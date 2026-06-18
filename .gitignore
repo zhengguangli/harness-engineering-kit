@@ -4,3 +4,23 @@ Thumbs.db
 
 # Claude Code local state (user-specific, not project-wide)
 .claude/settings.json
+
+# Editor / IDE
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Node (accidental installs)
+node_modules/
+package-lock.json
+
+# Python (accidental venvs)
+.venv/
+__pycache__/
+*.pyc
+
+# Temp files
+*.tmp
+*.bak
