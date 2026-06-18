@@ -68,6 +68,18 @@ docs/exec-plans/
 - 发现一个步骤做不完想留到以后,不要悄悄删掉——记录进 `tech-debt-tracker.md`,带上理由和影响范围。
 - 多个 agent 并行工作时,`docs/exec-plans/active/` 本身就是共享的协调台账,所有人都能看到谁在做什么、做到哪。
 
+## 并行协作约定
+
+- 每个 exec-plan 文件同一时刻只由一个 agent 编辑(在文件顶部元数据标注"负责 agent/人")。
+- 需要交接时,先提交当前进度到文件,再由下一个 agent 接管。
+- 不要两个 agent 同时修改同一个 exec-plan 文件。
+
+## 初始化步骤(首次为项目搭建 exec-plans 时)
+
+1. 创建目录 `docs/exec-plans/active/` 和 `docs/exec-plans/completed/`(如不存在)。
+2. 从本技能 `references/tech-debt-tracker-template.md` 创建 `docs/exec-plans/tech-debt-tracker.md`。
+3. exec-plan 文件本身用 `references/exec-plan-template.md` 作为起点。
+
 ## 操作步骤
 
 1. 先判断:这个任务需要临时计划还是 exec-plan?(见上面的判断标准)

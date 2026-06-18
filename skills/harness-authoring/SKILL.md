@@ -56,3 +56,4 @@ description: 在为 Claude Code 编写新的 skill、新的 subagent,或扩充 A
 4. 如果是 subagent,按"最小化工具授权"原则列工具清单,并明确 model 选择的理由。
 5. 检查这个新能力是否和已有的 skill/agent 重叠——如果重叠,合并或明确划分边界,不要让 Claude 在两个相似选项之间犯选择困难。
 6. 把新增的 skill/agent 在仓库的 AGENTS.md / README 里登记一行指针,保持"地图"本身也是最新的(呼应 `harness-repo-map` 技能)。
+7. 自检:新增/修改的 skill 正文是否 ≤ 500 行?subagent 的 tools 是否按最小权限原则?description 是否同时包含"做什么"和"什么时候用"?如果不符合,先修正再交付。

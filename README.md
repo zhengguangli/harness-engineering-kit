@@ -30,28 +30,20 @@ harness-engineering-kit/
 │   ├── qa-verifier.md
 │   ├── doc-gardener.md
 │   └── entropy-collector.md
-└── templates/                           # 复制到你的项目根目录,按需裁剪
-    ├── AGENTS.md
-    ├── ARCHITECTURE.md
-    ├── QUALITY_SCORE.md
-    └── docs/
-        ├── design-docs/{index.md, core-beliefs.md}
-        ├── exec-plans/{active/, completed/, tech-debt-tracker.md}
-        ├── product-specs/index.md
-        ├── generated/
-        └── references/
 ```
+
+> 模板文件(AGENTS.md、ARCHITECTURE.md、QUALITY_SCORE.md、docs/ 骨架等)已内嵌到各 skill 的 `references/` 子目录中,无需单独复制。
 
 ## 概念到组件的映射
 
 | 文章里的概念 | 落地为 |
 |---|---|
-| AGENTS.md 作为地图,docs/ 作为系统记录,渐进式披露 | `harness-repo-map` skill + `doc-gardener` agent + `templates/AGENTS.md` |
+| AGENTS.md 作为地图,docs/ 作为系统记录,渐进式披露 | `harness-repo-map` skill + `doc-gardener` agent |
 | 执行计划作为一等公民工件,跨上下文窗口接力 | `harness-exec-plans` skill + `plan-architect` agent |
-| 分层架构、依赖方向、"约束不变量不管实现" | `harness-architecture-boundaries` skill + `boundary-auditor` agent + `templates/ARCHITECTURE.md` |
+| 分层架构、依赖方向、"约束不变量不管实现" | `harness-architecture-boundaries` skill + `boundary-auditor` agent |
 | Ralph Wiggum Loop、"失败时问缺了什么能力" | `harness-verification-loop` skill + `verification-loop-runner` agent |
 | Chrome DevTools 驱动验证、可观测性栈(日志/指标/追踪) | `harness-observability-and-browser` skill + `qa-verifier` agent |
-| 黄金原则、熵增与垃圾回收、避免"AI 屎山大扫除日" | `harness-golden-principles` skill + `entropy-collector` agent + `templates/QUALITY_SCORE.md` |
+| 黄金原则、熵增与垃圾回收、避免"AI 屎山大扫除日" | `harness-golden-principles` skill + `entropy-collector` agent |
 | 文件系统作为持久状态、上下文是稀缺资源、skills 渐进式披露对抗 context rot | `harness-authoring` skill(指导如何写新的 skill/agent 而不破坏上下文预算) |
 | 沙箱/隔离环境、bash 作为通用工具 | 不单独成一个 skill——这是 Claude Code 本身已经提供的基础能力,套件假定它存在并在 `harness-observability-and-browser` 里建议按 worktree 隔离环境 |
 
@@ -75,7 +67,7 @@ cp agents/*.md  ~/.claude/agents/
 
 项目级与用户级同名时,项目级优先。
 
-**模板**:把 `templates/` 下的文件复制到项目根目录,按项目实际架构和领域划分填空,不要把示例里的占位内容(如六层架构图)当作必须照搬的标准——它只是展示"固定方向 + 有限合法边数"这个模式。
+**模板**:模板文件已内嵌在各 skill 的 `references/` 子目录中(如 `agents-md-template.md`、`architecture-template.md`、`quality-score-template.md` 等),由 agent 首次为项目初始化 docs/ 骨架时按需生成,无需手动拷贝。按项目实际架构和领域划分填空,不要把示例里的占位内容(如六层架构图)当作必须照搬的标准——它只是展示"固定方向 + 有限合法边数"这个模式。
 
 ## 推荐的接入顺序
 
