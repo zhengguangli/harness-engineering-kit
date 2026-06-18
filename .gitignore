@@ -1,0 +1,6 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Claude Code local state (user-specific, not project-wide)
+.claude/settings.json
