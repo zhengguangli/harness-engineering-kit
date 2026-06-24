@@ -1,7 +1,8 @@
 ---
 name: <agent-name>
 description: <做什么>。<什么时候用，具体场景>。
-tools: Read, Grep, Glob, Bash
+type: <read-only | executor>
+tools: Bash, Glob, Grep, Read
 model: sonnet
 skills: <相关 skill 名称>
 ---

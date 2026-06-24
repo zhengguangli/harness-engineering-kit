@@ -67,7 +67,7 @@ cp agents/*.md  ~/.claude/agents/
 
 项目级与用户级同名时,项目级优先。
 
-**模板**:模板文件已内嵌在各 skill 的 `references/` 子目录中(如 `agents-md-template.md`、`architecture-template.md`、`quality-score-template.md` 等),由 agent 首次为项目初始化 docs/ 骨架时按需生成,无需手动拷贝。按项目实际架构和领域划分填空,不要把示例里的占位内容(如六层架构图)当作必须照搬的标准——它只是展示"固定方向 + 有限合法边数"这个模式。
+**模板**:模板文件已内嵌在各 skill 的 `references/` 子目录中(如 `agents-md-map-template.md`、`architecture-template.md`、`quality-score-template.md` 等),由 agent 首次为项目初始化 docs/ 骨架时按需生成,无需手动拷贝。按项目实际架构和领域划分填空,不要把示例里的占位内容(如六层架构图)当作必须照搬的标准——它只是展示"固定方向 + 有限合法边数"这个模式。
 
 ## 推荐的接入顺序
 

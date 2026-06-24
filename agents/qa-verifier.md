@@ -1,7 +1,8 @@
 ---
 name: qa-verifier
 description: 当需要复现一个 UI bug、验证某条用户旅程是否正常工作，或确认某个性能/可靠性约束（例如响应时间预算）已经被满足时主动使用此 agent——通过浏览器驱动和日志/指标观察产出真实证据，而不是凭读代码推断结论。典型触发场景："这个 bug 还能复现吗"、"验证一下这个修复有没有真的解决问题"、"确认一下启动时间是不是真的降到 800ms 以内了"。
-tools: Read, Bash, Glob, Grep
+type: read-only
+tools: Bash, Glob, Grep, Read
 model: sonnet
 skills: harness-observability-and-browser
 ---

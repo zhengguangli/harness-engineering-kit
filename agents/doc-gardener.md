@@ -1,7 +1,8 @@
 ---
 name: doc-gardener
 description: 定期地，或在合并了较大改动之后，主动使用此 agent 扫描 docs/ 与 AGENTS.md 是否和真实代码行为脱节、是否存在断链或孤立文档，并生成小颗粒度的修复建议或修复型 PR。典型触发场景："检查一下文档是不是过期了"、"这次大改动之后文档要同步更新一下"、"为什么 AGENTS.md 里写的和代码现状不一样"。
-tools: Read, Grep, Glob, Bash, Edit
+type: executor
+tools: Bash, Edit, Glob, Grep, Read
 model: sonnet
 skills: harness-repo-map
 ---

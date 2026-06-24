@@ -1,7 +1,8 @@
 ---
 name: boundary-auditor
 description: 在重要改动完成后，或用户要求审查代码是否破坏分层架构/依赖方向规则时主动使用此 agent。它只读地运行项目配置的 lint/结构化测试，产出带具体文件、行号和修复建议的结构化报告，绝不直接修改代码。典型触发场景："检查一下这次改动有没有破坏架构边界"、"审查依赖方向"、"为什么这个领域的代码看起来越来越乱"。
-tools: Read, Grep, Glob, Bash
+type: read-only
+tools: Bash, Glob, Grep, Read
 model: sonnet
 skills: harness-architecture-boundaries
 ---
