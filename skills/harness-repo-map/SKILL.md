@@ -58,22 +58,22 @@ docs/
 
 ## 机械化校验,不要指望人工维护
 
-仅靠人工记得更新文档是不会长期生效的。要为知识库本身建立 CI 检查:
+仅靠人工记得更新文档是不会长期生效的。以下检查由 `doc-gardener` agent 在其固定工作流中内联执行,不需要额外生成独立脚本或 CI 配置文件:
 
 - **断链检测**:扫描 `docs/` 内部的相互引用,确保指向的文件/锚点还存在。
-- **新鲜度检测**:给关键文档加上"最后校验日期"或"对应代码版本"的元数据,超期未校验则在 CI 里标红。
-- **覆盖率检测**:对照代码里的领域/包列表,检查 `ARCHITECTURE.md` / `QUALITY_SCORE.md` 是否每个领域都有条目,新增领域没有文档时 CI 失败。
-- **结构检测**:linter 检查 `docs/` 目录是否符合约定的骨架(比如新计划是否真的落在 `exec-plans/active/`)。
+- **新鲜度检测**:给关键文档加上"最后校验日期"或"对应代码版本"的元数据,超期未校验则标记为过期。
+- **覆盖率检测**:对照代码里的领域/包列表,检查 `ARCHITECTURE.md` / `QUALITY_SCORE.md` 是否每个领域都有条目,新增领域没有文档时报告缺口。
+- **结构检测**:检查 `docs/` 目录是否符合约定的骨架(比如新计划是否真的落在 `exec-plans/active/`)。
 
 把这些检查的失败信息写成对 agent 友好的修复说明(参考 `harness-architecture-boundaries` 技能里"把修复指令写进报错信息"的做法),这样发现问题的 agent 能直接照着错误信息修。
 
 ## 初始化步骤(首次为项目搭建 docs/ 骨架时)
 
-1. 在仓库根目录创建 `AGENTS.md`、`ARCHITECTURE.md`、`QUALITY_SCORE.md`,内容参考本技能 `references/` 子目录里的对应模板文件。
+1. 在仓库根目录创建 `AGENTS.md`(参考本技能 `references/agents-md-template.md`)、`ARCHITECTURE.md`(参考 `harness-architecture-boundaries` 技能里的 `references/architecture-template.md`)、`QUALITY_SCORE.md`(参考 `harness-golden-principles` 技能里的 `references/quality-score-template.md`)。
 2. 按需创建以下空目录(如不存在):`docs/design-docs/`、`docs/exec-plans/active/`、`docs/exec-plans/completed/`、`docs/generated/`、`docs/product-specs/`、`docs/references/`。
 3. 从 `references/` 子目录的模板创建对应索引文件:`docs/design-docs/index.md`、`docs/design-docs/core-beliefs.md`、`docs/product-specs/index.md`、`docs/exec-plans/tech-debt-tracker.md`。
 4. 按项目实际情况填充模板里的占位符(领域名、代码路径、日期等)。
-5. 写一个最小的校验脚本(断链 + 结构检查),接入 CI 或作为 doc-gardener agent 的固定步骤。
+5. 文档校验由 `doc-gardener` agent 在其固定工作流中内联执行(断链检测、新鲜度检测、覆盖率检测、结构检测),不需要额外生成独立脚本。
 6. 在 AGENTS.md 顶部写明:"这个文件是地图,不是百科全书;深入信息请看 docs/"。
 
 ## 操作步骤(当你被要求"搭建/重构知识库"时)

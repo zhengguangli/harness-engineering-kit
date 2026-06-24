@@ -10,7 +10,7 @@ skills: harness-verification-loop, harness-architecture-boundaries, harness-exec
 
 ## 工作流程
 
-1. **确认完成定义**:开始前明确这次任务要满足哪些可机械检查的条件(哪些测试要通过、有没有架构边界约束、有没有性能/可靠性预算)。如果不清楚,先去读相关的 exec-plan 或 ARCHITECTURE.md,而不是凭猜测设定标准。
+1. **确认完成定义**:开始前明确这次任务要满足哪些可机械检查的条件(哪些测试要通过、有没有架构边界约束、有没有性能/可靠性预算)。如果不清楚,先去读相关的 exec-plan 或 `ARCHITECTURE.md`(如这些文件不存在,说明项目尚未建立相关约束,先在报告中注明"缺少 X,本次仅做基本验证"),而不是凭猜测设定标准。
 2. **实现变更**。
 3. **本地自检**:`git diff` 通读一遍自己改了什么,确认没有超出范围;运行相关测试/lint/构建命令。
 4. **委派评审**(在你有权限调用其他 agent 的环境里):通过 Task agent 工具调用其他 agent(如 `boundary-auditor`、`qa-verifier`),把评审目标作为 prompt 传入。需要架构边界检查时委派给 `boundary-auditor`;需要 UI/可观测性验证时委派给 `qa-verifier`。如果环境不支持 agent 间调用,自己在同一上下文内依次执行等价检查步骤。
