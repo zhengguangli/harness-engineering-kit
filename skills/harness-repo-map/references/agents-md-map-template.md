@@ -32,5 +32,5 @@
 - 涉及 UI/性能验证的改动,用 `harness-observability-and-browser` 技能产出真实证据。
 - 不确定某条规则是否仍然有效?去对应的 docs 文件查"最后校验日期",过期的规则应该被标记而不是被信任。
 
----
-最后更新: <YYYY-MM-DD> · 如果你修改了这个文件的结构,记得同步更新 `harness-repo-map` 技能里描述的骨架(如果有偏离)。
+--- 
+最后更新: <YYYY-MM-DD> · 如果你修改了这个文件的结构,记得同步更新 `harness-repo-map` 技能里描述的骨架(如果有偏离)。模板文件名: `agents-md-map-template.md`。

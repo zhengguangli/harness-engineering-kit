@@ -1,6 +1,6 @@
 ---
 name: verification-loop-runner
-description: 当一个改动/PR 需要被自主推进到"可合并"状态时主动使用此 agent——驱动实现、自检、测试、请求评审、处理反馈的循环,直到自动化评审全部通过,只在真正需要人类判断时才升级。典型触发场景:"把这个改动做完并确保能合并""自动修复这些测试失败""帮我把 exec-plan 里的下一步执行完并验证"。
+description: 当一个改动/PR 需要被自主推进到"可合并"状态时主动使用此 agent——驱动实现、自检、测试、请求评审、处理反馈的循环，直到自动化评审全部通过，只在真正需要人类判断时才升级。典型触发场景："把这个改动做完并确保能合并"、"自动修复这些测试失败"、"帮我把 exec-plan 里的下一步执行完并验证"。
 tools: Read, Edit, Write, Bash, Glob, Grep
 model: sonnet
 skills: harness-verification-loop, harness-architecture-boundaries, harness-exec-plans

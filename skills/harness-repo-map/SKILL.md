@@ -69,7 +69,7 @@ docs/
 
 ## 初始化步骤(首次为项目搭建 docs/ 骨架时)
 
-1. 在仓库根目录创建 `AGENTS.md`(参考本技能 `references/agents-md-template.md`)、`ARCHITECTURE.md`(参考 `harness-architecture-boundaries` 技能里的 `references/architecture-template.md`)、`QUALITY_SCORE.md`(参考 `harness-golden-principles` 技能里的 `references/quality-score-template.md`)。
+1. 在仓库根目录创建 `AGENTS.md`(参考本技能 `references/agents-md-map-template.md`)、`ARCHITECTURE.md`(参考 `harness-architecture-boundaries` 技能里的 `references/architecture-template.md`)、`QUALITY_SCORE.md`(参考 `harness-golden-principles` 技能里的 `references/quality-score-template.md`)。
 2. 按需创建以下空目录(如不存在):`docs/design-docs/`、`docs/exec-plans/active/`、`docs/exec-plans/completed/`、`docs/generated/`、`docs/product-specs/`、`docs/references/`。
 3. 从 `references/` 子目录的模板创建对应索引文件:`docs/design-docs/index.md`、`docs/design-docs/core-beliefs.md`、`docs/product-specs/index.md`、`docs/exec-plans/tech-debt-tracker.md`。
 4. 按项目实际情况填充模板里的占位符(领域名、代码路径、日期等)。
