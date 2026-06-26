@@ -1,6 +1,6 @@
-# Harness Engineering Kit for Claude Code
+# Harness Engineering Kit
 
-一套通用、与具体项目无关的 Claude Code **skills + subagents** 套件,把 OpenAI《Harness engineering: leveraging Codex in an agent-first world》和 LangChain《The Anatomy of an Agent Harness》两篇文章里的核心方法论,落地成可以直接放进任意仓库的可执行工件。
+一套通用、与具体项目无关的 **skills + agents** 套件,同时支持 **Claude Code** 和 **Codex**。把 OpenAI《Harness engineering: leveraging Codex in an agent-first world》和 LangChain《The Anatomy of an Agent Harness》两篇文章里的核心方法论,落地成可以直接放进任意仓库的可执行工件。
 
 > Agent = Model + Harness。模型提供智能,harness 提供让这份智能变成可靠产出所需要的一切:状态、工具、反馈回路、可机械强制的约束。这套工具集就是 harness 的一部分。
 
@@ -15,7 +15,7 @@
 
 ```
 harness-engineering-kit/
-├── skills/                              # 安装到 .claude/skills/<name>/SKILL.md
+├── skills/                              # 7 个 skill（方法论 + agent 提示词 + 模板）
 │   ├── harness-repo-map/                # AGENTS.md 地图 + docs/ 系统记录
 │   ├── harness-exec-plans/              # 执行计划作为一等公民工件
 │   ├── harness-architecture-boundaries/ # 分层架构与依赖方向的机械强制
@@ -23,51 +23,115 @@ harness-engineering-kit/
 │   ├── harness-observability-and-browser/ # 浏览器 + 可观测性反馈传感器
 │   ├── harness-golden-principles/       # 黄金原则与持续垃圾回收
 │   └── harness-authoring/               # 元技能:如何给这套体系本身加新能力
-├── agents/                              # 安装到 .claude/agents/<name>.md
-│   ├── plan-architect.md
-│   ├── boundary-auditor.md
-│   ├── verification-loop-runner.md
-│   ├── qa-verifier.md
-│   ├── doc-gardener.md
-│   └── entropy-collector.md
+└── CLAUDE.md                            # Claude Code 项目级指导
 ```
 
-> 模板文件(AGENTS.md、ARCHITECTURE.md、QUALITY_SCORE.md、docs/ 骨架等)已内嵌到各 skill 的 `references/` 子目录中,无需单独复制。
+每个 skill 内部结构:
+```
+skills/<name>/
+├── SKILL.md                             # 方法论正文
+├── agents/
+│   ├── <agent-name>.md                  # 配对 agent 的系统定义
+│   └── openai.yaml                      # Codex UI 元数据
+└── references/
+    ├── *-template.md                    # 模板文件
+    └── *-prompt.md                      # Agent 系统提示词（Codex spawn_agent 用）
+```
 
-## 概念到组件的映射
+## Skill 与 Agent 的使用方式
 
-| 文章里的概念 | 落地为 |
-|---|---|
-| AGENTS.md 作为地图,docs/ 作为系统记录,渐进式披露 | `harness-repo-map` skill + `doc-gardener` agent |
-| 执行计划作为一等公民工件,跨上下文窗口接力 | `harness-exec-plans` skill + `plan-architect` agent |
-| 分层架构、依赖方向、"约束不变量不管实现" | `harness-architecture-boundaries` skill + `boundary-auditor` agent |
-| Ralph Wiggum Loop、"失败时问缺了什么能力" | `harness-verification-loop` skill + `verification-loop-runner` agent |
-| Chrome DevTools 驱动验证、可观测性栈(日志/指标/追踪) | `harness-observability-and-browser` skill + `qa-verifier` agent |
-| 黄金原则、熵增与垃圾回收、避免"AI 屎山大扫除日" | `harness-golden-principles` skill + `entropy-collector` agent |
-| 文件系统作为持久状态、上下文是稀缺资源、skills 渐进式披露对抗 context rot | `harness-authoring` skill(指导如何写新的 skill/agent 而不破坏上下文预算) |
-| 沙箱/隔离环境、bash 作为通用工具 | 不单独成一个 skill——这是 Claude Code 本身已经提供的基础能力,套件假定它存在并在 `harness-observability-and-browser` 里建议按 worktree 隔离环境 |
+### 核心关系
+
+```
+Skill = 方法论（告诉"怎么做"）     → 注入主对话上下文
+Agent = 执行者（在独立上下文中"动手做"） → spawn 后独立运行
+
+主对话读 Skill → 理解方法论 → spawn Agent 去执行 → Agent 返回结果
+```
+
+Skill 不直接"调用" Agent。主对话根据 Skill 的指导决定何时 spawn 哪个 Agent。
+
+### 单次任务的使用流程
+
+以"实现一个新功能"为例:
+
+```
+用户: "帮我实现用户登录模块"
+         │
+         ▼
+① harness-exec-plans 触发（主对话获得"如何做计划"的知识）
+         │
+         ▼
+② spawn plan-architect agent
+   → 独立上下文中创建 exec-plan 文件
+   → 返回计划
+         │
+         ▼
+③ spawn verification-loop-runner agent
+   → 独立上下文中按计划逐步实现
+   → 每步自检，必要时委派:
+      ├── spawn boundary-auditor（检查架构边界）
+      └── spawn qa-verifier（验证 UI/性能）
+   → 返回完成结果
+         │
+         ▼
+④ 验收通过 → 完成
+```
+
+### 7 个 Skill 的触发场景
+
+| Skill | 触发时 | spawn 的 Agent |
+|---|---|---|
+| harness-repo-map | 搭建/重构 AGENTS.md 和 docs/ | doc-gardener |
+| harness-architecture-boundaries | 建立或检查架构边界规则 | boundary-auditor |
+| harness-exec-plans | 复杂任务需要落盘计划 | plan-architect |
+| harness-verification-loop | 把改动推进到"可合并"状态 | verification-loop-runner |
+| harness-observability-and-browser | 需要 UI 或性能验证 | qa-verifier |
+| harness-golden-principles | 周期性代码质量清扫 | entropy-collector |
+| harness-authoring | 创建新的 skill 或 agent | skill-scaffolder |
 
 ## 安装方式
 
-Claude Code 的 skill 和 subagent 都是按位置发现的纯文本文件,直接复制即可,不需要额外注册步骤。
+### Claude Code
+
+Skills 和 agents 都是按位置发现的纯文本文件,直接复制即可。
 
 **项目级(推荐,纳入版本控制,团队共享)**
 
 ```bash
 cp -r skills/*  <你的项目>/.claude/skills/
-cp agents/*.md  <你的项目>/.claude/agents/
+cp skills/*/agents/*.md  <你的项目>/.claude/agents/
 ```
 
 **用户级(跨项目个人习惯)**
 
 ```bash
 cp -r skills/*  ~/.claude/skills/
-cp agents/*.md  ~/.claude/agents/
+cp skills/*/agents/*.md  ~/.claude/agents/
 ```
 
 项目级与用户级同名时,项目级优先。
 
-**模板**:模板文件已内嵌在各 skill 的 `references/` 子目录中(如 `agents-md-map-template.md`、`architecture-template.md`、`quality-score-template.md` 等),由 agent 首次为项目初始化 docs/ 骨架时按需生成,无需手动拷贝。按项目实际架构和领域划分填空,不要把示例里的占位内容(如六层架构图)当作必须照搬的标准——它只是展示"固定方向 + 有限合法边数"这个模式。
+### Codex
+
+Skills 是 Codex 的能力扩展机制。安装到项目的 `.codex/skills/` 目录即可。
+
+**项目级(推荐)**
+
+```bash
+mkdir -p <你的项目>/.codex/skills/
+cp -r skills/*  <你的项目>/.codex/skills/
+```
+
+**用户级(跨项目)**
+
+```bash
+cp -r skills/*  ~/.codex/skills/
+```
+
+安装后重启 Codex 生效。Agent 通过 `spawn_agent` 工具使用,系统提示词在各 skill 的 `references/*-prompt.md` 中。
+
+> 模板文件已内嵌在各 skill 的 `references/` 子目录中,由 agent 首次为项目初始化 docs/ 骨架时按需生成,无需手动拷贝。
 
 ## 推荐的接入顺序
 
@@ -77,7 +141,19 @@ cp agents/*.md  ~/.claude/agents/
 4. 接入 `harness-verification-loop` + `verification-loop-runner`:让改动的"完成"有可机械检查的定义。
 5. 视项目类型接入 `harness-observability-and-browser` + `qa-verifier`(尤其是有 UI 或明确性能预算的项目)。
 6. 最后接入 `harness-golden-principles` + `entropy-collector`,建立周期性清扫节奏,防止前面四步积累的产出慢慢腐化。
-7. 任何时候要扩展这套体系本身,参考 `harness-authoring`。
+7. 任何时候要扩展这套体系本身,参考 `harness-authoring` + `skill-scaffolder`。
+
+## 概念到组件的映射
+
+| 文章里的概念 | 落地为 |
+|---|---|
+| AGENTS.md 作为地图,docs/ 作为系统记录,渐进式披露 | `harness-repo-map` skill + `doc-gardener` agent |
+| 执行计划作为一等公民工件,跨上下文窗口接力 | `harness-exec-plans` skill + `plan-architect` + `verification-loop-runner` agent |
+| 分层架构、依赖方向、"约束不变量不管实现" | `harness-architecture-boundaries` skill + `boundary-auditor` agent |
+| Ralph Wiggum Loop、"失败时问缺了什么能力" | `harness-verification-loop` skill + `verification-loop-runner` agent |
+| Chrome DevTools 驱动验证、可观测性栈(日志/指标/追踪) | `harness-observability-and-browser` skill + `qa-verifier` agent |
+| 黄金原则、熵增与垃圾回收、避免"AI 屎山大扫除日" | `harness-golden-principles` skill + `entropy-collector` agent |
+| 渐进式披露、上下文预算、skill/agent 撰写规范 | `harness-authoring` skill + `skill-scaffolder` agent |
 
 ## 关于 model / tools 字段的选择
 
@@ -87,4 +163,4 @@ cp agents/*.md  ~/.claude/agents/
 
 - 没有绑定任何具体语言/框架的 lint 工具链——每个 skill 里只给出"要机械强制什么、报错信息要包含什么"的模式,具体用 ESLint/dependency-cruiser/import-linter 还是自己写 AST 脚本,留给你的项目栈决定。
 - 没有提供具体的 CI 配置文件——hook 接入方式因项目的 CI 系统而异,套件只规定"这些检查必须在 CI 里跑、报错要带修复指令",不规定怎么接。
-- 没有附带浏览器自动化或可观测性后端的具体安装步骤——这部分应该使用 Claude Code 已连接的工具或项目已有的基础设施,本套件只规定"要有这类反馈传感器、怎么用它构成验证循环"。
+- 没有附带浏览器自动化或可观测性后端的具体安装步骤——这部分应该使用平台已连接的工具或项目已有的基础设施,本套件只规定"要有这类反馈传感器、怎么用它构成验证循环"。

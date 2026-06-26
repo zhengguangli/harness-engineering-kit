@@ -1,0 +1,3 @@
+interface:
+  display_name: "Architecture Boundaries"
+  short_description: "Enforce layer dependencies and data boundaries"

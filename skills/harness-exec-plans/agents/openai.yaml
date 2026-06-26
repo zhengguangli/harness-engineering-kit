@@ -1,0 +1,3 @@
+interface:
+  display_name: "Execution Plans"
+  short_description: "Versioned exec-plan artifacts for complex tasks"

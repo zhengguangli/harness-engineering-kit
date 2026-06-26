@@ -1,6 +1,6 @@
 ---
 name: harness-architecture-boundaries
-description: 为由 agent 大量生成代码的仓库设计并机械化强制分层架构与依赖方向规则——通过自定义 linter 和结构化测试约束 agent,而不是依赖人工 code review 去"靠感觉"挡住架构腐化。当用户要为项目建立"严格边界、局部自由"的架构、设计自定义 lint 规则、定义跨层依赖方向、或者代码已经出现架构腐化/循环依赖/层间越界时主动使用此技能。
+description: 为由 agent 大量生成代码的仓库设计并机械化强制分层架构与依赖方向规则——通过自定义 linter 和结构化测试约束 agent,而不是依赖人工 code review 去"靠感觉"挡住架构腐化。当用户要为项目建立"严格边界、局部自由"的分层架构、代码已出现架构腐化或循环依赖或层间越界、需要设计自定义 lint 规则或定义跨层依赖方向时使用。
 ---
 
 # Architecture Boundaries(架构边界)
@@ -15,6 +15,12 @@ description: 为由 agent 大量生成代码的仓库设计并机械化强制分
 - **不要约束**:某个具体函数怎么写、用什么库实现细节、变量命名是否符合人类审美。
 
 这类似于管理一个大型平台工程组织:中心化地守住边界、正确性、可复现性;边界内部,允许团队(或 agent)用自己的方式实现。agent 写出来的代码不一定符合人类的风格偏好,只要它正确、可维护、对下一轮 agent 可读,就达标。
+
+## 何时使用
+
+- 用户要为项目建立"严格边界、局部自由"的分层架构。
+- 代码已出现架构腐化、循环依赖或层间越界。
+- 需要设计自定义 lint 规则或定义跨层依赖方向。
 
 ## 推导项目自有的分层模型
 
@@ -53,6 +59,7 @@ Utils 只能被 Providers 使用,不能反向依赖业务领域内部。
 ## 怎么把规则变成机械约束
 
 1. **把检查交给 `boundary-auditor` agent 内联执行,而不是只写文档**。文档里的规则会被遗忘,agent 用 Grep/Bash 等工具直接检查依赖方向是否违规,不需要项目预先配置独立的 lint 工具链——agent 本身就能执行这些检查。如果项目已有现成的检查工具(ESLint、dependency-cruiser、import-linter 等),`boundary-auditor` 也会优先利用它们。检查模式模板见本技能 `references/check-pattern-template.md`。
+- `references/boundary-auditor-prompt.md`: boundary-auditor agent 系统提示词(Codex spawn_agent 用)
 2. **写结构化测试(可选)**,在测试层面断言"领域 A 的模块不会出现在领域 B 的依赖图里",而不只是功能测试。这需要项目自行编写,不属于 agent 自动生成的范畴。
 3. **把修复指令写进报错信息本身**。无论是由 agent 内联检查还是由外部工具检查,报错不要只说"违反规则 X",要写成"检测到 `service/foo.ts` 直接 import 了 `runtime/bar.ts` 的内部模块,违反 Service→Runtime 单向依赖规则;请改为通过 `service/foo.ts` 暴露的公共接口访问,或将共享逻辑下沉到 Types/Config 层"。这样发现问题的 agent 能直接照着修,不需要人介入解释。
 4. **区分"必须挡住"和"建议但不强制"**。把真正的不变量交给 `boundary-auditor` 阻塞检查;把风格偏好做成 `harness-golden-principles` 技能里讲的"周期性清扫",不要混进阻塞合并的硬规则里,否则会拖慢吞吐量又不增加安全边际。
@@ -69,3 +76,11 @@ Utils 只能被 Providers 使用,不能反向依赖业务领域内部。
 ## 配合的 agent
 
 - `boundary-auditor` agent:只读地运行这些 lint/结构化测试,产出带文件行号和修复建议的报告,不直接改代码。
+
+**Codex 用户**:通过 `spawn_agent` 工具使用,系统提示词见 `references/boundary-auditor-prompt.md`。
+
+## 相关模板
+
+- `references/architecture-template.md`: ARCHITECTURE.md 架构文档模板
+- `references/check-pattern-template.md`: 架构检查模式模板(boundary-auditor 参考)
+- `references/boundary-auditor-prompt.md`: boundary-auditor agent 系统提示词(Codex spawn_agent 用)

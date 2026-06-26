@@ -1,11 +1,17 @@
 ---
 name: harness-authoring
-description: 在为 Claude Code 编写新的 skill、新的 subagent,或扩充 AGENTS.md/docs 知识库时,遵循"渐进式披露"与上下文预算原则,对抗 context rot(上下文腐化)——避免把所有东西塞进一个无所不包的提示词。当用户要给这套 harness 工具集本身添加新能力、问"怎么写一个好的 SKILL.md"、要决定"这应该做成 skill 还是 subagent",或者发现某个 agent/skill 越写越臃肿时主动使用此技能。
+description: 指导如何为这套 harness 体系编写新的 skill、subagent 或扩充知识库,遵循渐进式披露与上下文预算原则对抗 context rot。当用户要给 harness 工具集添加新能力、问"怎么写一个好的 SKILL.md"或"这应该做成 skill 还是 subagent"、或发现某个 agent/skill 越写越臃肿需要瘦身时使用。
 ---
 
 # Harness Authoring(撰写新的 skill / agent)
 
 这是一个元技能——不直接服务于某个具体任务,而是指导如何**给这套 harness 体系本身添加新的能力**,同时不破坏它原本要解决的问题(上下文是稀缺资源)。
+
+## 何时使用
+
+- 用户要给这套 harness 工具集本身添加新能力。
+- 问"怎么写一个好的 SKILL.md"或"这应该做成 skill 还是 subagent"。
+- 发现某个 agent/skill 越写越臃肿,需要瘦身。
 
 ## 先想清楚:这应该是一个 skill,还是一个 subagent?
 
@@ -57,3 +63,15 @@ description: 在为 Claude Code 编写新的 skill、新的 subagent,或扩充 A
 5. 检查这个新能力是否和已有的 skill/agent 重叠——如果重叠,合并或明确划分边界,不要让 Claude 在两个相似选项之间犯选择困难。
 6. 把新增的 skill/agent 在仓库的 AGENTS.md / README 里登记一行指针,保持"地图"本身也是最新的(呼应 `harness-repo-map` 技能)。
 7. 自检:新增/修改的 skill 正文是否 ≤ 500 行?subagent 的 tools 是否按最小权限原则?description 是否同时包含"做什么"和"什么时候用"?如果不符合,先修正再交付。
+
+## 配合的 agent
+
+- `skill-scaffolder` agent:从模板生成新 skill/agent 的完整文件骨架,确保符合 harness-authoring 规范。只负责脚手架搭建,不负责内容填充。
+
+**Codex 用户**:通过 `spawn_agent` 工具使用,系统提示词见 `references/skill-scaffolder-prompt.md`。
+
+## 相关模板
+
+- `references/skill-template.md`: 新 skill 的 SKILL.md 模板
+- `references/agent-template.md`: 新 agent 的模板
+- `references/skill-scaffolder-prompt.md`: skill-scaffolder agent 系统提示词(Codex spawn_agent 用)

@@ -1,0 +1,3 @@
+interface:
+  display_name: "Verification Loop"
+  short_description: "Self-verification loop for code changes"

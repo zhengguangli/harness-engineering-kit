@@ -1,3 +1,5 @@
+<!-- 将此文件放置在 skills/<paired-skill>/agents/<agent-name>.md -->
+
 ---
 name: <agent-name>
 description: <做什么>。<什么时候用，具体场景>。
@@ -11,8 +13,7 @@ skills: <相关 skill 名称>
 
 ## 工具风险声明
 
-<如果是只读 agent: 本 agent 的 tools 字段包含 Bash 用于运行只读命令，禁止执行任何写操作。>
-<如果是执行型 agent: 说明可用工具范围>
+<说明 tools 中每个工具的使用边界和禁止操作。只读 agent 强调"禁止任何写操作";执行型 agent 限定 Edit/Write 的作用范围。>
 
 ## 工作流程
 
