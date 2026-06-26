@@ -1,6 +1,6 @@
 # Harness Engineering Kit
 
-一套通用、与具体项目无关的 **skills + agents** 套件,同时支持 **Claude Code** 和 **Codex**。把 OpenAI《Harness engineering: leveraging Codex in an agent-first world》和 LangChain《The Anatomy of an Agent Harness》两篇文章里的核心方法论,落地成可以直接放进任意仓库的可执行工件。
+一套通用、与具体项目无关的 **skills + agents** 套件,适用于 **Claude Code** 和 **Codex**。把 OpenAI《Harness engineering: leveraging Codex in an agent-first world》和 LangChain《The Anatomy of an Agent Harness》两篇文章里的核心方法论,落地成可以直接放进任意仓库的可执行工件。
 
 > Agent = Model + Harness。模型提供智能,harness 提供让这份智能变成可靠产出所需要的一切:状态、工具、反馈回路、可机械强制的约束。这套工具集就是 harness 的一部分。
 
@@ -15,16 +15,21 @@
 
 ```
 harness-engineering-kit/
-├── skills/                              # 7 个 skill（方法论 + agent 提示词 + 模板）
-│   ├── harness-repo-map/                # AGENTS.md 地图 + docs/ 系统记录
-│   ├── harness-exec-plans/              # 执行计划作为一等公民工件
-│   ├── harness-architecture-boundaries/ # 分层架构与依赖方向的机械强制
-│   ├── harness-verification-loop/       # Ralph Wiggum 自验证循环
-│   ├── harness-observability-and-browser/ # 浏览器 + 可观测性反馈传感器
-│   ├── harness-golden-principles/       # 黄金原则与持续垃圾回收
-│   └── harness-authoring/               # 元技能:如何给这套体系本身加新能力
-└── CLAUDE.md                            # Claude Code 项目级指导
+├── .gitignore                           # 忽略 docs/、AGENTS.md、CLAUDE.md（均由 agent 按项目生成）
+└── skills/                              # 7 个 skill（方法论 + agent 提示词 + 模板）
+    ├── harness-repo-map/                # 入口文件地图 + docs/ 系统记录
+    ├── harness-exec-plans/              # 执行计划作为一等公民工件
+    ├── harness-architecture-boundaries/ # 分层架构与依赖方向的机械强制
+    ├── harness-verification-loop/       # Ralph Wiggum 自验证循环
+    ├── harness-observability-and-browser/ # 浏览器 + 可观测性反馈传感器
+    ├── harness-golden-principles/       # 黄金原则与持续垃圾回收
+    └── harness-authoring/               # 元技能:如何给这套体系本身加新能力
 ```
+
+安装后由 agent 按项目生成的文件(不在仓库中):
+- `AGENTS.md` — Codex 入口地图
+- `CLAUDE.md` — Claude Code 入口地图
+- `docs/` — 架构文档、执行计划、质量评分等
 
 每个 skill 内部结构:
 ```
@@ -32,10 +37,10 @@ skills/<name>/
 ├── SKILL.md                             # 方法论正文
 ├── agents/
 │   ├── <agent-name>.md                  # 配对 agent 的系统定义
-│   └── openai.yaml                      # Codex UI 元数据
+│   └── openai.yaml                      # Codex UI 元数据（Claude Code 忽略）
 └── references/
-    ├── *-template.md                    # 模板文件
-    └── *-prompt.md                      # Agent 系统提示词（Codex spawn_agent 用）
+    ├── *-template.md                    # 模板文件（生成到目标项目的 docs/）
+    └── *-prompt.md                      # Agent 系统提示词
 ```
 
 ## Skill 与 Agent 的使用方式
@@ -82,7 +87,7 @@ Skill 不直接"调用" Agent。主对话根据 Skill 的指导决定何时 spaw
 
 | Skill | 触发时 | spawn 的 Agent |
 |---|---|---|
-| harness-repo-map | 搭建/重构 AGENTS.md 和 docs/ | doc-gardener |
+| harness-repo-map | 搭建/重构入口文件和 docs/ | doc-gardener |
 | harness-architecture-boundaries | 建立或检查架构边界规则 | boundary-auditor |
 | harness-exec-plans | 复杂任务需要落盘计划 | plan-architect |
 | harness-verification-loop | 把改动推进到"可合并"状态 | verification-loop-runner |
@@ -129,13 +134,13 @@ cp -r skills/*  <你的项目>/.codex/skills/
 cp -r skills/*  ~/.codex/skills/
 ```
 
-安装后重启 Codex 生效。Agent 通过 `spawn_agent` 工具使用,系统提示词在各 skill 的 `references/*-prompt.md` 中。
+安装后重启 Codex 生效。
 
 > 模板文件已内嵌在各 skill 的 `references/` 子目录中,由 agent 首次为项目初始化 docs/ 骨架时按需生成,无需手动拷贝。
 
 ## 推荐的接入顺序
 
-1. 先落地 `harness-repo-map`:整理/瘦身 AGENTS.md,搭好 `docs/` 骨架。这是地基,其他一切都要靠 agent 能发现知识才生效。
+1. 先落地 `harness-repo-map`:整理/瘦身入口文件,搭好 `docs/` 骨架。这是地基,其他一切都要靠 agent 能发现知识才生效。
 2. 落地 `harness-architecture-boundaries`:明确依赖方向规则,哪怕一开始只能靠文档,逐步补上 lint。
 3. 接入 `harness-exec-plans` + `plan-architect`:复杂任务开始用落盘计划驱动,而不是纯对话规划。
 4. 接入 `harness-verification-loop` + `verification-loop-runner`:让改动的"完成"有可机械检查的定义。
@@ -147,7 +152,7 @@ cp -r skills/*  ~/.codex/skills/
 
 | 文章里的概念 | 落地为 |
 |---|---|
-| AGENTS.md 作为地图,docs/ 作为系统记录,渐进式披露 | `harness-repo-map` skill + `doc-gardener` agent |
+| 入口文件作为地图,docs/ 作为系统记录,渐进式披露 | `harness-repo-map` skill + `doc-gardener` agent |
 | 执行计划作为一等公民工件,跨上下文窗口接力 | `harness-exec-plans` skill + `plan-architect` + `verification-loop-runner` agent |
 | 分层架构、依赖方向、"约束不变量不管实现" | `harness-architecture-boundaries` skill + `boundary-auditor` agent |
 | Ralph Wiggum Loop、"失败时问缺了什么能力" | `harness-verification-loop` skill + `verification-loop-runner` agent |
