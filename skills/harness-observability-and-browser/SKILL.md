@@ -71,9 +71,7 @@ description: 让 agent 通过浏览器自动化(DOM 快照、截图、控制台/
 
 - `qa-verifier` agent:专门执行这个技能描述的验证循环,产出证据,本身不负责修代码。
 
-**Codex 用户**:通过 `spawn_agent` 工具使用,系统提示词见 `references/qa-verifier-prompt.md`。
-
 ## 相关模板
 
 - 无独立模板文件。验证产出物格式参考 `../harness-exec-plans/references/exec-plan-template.md` 的验收标准段。
-- `references/qa-verifier-prompt.md`: qa-verifier agent 系统提示词(Codex spawn_agent 用)
+- `references/qa-verifier-prompt.md`: qa-verifier agent 系统提示词

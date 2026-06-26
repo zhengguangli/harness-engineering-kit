@@ -69,12 +69,13 @@ docs/
 
 ## 初始化步骤(首次为项目搭建 docs/ 骨架时)
 
-1. 在仓库根目录创建 `AGENTS.md`(参考本技能 `references/agents-md-map-template.md`)、`ARCHITECTURE.md`(参考 `../harness-architecture-boundaries/references/architecture-template.md`)、`QUALITY_SCORE.md`(参考 `../harness-golden-principles/references/quality-score-template.md`)。
-2. 按需创建以下空目录(如不存在):`docs/design-docs/`、`docs/exec-plans/active/`、`docs/exec-plans/completed/`、`docs/generated/`、`docs/product-specs/`、`docs/references/`。
-3. 从 `references/` 子目录的模板创建对应索引文件:`docs/design-docs/index.md`、`docs/design-docs/core-beliefs.md`、`docs/product-specs/index.md`、`docs/exec-plans/tech-debt-tracker.md`。
-4. 按项目实际情况填充模板里的占位符(领域名、代码路径、日期等)。
-5. 文档校验由 `doc-gardener` agent 在其固定工作流中内联执行(断链检测、新鲜度检测、覆盖率检测、结构检测),不需要额外生成独立脚本。
-6. 在 AGENTS.md 顶部写明:"这个文件是地图,不是百科全书;深入信息请看 docs/"。
+1. 创建当前平台的入口文件(参考 `references/agents-md-map-template.md`)。只创建自己平台的,不要替另一个平台创建。
+2. 在 `docs/` 下创建 `ARCHITECTURE.md`(参考 `../harness-architecture-boundaries/references/architecture-template.md`)和 `QUALITY_SCORE.md`(参考 `../harness-golden-principles/references/quality-score-template.md`)。这两个文件属于 `docs/`,不要放在根目录。
+3. 按需创建以下空目录(如不存在):`docs/design-docs/`、`docs/exec-plans/active/`、`docs/exec-plans/completed/`、`docs/generated/`、`docs/product-specs/`、`docs/references/`。
+4. 从 `references/` 子目录的模板创建对应索引文件:`docs/design-docs/index.md`、`docs/design-docs/core-beliefs.md`、`docs/product-specs/index.md`、`docs/exec-plans/tech-debt-tracker.md`。
+5. 按项目实际情况填充模板里的占位符(领域名、代码路径、日期等)。
+6. 文档校验由 `doc-gardener` agent 在其固定工作流中内联执行(断链检测、新鲜度检测、覆盖率检测、结构检测),不需要额外生成独立脚本。
+7. 在入口文件顶部写明:"这个文件是地图,不是百科全书;深入信息请看 docs/"。
 
 ## 操作步骤(当你被要求"搭建/重构知识库"时)
 
@@ -82,14 +83,12 @@ docs/
 2. 设计/裁剪目录骨架(参考上面的模板),只创建项目真正需要的子目录。
 3. 把百科全书式 AGENTS.md 里的内容,按主题拆分搬运到对应 `docs/*.md`,AGENTS.md 改写成指针表。
 4. 给每个被搬运的文档补上一句"这是关于什么的、什么时候该看它"。
-5. 如果项目还没有校验脚本,按初始化步骤第 5 步补上。
-6. 在 AGENTS.md 顶部写明:"这个文件是地图,不是百科全书;深入信息请看 docs/"。
+5. 如果项目还没有校验脚本,按初始化步骤第 6 步补上。
+6. 在入口文件顶部写明:"这个文件是地图,不是百科全书;深入信息请看 docs/"。
 
 ## 配合的 agent
 
 - `doc-gardener` agent:周期性地或在合并后扫描 `docs/` 是否和代码行为脱节,生成小颗粒度的修复建议或直接打开修复型 PR。日常维护用这个,不要等人工每周一次大扫除。
-
-**Codex 用户**:通过 `spawn_agent` 工具使用,系统提示词见 `references/doc-gardener-prompt.md`。
 
 ## 相关模板
 
@@ -98,4 +97,4 @@ docs/
 - `references/core-beliefs-template.md`: 核心信念模板
 - `references/product-specs-index-template.md`: 产品规格索引模板
 - 跨 skill 引用: `../harness-architecture-boundaries/references/architecture-template.md`、`../harness-golden-principles/references/quality-score-template.md`
-- `references/doc-gardener-prompt.md`: doc-gardener agent 系统提示词(Codex spawn_agent 用)
+- `references/doc-gardener-prompt.md`: doc-gardener agent 系统提示词

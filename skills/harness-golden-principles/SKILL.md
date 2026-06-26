@@ -68,9 +68,7 @@ Agent 会忠实地复制仓库里已经存在的模式——**包括不太好的
 
 - `entropy-collector` agent:执行上面描述的周期性清扫,产出小颗粒度修复 PR。
 
-**Codex 用户**:通过 `spawn_agent` 工具使用,系统提示词见 `references/entropy-collector-prompt.md`。
-
 ## 相关模板
 
 - `references/quality-score-template.md`: QUALITY_SCORE.md 质量评分模板
-- `references/entropy-collector-prompt.md`: entropy-collector agent 系统提示词(Codex spawn_agent 用)
+- `references/entropy-collector-prompt.md`: entropy-collector agent 系统提示词
