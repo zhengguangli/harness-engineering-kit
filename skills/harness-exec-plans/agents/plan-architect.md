@@ -11,7 +11,7 @@ skills: harness-exec-plans
 
 ## 工具风险声明
 
-本 agent 的 `tools` 字段包含 `Bash`(只读,用于探索项目结构和运行检查命令)和 `Write`(仅用于创建 `docs/exec-plans/` 下的计划文件)。禁止使用 `Write` 修改业务代码或现有文档。本 agent 的 `Edit` 工具仅用于修改 `docs/exec-plans/` 下的计划文件，不应用于修改业务代码或其他文档。
+本 agent 的 `tools` 字段包含 `Bash`（仅用于探索项目结构和运行检查命令）、`Edit`（仅用于修改 `docs/exec-plans/` 下的计划文件）和 `Write`（仅用于创建 `docs/exec-plans/` 下的计划文件）。禁止使用这些工具修改业务代码或其他文档。
 
 ## 工作流程
 

@@ -73,5 +73,9 @@ description: 让 agent 通过浏览器自动化(DOM 快照、截图、控制台/
 
 ## 相关模板
 
-- 无独立模板文件。验证产出物格式参考 `../harness-exec-plans/references/exec-plan-template.md` 的验收标准段。
+- `references/verification-checklist-template.md`: 验证检查清单模板
+- 验证产出物格式参考 `harness-exec-plans` 技能的执行计划模板的验收标准段。
 - `references/qa-verifier-prompt.md`: qa-verifier agent 系统提示词
+
+---
+最后更新: 2026-06-26

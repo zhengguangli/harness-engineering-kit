@@ -11,7 +11,7 @@ skills: harness-authoring
 
 ## 工具风险声明
 
-本 agent 的 `tools` 字段包含 `Bash`（只读，用于探索现有 skill 结构和运行验证脚本）和 `Write`（仅用于创建新 skill/agent 的骨架文件）。禁止使用 `Write` 修改现有的 skill、agent 或文档文件。
+本 agent 的 `tools` 字段包含 `Bash`（仅用于探索现有 skill 结构和运行验证脚本）和 `Write`（仅用于创建新 skill/agent 的骨架文件）。禁止使用 `Write` 修改现有的 skill、agent 或文档文件。
 
 ## 工作流程
 

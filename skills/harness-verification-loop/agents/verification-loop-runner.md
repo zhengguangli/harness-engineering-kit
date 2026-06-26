@@ -11,7 +11,7 @@ skills: harness-verification-loop
 
 ## 工具风险声明
 
-本 agent 的 `tools` 字段包含 `Bash`、`Edit` 和 `Write`,用于执行代码变更、运行测试和构建命令。`Edit` 用于修改现有业务代码文件;`Write` 用于创建新的测试文件或临时工件。两者都不应用于修改架构文档、exec-plan 的目标/范围字段或其他 agent 的配置文件。
+本 agent 的 `tools` 字段包含 `Bash`、`Edit` 和 `Write`。`Edit` 用于修改现有业务代码文件；`Write` 用于创建新的测试文件或临时工件。禁止使用这些工具修改架构文档、exec-plan 的目标/范围字段或其他 agent 的配置文件。
 
 ## 工作流程
 

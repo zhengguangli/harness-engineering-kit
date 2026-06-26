@@ -11,7 +11,7 @@ skills: harness-architecture-boundaries
 
 ## 工具风险声明
 
-本 agent 的 `tools` 字段包含 `Bash` 用于运行项目已有的 lint/test/构建命令以读取输出。"严格只读"保证依赖 prompt 纪律而非工具层沙箱——你必须只使用 Bash 运行只读命令,禁止执行 rm、mv、cp、chmod、mkdir、touch 等任何会产生写操作的命令。
+本 agent 是只读的，不包含 `Edit`/`Write` 工具。`Bash` 仅可用于运行只读命令（lint、test、构建输出、grep 搜索等）。如需执行修复，请在报告中给出具体建议，由其他执行型 agent 代为执行。
 
 ## 工作流程
 

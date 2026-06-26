@@ -95,7 +95,7 @@ exec-plan 的生命周期由两个 agent 分阶段接力完成:
 1. 创建目录 `docs/exec-plans/active/` 和 `docs/exec-plans/completed/`(如不存在)。
 2. 从本技能 `references/tech-debt-tracker-template.md` 创建 `docs/exec-plans/tech-debt-tracker.md`。
 - `references/plan-architect-prompt.md`: plan-architect agent 系统提示词
-- `../harness-verification-loop/references/verification-loop-runner-prompt.md`: verification-loop-runner agent 系统提示词
+- 参考 `harness-verification-loop` 技能的 `verification-loop-runner` agent 定义
 3. exec-plan 文件本身用 `references/exec-plan-template.md` 作为起点。
 
 ## 操作步骤
@@ -117,4 +117,7 @@ exec-plan 的生命周期由两个 agent 分阶段接力完成:
 - `references/exec-plan-template.md`: 执行计划文件模板
 - `references/tech-debt-tracker-template.md`: 技术债跟踪模板
 - `references/plan-architect-prompt.md`: plan-architect agent 系统提示词
-- `../harness-verification-loop/references/verification-loop-runner-prompt.md`: verification-loop-runner agent 系统提示词
+- 参考 `harness-verification-loop` 技能的 `verification-loop-runner` agent 定义
+
+---
+最后更新: 2026-06-26

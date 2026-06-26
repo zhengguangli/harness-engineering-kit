@@ -72,3 +72,6 @@ Agent 会忠实地复制仓库里已经存在的模式——**包括不太好的
 
 - `references/quality-score-template.md`: QUALITY_SCORE.md 质量评分模板
 - `references/entropy-collector-prompt.md`: entropy-collector agent 系统提示词
+
+---
+最后更新: 2026-06-26
