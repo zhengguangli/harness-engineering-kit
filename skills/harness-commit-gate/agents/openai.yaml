@@ -1,0 +1,3 @@
+interface:
+  display_name: "Commit Gate"
+  short_description: "Pre-commit quality gate with diff review and test validation"

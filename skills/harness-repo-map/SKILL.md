@@ -70,7 +70,7 @@ docs/
 ## 初始化步骤(首次为项目搭建 docs/ 骨架时)
 
 1. 创建当前平台的入口文件(参考 `references/agents-md-map-template.md`)。只创建自己平台的,不要替另一个平台创建。
-2. 在 `docs/` 下创建 `ARCHITECTURE.md`（参考 `harness-architecture-boundaries` 技能的架构模板）和 `QUALITY_SCORE.md`（参考 `harness-golden-principles` 技能的质量评分模板）。这两个文件属于 `docs/`，不要放在根目录。
+2. 在 `docs/` 下创建 `ARCHITECTURE.md`（参考 `references/architecture-template.md`）和 `QUALITY_SCORE.md`（参考 `references/quality-score-template.md`）。这两个文件属于 `docs/`，不要放在根目录。
 3. 按需创建以下空目录(如不存在):`docs/design-docs/`、`docs/exec-plans/active/`、`docs/exec-plans/completed/`、`docs/generated/`、`docs/product-specs/`、`docs/references/`。
 4. 从 `references/` 子目录的模板创建对应索引文件:`docs/design-docs/index.md`、`docs/design-docs/core-beliefs.md`、`docs/product-specs/index.md`、`docs/exec-plans/tech-debt-tracker.md`。
 5. 按项目实际情况填充模板里的占位符(领域名、代码路径、日期等)。
@@ -96,8 +96,9 @@ docs/
 - `references/design-docs-index-template.md`: 设计文档索引模板
 - `references/core-beliefs-template.md`: 核心信念模板
 - `references/product-specs-index-template.md`: 产品规格索引模板
-- 跨 skill 引用: `harness-architecture-boundaries` 技能的架构模板、`harness-golden-principles` 技能的质量评分模板
+- `references/architecture-template.md`: ARCHITECTURE.md 架构文档模板
+- `references/quality-score-template.md`: QUALITY_SCORE.md 质量评分模板
 - `references/doc-gardener-prompt.md`: doc-gardener agent 系统提示词
 
 ---
-最后更新: 2026-06-26
+最后更新: 2026-06-29
