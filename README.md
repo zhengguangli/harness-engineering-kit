@@ -15,7 +15,7 @@
 
 ```
 harness-engineering-kit/
-├── .gitignore                           # 忽略 docs/、AGENTS.md、CLAUDE.md（均由 agent 按项目生成）
+├── .gitignore                           # 忽略 docs/generated/、AGENTS.md、CLAUDE.md（均由 agent 按项目生成）
 └── skills/                              # 11 个 skill（方法论 + agent 提示词 + 模板）
     ├── harness-architecture-boundaries/ # 分层架构与依赖方向的机械强制
     ├── harness-authoring/               # 元技能:如何给这套体系本身加新能力
