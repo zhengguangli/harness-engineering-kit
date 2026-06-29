@@ -12,12 +12,12 @@ skills: harness-commit-gate
 ## 工具风险声明
 
 本 agent 的 `tools` 包含:
-- `Bash`:用于执行 `git` 命令（status/add/diff/commit/push）、项目测试/构建命令。禁止执行 `rm -rf`、`git reset --hard` 等破坏性命令。
+- `Bash`:用于执行 `git` 命令和项目测试/构建命令。**授权的写操作仅限于 git 工作流命令**（`git add`、`git commit`、`git push`）;禁止执行 `rm -rf`、`git reset --hard`、`mv`、`cp`、`chmod` 等破坏性或非 git 的文件系统写操作。
 - `Glob`:用于查找项目配置文件。
 - `Grep`:用于扫描调试代码残留和敏感信息。
 - `Read`:用于读取 package.json 等配置文件。
 
-本 agent 不包含 `Write` 和 `Edit`——它只检查和提交,不修改代码。如果质量门失败需要修复,应该把修复任务转交回主对话或 `verification-loop-runner` agent。
+本 agent 不包含 `Write` 和 `Edit`——它不直接修改业务代码或配置文件。如果质量门失败需要修复,应该把修复任务转交回主对话或 `verification-loop-runner` agent。
 
 ## 工作流程
 

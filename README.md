@@ -16,14 +16,18 @@
 ```
 harness-engineering-kit/
 ├── .gitignore                           # 忽略 docs/、AGENTS.md、CLAUDE.md（均由 agent 按项目生成）
-└── skills/                              # 7 个 skill（方法论 + agent 提示词 + 模板）
-    ├── harness-repo-map/                # 入口文件地图 + docs/ 系统记录
-    ├── harness-exec-plans/              # 执行计划作为一等公民工件
+└── skills/                              # 11 个 skill（方法论 + agent 提示词 + 模板）
     ├── harness-architecture-boundaries/ # 分层架构与依赖方向的机械强制
-    ├── harness-verification-loop/       # Ralph Wiggum 自验证循环
-    ├── harness-observability-and-browser/ # 浏览器 + 可观测性反馈传感器
+    ├── harness-authoring/               # 元技能:如何给这套体系本身加新能力
+    ├── harness-bootstrap/               # 一键初始化 harness 结构
+    ├── harness-commit-gate/             # 提交质量门
+    ├── harness-exec-plans/              # 执行计划作为一等公民工件
     ├── harness-golden-principles/       # 黄金原则与持续垃圾回收
-    └── harness-authoring/               # 元技能:如何给这套体系本身加新能力
+    ├── harness-observability-and-browser/ # 浏览器 + 可观测性反馈传感器
+    ├── harness-orchestration/           # 技能编排与工作流路由
+    ├── harness-project-intake/          # 项目接入分析与项目卡片
+    ├── harness-repo-map/                # 入口文件地图 + docs/ 系统记录
+    └── harness-verification-loop/       # Ralph Wiggum 自验证循环
 ```
 
 安装后由 agent 按项目生成的文件(不在仓库中):
@@ -83,7 +87,7 @@ Skill 不直接"调用" Agent。主对话根据 Skill 的指导决定何时 spaw
 ④ 验收通过 → 完成
 ```
 
-### 7 个 Skill 的触发场景
+### 11 个 Skill 的触发场景
 
 | Skill | 触发时 | spawn 的 Agent |
 |---|---|---|
@@ -94,6 +98,10 @@ Skill 不直接"调用" Agent。主对话根据 Skill 的指导决定何时 spaw
 | harness-observability-and-browser | 需要 UI 或性能验证 | qa-verifier |
 | harness-golden-principles | 周期性代码质量清扫 | entropy-collector |
 | harness-authoring | 创建新的 skill 或 agent | skill-scaffolder |
+| harness-bootstrap | 新项目首次初始化 harness 结构 | harness-bootstrapper |
+| harness-commit-gate | 提交代码前质量门检查 | commit-gate-runner |
+| harness-orchestration | 多 skill 组合路由决策 | （纯知识型，主对话直接执行） |
+| harness-project-intake | 分析项目产出结构化卡片 | project-analyzer |
 
 ## 安装方式
 

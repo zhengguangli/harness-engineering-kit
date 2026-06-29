@@ -1,5 +1,7 @@
 # QUALITY_SCORE.md
 
+> 同步副本: harness-golden-principles/references/ 下有一份相同模板,修改时任选一处更新即可。
+
 按领域/分层追踪代码质量与架构一致性的评分,随时间观察差距是否在收敛还是扩大。由 `entropy-collector` agent 在周期性清扫时更新。
 
 ## 评分维度(示例,按项目调整)
