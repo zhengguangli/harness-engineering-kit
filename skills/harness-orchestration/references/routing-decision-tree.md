@@ -1,30 +1,25 @@
-## 相关模板
+# Routing Decision Tree（路由决策树参考）
 
-- `references/routing-decision-tree.md`: 路由决策树与四条标准工作流（可独立加载的参考文件）
+本文件是 `harness-orchestration` 技能的可独立加载参考——将 SKILL.md 中的决策树和标准工作流提取为 agent 可按需查阅的结构化知识。orchestrator agent 在需要精确路由判断时加载此文件,不必将全部 SKILL.md 内容注入上下文。
 
----
-name: harness-orchestration
-description: 编排 harness-engineering-kit 中 10 个 skill 的组合与工作流路由——根据用户目标选择正确的 skill 组合和执行顺序,而不是让 agent 在相似技能之间犯选择困难。当用户问"我该用哪些 skill"、"怎么开始用这套 harness"、面对多个 skill 不知如何组合、或进入新项目不知道先做什么后做什么时使用。
-## 相关模板
+## 三层路由判断
 
-- `references/routing-decision-tree.md`: 路由决策树与四条标准工作流（可独立加载的参考文件）
+面对一个任务时,用以下 3 层判断快速路由:
 
----
-
-# Orchestration（技能编排与工作流路由）
-
-## 核心原则
-
-这 10 个 skill 不是孤立的工具箱,而是一条有标准顺序的工作流。**选择正确的 skill 组合比掌握单个 skill 更重要**——单个 skill 内部的方法论再好,如果用错了时机或跳过了前置步骤,效果会大打折扣。
-
-这个 skill 不是一个"可委派出去等结果"的执行任务,而是主对话需要持续记住的路由知识——它帮助 agent 在恰当的时机调用恰当的技能。
-
-## 何时使用
-
-- 用户问"我该用哪些 skill"或"怎么开始用这套 harness"。
-- 面对多个 skill 不知如何组合,需要路由决策。
-- 进入新项目,不确定先做什么后做什么。
-- 复杂任务需要规划多 skill 的协作流程。
+```
+用户要什么?
+├── 初始化/新项目 → Workflow 1
+├── 写代码/改代码 → Workflow 2
+│   ├── 任务复杂度?
+│   │   ├── 简单(单次可完成) → 跳过 exec-plans,直接 verification-loop + commit-gate
+│   │   └── 复杂(跨会话) → exec-plans → verification-loop → commit-gate
+│   └── 涉及 UI/性能?
+│       └── 是 → verification-loop 内触发 observability-and-browser
+├── 修质量/清扫 → Workflow 3
+│   ├── 纯品味漂移 → golden-principles → verification-loop → commit-gate
+│   └── 结构性违规 → golden-principles + architecture-boundaries → verification-loop → commit-gate
+└── 给 harness 加能力 → Workflow 4
+```
 
 ## 四条标准工作流
 
@@ -84,26 +79,7 @@ authoring(设计新 skill)  →  bootstrap(如涉及新项目结构)  →  repo-
 - 最后用 `repo-map` 更新 AGENTS.md 导航表,确保地图反映最新状态。
 - 新增的 skill 要在 `docs/ARCHITECTURE.md` 领域表和 `docs/QUALITY_SCORE.md` 评分表中各加一行。
 
-## 决策树
-
-面对一个任务时,用以下 3 层判断快速路由:
-
-```
-用户要什么?
-├── 初始化/新项目 → Workflow 1
-├── 写代码/改代码 → Workflow 2
-│   ├── 任务复杂度?
-│   │   ├── 简单(单次可完成) → 跳过 exec-plans,直接 verification-loop + commit-gate
-│   │   └── 复杂(跨会话) → exec-plans → verification-loop → commit-gate
-│   └── 涉及 UI/性能?
-│       └── 是 → verification-loop 内触发 observability-and-browser
-├── 修质量/清扫 → Workflow 3
-│   ├── 纯品味漂移 → golden-principles → verification-loop → commit-gate
-│   └── 结构性违规 → golden-principles + architecture-boundaries → verification-loop → commit-gate
-└── 给 harness 加能力 → Workflow 4
-```
-
-## 交接点
+## 交接点表
 
 以下产出物在 skill 之间有明确的"上游产出 → 下游消费"关系:
 
@@ -116,22 +92,14 @@ authoring(设计新 skill)  →  bootstrap(如涉及新项目结构)  →  repo-
 | `golden-principles` | 修复队列(偏离模式列表) | `verification-loop`(逐项修复) |
 | `repo-map` | AGENTS.md + docs/ 校验报告 | `bootstrap`(确认骨架完整性)、`authoring`(确认新 skill 已登记) |
 
-## 不需要全部启动
+## 常见省略
 
-这 10 个 skill 是按需使用的,不是每次都要全走一遍。常见省略:
+这 10 个 skill 是按需使用的,不是每次都要全走一遍:
 
 - 小项目不需要 `architecture-boundaries`(没有多层架构要守)。
 - 纯文档改动不需要 `verification-loop` 和 `observability-and-browser`。
 - 已有完善 harness 结构的项目不需要重新走 Workflow 1。
 - `authoring` 只在扩展 harness 体系本身时使用,日常开发不需要。
-
-## 配合的 agent
-
-- `orchestrator` agent:只读的路由顾问,为主对话推荐 skill 组合和执行顺序,不独立执行任务。编排逻辑也可由主对话根据本文件的路由知识直接执行。
-
-## 相关模板
-
-- `references/routing-decision-tree.md`: 路由决策树与四条标准工作流（可独立加载的参考文件）
 
 ---
 最后更新: 2026-06-29
