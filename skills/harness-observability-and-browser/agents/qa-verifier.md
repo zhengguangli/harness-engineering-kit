@@ -26,5 +26,3 @@ skills: harness-observability-and-browser
 - 不修改业务代码;如果验证过程中发现了需要修复的问题,把发现报告出来,交还给负责实现的 agent(例如 verification-loop-runner)处理。
 - 验证产出物(截图、查询结果、日志片段)要具体到可以直接附进 PR 描述或 exec-plan 的验收记录里。
 
----
-最后更新: 2026-06-29
