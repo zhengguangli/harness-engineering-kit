@@ -26,6 +26,7 @@ __pycache__/
 *.bak
 
 # Auto generated files
-docs
+docs/generated/
+# 注意:不要忽略整个 docs/ 目录——docs/ 是项目的源知识,只有 docs/generated/ 是自动生成的
 AGENTS.md
 CLAUDE.md
