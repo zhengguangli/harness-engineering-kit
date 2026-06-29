@@ -1,4 +1,6 @@
 <!-- docs/ 目录骨架模板 — 由 harness-bootstrapper agent 使用 -->
+<!-- 注意: 此模板中的 ARCHITECTURE.md 和 QUALITY_SCORE.md 结构与 harness-repo-map 的对应模板保持一致。
+     修改此模板时,需同步检查 harness-repo-map/references/architecture-template.md 和 quality-score-template.md。 -->
 
 ## 需要创建的文件列表
 

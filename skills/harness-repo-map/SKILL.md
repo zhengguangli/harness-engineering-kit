@@ -49,7 +49,7 @@ docs/
 
 不是每个项目都需要全部子目录——按需裁剪,但**目录本身要被记录在 AGENTS.md 里**,这样 agent 第一次进入仓库就知道"信息分布在哪几类文件里",而不需要每次都重新探索。
 
-写 AGENTS.md 的 4 条核心规则(长度、内容范围、变化频率、可验证性),详见 `references/agents-md-writing-rules.md`。
+写 AGENTS.md 的 4 条核心规则(长度、内容范围、变化频率、可验证性),详见 `references/agents-md-map-template.md` 的附录 B。
 
 ## 机械化校验,不要指望人工维护
 
@@ -87,12 +87,10 @@ docs/
 
 ## 相关模板
 
-- `references/agents-md-map-template.md`: AGENTS.md 地图模板
-- `references/design-docs-index-template.md`: 设计文档索引模板
-- `references/core-beliefs-template.md`: 核心信念模板
-- `references/product-specs-index-template.md`: 产品规格索引模板
-- `references/architecture-template.md`: ARCHITECTURE.md 架构文档模板
-- `references/quality-score-template.md`: QUALITY_SCORE.md 质量评分模板
+- `references/agents-md-map-template.md`: AGENTS.md 地图模板（含核心信念和写作规则附录）
+- `references/docs-index-templates.md`: 设计文档索引 + 产品规格索引模板
+- `references/architecture-template.md`: ARCHITECTURE.md 架构文档模板（派生自 `harness-architecture-boundaries`）
+- `references/quality-score-template.md`: QUALITY_SCORE.md 质量评分模板（派生自 `harness-golden-principles`）
 - `references/doc-gardener-prompt.md`: doc-gardener agent 系统提示词
 
 ---

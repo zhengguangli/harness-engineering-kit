@@ -56,7 +56,7 @@ description: 让 agent 通过浏览器自动化(DOM 快照、截图、控制台/
 ## 相关模板
 
 - `references/verification-checklist-template.md`: 验证检查清单模板
-- 验收标准格式参考 `docs/exec-plans/` 下的执行计划结构。
+- 验收标准必须是具体的、机械可检查的条件（如"P99 延迟 < 800ms"、"关键用户旅程截图前后对比无异常"）。
 - `references/qa-verifier-prompt.md`: qa-verifier agent 系统提示词
 
 ---

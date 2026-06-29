@@ -1,6 +1,6 @@
 # ARCHITECTURE.md
 
-> 同步副本:harness-architecture-boundaries/references/ 下有一份相同模板,修改时任选一处更新即可。
+<!-- Derived from: harness-architecture-boundaries -->
 
 这个文件定义跨领域的架构地图与依赖方向规则。规则要尽量被 `harness-architecture-boundaries` 技能里描述的方式编码成 lint/结构化测试,而不是只停留在文字描述。
 
