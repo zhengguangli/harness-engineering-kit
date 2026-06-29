@@ -1,15 +1,8 @@
-## 相关模板
-
-- `references/routing-decision-tree.md`: 路由决策树与四条标准工作流（可独立加载的参考文件）
-
 ---
 name: harness-orchestration
 description: 编排 harness-engineering-kit 中 10 个 skill 的组合与工作流路由——根据用户目标选择正确的 skill 组合和执行顺序,而不是让 agent 在相似技能之间犯选择困难。当用户问"我该用哪些 skill"、"怎么开始用这套 harness"、面对多个 skill 不知如何组合、或进入新项目不知道先做什么后做什么时使用。
-## 相关模板
-
-- `references/routing-decision-tree.md`: 路由决策树与四条标准工作流（可独立加载的参考文件）
-
 ---
+
 
 # Orchestration（技能编排与工作流路由）
 

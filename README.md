@@ -206,13 +206,41 @@ nacos-cli skill-sync resolve <skill-name> --use-agent codex --non-interactive
 
 ## 推荐的接入顺序
 
-1. 先落地 `harness-repo-map`:整理/瘦身入口文件,搭好 `docs/` 骨架。这是地基,其他一切都要靠 agent 能发现知识才生效。
-2. 落地 `harness-architecture-boundaries`:明确依赖方向规则,哪怕一开始只能靠文档,逐步补上 lint。
-3. 接入 `harness-exec-plans` + `plan-architect`:复杂任务开始用落盘计划驱动,而不是纯对话规划。
-4. 接入 `harness-verification-loop` + `verification-loop-runner`:让改动的"完成"有可机械检查的定义。
-5. 视项目类型接入 `harness-observability-and-browser` + `qa-verifier`(尤其是有 UI 或明确性能预算的项目)。
-6. 最后接入 `harness-golden-principles` + `entropy-collector`,建立周期性清扫节奏,防止前面四步积累的产出慢慢腐化。
-7. 任何时候要扩展这套体系本身,参考 `harness-authoring` + `skill-scaffolder`。
+以下是基于各 skill 之间**实际依赖关系**推导出的分层接入顺序。每一层依赖上一层的产出,不可跳步。
+
+### Layer 0 · 信息采集
+
+1. **`harness-project-intake`** + `project-intake-runner`:分析目标项目,产出结构化项目卡片(技术栈、架构骨架、关键模块、配置要点)。这是后续一切步骤的信息源——没有项目卡片,`bootstrap` 不知道该生成什么样的骨架。
+
+### Layer 1 · 骨架搭建
+
+2. **`harness-bootstrap`**:根据项目卡片生成 AGENTS.md 地图、`docs/` 目录骨架、.gitignore 规则和 CI 模板。这是整个 harness 的物理地基。
+
+### Layer 2 · 知识体系与约束规则
+
+以下三项依赖 Layer 1 的产出(`docs/` 结构已存在),但彼此之间可以并行推进:
+
+3. **`harness-repo-map`** + `doc-gardener`:校验 AGENTS.md 是否只是"地图"而非"百科全书",确保 `docs/` 里的指针准确、无断链。这是知识的可发现性保障。
+4. **`harness-architecture-boundaries`** + `boundary-auditor`:在 `docs/ARCHITECTURE.md` 里写入分层模型与依赖方向规则,建立结构性红线。哪怕一开始只能靠文档约束,也先确立规则再逐步补上 lint。
+5. **`harness-golden-principles`** + `entropy-collector`:把人类品味编码为可机械检查的规则,建立周期性清扫节奏(可与上一步并行)。
+
+### Layer 3 · 计划驱动
+
+6. **`harness-exec-plans`** + `plan-architect`:复杂任务开始用落盘计划驱动。依赖 `docs/exec-plans/` 目录结构已存在(Layer 1 产出)。
+
+### Layer 4 · 执行与验证
+
+7. **`harness-verification-loop`** + `verification-loop-runner`:让改动的"完成"有可机械检查的定义。循环内会调用 `boundary-auditor`(Layer 2)做架构评审,并把状态写回 exec-plan(Layer 3)实现跨窗口接力。
+8. **`harness-observability-and-browser`** + `qa-verifier`:作为 verification-loop 的反馈传感器——需要 UI 验证或性能确认时产出真实证据,不是独立的工作流节点。
+
+### Layer 5 · 提交门
+
+9. **`harness-commit-gate`**:最终质量关卡——diff 审查、自动化验证、commit message 格式化。在自验证循环收敛后执行。
+
+### 元层 · 编排与扩展
+
+10. **`harness-orchestration`**:路由知识,帮助 agent 在上述各层之间选择正确的 skill 组合和执行顺序。
+11. **`harness-authoring`** + `skill-scaffolder`:任何时候要给这套体系本身添加新能力,参考此技能。
 
 ## 概念到组件的映射
 
