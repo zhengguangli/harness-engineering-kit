@@ -15,15 +15,19 @@
 
 ```
 harness-engineering-kit/
-├── .gitignore                           # 忽略 docs/、AGENTS.md、CLAUDE.md（均由 agent 按项目生成）
-└── skills/                              # 7 个 skill（方法论 + agent 提示词 + 模板）
-    ├── harness-repo-map/                # 入口文件地图 + docs/ 系统记录
-    ├── harness-exec-plans/              # 执行计划作为一等公民工件
+├── .gitignore                           # 忽略 docs/generated/、AGENTS.md、CLAUDE.md（均由 agent 按项目生成）
+└── skills/                              # 11 个 skill（方法论 + agent 提示词 + 模板）
     ├── harness-architecture-boundaries/ # 分层架构与依赖方向的机械强制
-    ├── harness-verification-loop/       # Ralph Wiggum 自验证循环
-    ├── harness-observability-and-browser/ # 浏览器 + 可观测性反馈传感器
+    ├── harness-authoring/               # 元技能:如何给这套体系本身加新能力
+    ├── harness-bootstrap/               # 一键初始化 harness 结构
+    ├── harness-commit-gate/             # 提交质量门
+    ├── harness-exec-plans/              # 执行计划作为一等公民工件
     ├── harness-golden-principles/       # 黄金原则与持续垃圾回收
-    └── harness-authoring/               # 元技能:如何给这套体系本身加新能力
+    ├── harness-observability-and-browser/ # 浏览器 + 可观测性反馈传感器
+    ├── harness-orchestration/           # 技能编排与工作流路由
+    ├── harness-project-intake/          # 项目接入分析与项目卡片
+    ├── harness-repo-map/                # 入口文件地图 + docs/ 系统记录
+    └── harness-verification-loop/       # Ralph Wiggum 自验证循环
 ```
 
 安装后由 agent 按项目生成的文件(不在仓库中):
@@ -83,7 +87,7 @@ Skill 不直接"调用" Agent。主对话根据 Skill 的指导决定何时 spaw
 ④ 验收通过 → 完成
 ```
 
-### 7 个 Skill 的触发场景
+### 11 个 Skill 的触发场景
 
 | Skill | 触发时 | spawn 的 Agent |
 |---|---|---|
@@ -94,6 +98,10 @@ Skill 不直接"调用" Agent。主对话根据 Skill 的指导决定何时 spaw
 | harness-observability-and-browser | 需要 UI 或性能验证 | qa-verifier |
 | harness-golden-principles | 周期性代码质量清扫 | entropy-collector |
 | harness-authoring | 创建新的 skill 或 agent | skill-scaffolder |
+| harness-bootstrap | 新项目首次初始化 harness 结构 | harness-bootstrapper |
+| harness-commit-gate | 提交代码前质量门检查 | commit-gate-runner |
+| harness-orchestration | 多 skill 组合路由决策（只读路由顾问） | （纯知识型，主对话直接执行，无需 spawn 独立 agent） |
+| harness-project-intake | 分析项目产出结构化卡片 | project-analyzer |
 
 ## 安装方式
 
@@ -138,15 +146,101 @@ cp -r skills/*  ~/.codex/skills/
 
 > 模板文件已内嵌在各 skill 的 `references/` 子目录中,由 agent 首次为项目初始化 docs/ 骨架时按需生成,无需手动拷贝。
 
+## 技能同步(nacos-cli skill-sync)
+
+手动复制容易遗漏或版本不一致。[`nacos-cli skill-sync`](https://nacos.io/skill-sync/SKILL.md) 可以把仓库里的 skills 自动同步到多个 agent 目录（Codex、Claude 等）,支持 local 模式（symlink 保持一致）和 Nacos 模式（团队远程同步）。
+
+### 前置安装
+
+```bash
+# macOS / Linux 一键安装
+curl -fsSL https://nacos.io/nacos-installer.sh | bash -s -- --cli
+source ~/.zshrc   # 或 source ~/.bashrc
+nacos-cli --help
+```
+
+### 首次同步（完整流程）
+
+```bash
+# 1. 查看当前状态（确认哪些 skill 已管理、哪些缺失）
+nacos-cli skill-sync status
+
+# 2. 将仓库中尚未同步的 skill 复制到 central repo
+REPO=$(nacos-cli skill-sync status 2>/dev/null | grep '^Repository:' | awk '{print $2}')
+for skill in skills/harness-*/; do
+  name=$(basename "$skill")
+  [ -d "$REPO/$name" ] || cp -r "$skill" "$REPO/$name"
+done
+
+# 3. 逐个添加缺失的 skill（首次需指定 --non-interactive）
+for skill in skills/harness-*/; do
+  nacos-cli skill-sync add "$(basename $skill)" --non-interactive
+done
+
+# 4. 启动同步（local 模式创建 symlink，Nacos 模式启动后台 daemon）
+nacos-cli skill-sync start --non-interactive
+
+# 5. 验证全部 Linked
+nacos-cli skill-sync status
+```
+
+### 后续同步（日常使用）
+
+```bash
+# 新增一个 skill
+nacos-cli skill-sync add <skill-name> --non-interactive
+nacos-cli skill-sync start --non-interactive
+
+# 查看状态（首选命令，有 NEXT 提示时按提示操作）
+nacos-cli skill-sync status
+
+# 批量添加所有未管理的 skill
+nacos-cli skill-sync add --all --non-interactive
+nacos-cli skill-sync start --non-interactive
+
+# 遇到冲突时（某 skill 在多个 agent 目录有不同版本）
+nacos-cli skill-sync resolve <skill-name> --use-agent codex --non-interactive
+```
+
+> local 模式下 symlink 自动保持同步,大部分时候只需 `status` 看一眼。Nacos 模式下 daemon 会轮询远端变更。
+
 ## 推荐的接入顺序
 
-1. 先落地 `harness-repo-map`:整理/瘦身入口文件,搭好 `docs/` 骨架。这是地基,其他一切都要靠 agent 能发现知识才生效。
-2. 落地 `harness-architecture-boundaries`:明确依赖方向规则,哪怕一开始只能靠文档,逐步补上 lint。
-3. 接入 `harness-exec-plans` + `plan-architect`:复杂任务开始用落盘计划驱动,而不是纯对话规划。
-4. 接入 `harness-verification-loop` + `verification-loop-runner`:让改动的"完成"有可机械检查的定义。
-5. 视项目类型接入 `harness-observability-and-browser` + `qa-verifier`(尤其是有 UI 或明确性能预算的项目)。
-6. 最后接入 `harness-golden-principles` + `entropy-collector`,建立周期性清扫节奏,防止前面四步积累的产出慢慢腐化。
-7. 任何时候要扩展这套体系本身,参考 `harness-authoring` + `skill-scaffolder`。
+以下是基于各 skill 之间**实际依赖关系**推导出的分层接入顺序。每一层依赖上一层的产出,不可跳步。
+
+### Layer 0 · 信息采集
+
+1. **`harness-project-intake`** + `project-intake-runner`:分析目标项目,产出结构化项目卡片(技术栈、架构骨架、关键模块、配置要点)。这是后续一切步骤的信息源——没有项目卡片,`bootstrap` 不知道该生成什么样的骨架。
+
+### Layer 1 · 骨架搭建
+
+2. **`harness-bootstrap`**:根据项目卡片生成 AGENTS.md 地图、`docs/` 目录骨架、.gitignore 规则和 CI 模板。这是整个 harness 的物理地基。
+
+### Layer 2 · 知识体系与约束规则
+
+以下三项依赖 Layer 1 的产出(`docs/` 结构已存在),但彼此之间可以并行推进:
+
+3. **`harness-repo-map`** + `doc-gardener`:校验 AGENTS.md 是否只是"地图"而非"百科全书",确保 `docs/` 里的指针准确、无断链。这是知识的可发现性保障。
+4. **`harness-architecture-boundaries`** + `boundary-auditor`:在 `docs/ARCHITECTURE.md` 里写入分层模型与依赖方向规则,建立结构性红线。哪怕一开始只能靠文档约束,也先确立规则再逐步补上 lint。
+5. **`harness-golden-principles`** + `entropy-collector`:把人类品味编码为可机械检查的规则,建立周期性清扫节奏(可与上一步并行)。
+
+### Layer 3 · 计划驱动
+
+6. **`harness-exec-plans`** + `plan-architect`:复杂任务开始用落盘计划驱动。依赖 `docs/exec-plans/` 目录结构已存在(Layer 1 产出)。
+
+### Layer 4 · 执行与验证
+
+7. **`harness-verification-loop`** + `verification-loop-runner`:让改动的"完成"有可机械检查的定义。循环内会调用 `boundary-auditor`(Layer 2)做架构评审,并把状态写回 exec-plan(Layer 3)实现跨窗口接力。
+8. **`harness-observability-and-browser`** + `qa-verifier`:作为 verification-loop 的反馈传感器——需要 UI 验证或性能确认时产出真实证据,不是独立的工作流节点。
+
+### Layer 5 · 提交门
+
+9. **`harness-commit-gate`**:最终质量关卡——diff 审查、自动化验证、commit message 格式化。在自验证循环收敛后执行。
+
+### 元层 · 编排与扩展
+
+10. **`harness-orchestration`**:路由知识，帮助 agent 在上述各层之间选择正确的 skill 组合和执行顺序。配对 `orchestrator` agent 为只读路由顾问；由于编排是"主对话需要持续记住才能推理"的路由知识，主对话也可以直接根据 `SKILL.md` 中的工作流和决策树执行，不一定需要 spawn 独立 agent。
+11. **`harness-authoring`** + `skill-scaffolder`:任何时候要给这套体系本身添加新能力,参考此技能。
 
 ## 概念到组件的映射
 

@@ -9,19 +9,19 @@
 ## 硬约束(极少数,违反即阻塞合并)
 
 - 所有外部数据进入系统边界时必须被解析为强类型,不允许校验后继续当弱类型传递(parse, don't validate)。
-- 依赖方向和分层规则见 `ARCHITECTURE.md`,由 CI 中的结构化测试机械强制,不接受例外。
+- 依赖方向和分层规则见 `docs/ARCHITECTURE.md`,由 CI 中的结构化测试机械强制,不接受例外。
 - <按项目实际情况补充,每条都应该是可被 lint/测试机械检查的>
 
 ## 去哪里找更多
 
 | 我想知道… | 去看这里 |
 |---|---|
-| 整体架构、分层与依赖方向规则 | `ARCHITECTURE.md` |
+| 整体架构、分层与依赖方向规则 | `docs/ARCHITECTURE.md` |
 | 设计决策的背景和"核心信念" | `docs/design-docs/index.md`, `docs/design-docs/core-beliefs.md` |
 | 当前/已完成的执行计划 | `docs/exec-plans/active/`, `docs/exec-plans/completed/` |
 | 已知但暂不处理的技术债 | `docs/exec-plans/tech-debt-tracker.md` |
 | 产品需求/功能规格 | `docs/product-specs/index.md` |
-| 各领域/分层的质量评分 | `QUALITY_SCORE.md` |
+| 各领域/分层的质量评分 | `docs/QUALITY_SCORE.md` |
 | 自动生成的内容(不要手改) | `docs/generated/` |
 | 第三方库/工具的精简参考 | `docs/references/` |
 

@@ -56,22 +56,15 @@ Utils 只能被 Providers 使用,不能反向依赖业务领域内部。
 
 要求:**任何外部数据进入系统边界时,必须被解析成强类型,而不是被校验后当作弱类型继续传递**。不规定具体用什么库实现(项目可以自由选择 schema 验证库),只规定这个不变量本身要被机械检查到——比如 lint 规则禁止在边界层直接使用未经解析的 `any`/`dict`/动态字典访问。
 
-## 怎么把规则变成机械约束
-
-1. **把检查交给 `boundary-auditor` agent 内联执行,而不是只写文档**。文档里的规则会被遗忘,agent 用 Grep/Bash 等工具直接检查依赖方向是否违规,不需要项目预先配置独立的 lint 工具链——agent 本身就能执行这些检查。如果项目已有现成的检查工具(ESLint、dependency-cruiser、import-linter 等),`boundary-auditor` 也会优先利用它们。检查模式模板见本技能 `references/check-pattern-template.md`。
-- `references/boundary-auditor-prompt.md`: boundary-auditor agent 系统提示词
-2. **写结构化测试(可选)**,在测试层面断言"领域 A 的模块不会出现在领域 B 的依赖图里",而不只是功能测试。这需要项目自行编写,不属于 agent 自动生成的范畴。
-3. **把修复指令写进报错信息本身**。无论是由 agent 内联检查还是由外部工具检查,报错不要只说"违反规则 X",要写成"检测到 `service/foo.ts` 直接 import 了 `runtime/bar.ts` 的内部模块,违反 Service→Runtime 单向依赖规则;请改为通过 `service/foo.ts` 暴露的公共接口访问,或将共享逻辑下沉到 Types/Config 层"。这样发现问题的 agent 能直接照着修,不需要人介入解释。
-4. **区分"必须挡住"和"建议但不强制"**。把真正的不变量交给 `boundary-auditor` 阻塞检查;把风格偏好做成 `harness-golden-principles` 技能里讲的"周期性清扫",不要混进阻塞合并的硬规则里,否则会拖慢吞吐量又不增加安全边际。
-
 ## 操作步骤
 
 1. 和用户一起明确:这个仓库/领域的依赖方向应该是什么?横切关注点的合法入口是什么?
-2. 把这些规则写进 `ARCHITECTURE.md`(模板见本技能 `references/architecture-template.md`)作为人类/agent 可读的地图。
-3. 让 `boundary-auditor` agent 对照 `ARCHITECTURE.md` 中的规则执行检查(内联或利用项目已有的检查命令),确保每条规则都被机械验证,而不只是写在文档里。
-4. 给每条检查发现配上"如何修复"的具体指令文本,让接手修复的 agent 能直接照着改。
-5. 让 `boundary-auditor` 的检查成为 `harness-verification-loop` 自验证循环里的一步(每次改动后委派审计),而不是事后人工 review 才发现。
-6. 定期(配合 `boundary-auditor` agent)审计:是否出现了新的、还没被规则覆盖的越界模式?如果有,补充新规则,而不是靠记忆/感觉去挡。
+2. 把这些规则写进 `docs/ARCHITECTURE.md`(模板见 `references/architecture-template.md`)作为人类/agent 可读的地图。
+3. 把检查交给 `boundary-auditor` agent 内联执行——agent 用 Grep/Bash 等工具直接检查依赖方向是否违规,不需要项目预先配置独立的 lint 工具链。如果项目已有现成的检查工具,`boundary-auditor` 会优先利用它们。检查模式模板见 `references/check-pattern-template.md`。
+4. 给每条检查发现配上"如何修复"的具体指令文本——报错不要只说"违反规则 X",要写成具体的修复指引。
+5. 区分"必须挡住"和"建议但不强制":真正的不变量交给 `boundary-auditor` 阻塞检查;风格偏好交给 `harness-golden-principles` 的周期性清扫。
+6. 让 `boundary-auditor` 的检查成为 `harness-verification-loop` 自验证循环里的一步。
+7. 定期审计:是否出现了新的越界模式?补充新规则。
 
 ## 配合的 agent
 
@@ -82,3 +75,6 @@ Utils 只能被 Providers 使用,不能反向依赖业务领域内部。
 - `references/architecture-template.md`: ARCHITECTURE.md 架构文档模板
 - `references/check-pattern-template.md`: 架构检查模式模板(boundary-auditor 参考)
 - `references/boundary-auditor-prompt.md`: boundary-auditor agent 系统提示词
+
+---
+最后更新: 2026-06-29

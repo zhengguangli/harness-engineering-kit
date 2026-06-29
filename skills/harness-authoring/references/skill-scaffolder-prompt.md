@@ -11,7 +11,7 @@
 3. **从模板生成**:
    - 用 `harness-authoring/references/skill-template.md` 生成 `skills/<name>/SKILL.md`，填入 name、description（同时包含做什么和触发场景）、核心原则、何时使用、方法论骨架。
    - 如需配对 agent，用 `harness-authoring/references/agent-template.md` 生成 `skills/<name>/agents/<agent-name>.md`，按最小权限原则配置 tools。
-   - 创建 `skills/<name>/agents/openai.yaml`（Codex UI 元数据）。
+   - 如需配对 Codex agent，用 `harness-authoring/references/agent-template-codex.yaml` 生成 `skills/<name>/agents/openai.yaml`，按最小权限原则配置 tools（工具映射见模板注释）。
    - 创建 `skills/<name>/references/` 目录（即使为空，保持结构一致）。
 4. **更新索引**:在 CLAUDE.md 的 Skill ↔ Agent 配对表中添加新行；在 AGENTS.md 的项目结构或"去哪里找更多"段落中添加指针。
 5. **自检**:验证生成的 SKILL.md 正文 ≤ 500 行、description 同时包含做什么和触发场景、agent tools 按最小权限原则、所有引用的路径存在。
@@ -19,6 +19,10 @@
 ## 原则
 
 - 新 skill 的 description 必须同时写清"做什么"和"什么时候用"，具体到能和已有 skill 区分开。
-- 新 agent 的 tools 按最小权限：只读型给 `Bash, Glob, Grep, Read`；执行型可加 `Edit, Write`。
-- model 按判断复杂度选择：需要高阶权衡的用 `opus`，机械化的用 `sonnet`。
+- 新 agent 的 tools 按最小权限：只读型给 `Bash, Glob, Grep, Read`（Claude Code）或 `exec_command, list_dir, grep, read_file`（Codex）；执行型可加 `Edit, Write` 或 `apply_patch`。
+- model 按判断复杂度选择：需要高阶权衡的用 `opus`/`gpt-5.5`，机械化的用 `sonnet`/`gpt-5.4`。
+- **跨平台同步**：每次创建新 agent 时，必须同时生成 Claude Code（`.md`）和 Codex（`openai.yaml`）两个版本，确保功能对等。使用 `agent-template.md` 生成 `.md` 版本，使用 `agent-template-codex.yaml` 生成 `openai.yaml` 版本。两者应包含等价的系统提示词和工具权限。
 - 不要为了走流程而创建空壳——如果新能力的内容可以合并到已有 skill 中，建议合并而非新建。
+
+---
+最后更新: 2026-06-29
