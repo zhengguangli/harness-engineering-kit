@@ -100,7 +100,7 @@ Skill 不直接"调用" Agent。主对话根据 Skill 的指导决定何时 spaw
 | harness-authoring | 创建新的 skill 或 agent | skill-scaffolder |
 | harness-bootstrap | 新项目首次初始化 harness 结构 | harness-bootstrapper |
 | harness-commit-gate | 提交代码前质量门检查 | commit-gate-runner |
-| harness-orchestration | 多 skill 组合路由决策 | （纯知识型，主对话直接执行） |
+| harness-orchestration | 多 skill 组合路由决策（只读路由顾问） | （纯知识型，主对话直接执行，无需 spawn 独立 agent） |
 | harness-project-intake | 分析项目产出结构化卡片 | project-analyzer |
 
 ## 安装方式
@@ -239,7 +239,7 @@ nacos-cli skill-sync resolve <skill-name> --use-agent codex --non-interactive
 
 ### 元层 · 编排与扩展
 
-10. **`harness-orchestration`**:路由知识,帮助 agent 在上述各层之间选择正确的 skill 组合和执行顺序。
+10. **`harness-orchestration`**:路由知识，帮助 agent 在上述各层之间选择正确的 skill 组合和执行顺序。配对 `orchestrator` agent 为只读路由顾问；由于编排是"主对话需要持续记住才能推理"的路由知识，主对话也可以直接根据 `SKILL.md` 中的工作流和决策树执行，不一定需要 spawn 独立 agent。
 11. **`harness-authoring`** + `skill-scaffolder`:任何时候要给这套体系本身添加新能力,参考此技能。
 
 ## 概念到组件的映射
