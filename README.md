@@ -146,6 +146,64 @@ cp -r skills/*  ~/.codex/skills/
 
 > 模板文件已内嵌在各 skill 的 `references/` 子目录中,由 agent 首次为项目初始化 docs/ 骨架时按需生成,无需手动拷贝。
 
+## 技能同步(nacos-cli skill-sync)
+
+手动复制容易遗漏或版本不一致。[`nacos-cli skill-sync`](https://nacos.io/skill-sync/SKILL.md) 可以把仓库里的 skills 自动同步到多个 agent 目录（Codex、Claude 等）,支持 local 模式（symlink 保持一致）和 Nacos 模式（团队远程同步）。
+
+### 前置安装
+
+```bash
+# macOS / Linux 一键安装
+curl -fsSL https://nacos.io/nacos-installer.sh | bash -s -- --cli
+source ~/.zshrc   # 或 source ~/.bashrc
+nacos-cli --help
+```
+
+### 首次同步（完整流程）
+
+```bash
+# 1. 查看当前状态（确认哪些 skill 已管理、哪些缺失）
+nacos-cli skill-sync status
+
+# 2. 将仓库中尚未同步的 skill 复制到 central repo
+REPO=$(nacos-cli skill-sync status 2>/dev/null | grep '^Repository:' | awk '{print $2}')
+for skill in skills/harness-*/; do
+  name=$(basename "$skill")
+  [ -d "$REPO/$name" ] || cp -r "$skill" "$REPO/$name"
+done
+
+# 3. 逐个添加缺失的 skill（首次需指定 --non-interactive）
+for skill in skills/harness-*/; do
+  nacos-cli skill-sync add "$(basename $skill)" --non-interactive
+done
+
+# 4. 启动同步（local 模式创建 symlink，Nacos 模式启动后台 daemon）
+nacos-cli skill-sync start --non-interactive
+
+# 5. 验证全部 Linked
+nacos-cli skill-sync status
+```
+
+### 后续同步（日常使用）
+
+```bash
+# 新增一个 skill
+nacos-cli skill-sync add <skill-name> --non-interactive
+nacos-cli skill-sync start --non-interactive
+
+# 查看状态（首选命令，有 NEXT 提示时按提示操作）
+nacos-cli skill-sync status
+
+# 批量添加所有未管理的 skill
+nacos-cli skill-sync add --all --non-interactive
+nacos-cli skill-sync start --non-interactive
+
+# 遇到冲突时（某 skill 在多个 agent 目录有不同版本）
+nacos-cli skill-sync resolve <skill-name> --use-agent codex --non-interactive
+```
+
+> local 模式下 symlink 自动保持同步,大部分时候只需 `status` 看一眼。Nacos 模式下 daemon 会轮询远端变更。
+
 ## 推荐的接入顺序
 
 1. 先落地 `harness-repo-map`:整理/瘦身入口文件,搭好 `docs/` 骨架。这是地基,其他一切都要靠 agent 能发现知识才生效。

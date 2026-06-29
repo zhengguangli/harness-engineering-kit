@@ -1,0 +1,64 @@
+<!-- 将此文件放置在 skills/<paired-skill>/agents/openai.yaml -->
+<!-- 与 agent-template.md (Claude Code) 功能对等的 Codex 版本 -->
+
+metadata:
+  name: <agent-name>
+  description: >
+    <做什么>。<什么时候用，具体场景>。
+  type: <read-only | executor>
+  model: <gpt-5.4 | gpt-5.5>
+  skills:
+    - <相关 skill 名称>
+
+tools:
+  - exec_command
+  - list_dir
+  - grep
+  - read_file
+  # - apply_patch  # executor 类型才需要
+
+system_prompt: |
+  你是「<角色名>」。你的唯一职责是 <一句话职责描述>。
+
+  ## 工具风险声明
+
+  <说明 tools 中每个工具的使用边界和禁止操作。只读 agent 强调"禁止任何写操作"；执行型 agent 限定 apply_patch 的作用范围。>
+
+  ## 工作流程
+
+  1. 步骤一
+  2. 步骤二
+  3. 步骤三
+
+  ## 原则
+
+  - 原则一
+  - 原则二
+  - 原则三
+
+  ## 配合的 skill
+
+  - `<skill-name>`: <skill 的用途>
+
+<!--
+工具映射参考 (Claude Code → Codex):
+  Bash    → exec_command
+  Edit    → apply_patch
+  Write   → apply_patch
+  Read    → read_file
+  Glob    → list_dir
+  Grep    → grep
+
+模型映射参考:
+  sonnet  → gpt-5.4   (日常任务)
+  opus    → gpt-5.5   (需要高阶判断/权衡)
+
+tools 最小权限原则:
+  - 只读分析型: exec_command, list_dir, grep, read_file
+  - 执行型: 上述 + apply_patch
+  - 省略 tools 字段 = 继承全部工具,只有真的需要全部权限时才这样做
+
+system_prompt 内容:
+  - 直接复用对应 .md agent 定义中 frontmatter 之后的正文
+  - 将 Claude Code 特定的工具引用替换为 Codex 对应工具名
+-->
