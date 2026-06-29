@@ -46,6 +46,8 @@ AGENTS.md 是地图,不是百科全书:
 
 Harness 初始化时应确保以下内容在 `.gitignore` 中:
 
+**重要**: `docs/` 是项目的源知识目录,绝对不能整体忽略。只有 `docs/generated/`（agent 自动生成的内容）才应该被忽略。
+
 ```gitignore
 # 自动生成的文件（不要手改）
 docs/generated/
