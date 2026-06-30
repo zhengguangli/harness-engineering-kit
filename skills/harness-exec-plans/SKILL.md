@@ -43,7 +43,7 @@ docs/exec-plans/
 ├── completed/              # 完成后移入，保留决策历史
 └── tech-debt-tracker.md    # 已知但暂不处理的技术债清单
 ```
-- 完成后**移动文件**而非删除，保留决策历史。
+- 完成后**移动文件**而非删除，保留决策历史（跨平台建议：macOS/Linux 用 `mv`，Windows PowerShell 用 `Move-Item`；可提供统一 helper 脚本）。
 - 搁置的任务标注状态为 `blocked` 并写清阻塞原因。
 - 发现做不完的步骤，记录进 `tech-debt-tracker.md` 带上理由和影响范围。
 ### 并行协作约定

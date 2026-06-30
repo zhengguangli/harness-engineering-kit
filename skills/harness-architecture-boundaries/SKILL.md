@@ -59,9 +59,11 @@ Utils 只能被 Providers 使用,不能反向依赖业务领域内部。
 
 ### 4. 执行步骤
 
+平台前置说明（默认假设）：本技能步骤默认在类 Unix shell（macOS/Linux 或 WSL/Git Bash）下执行。若在 Windows 原生 PowerShell 环境中，请先声明限制并给出等价命令或降级策略。
+
 1. 和用户一起明确:这个仓库/领域的依赖方向应该是什么?横切关注点的合法入口是什么?
 2. 把规则写进 `docs/ARCHITECTURE.md`（模板见 `references/architecture-template.md`）
-3. 把检查交给 `boundary-auditor` agent 内联执行——agent 用 Grep/Bash 等工具直接检查依赖方向是否违规,不需要项目预先配置独立的 lint 工具链
+3. 把检查交给 `boundary-auditor` agent 内联执行——agent 用 `Grep`/`Bash`/`list_dir` 等工具直接检查依赖方向是否违规,不需要项目预先配置独立的 lint 工具链
 4. 给每条检查发现配上"如何修复"的具体指令文本
 5. 区分"必须挡住"和"建议但不强制":真正的不变量交给 `boundary-auditor` 阻塞检查;风格偏好交给 `harness-golden-principles` 周期性清扫
 6. 让 `boundary-auditor` 的检查成为 `harness-verification-loop` 自验证循环里的一步

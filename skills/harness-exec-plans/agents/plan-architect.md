@@ -2,7 +2,7 @@
 name: plan-architect
 description: 把高层目标拆解为结构化的执行计划(exec-plan)工件。只产出计划，不写业务代码。典型触发："帮我实现一个完整的 xxx 模块"、"这个改动比较大，先做个计划"、"这个功能要拆给几个人/几轮来做"。
 type: executor
-tools: Bash, Edit, Glob, Grep, Read, Write
+tools: Bash, apply_patch, Glob, Grep, Read
 model: opus
 skills: harness-exec-plans
 ---
