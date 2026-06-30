@@ -108,6 +108,6 @@ plan-architect 与 verification-loop-runner 的分工与交接协议,详见 `ref
 
 - `references/exec-plan-template.md`: 执行计划文件模板
 - `references/tech-debt-tracker-template.md`: 技术债跟踪模板
-- `references/plan-architect-prompt.md`: plan-architect agent 系统提示词
+- `agents/plan-architect.md`: plan-architect agent 系统提示词（canonical 版本）
 ---
 最后更新: 2026-06-30

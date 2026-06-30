@@ -76,7 +76,7 @@ version: 0.1.0
 
 - `references/completion-summary-template.md`: 验证循环完成总结模板
 - 验收标准必须是具体的、机械可检查的条件（如"全部测试通过且覆盖率 ≥ X%"、"关键用户旅程截图前后对比无异常"）。评审型 agent 的职责见 `harness-architecture-boundaries` 技能的 `boundary-auditor` agent。
-- `references/verification-loop-runner-prompt.md`: verification-loop-runner agent 系统提示词
+- `agents/verification-loop-runner.md`: verification-loop-runner agent 系统提示词（canonical 版本）
 
 ---
 最后更新: 2026-06-30

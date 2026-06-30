@@ -75,7 +75,7 @@ Utils 只能被 Providers 使用,不能反向依赖业务领域内部。
 
 - `references/architecture-template.md`: ARCHITECTURE.md 架构文档模板
 - `references/check-pattern-template.md`: 架构检查模式模板(boundary-auditor 参考)
-- `references/boundary-auditor-prompt.md`: boundary-auditor agent 系统提示词
+- `agents/boundary-auditor.md`: boundary-auditor agent 系统提示词（canonical 版本）
 
 ---
 最后更新: 2026-06-30

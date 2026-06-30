@@ -92,7 +92,7 @@ docs/
 - `references/docs-index-templates.md`: 设计文档索引 + 产品规格索引模板
 - `references/architecture-template.md`: 指向 `harness-architecture-boundaries/references/architecture-template.md`（canonical 版本，避免双源维护）
 - `references/quality-score-template.md`: 指向 `harness-golden-principles/references/quality-score-template.md`（canonical 版本，避免双源维护）
-- `references/doc-gardener-prompt.md`: doc-gardener agent 系统提示词
+- `agents/doc-gardener.md`: doc-gardener agent 系统提示词（canonical 版本）
 
 ---
 最后更新: 2026-06-30

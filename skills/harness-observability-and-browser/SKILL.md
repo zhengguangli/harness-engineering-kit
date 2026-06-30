@@ -25,7 +25,9 @@ version: 0.1.0
 
 ## 两类反馈传感器
 
-浏览器驱动验证的完整标准循环(快照→触发→观察→诊断→修复→对比),详见 `references/browser-verification-cycle.md`。
+### 1. 浏览器驱动验证
+
+适用于:UI bug 复现、交互流程验证、视觉回归检查。浏览器驱动验证的完整标准循环(快照→触发→观察→诊断→修复→对比),详见 `references/browser-verification-cycle.md`。
 
 ### 2. 可观测性回路
 
@@ -58,7 +60,7 @@ version: 0.1.0
 
 - `references/verification-checklist-template.md`: 验证检查清单模板
 - 验收标准必须是具体的、机械可检查的条件（如"P99 延迟 < 800ms"、"关键用户旅程截图前后对比无异常"）。
-- `references/qa-verifier-prompt.md`: qa-verifier agent 系统提示词
+- `agents/qa-verifier.md`: qa-verifier agent 系统提示词（canonical 版本）
 
 ---
 最后更新: 2026-06-30
