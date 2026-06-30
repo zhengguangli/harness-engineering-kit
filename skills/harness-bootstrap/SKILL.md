@@ -3,37 +3,42 @@ name: harness-bootstrap
 description: 为任意项目一键初始化 harness 结构——生成 AGENTS.md 地图、docs/ 骨架、.gitignore 规则、CI 模板。当用户说"init harness"、"Build a harness for this project"、"为这个项目初始化 harness"、"设计一套 harness 规范"时使用。
 version: 0.1.0
 ---
-
 # Harness Bootstrap（项目 Harness 初始化）
 
 ## 核心原则
 
-Harness 的核心价值是**让 agent 在项目里有地图可循**。初始化不是"复制一堆模板文件",而是根据项目的实际情况生成**最小可用的知识骨架**——宁可少而准,不要多而空。
+- **最小可用知识骨架**:初始化不是"复制一堆模板文件",而是根据项目的实际情况生成最小可用的知识骨架——宁可少而准,不要多而空。
+- **地图不是百科全书**:AGENTS.md 只包含"去哪里找答案"的路由表,不要把所有信息塞进来。
+- **尊重现有内容**:如果项目已有 AGENTS.md 或 docs/,先读取再决定是覆盖还是增量更新,永远不要盲目覆盖。
 
 ## 何时使用
 
-- 用户说"init harness"、"run harness"、"Build a harness for this project"。
-- 用户说"为这个项目初始化 harness"、"设计一套 harness 规范"。
-- 用户进入一个新项目,希望用 harness 方法论管理 agent 协作。
+- 用户说"init harness"、"run harness"、"Build a harness for this project"
+- 用户说"为这个项目初始化 harness"、"设计一套 harness 规范"
+- 用户进入一个新项目,希望用 harness 方法论管理 agent 协作
+
+## 何时不该用
+
+- 项目已有完整的 harness 结构且用户未要求重新初始化
+- 用户只想了解 harness 方法论,而非实际初始化
+- 项目规模极小,不需要结构化知识管理
 
 ## 方法论
 
-### 初始化的三层结构
+### 1. 初始化的三层结构
 
 1. **地图层（AGENTS.md）**:项目的"入口地图",告诉 agent 遇到问题去哪里找答案。
 2. **知识层（docs/）**:结构化的项目知识——架构、设计决策、质量评分。
 3. **约束层（.gitignore + CI）**:防止 agent 生成的噪音进入版本控制。
 
-### AGENTS.md 的设计原则
-
-AGENTS.md 是地图,不是百科全书:
+### 2. AGENTS.md 的设计原则
 
 - **简短**:只包含"去哪里找答案"的路由表,不要把所有信息塞进来。
 - **指向性**:每个条目指向一个具体的 `docs/` 文件或 `skills/` 目录。
 - **硬约束极少数**:只有违反即阻塞合并的规则才放在这里。
 - **工作方式提示**:告诉 agent 项目的编码风格、验证流程、提交规范。
 
-### docs/ 目录的最小可用集
+### 3. docs/ 目录的最小可用集
 
 | 文件 | 内容 | 是否必须 |
 |---|---|---|
@@ -43,7 +48,7 @@ AGENTS.md 是地图,不是百科全书:
 | `docs/exec-plans/active/` | 当前执行计划目录 | 推荐 |
 | `docs/exec-plans/completed/` | 已完成执行计划目录 | 推荐 |
 
-### .gitignore 规则
+### 4. .gitignore 规则
 
 Harness 初始化时应确保以下内容在 `.gitignore` 中:
 
@@ -70,7 +75,7 @@ dist/
 build/
 ```
 
-## 初始化步骤
+### 5. 执行步骤
 
 1. **项目探查**:执行 `harness-project-intake` 技能的分析流程,了解项目技术栈、结构、现有文档。
 2. **确认范围**:与用户确认哪些组件需要初始化（AGENTS.md / docs/ / .gitignore / CI）。
@@ -82,6 +87,21 @@ build/
 4. **生成 docs/ 骨架**:创建最小可用的 docs/ 目录结构,每个文件只写骨架和"最后更新"日期。
 5. **更新 .gitignore**:检查并补充缺失的 gitignore 规则。
 6. **自检**:验证所有生成的文件存在、格式正确、docs/ 文件底部有"最后更新"日期。
+
+## 关键要点
+
+- **宁可少而准**:不要生成大量空壳文件。如果不确定某个 docs/ 文件是否需要,先不创建,在 AGENTS.md 的路由表里留一个占位条目即可。
+- **尊重现有内容**:如果项目已有 AGENTS.md 或 docs/,先读取再决定是覆盖还是增量更新。永远不要盲目覆盖。
+- **AGENTS.md 是地图**:只放路由表和硬约束,不要把项目的所有知识塞进去。
+- **每个 docs/ 文件底部必须有"最后更新"日期**:这是 harness 体系的硬约束。
+
+## 常见陷阱
+
+- **过度初始化**:生成大量空壳文件,导致后续维护负担增加。
+- **盲目覆盖**:不检查现有内容就覆盖 AGENTS.md 或 docs/,丢失有价值的信息。
+- **忽略 .gitignore**:不更新 .gitignore 导致 agent 生成的噪音进入版本控制。
+- **AGENTS.md 膨胀**:把所有知识塞进 AGENTS.md,导致文件过大、难以维护。
+- **docs/ 文件缺少日期**:没有"最后更新"日期会导致无法判断信息是否过时。
 
 ## 配合的 agent
 
