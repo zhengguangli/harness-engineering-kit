@@ -1,5 +1,5 @@
 <!-- 将此文件放置在 skills/<paired-skill>/agents/openai.yaml -->
-<!-- 与 agent-template.md (Claude Code) 功能对等的 Codex 版本 -->
+<!-- 与 scaffold-templates.md 的 Agent .md 模板功能对等的 Codex 版本 -->
 
 metadata:
   name: <agent-name>
