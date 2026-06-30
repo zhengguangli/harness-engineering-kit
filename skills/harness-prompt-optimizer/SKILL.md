@@ -1,7 +1,7 @@
 ---
 name: harness-prompt-optimizer
 description: 将自然语言描述转化为高质量、结构化的 LLM prompt——包含角色定义、变量字典、执行链、约束、输出 schema 和 few-shot 示例。当用户说"帮我写/优化一个 prompt"、"这个 prompt 效果不好"、"我需要一个 system prompt"、或在构建复杂 agent 需要高质量系统提示词时使用。
-version: 0.4.0
+version: 0.1.1
 ---
 
 # Prompt Optimizer（提示词优化）
