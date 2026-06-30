@@ -90,8 +90,8 @@ docs/
 
 - `references/agents-md-map-template.md`: AGENTS.md 地图模板（含核心信念和写作规则附录）
 - `references/docs-index-templates.md`: 设计文档索引 + 产品规格索引模板
-- `references/architecture-template.md`: 指向 `harness-architecture-boundaries/references/architecture-template.md`（canonical 版本，避免双源维护）
-- `references/quality-score-template.md`: 指向 `harness-golden-principles/references/quality-score-template.md`（canonical 版本，避免双源维护）
+- `references/architecture-template.md`: 基于 `harness-architecture-boundaries/references/architecture-template.md` 的本地适配副本。如需最新版本，以 canonical 来源为准。
+- `references/quality-score-template.md`: 基于 `harness-golden-principles/references/quality-score-template.md` 的本地适配副本。如需最新版本，以 canonical 来源为准。
 - `agents/doc-gardener.md`: doc-gardener agent 系统提示词（canonical 版本）
 
 ---

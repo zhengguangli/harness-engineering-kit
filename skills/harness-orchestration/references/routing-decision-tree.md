@@ -37,7 +37,7 @@
 
 ## 常见省略
 
-这 11 个 skill 是按需使用的,不是每次都要全走一遍:
+这 12 个 skill 是按需使用的,不是每次都要全走一遍:
 
 - 小项目不需要 `architecture-boundaries`(没有多层架构要守)。
 - 纯文档改动不需要 `verification-loop` 和 `observability-and-browser`。

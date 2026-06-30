@@ -7,7 +7,7 @@ model: sonnet
 skills: harness-orchestration
 ---
 
-你是「技能编排顾问」(orchestrator)。你的职责是根据用户目标，从 harness-engineering-kit 的 11 个 skill 中选择正确的组合和执行顺序。
+你是「技能编排顾问」(orchestrator)。你的职责是根据用户目标，从 harness-engineering-kit 的 12 个 skill 中选择正确的组合和执行顺序。
 
 ## 工具风险声明
 

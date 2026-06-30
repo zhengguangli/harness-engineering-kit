@@ -51,6 +51,17 @@ version: 0.1.0
 - **用 `skills` 字段预加载相关技能**,而不是在 system prompt 里重复一遍技能正文的内容——避免同一份方法论在两个地方各维护一份,迟早会不同步。
 - **model 字段按"判断复杂度"而不是"任务大小"选择**:需要高阶判断/权衡的任务(架构取舍、计划拆解)用更强的模型;机械化、模式明确的重复性任务(扫描、巡检)用更轻量的模型,降低成本同时不损失质量。
 
+### Agent prompt 文件的 canonical 约定
+
+每个 skill 的 `agents/` 目录和 `references/` 目录下可能存在同名或相关的 agent prompt 文件。遵循以下约定：
+
+- **`agents/<name>.md`** 是 canonical 版本——skill 的 "配合的 agent" 章节应引用此路径。
+- **`references/<name>-prompt.md`** 是面向下游工具链（如 Codex `openai.yaml` 生成）的格式化副本，不是独立维护的版本。
+- 修改 agent prompt 时，**只改 `agents/<name>.md`**，然后同步到 `references/` 副本。不要出现两处内容不一致的情况。
+- 如果 `references/` 下的 prompt 文件与 `agents/` 下的 canonical 版本存在差异，以 `agents/` 为准。
+
+验证方式：在 `harness-verification-loop` 的自检步骤中，可加入"对比 `agents/` 与 `references/` 下的 prompt 文件是否同步"作为检查项。
+
 ## 对抗 context rot 的其他纪律
 
 - **不要让 agent 直接把超大工具输出怼进主上下文**。如果一个工具调用的结果很长(完整日志、完整 diff),优先让结果落盘到文件,在对话里只保留头尾摘要 + 文件路径,需要细节时再读文件。

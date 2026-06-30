@@ -48,6 +48,11 @@ version: 0.1.0
      安全敏感决策)时才升级给人类,而不是因为不确定就甩锅
 ```
 
+### 验收标准
+
+验收标准必须是具体的、机械可检查的条件（如"全部测试通过且覆盖率 ≥ X%"、"关键用户旅程截图前后对比无异常"），不要写"看起来不错"这种无法验证的标准。评审型 agent 的职责见 `harness-architecture-boundaries` 技能的 `boundary-auditor` agent。
+
+
 ## 设定循环的边界,避免空转
 
 没有边界的循环会在卡住的任务上无限自我重复同样的失败。务必设定:
@@ -75,7 +80,6 @@ version: 0.1.0
 ## 相关模板
 
 - `references/completion-summary-template.md`: 验证循环完成总结模板
-- 验收标准必须是具体的、机械可检查的条件（如"全部测试通过且覆盖率 ≥ X%"、"关键用户旅程截图前后对比无异常"）。评审型 agent 的职责见 `harness-architecture-boundaries` 技能的 `boundary-auditor` agent。
 - `agents/verification-loop-runner.md`: verification-loop-runner agent 系统提示词（canonical 版本）
 
 ---
