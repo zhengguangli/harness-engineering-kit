@@ -1,0 +1,4 @@
+interface:
+  display_name: "Prompt Optimizer"
+  short_description: "Transform ideas into structured LLM prompts"
+  default_prompt: "Optimize this prompt: I want an AI to summarize news articles."
