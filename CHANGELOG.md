@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.1.1] - 2026-06-30
+
+### Changed
+- Unified agent tool mapping across skills to reduce cross-platform ambiguity
+- Strengthened `harness-commit-gate` defaults and failure-handling behavior
+- Improved `harness-verification-loop` clarity, numbering consistency, and references
+- Enhanced `harness-orchestration` to discover available skills dynamically
+- Added cross-platform prerequisites and fallback notes in multiple skills
+
+### Fixed
+- Resolved dual-source maintenance drift between `agents/*.md` and `openai.yaml`
+- Fixed sequential numbering inconsistencies in workflow documents
+- Corrected duplicate/conflicting tool declarations in agent definitions
+
+### Verification
+- Full read-only regression across 12 skills completed successfully
+- Duplicate-number and reference-mismatch checks passed
+- Key policy checks confirmed (staged-first gating, failure classification, orchestration discovery)
+
 ## [v0.1.0] - 2026-06-30
 
 ### Added
