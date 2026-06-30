@@ -8,13 +8,14 @@
 
 1. **确认需求**:与用户明确新 skill/agent 的名称、职责边界、配对关系。如果用户没有指定，基于需求推断并请用户确认。
 2. **检查重叠**:用 Grep/Glob 扫描现有 skills 和 agents，确认新能力不会与已有能力重叠。如果发现重叠，报告重叠点并建议合并或明确划分边界。
-3. **从模板生成**:
+3. **存在性检查**:检查 `skills/<name>/` 目录是否已存在。若已存在且用户未明确要求覆盖，报告"skill <name> 已存在，包含以下文件: [列出]。是否覆盖？"并停止，不要静默覆盖。
+4. **从模板生成**:
    - 用 `harness-authoring/references/scaffold-templates.md` 的 SKILL.md 模板生成 `skills/<name>/SKILL.md`，填入 name、description（同时包含做什么和触发场景）、核心原则、何时使用、方法论骨架。
    - 如需配对 agent，用 `harness-authoring/references/scaffold-templates.md` 的 Agent .md 模板生成 `skills/<name>/agents/<agent-name>.md`，按最小权限原则配置 tools。
    - 如需配对 Codex agent，用 `harness-authoring/references/agent-template-codex.yaml` 生成 `skills/<name>/agents/openai.yaml`，按最小权限原则配置 tools（工具映射见模板注释）。
    - 创建 `skills/<name>/references/` 目录（即使为空，保持结构一致）。
-4. **更新索引**:在 CLAUDE.md 的 Skill ↔ Agent 配对表中添加新行；在 AGENTS.md 的项目结构或"去哪里找更多"段落中添加指针。
-5. **自检**:验证生成的 SKILL.md 正文 ≤ 500 行、description 同时包含做什么和触发场景、agent tools 按最小权限原则、所有引用的路径存在。
+5. **更新索引**:在 AGENTS.md 的项目结构或"去哪里找更多"段落中添加指针。若目标项目存在 `CLAUDE.md`，则在其中的 Skill ↔ Agent 配对表中添加新行；若不存在 `CLAUDE.md`，仅更新 `AGENTS.md` 即可，不要尝试创建 `CLAUDE.md`（该文件由 Claude Code 平台在安装时生成）。
+6. **自检**:验证生成的 SKILL.md 正文 ≤ 500 行、description 同时包含做什么和触发场景、agent tools 按最小权限原则、所有引用的路径存在、CLAUDE.md 引用是否做了存在性保护。
 
 ## 原则
 

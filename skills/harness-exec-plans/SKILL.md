@@ -1,6 +1,7 @@
 ---
 name: harness-exec-plans
 description: 把跨多个上下文窗口的复杂任务落盘为版本化的执行计划(exec-plan)工件——包含目标、步骤、决策记录与验收标准。当任务跨越多个上下文窗口或多次会话、用户说"先做个计划"或"改动比较大"、失败后需要知道上一轮试过什么/为什么放弃、或需要长时程自主执行时使用。
+version: 0.1.0
 ---
 
 # Execution Plans(执行计划)
@@ -109,4 +110,4 @@ plan-architect 与 verification-loop-runner 的分工与交接协议,详见 `ref
 - `references/tech-debt-tracker-template.md`: 技术债跟踪模板
 - `references/plan-architect-prompt.md`: plan-architect agent 系统提示词
 ---
-最后更新: 2026-06-29
+最后更新: 2026-06-30

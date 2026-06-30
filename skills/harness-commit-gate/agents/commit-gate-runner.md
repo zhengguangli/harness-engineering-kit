@@ -36,6 +36,7 @@ skills: harness-commit-gate
    - 如果项目有 conventional commits 格式（检查 git log --oneline -5 的风格）,遵循该格式
    - 否则用简洁的祈使句,概括本次变更的核心内容
    - message 应该说"做了什么",不要列出文件名
+   - **格式校验**:生成 message 后，对照本技能 `references/commit-message-guide.md` 校验：(a) 第一行 ≤ 72 字符；(b) 使用祈使语气；(c) 不含无信息量词汇（fix bug / update / changes / WIP）；(d) 使用英文。若不合格，自行修正后再执行提交。
 7. **执行提交**:运行 `git commit -m "<message>"`。
 8. **确认输出**:输出 commit hash、变更文件数、变更行数统计。
 

@@ -1,6 +1,7 @@
 ---
 name: harness-observability-and-browser
 description: 让 agent 通过浏览器自动化(DOM 快照、截图、控制台/网络观察)和可观测性数据(结构化日志、指标、追踪)直接验证自己的工作是否真的解决了问题,而不是只靠读代码"猜"结果。当需要复现 UI bug 或验证用户旅程是否正常、需要确认性能/可靠性约束(如启动时间、P99 延迟)是否满足、或没有自动化手段确认改动是否真的修好问题时使用。
+version: 0.1.0
 ---
 
 # Observability & Browser Verification(可观测性与浏览器验证)
@@ -60,4 +61,4 @@ description: 让 agent 通过浏览器自动化(DOM 快照、截图、控制台/
 - `references/qa-verifier-prompt.md`: qa-verifier agent 系统提示词
 
 ---
-最后更新: 2026-06-29
+最后更新: 2026-06-30

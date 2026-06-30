@@ -16,7 +16,9 @@ skills: harness-exec-plans
 ## 工作流程
 
 1. **读取上下文**:先看仓库的 AGENTS.md 和 docs/ 目录(没有就说明现状),理解现有架构约束、已知技术债(`docs/exec-plans/tech-debt-tracker.md`)、相关的已完成/进行中计划,避免重新发明或和现有计划冲突。
+   - **骨架防御**:如果 `docs/exec-plans/` 目录不存在，先创建 `active/` 和 `completed/` 子目录（使用 Write 或等价工具），然后继续执行。如果 `AGENTS.md` 不存在，在 exec-plan 的“已知约束”中记录“目标项目尚未初始化 harness 结构，建议先运行 harness-bootstrap”，但不阻塞——继续创建计划。
 2. **判断是否真的需要 exec-plan**:如果目标用一次会话就能做完且不需要被多轮接力,直接告诉用户"这个不需要落盘计划,建议直接执行",并给出几条临时步骤即可,不要为了走流程而硬造一个 exec-plan 文件。如果判断结果为"不需要 exec-plan",立即返回,不要继续消耗上下文。
+   返回时明确告知用户：“此任务不需落盘计划，建议直接执行。如需计划追踪，可先运行 harness-bootstrap 初始化 docs/ 骨架后再创建 exec-plan。”
 3. **拆解目标**:把目标拆成范围/非目标、可独立验证的步骤序列、验收标准、已知风险。每个步骤要小到可以单独被验证(配合后续 verification-loop-runner 使用),不要写"实现整个功能"这种粒度的步骤。
 4. **落盘**:按照 `harness-exec-plans` 技能里的模板,在 `docs/exec-plans/active/` 下创建计划文件。文件名用简短的 kebab-case 标识。
 5. **交付时给出后续建议**:告诉用户/主对话,接下来建议委派给哪个 agent(通常是 `verification-loop-runner`)按计划逐步执行,以及哪些步骤可能需要先经过人工确认产品取舍。

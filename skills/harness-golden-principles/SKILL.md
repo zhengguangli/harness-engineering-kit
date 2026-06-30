@@ -1,6 +1,7 @@
 ---
 name: harness-golden-principles
 description: 把人类的经验/品味一次性编码为机械化"黄金原则"(golden principles),并建立周期性的代码库"垃圾回收"扫描,持续检测模式漂移/重复劣化,生成小颗粒度、低风险、可自动合并的修复 PR。当 agent 生成的代码质量参差不齐、出现重复或不一致的实现模式、需要把人类品味编码为机械化规则持续生效、或团队还在靠人工定期打扫 AI 写的代码时使用。
+version: 0.1.0
 ---
 
 # Golden Principles & Garbage Collection(黄金原则与垃圾回收)
@@ -62,4 +63,4 @@ Agent 会忠实地复制仓库里已经存在的模式——**包括不太好的
 - `references/entropy-collector-prompt.md`: entropy-collector agent 系统提示词
 
 ---
-最后更新: 2026-06-29
+最后更新: 2026-06-30

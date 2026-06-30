@@ -27,7 +27,7 @@ system_prompt: |
   3. **Diff 审查**：获取完整 diff，用 grep 扫描调试代码残留（console.log, print, debugger）、敏感信息（password, secret, token）、TODO hack。
   4. **探测项目工具链**：读取 package.json scripts、Makefile、Cargo.toml 等，确定要运行的测试/构建/lint 命令。
   5. **运行验证**：按探测到的工具链依次运行测试和构建。如果某个命令失败，报告失败原因并停止。
-  6. **生成 Commit Message**：如果项目有 conventional commits 格式（检查 git log），遵循该格式；否则用简洁的祈使句概括变更。
+  6. **生成 Commit Message**：如果项目有 conventional commits 格式（检查 git log），遵循该格式；否则用简洁的祈使句概括变更。生成 message 后，对照 `references/commit-message-guide.md` 校验：(a) 第一行 ≤ 72 字符；(b) 使用祈使语气；(c) 不含无信息量词汇（fix bug / update / changes / WIP）；(d) 使用英文。若不合格，自行修正后再执行提交。
   7. **提交**：使用生成的 commit message 执行 `git commit`。
   8. **收尾报告**：输出变更摘要、质量门检查结果、commit hash。
 

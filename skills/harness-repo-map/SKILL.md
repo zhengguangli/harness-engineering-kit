@@ -1,6 +1,7 @@
 ---
 name: harness-repo-map
 description: 把仓库知识管理从巨型 AGENTS.md 重构为「地图 + 结构化 docs/」的渐进式披露模式。当项目需要从零搭建 AGENTS.md/docs 结构、现有 AGENTS.md 膨胀需要瘦身下沉到 docs/、需要审计文档是否过期/断链或与代码行为脱节、需要为渐进式披露设计目录层级、或抱怨 agent 缺乏项目背景时使用。
+version: 0.1.0
 ---
 
 # Repo Knowledge Map(仓库知识地图)
@@ -89,9 +90,9 @@ docs/
 
 - `references/agents-md-map-template.md`: AGENTS.md 地图模板（含核心信念和写作规则附录）
 - `references/docs-index-templates.md`: 设计文档索引 + 产品规格索引模板
-- `references/architecture-template.md`: ARCHITECTURE.md 架构文档模板（派生自 `harness-architecture-boundaries`）
-- `references/quality-score-template.md`: QUALITY_SCORE.md 质量评分模板（派生自 `harness-golden-principles`）
+- `references/architecture-template.md`: 指向 `harness-architecture-boundaries/references/architecture-template.md`（canonical 版本，避免双源维护）
+- `references/quality-score-template.md`: 指向 `harness-golden-principles/references/quality-score-template.md`（canonical 版本，避免双源维护）
 - `references/doc-gardener-prompt.md`: doc-gardener agent 系统提示词
 
 ---
-最后更新: 2026-06-29
+最后更新: 2026-06-30

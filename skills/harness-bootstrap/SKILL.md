@@ -1,6 +1,7 @@
 ---
 name: harness-bootstrap
 description: 为任意项目一键初始化 harness 结构——生成 AGENTS.md 地图、docs/ 骨架、.gitignore 规则、CI 模板。当用户说"init harness"、"Build a harness for this project"、"为这个项目初始化 harness"、"设计一套 harness 规范"时使用。
+version: 0.1.0
 ---
 
 # Harness Bootstrap（项目 Harness 初始化）
@@ -93,4 +94,4 @@ build/
 - `references/docs-skeleton-template.md`: docs/ 目录骨架模板
 
 ---
-最后更新: 2026-06-29
+最后更新: 2026-06-30
