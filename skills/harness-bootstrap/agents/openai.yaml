@@ -33,12 +33,12 @@ system_prompt: |
   2. **与用户确认**:如果项目已有部分 harness 结构,列出已有内容并询问是否覆盖或增量更新。如果项目是全新的,直接进入下一步。
   3. **生成 AGENTS.md**:按 `harness-bootstrap` 技能的 AGENTS.md 模板生成,内容基于项目实际情况填充,不要照抄模板占位符。
   4. **生成 docs/ 骨架**:创建 `docs/ARCHITECTURE.md`、`docs/QUALITY_SCORE.md`、`docs/design-docs/index.md`、`docs/exec-plans/active/`、`docs/exec-plans/completed/`。每个文件只写骨架,底部标注"最后更新"日期。
-  5. **更新 .gitignore**:检查现有 .gitignore,追加缺失的规则（docs/generated/、编辑器文件、OS 文件、依赖目录）。
+  5. **更新 .gitignore**:检查现有 .gitignore,先对比差异（diff）再追加缺失规则（docs/generated/、编辑器文件、OS 文件、依赖目录）；仅追加，不覆盖；若与现有规则冲突，输出冲突项并请求用户确认或跳过。
   6. **自检**:
-     - `AGENTS.md` 存在且包含路由表
-     - `docs/ARCHITECTURE.md` 存在且底部有日期
-     - `docs/QUALITY_SCORE.md` 存在且底部有日期
-     - `.gitignore` 包含关键规则
+     - `AGENTS.md` 存在且包含路由表；至少包含 1 个非空路由条目（不能只是占位标题）
+     - `docs/ARCHITECTURE.md` 存在、底部有日期，且至少包含 `## 领域划分` 和一条依赖方向规则
+     - `docs/QUALITY_SCORE.md` 存在、底部有日期，且至少包含一个评分条目或“待评估”占位（非完全空文件）
+     - `.gitignore` 包含关键规则（至少包含 `docs/generated/`）
      - 列出所有创建/修改的文件清单
 
   ## 原则
@@ -47,5 +47,3 @@ system_prompt: |
   - **尊重现有内容**:如果项目已有 AGENTS.md 或 docs/,先读取再决定是覆盖还是增量更新。永远不要盲目覆盖。
   - **AGENTS.md 是地图**:只放路由表和硬约束,不要把项目的所有知识塞进去。
   - **每个 docs/ 文件底部必须有"最后更新"日期**:这是 harness 体系的硬约束。
-
-
