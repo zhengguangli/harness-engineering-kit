@@ -16,7 +16,7 @@
 ```
 harness-engineering-kit/
 ├── .gitignore                           # 忽略 docs/generated/、AGENTS.md、CLAUDE.md（均由 agent 按项目生成）
-└── skills/                              # 11 个 skill（方法论 + agent 提示词 + 模板）
+└── skills/                              # 12 个 skill（方法论 + agent 提示词 + 模板）
     ├── harness-architecture-boundaries/ # 分层架构与依赖方向的机械强制
     ├── harness-authoring/               # 元技能:如何给这套体系本身加新能力
     ├── harness-bootstrap/               # 一键初始化 harness 结构
@@ -26,6 +26,7 @@ harness-engineering-kit/
     ├── harness-observability-and-browser/ # 浏览器 + 可观测性反馈传感器
     ├── harness-orchestration/           # 技能编排与工作流路由
     ├── harness-project-intake/          # 项目接入分析与项目卡片
+    ├── harness-prompt-optimizer/          # 提示词优化与结构化 Prompt 工程
     ├── harness-repo-map/                # 入口文件地图 + docs/ 系统记录
     └── harness-verification-loop/       # Ralph Wiggum 自验证循环
 ```
@@ -87,7 +88,7 @@ Skill 不直接"调用" Agent。主对话根据 Skill 的指导决定何时 spaw
 ④ 验收通过 → 完成
 ```
 
-### 11 个 Skill 的触发场景
+### 12 个 Skill 的触发场景
 
 | Skill | 触发时 | spawn 的 Agent |
 |---|---|---|
@@ -102,6 +103,7 @@ Skill 不直接"调用" Agent。主对话根据 Skill 的指导决定何时 spaw
 | harness-commit-gate | 提交代码前质量门检查 | commit-gate-runner |
 | harness-orchestration | 多 skill 组合路由决策（只读路由顾问） | （纯知识型，主对话直接执行，无需 spawn 独立 agent） |
 | harness-project-intake | 分析项目产出结构化卡片 | project-analyzer |
+| harness-prompt-optimizer | 优化/创建结构化 Prompt | （纯知识型，主对话直接执行） |
 
 ## 安装方式
 
@@ -218,29 +220,30 @@ nacos-cli skill-sync resolve <skill-name> --use-agent codex --non-interactive
 
 ### Layer 2 · 知识体系与约束规则
 
-以下三项依赖 Layer 1 的产出(`docs/` 结构已存在),但彼此之间可以并行推进:
+以下四项依赖 Layer 1 的产出(`docs/` 结构已存在),但彼此之间可以并行推进:
 
 3. **`harness-repo-map`** + `doc-gardener`:校验 AGENTS.md 是否只是"地图"而非"百科全书",确保 `docs/` 里的指针准确、无断链。这是知识的可发现性保障。
 4. **`harness-architecture-boundaries`** + `boundary-auditor`:在 `docs/ARCHITECTURE.md` 里写入分层模型与依赖方向规则,建立结构性红线。哪怕一开始只能靠文档约束,也先确立规则再逐步补上 lint。
 5. **`harness-golden-principles`** + `entropy-collector`:把人类品味编码为可机械检查的规则,建立周期性清扫节奏(可与上一步并行)。
+6. **`harness-prompt-optimizer`**:优化和创建结构化 Prompt,提升 agent 与 LLM 交互的确定性和输出质量。可与上述三项并行推进。
 
 ### Layer 3 · 计划驱动
 
-6. **`harness-exec-plans`** + `plan-architect`:复杂任务开始用落盘计划驱动。依赖 `docs/exec-plans/` 目录结构已存在(Layer 1 产出)。
+7. **`harness-exec-plans`** + `plan-architect`:复杂任务开始用落盘计划驱动。依赖 `docs/exec-plans/` 目录结构已存在(Layer 1 产出)。
 
 ### Layer 4 · 执行与验证
 
-7. **`harness-verification-loop`** + `verification-loop-runner`:让改动的"完成"有可机械检查的定义。循环内会调用 `boundary-auditor`(Layer 2)做架构评审,并把状态写回 exec-plan(Layer 3)实现跨窗口接力。
-8. **`harness-observability-and-browser`** + `qa-verifier`:作为 verification-loop 的反馈传感器——需要 UI 验证或性能确认时产出真实证据,不是独立的工作流节点。
+8. **`harness-verification-loop`** + `verification-loop-runner`:让改动的"完成"有可机械检查的定义。循环内会调用 `boundary-auditor`(Layer 2)做架构评审,并把状态写回 exec-plan(Layer 3)实现跨窗口接力。
+9. **`harness-observability-and-browser`** + `qa-verifier`:作为 verification-loop 的反馈传感器——需要 UI 验证或性能确认时产出真实证据,不是独立的工作流节点。
 
 ### Layer 5 · 提交门
 
-9. **`harness-commit-gate`**:最终质量关卡——diff 审查、自动化验证、commit message 格式化。在自验证循环收敛后执行。
+10. **`harness-commit-gate`**:最终质量关卡——diff 审查、自动化验证、commit message 格式化。在自验证循环收敛后执行。
 
 ### 元层 · 编排与扩展
 
-10. **`harness-orchestration`**:路由知识，帮助 agent 在上述各层之间选择正确的 skill 组合和执行顺序。配对 `orchestrator` agent 为只读路由顾问；由于编排是"主对话需要持续记住才能推理"的路由知识，主对话也可以直接根据 `SKILL.md` 中的工作流和决策树执行，不一定需要 spawn 独立 agent。
-11. **`harness-authoring`** + `skill-scaffolder`:任何时候要给这套体系本身添加新能力,参考此技能。
+11. **`harness-orchestration`**:路由知识，帮助 agent 在上述各层之间选择正确的 skill 组合和执行顺序。配对 `orchestrator` agent 为只读路由顾问；由于编排是"主对话需要持续记住才能推理"的路由知识，主对话也可以直接根据 `SKILL.md` 中的工作流和决策树执行，不一定需要 spawn 独立 agent。
+12. **`harness-authoring`** + `skill-scaffolder`:任何时候要给这套体系本身添加新能力,参考此技能。
 
 ## 概念到组件的映射
 
