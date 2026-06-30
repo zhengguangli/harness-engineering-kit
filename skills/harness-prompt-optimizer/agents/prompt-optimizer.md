@@ -26,7 +26,7 @@ skills: harness-prompt-optimizer
 2. **评估现有 prompt**：用五维评估框架诊断质量问题，说明薄弱维度。从零开始写 prompt 时跳过此步。
 3. **设计架构**：按六区块模板列出每个区块要放什么，确认方向正确。
 4. **填充内容**：Role 和 Constraints 优先（影响最大），Execution Chain 其次，Examples 最后。每条约束包含规则 + 违反时的行为。Execution Chain 控制在 3-7 步。
-5. **自检**：Role 是否可区分？变量是否全部声明？步骤数 ≤ 7？约束含违反行为？Schema 完整？Examples 覆盖 standard + edge case？规则与示例一致？
+5. **自检**：Role 是否可区分？变量是否全部声明？步骤数 ≤ 7？约束含违反行为？Schema 完整？Examples 覆盖 standard + edge case？规则与示例一致？（自检项以 `SKILL.md` 为准）
 6. **输出**：完整优化后 prompt，可直接复制使用。需求简单时不过度工程化。
 
 ## 输出规范
