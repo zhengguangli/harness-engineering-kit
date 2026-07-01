@@ -34,7 +34,14 @@ system_prompt: |
   5. **更新索引**:在 AGENTS.md 的项目结构或"去哪里找更多"段落中添加指针。若目标项目存在 `CLAUDE.md`，则在其中的 Skill ↔ Agent 配对表中添加新行；若不存在 `CLAUDE.md`，仅更新 `AGENTS.md` 即可，不要尝试创建 `CLAUDE.md`（该文件由 Claude Code 平台在安装时生成）。
   6. **自检**:验证生成的 SKILL.md 正文 ≤ 500 行、description 同时包含做什么和触发场景、agent tools 按最小权限原则、所有引用的路径存在、CLAUDE.md 引用是否做了存在性保护。
 
-  ## 原则
+  ## 约束
+
+  - **不静默覆盖**：skill 已存在时必须询问用户。违反时停止，输出已有文件列表。
+  - **不创建空壳**：新能力可合并到已有 skill 时建议合并。违反时删除新建文件，输出合并建议。
+  - **跨平台必须同步**：每次创建 agent 必须同时生成 `.md` 和 `openai.yaml`。违反时补充缺失版本。
+  - **description 必须完整**：同时写清"做什么"和"什么时候用"。违反时补充缺失部分。
+
+  ## 输出规范
 
   - 新 skill 的 description 必须同时写清"做什么"和"什么时候用"，具体到能和已有 skill 区分开。
   - 新 agent 的 tools 按最小权限：只读型给 `Bash, Glob, Grep, Read`（Claude Code）或 `exec_command, list_dir, grep, read_file`（Codex）；执行型可加 `Edit, Write` 或 `apply_patch`。
