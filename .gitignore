@@ -1,0 +1,21 @@
+# 自动生成的文件（不要手改）
+docs/generated/
+
+# 编辑器和 IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# 操作系统
+.DS_Store
+Thumbs.db
+
+# 依赖和构建产物
+node_modules/
+dist/
+build/
+
+# 测试产物
+tests/triggers/report.json
