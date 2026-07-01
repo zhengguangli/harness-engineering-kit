@@ -6,6 +6,29 @@ version: 0.1.1
 
 # Prompt Optimizer（提示词优化）
 
+## 触发信号
+
+### 显式触发（explicit）
+- `harness-prompt-optimizer`
+- `prompt-optimizer`
+- `system prompt`
+
+### 语义意图（intent）
+- 写或优化 prompt / system prompt
+- prompt 输出不稳定、易幻觉或缺约束
+- 把粗糙需求转化为结构化 prompt
+
+### 证据触发（artifacts）
+- `prompt`
+- `system prompt`
+- `examples`
+- `schema`
+- `constraints`
+
+### 避免触发（avoid_when）
+- 需要的是代码实现而不是 prompt 工程
+- 任务太简单，不需要六区块结构
+
 ## 核心原则
 
 LLM 的输出质量上限由 prompt 的结构质量决定。一份好的 prompt 不是"把需求写长一点"，而是用工程化方式消除歧义、约束行为空间、锚定输出格式：

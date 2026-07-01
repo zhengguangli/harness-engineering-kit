@@ -4,6 +4,30 @@ description: 让 agent 通过浏览器自动化和可观测性数据直接验证
 version: 0.1.0
 ---
 # 可观测性与浏览器验证（Observability & Browser）
+## 触发信号
+
+### 显式触发（explicit）
+- `harness-observability-and-browser`
+- `observability and browser`
+- `qa-verifier`
+
+### 语义意图（intent）
+- 复现 UI bug 或验证用户旅程
+- 确认性能/可靠性约束（启动时间、P99）
+- 需要截图、日志或运行时证据
+
+### 证据触发（artifacts）
+- `browser`
+- `screenshot`
+- `console`
+- `P99`
+- `trace`
+- `log`
+
+### 避免触发（avoid_when）
+- 改动可通过静态分析/lint/单测完全验证
+- 无 UI 与性能约束，且不依赖运行时信号
+
 ## 核心原则
 - **用真实信号替代推断**：agent 的每个判断应基于亲眼看到的信号——浏览器实际渲染的状态、日志实际打出的错误、指标实际测到的延迟。没有这些，agent 只能靠读代码静态推断。
 - **反馈传感器是一等公民**：浏览器快照、结构化日志、指标查询、追踪数据都是"反馈传感器"，验证结果必须附带这些证据。
