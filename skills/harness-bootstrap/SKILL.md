@@ -5,6 +5,31 @@ version: 0.1.0
 ---
 # Harness Bootstrap（项目 Harness 初始化）
 
+## 触发信号
+
+### 显式触发（explicit）
+- `harness-bootstrap`
+- `init harness`
+- `bootstrap`
+- `初始化 harness`
+
+### 语义意图（intent）
+- 为项目初始化 harness 结构
+- 生成 AGENTS.md 地图、docs/ 骨架、CI 模板
+- 设计一套 harness 规范
+- 新项目第一次接入 harness 体系
+
+### 证据触发（artifacts）
+- `AGENTS.md`
+- `CLAUDE.md`
+- `docs/`
+- `.gitignore`
+- `CI`
+
+### 避免触发（avoid_when）
+- 项目已有完整 harness 结构且未要求重初始化
+- 只想了解 harness 方法论，不想实际初始化
+
 ## 核心原则
 
 - **最小可用知识骨架**:初始化不是"复制一堆模板文件",而是根据项目的实际情况生成最小可用的知识骨架——宁可少而准,不要多而空。

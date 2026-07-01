@@ -1,0 +1,369 @@
+[
+  {
+    "id": "commit-01",
+    "input": "帮我提交代码",
+    "expected_primary_skill": "harness-commit-gate",
+    "expected_candidates": [
+      "harness-commit-gate",
+      "harness-verification-loop"
+    ],
+    "tags": [
+      "commit"
+    ]
+  },
+  {
+    "id": "commit-02",
+    "input": "先修一下这个问题，然后提交代码",
+    "expected_primary_skill": "harness-commit-gate",
+    "expected_candidates": [
+      "harness-commit-gate",
+      "harness-verification-loop"
+    ],
+    "tags": [
+      "commit",
+      "ambiguous"
+    ]
+  },
+  {
+    "id": "commit-03",
+    "input": "执行 git commit",
+    "expected_primary_skill": "harness-commit-gate",
+    "expected_candidates": [
+      "harness-commit-gate"
+    ],
+    "tags": [
+      "commit"
+    ]
+  },
+  {
+    "id": "commit-04",
+    "input": "把改动推进到可合并状态",
+    "expected_primary_skill": "harness-verification-loop",
+    "expected_candidates": [
+      "harness-verification-loop",
+      "harness-commit-gate"
+    ],
+    "tags": [
+      "commit",
+      "verification",
+      "ambiguous"
+    ]
+  },
+  {
+    "id": "plan-01",
+    "input": "先做个计划",
+    "expected_primary_skill": "harness-exec-plans",
+    "expected_candidates": [
+      "harness-exec-plans",
+      "harness-orchestration"
+    ],
+    "tags": [
+      "plan"
+    ]
+  },
+  {
+    "id": "plan-02",
+    "input": "任务比较大，需要落盘执行计划",
+    "expected_primary_skill": "harness-exec-plans",
+    "expected_candidates": [
+      "harness-exec-plans"
+    ],
+    "tags": [
+      "plan"
+    ]
+  },
+  {
+    "id": "plan-03",
+    "input": "跨多窗口接力完成这个任务",
+    "expected_primary_skill": "harness-exec-plans",
+    "expected_candidates": [
+      "harness-exec-plans",
+      "harness-verification-loop"
+    ],
+    "tags": [
+      "plan",
+      "ambiguous"
+    ]
+  },
+  {
+    "id": "orchestration-01",
+    "input": "我不知道该用哪些 skill",
+    "expected_primary_skill": "harness-orchestration",
+    "expected_candidates": [
+      "harness-orchestration"
+    ],
+    "tags": [
+      "orchestration"
+    ]
+  },
+  {
+    "id": "orchestration-02",
+    "input": "帮我规划多 skill 协作顺序",
+    "expected_primary_skill": "harness-orchestration",
+    "expected_candidates": [
+      "harness-orchestration",
+      "harness-exec-plans"
+    ],
+    "tags": [
+      "orchestration",
+      "ambiguous"
+    ]
+  },
+  {
+    "id": "bootstrap-01",
+    "input": "为这个项目初始化 harness",
+    "expected_primary_skill": "harness-bootstrap",
+    "expected_candidates": [
+      "harness-bootstrap",
+      "harness-repo-map"
+    ],
+    "tags": [
+      "bootstrap",
+      "ambiguous"
+    ]
+  },
+  {
+    "id": "bootstrap-02",
+    "input": "生成 AGENTS.md 和 docs/ 骨架",
+    "expected_primary_skill": "harness-bootstrap",
+    "expected_candidates": [
+      "harness-bootstrap",
+      "harness-repo-map"
+    ],
+    "tags": [
+      "bootstrap",
+      "ambiguous"
+    ]
+  },
+  {
+    "id": "repo-map-01",
+    "input": "AGENTS.md 太大了，需要瘦身",
+    "expected_primary_skill": "harness-repo-map",
+    "expected_candidates": [
+      "harness-repo-map"
+    ],
+    "tags": [
+      "repo-map"
+    ]
+  },
+  {
+    "id": "repo-map-02",
+    "input": "审计文档断链和过期内容，并下沉 docs/",
+    "expected_primary_skill": "harness-repo-map",
+    "expected_candidates": [
+      "harness-repo-map",
+      "harness-golden-principles"
+    ],
+    "tags": [
+      "repo-map",
+      "ambiguous"
+    ]
+  },
+  {
+    "id": "repo-map-03",
+    "input": "设计渐进式披露目录层级",
+    "expected_primary_skill": "harness-repo-map",
+    "expected_candidates": [
+      "harness-repo-map"
+    ],
+    "tags": [
+      "repo-map"
+    ]
+  },
+  {
+    "id": "verification-01",
+    "input": "建立实现→自检→测试→评审→修复循环",
+    "expected_primary_skill": "harness-verification-loop",
+    "expected_candidates": [
+      "harness-verification-loop"
+    ],
+    "tags": [
+      "verification"
+    ]
+  },
+  {
+    "id": "verification-02",
+    "input": "需要跨多窗口迭代直到可合并",
+    "expected_primary_skill": "harness-verification-loop",
+    "expected_candidates": [
+      "harness-verification-loop",
+      "harness-exec-plans"
+    ],
+    "tags": [
+      "verification",
+      "ambiguous"
+    ]
+  },
+  {
+    "id": "intake-01",
+    "input": "分析当前项目并产出项目卡片",
+    "expected_primary_skill": "harness-project-intake",
+    "expected_candidates": [
+      "harness-project-intake",
+      "harness-repo-map"
+    ],
+    "tags": [
+      "intake",
+      "ambiguous"
+    ]
+  },
+  {
+    "id": "prompt-01",
+    "input": "帮我优化这个 system prompt",
+    "expected_primary_skill": "harness-prompt-optimizer",
+    "expected_candidates": [
+      "harness-prompt-optimizer"
+    ],
+    "tags": [
+      "prompt"
+    ]
+  },
+  {
+    "id": "authoring-01",
+    "input": "怎么写一个好的 SKILL.md",
+    "expected_primary_skill": "harness-authoring",
+    "expected_candidates": [
+      "harness-authoring",
+      "harness-orchestration"
+    ],
+    "tags": [
+      "authoring",
+      "ambiguous"
+    ]
+  },
+  {
+    "id": "golden-01",
+    "input": "治理 AI 生成代码里的重复模式",
+    "expected_primary_skill": "harness-golden-principles",
+    "expected_candidates": [
+      "harness-golden-principles",
+      "harness-architecture-boundaries"
+    ],
+    "tags": [
+      "golden",
+      "ambiguous"
+    ]
+  },
+  {
+    "id": "intake-02",
+    "input": "读取 README 并给摘要",
+    "expected_primary_skill": "harness-project-intake",
+    "expected_candidates": [
+      "harness-project-intake",
+      "harness-repo-map"
+    ],
+    "tags": [
+      "intake",
+      "ambiguous"
+    ]
+  },
+  {
+    "id": "prompt-02",
+    "input": "这个 prompt 效果不好，帮我改进结构和约束",
+    "expected_primary_skill": "harness-prompt-optimizer",
+    "expected_candidates": [
+      "harness-prompt-optimizer"
+    ],
+    "tags": [
+      "prompt"
+    ]
+  },
+  {
+    "id": "golden-02",
+    "input": "建立周期性垃圾回收和模式漂移扫描",
+    "expected_primary_skill": "harness-golden-principles",
+    "expected_candidates": [
+      "harness-golden-principles"
+    ],
+    "tags": [
+      "golden"
+    ]
+  },
+  {
+    "id": "authoring-02",
+    "input": "给这套 harness 工具集本身添加新能力",
+    "expected_primary_skill": "harness-authoring",
+    "expected_candidates": [
+      "harness-authoring",
+      "harness-orchestration"
+    ],
+    "tags": [
+      "authoring",
+      "ambiguous"
+    ]
+  },
+  {
+    "id": "repo-map-04",
+    "input": "AGENTS.md 指针断了，需要校验",
+    "expected_primary_skill": "harness-repo-map",
+    "expected_candidates": [
+      "harness-repo-map"
+    ],
+    "tags": [
+      "repo-map"
+    ]
+  },
+  {
+    "id": "bootstrap-03",
+    "input": "新项目接入 harness，先给骨架",
+    "expected_primary_skill": "harness-bootstrap",
+    "expected_candidates": [
+      "harness-bootstrap",
+      "harness-project-intake"
+    ],
+    "tags": [
+      "bootstrap",
+      "ambiguous"
+    ]
+  },
+  {
+    "id": "orchestration-03",
+    "input": "进入新项目，不确定先做什么后做什么",
+    "expected_primary_skill": "harness-orchestration",
+    "expected_candidates": [
+      "harness-orchestration",
+      "harness-project-intake"
+    ],
+    "tags": [
+      "orchestration",
+      "ambiguous"
+    ]
+  },
+  {
+    "id": "verification-03",
+    "input": "可验证任务反复失败，需要迭代收敛",
+    "expected_primary_skill": "harness-verification-loop",
+    "expected_candidates": [
+      "harness-verification-loop",
+      "harness-exec-plans"
+    ],
+    "tags": [
+      "verification",
+      "ambiguous"
+    ]
+  },
+  {
+    "id": "plan-04",
+    "input": "失败后记录上一轮试过什么、为什么放弃",
+    "expected_primary_skill": "harness-exec-plans",
+    "expected_candidates": [
+      "harness-exec-plans",
+      "harness-verification-loop"
+    ],
+    "tags": [
+      "plan",
+      "ambiguous"
+    ]
+  },
+  {
+    "id": "commit-05",
+    "input": "提交并格式化 commit message",
+    "expected_primary_skill": "harness-commit-gate",
+    "expected_candidates": [
+      "harness-commit-gate"
+    ],
+    "tags": [
+      "commit"
+    ]
+  }
+]
