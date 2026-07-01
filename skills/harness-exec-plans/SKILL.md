@@ -98,6 +98,7 @@ docs/exec-plans/
 ## 相关模板
 - `references/exec-plan-template.md`：执行计划文件模板
 - `references/tech-debt-tracker-template.md`：技术债跟踪模板
+- `references/agent-handoff-protocol.md`：多 agent 接力执行协议
 - `agents/plan-architect.md`：plan-architect agent 系统提示词
 ---
-最后更新: 2026-06-30
+最后更新: 2026-07-01

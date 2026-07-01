@@ -155,9 +155,16 @@ You are part of [System/Pipeline]. Your input is [Data Type]. Your output is con
 - **约束过多**：超过 8 条约束 LLM 反而违反得更多，精选关键约束。
 - **过度工程化**：简单任务不需要完整六区块，为形式完整而增加无用内容只会浪费 token。
 
+## 配合的 agent
+
+- `prompt-optimizer` agent：执行型 agent，负责分析需求并生成结构化 prompt。
+
 ## 相关模板
 
 - `references/prompt-architecture-template.md`: Prompt 六区块架构模板（可直接复制填充）
 - `references/optimization-examples.md`: 多领域 prompt 优化前后对比示例集
 - `references/six-block-design-notes.md`: 六区块填写要点（好/坏例子、tie-breaker 规则、必备约束类型）
 - `references/implicit-trigger-patterns.md`: 隐式触发模式（句式识别 / 关键词触发）详细参考
+
+---
+最后更新: 2026-07-01

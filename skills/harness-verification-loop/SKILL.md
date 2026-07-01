@@ -94,7 +94,8 @@ version: 0.1.0
 3. **跑循环步骤 1-6**。
 4. **每轮迭代后**：如果使用 exec-plan，更新步骤勾选状态和决策日志。
 5. **达成完成定义后**：产出简短总结——做了什么、怎么验证的、还有什么已知限制。
-6. **如果在边界次数内没能收敛**：明确写出卡在哪、缺什么，升级给人类或记录进 `tech-debt-tracker.md`，不要假装完成。
+6. **提交**：循环收敛后，交由 `harness-commit-gate` 完成提交。
+7. **如果在边界次数内没能收敛**：明确写出卡在哪、缺什么，升级给人类或记录进 `tech-debt-tracker.md`，不要假装完成。
 
 ## 关键要点
 
@@ -115,3 +116,6 @@ version: 0.1.0
 
 - `references/completion-summary-template.md`: 验证循环完成总结模板
 - `agents/verification-loop-runner.md`: verification-loop-runner agent 系统提示词（canonical 版本）
+
+---
+最后更新: 2026-07-01

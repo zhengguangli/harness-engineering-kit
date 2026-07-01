@@ -1,6 +1,6 @@
 ---
 name: harness-architecture-boundaries
-description: 为由 agent 大量生成代码的仓库设计并机械化强制分层架构与依赖方向规则——通过自定义 linter 和结构化测试约束 agent,而不是依赖人工 code review 去"靠感觉"挡住架构腐化。当用户要为项目建立"严格边界、局部自由"的分层架构、代码已出现架构腐化或循环依赖或层间越界、需要设计自定义 lint 规则或定义跨层依赖方向时使用。
+description: 为 agent 大量生成代码的仓库设计分层架构与依赖方向规则——通过自定义 linter 和结构化测试机械化强制约束。当用户要建立分层架构、出现循环依赖或层间越界、需要设计自定义 lint 规则时使用。
 version: 0.1.0
 ---
 # Architecture Boundaries（架构边界）

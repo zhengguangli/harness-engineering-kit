@@ -47,6 +47,7 @@ version: 0.1.0
 - 项目已有完整的 harness 结构且用户未要求重新初始化
 - 用户只想了解 harness 方法论,而非实际初始化
 - 项目规模极小,不需要结构化知识管理
+- 只需要重构 AGENTS.md/docs 结构而非全面初始化——用 `harness-repo-map`
 
 ## 方法论
 
