@@ -5,29 +5,6 @@ version: 0.1.0
 ---
 # Harness Authoring（撰写新的 skill / agent）
 
-## 触发信号
-
-### 显式触发（explicit）
-- `harness-authoring`
-- `authoring`
-- `skill-scaffolder`
-
-### 语义意图（intent）
-- 给 harness 体系添加新 skill / subagent / 知识库能力
-- 问“怎么写一个好的 SKILL.md”
-- skill / agent 越写越臃肿需要瘦身
-
-### 证据触发（artifacts）
-- `SKILL.md`
-- `agents/`
-- `references/`
-- `description`
-- `name`
-
-### 避免触发（avoid_when）
-- 与 harness 体系无关的独立工具开发
-- 只是了解现有 skill 用法，不是新增能力
-
 ## 核心原则
 
 - **上下文是稀缺资源**:每个设计决策都要考虑对上下文预算的影响——常驻内容尽量精简,按需加载尽量前置。

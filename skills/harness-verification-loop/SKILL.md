@@ -6,33 +6,6 @@ version: 0.1.0
 
 # Verification Loop（自验证循环）
 
-## 触发信号
-
-### 显式触发（explicit）
-- `harness-verification-loop`
-- `verification loop`
-- `自验证循环`
-- `Ralph Wiggum Loop`
-
-### 语义意图（intent）
-- 把改动推进到可合并状态
-- 建立实现→自检→测试→评审→修复循环
-- 任务反复失败，需要持续迭代
-- 需要跨窗口接力执行并在反馈中收敛
-
-### 证据触发（artifacts）
-- `exec-plan`
-- `test`
-- `build`
-- `lint`
-- `PR`
-- `review`
-
-### 避免触发（avoid_when）
-- 单行 typo / 配置微调，直接走 `commit-gate`
-- 项目无测试/构建配置，循环缺乏反馈信号
-- 任务只是头脑风暴或纯探索，不产出可验证变更
-
 ## 核心原则
 
 - **失败是缺失能力的信号，不是不够努力的信号**：任务失败时，正确的反应不是"再试一次"，而是问"agent 缺了什么能力，如何让它可见、可执行？"这是 harness engineering 区别于"加大力气提示"的地方。

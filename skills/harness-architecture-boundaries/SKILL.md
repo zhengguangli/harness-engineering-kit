@@ -5,30 +5,6 @@ version: 0.1.0
 ---
 # Architecture Boundaries（架构边界）
 
-## 触发信号
-
-### 显式触发（explicit）
-- `harness-architecture-boundaries`
-- `architecture boundaries`
-- `architecture-boundaries`
-
-### 语义意图（intent）
-- 用户要建立分层架构与依赖方向规则
-- 出现循环依赖、层间越界或架构腐化
-- 需要自定义 lint 规则或结构化架构测试
-- 想让架构约束被机械强制而非仅靠 review
-
-### 证据触发（artifacts）
-- `docs/ARCHITECTURE.md`
-- `boundary-auditor`
-- `lint`
-- `import` / `dependency`
-- `test`
-
-### 避免触发（avoid_when）
-- 纯风格偏好（交给 `harness-golden-principles`）
-- 项目规模极小、无明显分层需求
-
 ## 核心原则
 
 - **边界内放权,边界上狠功夫**:在模块间依赖方向、数据边界形态、跨层调用路径上严格约束;在具体实现细节上充分放权。

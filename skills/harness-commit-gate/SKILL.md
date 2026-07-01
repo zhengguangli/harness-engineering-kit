@@ -5,34 +5,6 @@ version: 0.1.0
 ---
 # Commit Gate（提交质量门）
 
-## 触发信号
-
-### 显式触发（explicit）
-- `harness-commit-gate`
-- `提交代码`
-- `commit`
-- `git commit`
-
-### 语义意图（intent）
-- 提交代码并执行质量门
-- 先修问题再提交（修复，提交代码）
-- 格式化 commit message 并本地提交
-- 用户要求 agent 处理 commit 流程
-
-### 证据触发（artifacts）
-- `git status`
-- `git diff --staged`
-- `git add`
-- `git commit`
-- `test`
-- `build`
-- `lint`
-
-### 避免触发（avoid_when）
-- 已在 `verification-loop` 完成完整自检且已放行，不再重复门检
-- 工作区无可提交变更（无 staged 文件）
-- 任务是纯探索/分析，不产出可提交代码
-
 ## 核心原则
 
 - **提交是"验证通过"的信号**:每次提交前都应经过一个轻量的质量门:检查改了什么、跑相关测试、格式化 commit message。通过才放行,不通过就修到通过。

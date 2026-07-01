@@ -6,30 +6,6 @@ version: 0.1.0
 
 # Project Intake（项目接入分析）
 
-## 触发信号
-
-### 显式触发（explicit）
-- `harness-project-intake`
-- `project intake`
-- `project-card`
-
-### 语义意图（intent）
-- 分析当前项目并产出项目卡片
-- 分析 README / 项目概览
-- 首次进入新目录快速了解项目
-
-### 证据触发（artifacts）
-- `README.md`
-- `package.json`
-- `Cargo.toml`
-- `go.mod`
-- `pyproject.toml`
-- `git log`
-
-### 避免触发（avoid_when）
-- 只需要直接查看某个文件内容
-- 已在项目中工作过且不需要重新分析
-
 ## 核心原则
 
 - **结论优先**：用户要的是结构化卡片，不是 `cat README.md` 的原始输出。读完文件后沉默地综合，只输出结论。

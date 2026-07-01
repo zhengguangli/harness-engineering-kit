@@ -206,66 +206,6 @@ nacos-cli skill-sync resolve <skill-name> --use-agent codex --non-interactive
 
 > local 模式下 symlink 自动保持同步,大部分时候只需 `status` 看一眼。Nacos 模式下 daemon 会轮询远端变更。
 
-
-## Skill Trigger QA（触发词质量校验）
-
-每个 `SKILL.md` 都应包含统一的 `## 触发信号` 节（显式触发、语义意图、证据触发、避免触发）。仓库提供轻量校验脚本，用于防止格式漂移和关键词缺失。
-
-### 本地运行
-
-```bash
-make triggers-check
-# 或
-./scripts/validate-skill-triggers.sh
-```
-
-### 校验规则
-
-- 每个 skill 必须有 `## 触发信号` 节
-- 必须包含四类触发子节：显式触发 / 语义意图 / 证据触发 / 避免触发
-- 条目下限：显式触发 ≥ 3、语义意图 ≥ 3、避免触发 ≥ 2
-
-> 当前为 warn-only 本地门禁，不阻断开发；后续可按需要升级为 CI gate。
-### 本地全量检查（推荐）
-
-```bash
-make triggers-all
-# 依次执行：结构校验 -> 关键词一致性校验 -> 回归测试 -> JSON 报告
-```
-
-### 回归用例维护规范（Case Guide）
-
-新增或修改回归用例时，请遵循：
-
-- 用例文件：`tests/triggers/cases.json`
-- 每条 case 至少包含：
-  - `id`：唯一 ID，建议格式 `skill-topic-NN`
-  - `input`：自然语言输入（尽量贴近用户原话）
-  - `expected_primary_skill`：首选命中 skill
-  - `expected_candidates`：可接受候选列表（用于歧义场景）
-  - `tags`：分类标签（如 `commit`、`plan`、`ambiguous`）
-
-#### 判定规则
-
-- `PASS`：主 skill 命中且为最强信号
-- `WARN`：主 skill 命中但不是最强信号（候选歧义仍存在）
-- `FAIL`：主 skill 未命中
-
-#### 关键词一致性要求
-
-回归脚本依赖静态关键词映射（`scripts/run-trigger-regression.sh` 中的 `SKILL_KW`）。  
-当你新增 case 时，务必保证：
-
-1. 所有用于匹配的关键词在对应 `SKILL.md` 中真实存在
-2. 运行 `make keyword-consistency` 全部通过
-3. 避免“只改用例、不改关键词”导致结果漂移
-
-#### 报告与产物
-
-- 回归报告：`tests/triggers/report.json`
-- 推荐更新节奏：每次修改触发词/用例后都跑一次 `make triggers-all`
-
-
 ## 推荐的接入顺序
 
 以下是基于各 skill 之间**实际依赖关系**推导出的分层接入顺序。每一层依赖上一层的产出,不可跳步。
