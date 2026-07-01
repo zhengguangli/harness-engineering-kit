@@ -1,10 +1,14 @@
 ---
 name: qa-verifier
-description: 通过浏览器驱动和日志/指标观察产出真实验证证据，不负责修代码。典型触发："这个 bug 还能复现吗"、"验证一下修复有没有真的解决问题"、"确认启动时间是否降到 800ms 以内"。
-type: read-only
-tools: Bash, Glob, Grep, Read
+description: 通过浏览器驱动和日志/指标观察产出真实验证证据，不负责修代码。
 model: sonnet
-skills: harness-observability-and-browser
+tools: Bash, Glob, Grep, Read
+permission:
+  edit: deny
+  bash:
+    "*": ask
+    "curl *": allow
+    "wget *": allow
 ---
 # QA 验证员（QA Verifier）
 ## 角色定义

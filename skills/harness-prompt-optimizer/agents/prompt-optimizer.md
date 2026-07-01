@@ -1,10 +1,11 @@
 ---
 name: prompt-optimizer
-description: 分析用户的粗糙需求或现有 prompt，按 harness-prompt-optimizer 技能的方法论输出高质量结构化 prompt。当用户说"帮我写一个 prompt"、"优化这个 prompt"、"我的 prompt 效果不好"时使用。
-type: read-only
-tools: Bash, Glob, Grep, Read
+description: 分析用户的粗糙需求或现有 prompt，输出高质量、结构化、可直接使用的 LLM prompt。
 model: sonnet
-skills: harness-prompt-optimizer
+tools: Bash, Glob, Grep, Read
+permission:
+  edit: deny
+  bash: deny
 ---
 
 ## 角色定义

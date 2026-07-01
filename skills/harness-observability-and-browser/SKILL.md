@@ -1,32 +1,12 @@
 ---
 name: harness-observability-and-browser
-description: 让 agent 通过浏览器自动化和可观测性数据直接验证工作成果，而非只靠读代码"猜"结果。
-version: 0.1.0
+description: 让 agent 通过浏览器自动化和可观测性数据直接验证工作成果，而非只靠读代码"猜"结果。用于"复现 UI bug"、"确认 P99 延迟达标"、"需要截图验证"场景。
+when_to_use: 当用户需要复现 UI bug、确认性能/可靠性约束、需要截图或运行时证据时使用。
+compatibility: opencode
+metadata:
+  category: verification
 ---
 # 可观测性与浏览器验证（Observability & Browser）
-## 触发信号
-
-### 显式触发（explicit）
-- `harness-observability-and-browser`
-- `observability and browser`
-- `qa-verifier`
-
-### 语义意图（intent）
-- 复现 UI bug 或验证用户旅程
-- 确认性能/可靠性约束（启动时间、P99）
-- 需要截图、日志或运行时证据
-
-### 证据触发（artifacts）
-- `browser`
-- `screenshot`
-- `console`
-- `P99`
-- `trace`
-- `log`
-
-### 避免触发（avoid_when）
-- 改动可通过静态分析/lint/单测完全验证
-- 无 UI 与性能约束，且不依赖运行时信号
 
 ## 核心原则
 - **用真实信号替代推断**：agent 的每个判断应基于亲眼看到的信号——浏览器实际渲染的状态、日志实际打出的错误、指标实际测到的延迟。没有这些，agent 只能靠读代码静态推断。
@@ -82,4 +62,4 @@ version: 0.1.0
 - `references/verification-checklist-template.md`：验证检查清单模板
 - `agents/qa-verifier.md`：qa-verifier agent 系统提示词
 ---
-最后更新: 2026-06-30
+最后更新: 2026-07-01

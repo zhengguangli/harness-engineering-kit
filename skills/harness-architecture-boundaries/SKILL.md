@@ -1,33 +1,12 @@
 ---
 name: harness-architecture-boundaries
-description: 为 agent 大量生成代码的仓库设计分层架构与依赖方向规则——通过自定义 linter 和结构化测试机械化强制约束。当用户要建立分层架构、出现循环依赖或层间越界、需要设计自定义 lint 规则时使用。
-version: 0.1.0
+description: 为 agent 大量生成代码的仓库设计分层架构与依赖方向规则——通过自定义 linter 和结构化测试机械化强制约束。用于"建立分层架构"、"出现循环依赖"、"需要 lint 规则"场景。
+when_to_use: 当用户要建立分层架构、出现循环依赖或层间越界、需要设计自定义 lint 规则时使用。
+compatibility: opencode
+metadata:
+  category: architecture
 ---
 # Architecture Boundaries（架构边界）
-
-## 触发信号
-
-### 显式触发（explicit）
-- `harness-architecture-boundaries`
-- `architecture boundaries`
-- `architecture-boundaries`
-
-### 语义意图（intent）
-- 用户要建立分层架构与依赖方向规则
-- 出现循环依赖、层间越界或架构腐化
-- 需要自定义 lint 规则或结构化架构测试
-- 想让架构约束被机械强制而非仅靠 review
-
-### 证据触发（artifacts）
-- `docs/ARCHITECTURE.md`
-- `boundary-auditor`
-- `lint`
-- `import` / `dependency`
-- `test`
-
-### 避免触发（avoid_when）
-- 纯风格偏好（交给 `harness-golden-principles`）
-- 项目规模极小、无明显分层需求
 
 ## 核心原则
 
@@ -115,4 +94,4 @@ Utils 只能被 Providers 使用,不能反向依赖业务领域内部。
 - `agents/boundary-auditor.md`: boundary-auditor agent 系统提示词（canonical 版本）
 
 ---
-最后更新: 2026-06-30
+最后更新: 2026-07-01

@@ -1,10 +1,14 @@
 ---
 name: skill-scaffolder
-description: 当用户确认要创建一个新的 skill 或 agent 时，使用此 agent 从模板生成完整的文件骨架——包括 SKILL.md、agents/openai.yaml、references/ 目录结构，以及更新 AGENTS.md 指针（若目标项目存在 CLAUDE.md 则同步更新）。典型触发场景："帮我创建一个新的 skill"、"为 xxx 功能加一个 agent"、"按 harness-authoring 的规范初始化一个新能力"。
-type: executor
-tools: Bash, Glob, Grep, Read, Write
+description: 从模板生成新 skill 和 agent 的完整文件骨架——确保符合 harness-authoring 规范。
 model: sonnet
-skills: harness-authoring
+tools: Bash, Glob, Grep, Read, Write
+permission:
+  edit: allow
+  bash:
+    "*": ask
+    "mkdir *": allow
+    "ls *": allow
 ---
 
 # Skill Scaffolder（技能脚手架工）

@@ -1,10 +1,16 @@
 ---
 name: project-analyzer
-description: 分析当前项目并产出结构化项目卡片——包含技术栈、架构骨架、关键模块、构建命令和近期活跃度。当用户说"分析当前项目"、"分析README"、"项目概览"时使用。
-type: read-only
-tools: Bash, Glob, Grep, Read
+description: 分析当前项目并产出结构化项目卡片——技术栈、架构骨架、关键模块、构建命令和近期活跃度。
 model: sonnet
-skills: harness-project-intake
+tools: Bash, Glob, Grep, Read
+permission:
+  edit: deny
+  bash:
+    "*": deny
+    "ls *": allow
+    "find *": allow
+    "git log *": allow
+    "git rev-parse *": allow
 ---
 
 ## 角色定义

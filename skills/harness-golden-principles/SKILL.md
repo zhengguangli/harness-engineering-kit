@@ -1,30 +1,12 @@
 ---
 name: harness-golden-principles
-description: 把人类经验编码为机械化"黄金原则"，建立周期性代码库扫描，持续检测模式漂移并生成小颗粒度修复 PR。
-version: 0.1.0
+description: 把人类经验编码为机械化"黄金原则"，建立周期性代码库扫描，持续检测模式漂移并生成小颗粒度修复 PR。用于"治理 AI 生成代码的重复模式"、"周期性扫描"场景。
+when_to_use: 当用户想把人类品味编码为机械化规则、治理 AI 生成代码的重复/不一致模式、建立周期性垃圾回收时使用。
+compatibility: opencode
+metadata:
+  category: quality
 ---
 # 黄金原则与垃圾回收（Golden Principles & GC）
-## 触发信号
-
-### 显式触发（explicit）
-- `harness-golden-principles`
-- `golden principles`
-- `entropy-collector`
-
-### 语义意图（intent）
-- 把人类品味编码为可机械检查规则
-- 治理 AI 生成代码的重复/不一致模式
-- 建立周期性垃圾回收与模式漂移扫描
-
-### 证据触发（artifacts）
-- `tech-debt-tracker.md`
-- `patterns`
-- `smell`
-- `review`
-
-### 避免触发（avoid_when）
-- 需要的是结构性架构约束（交给 `harness-architecture-boundaries`）
-- 项目极小、无重复模式
 
 ## 核心原则
 - **偏差存活时间趋近于零**：不一致模式出现后，几天内被下一轮扫描发现并修复，而非积累数月。
@@ -81,4 +63,4 @@ version: 0.1.0
 - `references/quality-score-template.md`：质量评分模板
 - `agents/entropy-collector.md`：entropy-collector agent 系统提示词
 ---
-最后更新: 2026-06-30
+最后更新: 2026-07-01

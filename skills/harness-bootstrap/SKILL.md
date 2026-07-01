@@ -1,40 +1,19 @@
 ---
 name: harness-bootstrap
-description: 为任意项目一键初始化 harness 结构——生成 AGENTS.md 地图、docs/ 骨架、.gitignore 规则、CI 模板。当用户说"init harness"、"Build a harness for this project"、"为这个项目初始化 harness"、"设计一套 harness 规范"时使用。
-version: 0.1.0
+description: 为任意项目一键初始化 harness 结构——生成 AGENTS.md 地图、docs/ 骨架、.gitignore 规则、CI 模板。用于"init harness"、"为这个项目初始化 harness"场景。
+when_to_use: 当用户说"init harness"、"Build a harness for this project"、"为这个项目初始化 harness"、"设计一套 harness 规范"时使用。
+disable-model-invocation: true
+compatibility: opencode
+metadata:
+  category: workflow
 ---
 # Harness Bootstrap（项目 Harness 初始化）
 
-## 触发信号
-
-### 显式触发（explicit）
-- `harness-bootstrap`
-- `init harness`
-- `bootstrap`
-- `初始化 harness`
-
-### 语义意图（intent）
-- 为项目初始化 harness 结构
-- 生成 AGENTS.md 地图、docs/ 骨架、CI 模板
-- 设计一套 harness 规范
-- 新项目第一次接入 harness 体系
-
-### 证据触发（artifacts）
-- `AGENTS.md`
-- `CLAUDE.md`
-- `docs/`
-- `.gitignore`
-- `CI`
-
-### 避免触发（avoid_when）
-- 项目已有完整 harness 结构且未要求重初始化
-- 只想了解 harness 方法论，不想实际初始化
-
 ## 核心原则
 
-- **最小可用知识骨架**:初始化不是"复制一堆模板文件",而是根据项目的实际情况生成最小可用的知识骨架——宁可少而准,不要多而空。
-- **地图不是百科全书**:AGENTS.md 只包含"去哪里找答案"的路由表,不要把所有信息塞进来。
-- **尊重现有内容**:如果项目已有 AGENTS.md 或 docs/,先读取再决定是覆盖还是增量更新,永远不要盲目覆盖。
+- **最小可用知识骨架**:根据项目实际情况生成最小可用骨架——宁可少而准,不要多而空。
+- **地图不是百科全书**:AGENTS.md 只包含路由表,不要把所有信息塞进来。
+- **尊重现有内容**:先读取再决定覆盖还是增量更新,永远不要盲目覆盖。
 
 ## 何时使用
 
@@ -140,4 +119,4 @@ build/
 - `references/docs-skeleton-template.md`: docs/ 目录骨架模板
 
 ---
-最后更新: 2026-06-30
+最后更新: 2026-07-01

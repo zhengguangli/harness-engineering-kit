@@ -1,32 +1,12 @@
 ---
 name: harness-authoring
-description: 指导如何为这套 harness 体系编写新的 skill、subagent 或扩充知识库,遵循渐进式披露与上下文预算原则对抗 context rot。当用户要给 harness 工具集添加新能力、问"怎么写一个好的 SKILL.md"或"这应该做成 skill 还是 subagent"、或发现某个 agent/skill 越写越臃肿需要瘦身时使用。
-version: 0.1.0
+description: 指导如何为这套 harness 体系编写新的 skill、subagent 或扩充知识库——遵循渐进式披露与上下文预算原则。用于"怎么写一个好的 SKILL.md"、"给 harness 添新能力"场景。
+when_to_use: 当用户要给 harness 工具集添加新能力、问"怎么写一个好的 SKILL.md"或"这应该做成 skill 还是 subagent"时使用。
+compatibility: opencode
+metadata:
+  category: meta
 ---
 # Harness Authoring（撰写新的 skill / agent）
-
-## 触发信号
-
-### 显式触发（explicit）
-- `harness-authoring`
-- `authoring`
-- `skill-scaffolder`
-
-### 语义意图（intent）
-- 给 harness 体系添加新 skill / subagent / 知识库能力
-- 问“怎么写一个好的 SKILL.md”
-- skill / agent 越写越臃肿需要瘦身
-
-### 证据触发（artifacts）
-- `SKILL.md`
-- `agents/`
-- `references/`
-- `description`
-- `name`
-
-### 避免触发（avoid_when）
-- 与 harness 体系无关的独立工具开发
-- 只是了解现有 skill 用法，不是新增能力
 
 ## 核心原则
 
@@ -136,4 +116,4 @@ version: 0.1.0
 - `references/skill-scaffolder-prompt.md`: skill-scaffolder agent 系统提示词（含跨平台工具映射表）
 
 ---
-最后更新: 2026-06-30
+最后更新: 2026-07-01

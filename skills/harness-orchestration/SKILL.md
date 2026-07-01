@@ -1,36 +1,15 @@
 ---
 name: harness-orchestration
-description: 编排 harness-engineering-kit 中 skill 的组合与工作流路由——根据用户目标选择正确的 skill 组合和执行顺序。
-version: 0.1.0
+description: 编排 harness-engineering-kit 中 skill 的组合与工作流路由——根据用户目标选择正确的 skill 组合和执行顺序。用于"我该用哪些 skill"、"规划多 skill 协作"场景。
+when_to_use: 当用户问"我该用哪些 skill"、面对多个 skill 不知如何组合、进入新项目不确定先后顺序时使用。
+compatibility: opencode
+metadata:
+  category: routing
 ---
 # 技能编排与工作流路由（Orchestration）
-## 触发信号
-
-### 显式触发（explicit）
-- `harness-orchestration`
-- `编排`
-- `路由`
-- `我该用哪些 skill`
-
-### 语义意图（intent）
-- 不知道该用哪些 skill
-- 需要规划多 skill 协作顺序
-- 进入新项目不确定先做什么
-- 目标跨多个工作流，需要组合与交接设计
-
-### 证据触发（artifacts）
-- `routing-decision-tree.md`
-- `workflow`
-- `skill`
-- `bootstrap`
-- `verification-loop`
-
-### 避免触发（avoid_when）
-- 用户已明确指定 skill
-- 任务只涉及单个 skill
 
 ## 核心原则
-- **组合比单点更重要**：选择正确的 skill 组合和执行顺序，比掌握单个 skill 更关键。单个 skill 方法论再好，用错时机或跳过前置步骤效果大打折扣。
+- **组合比单点更重要**：选择正确的 skill 组合和执行顺序，比掌握单个 skill 更关键。
 - **按需使用，不全量启动**：12 个 skill 是按需使用的工具箱，不是每次都要全走一遍。
 - **编排是路由知识**：主对话持续记住的决策逻辑，不是"委派出去等结果"的执行任务。
 ## 何时使用
@@ -86,4 +65,4 @@ version: 0.1.0
 ## 相关模板
 - `references/routing-decision-tree.md`：路由决策树与标准工作流
 ---
-最后更新: 2026-06-30
+最后更新: 2026-07-01

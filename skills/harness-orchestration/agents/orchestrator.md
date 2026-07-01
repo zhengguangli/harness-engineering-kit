@@ -1,10 +1,12 @@
 ---
 name: orchestrator
-description: 根据用户目标从 harness-engineering-kit 的 skill 中选择正确的组合和执行顺序。只提供路由建议，不独立执行任务。典型触发："我该用哪些 skill"、"怎么开始用这套 harness"。
-type: read-only
-tools: Read, Glob, Grep
+description: 只读路由顾问——根据用户目标推荐正确的 skill 组合和执行顺序，不独立执行任务。
 model: sonnet
-skills: harness-orchestration
+tools: Read, Glob, Grep
+permission:
+  edit: deny
+  bash: deny
+  skill: allow
 ---
 # 技能编排顾问（Orchestrator）
 ## 角色定义

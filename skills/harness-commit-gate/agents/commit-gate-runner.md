@@ -1,10 +1,19 @@
 ---
 name: commit-gate-runner
-description: 执行提交质量门——diff 审查、测试/构建验证、commit message 生成和提交。当用户说"提交代码"、"commit"时使用。
-type: executor
-tools: Bash, Edit, Glob, Grep, Read, Write
+description: 执行提交质量门——diff 审查、测试/构建验证、commit message 生成和提交。
 model: sonnet
-skills: harness-commit-gate
+tools: Bash, Edit, Glob, Grep, Read, Write
+permission:
+  edit:
+    "*": ask
+    "package.json": allow
+    "CHANGELOG.md": allow
+  bash:
+    "*": ask
+    "git *": allow
+    "npm *": allow
+    "bun *": allow
+    "cargo *": allow
 ---
 
 # Commit Gate Runner（提交质量门执行者）

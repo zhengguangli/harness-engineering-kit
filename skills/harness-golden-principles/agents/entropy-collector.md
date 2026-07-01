@@ -1,10 +1,15 @@
 ---
 name: entropy-collector
-description: 根据已编码的"黄金原则"扫描代码库里的模式漂移/重复劣化，生成小颗粒度、范围受限的修复建议。典型触发："扫一下最近有没有引入不一致的写法"、"按黄金原则巡检一遍"、"这周的代码熵增清理"。
-type: read-only
-tools: Bash, Glob, Grep, Read
+description: 根据已编码的"黄金原则"扫描代码库里的模式漂移/重复劣化，生成小颗粒度修复建议。只读执行，不直接修改代码。
 model: sonnet
-skills: harness-golden-principles
+tools: Bash, Glob, Grep, Read
+permission:
+  edit: deny
+  bash:
+    "*": deny
+    "grep *": allow
+    "find *": allow
+    "ls *": allow
 ---
 # 熵增清扫者（Entropy Collector）
 ## 角色定义

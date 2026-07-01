@@ -26,7 +26,7 @@ harness-engineering-kit/
     ├── harness-observability-and-browser/ # 浏览器 + 可观测性反馈传感器
     ├── harness-orchestration/           # 技能编排与工作流路由
     ├── harness-project-intake/          # 项目接入分析与项目卡片
-    ├── harness-prompt-optimizer/          # 提示词优化与结构化 Prompt 工程
+    ├── harness-prompt-optimizer/        # 提示词优化与结构化 Prompt 工程
     ├── harness-repo-map/                # 入口文件地图 + docs/ 系统记录
     └── harness-verification-loop/       # Ralph Wiggum 自验证循环
 ```
@@ -39,14 +39,28 @@ harness-engineering-kit/
 每个 skill 内部结构:
 ```
 skills/<name>/
-├── SKILL.md                             # 方法论正文
+├── SKILL.md                             # 方法论正文（含跨平台 frontmatter）
 ├── agents/
-│   ├── <agent-name>.md                  # 配对 agent 的系统定义
-│   └── openai.yaml                      # Codex UI 元数据（Claude Code 忽略）
+│   ├── <agent-name>.md                  # 配对 agent 的系统定义（Claude Code + OpenCode 格式）
+│   └── openai.yaml                      # Codex UI 元数据
 └── references/
     ├── *-template.md                    # 模板文件（生成到目标项目的 docs/）
     └── *-prompt.md                      # Agent 系统提示词
 ```
+
+### 跨平台兼容性
+
+SKILL.md 的 frontmatter 设计为跨平台兼容——各平台只读自己认识的字段，忽略未知字段：
+
+| 字段 | Claude Code | OpenCode | Codex |
+|---|---|---|---|
+| `name` | ✅ | ✅ (必须) | ✅ |
+| `description` | ✅ | ✅ (必须) | ✅ |
+| `when_to_use` | ✅ | ❌ 忽略 | ❌ 忽略 |
+| `disable-model-invocation` | ✅ | ❌ 忽略 | ❌ 忽略 |
+| `allowed-tools` | ✅ | ❌ 忽略 | ❌ 忽略 |
+| `compatibility` | ❌ 忽略 | ✅ | ❌ 忽略 |
+| `metadata` | ❌ 忽略 | ✅ | ❌ 忽略 |
 
 ## Skill 与 Agent 的使用方式
 
@@ -126,6 +140,24 @@ cp skills/*/agents/*.md  ~/.claude/agents/
 ```
 
 项目级与用户级同名时,项目级优先。
+
+### OpenCode
+
+OpenCode 从 `.opencode/skills/`、`.claude/skills/`、`.agents/skills/` 三个位置发现 skills。
+
+**项目级(推荐)**
+
+```bash
+cp -r skills/*  <你的项目>/.opencode/skills/
+```
+
+**用户级(跨项目)**
+
+```bash
+cp -r skills/*  ~/.config/opencode/skills/
+```
+
+OpenCode 也兼容 `.claude/skills/` 路径,所以如果项目已为 Claude Code 安装过,无需重复复制。
 
 ### Codex
 
@@ -207,9 +239,9 @@ nacos-cli skill-sync resolve <skill-name> --use-agent codex --non-interactive
 > local 模式下 symlink 自动保持同步,大部分时候只需 `status` 看一眼。Nacos 模式下 daemon 会轮询远端变更。
 
 
-## Skill Trigger QA（触发词质量校验）
+## Skill Frontmatter QA（frontmatter 质量校验）
 
-每个 `SKILL.md` 都应包含统一的 `## 触发信号` 节（显式触发、语义意图、证据触发、避免触发）。仓库提供轻量校验脚本，用于防止格式漂移和关键词缺失。
+每个 `SKILL.md` 的 frontmatter 应包含 `description`、`when_to_use`、`compatibility` 字段，不应包含已废弃的 `version` 字段或正文中的 `## 触发信号` 节。仓库提供轻量校验脚本，用于防止格式漂移。
 
 ### 本地运行
 
@@ -221,9 +253,10 @@ make triggers-check
 
 ### 校验规则
 
-- 每个 skill 必须有 `## 触发信号` 节
-- 必须包含四类触发子节：显式触发 / 语义意图 / 证据触发 / 避免触发
-- 条目下限：显式触发 ≥ 3、语义意图 ≥ 3、避免触发 ≥ 2
+- 每个 skill 必须有 `description` 字段（≥ 20 字符）
+- 每个 skill 必须有 `when_to_use` 字段
+- 每个 skill 必须有 `compatibility` 字段
+- 不应包含 `version` 字段或 `## 触发信号` 正文章节
 
 > 当前为 warn-only 本地门禁，不阻断开发；后续可按需要升级为 CI gate。
 ### 本地全量检查（推荐）

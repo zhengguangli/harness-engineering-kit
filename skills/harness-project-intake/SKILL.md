@@ -1,34 +1,15 @@
 ---
 name: harness-project-intake
-description: 一键分析项目并产出结构化项目卡片——技术栈、架构骨架、关键模块、配置要点、近期活跃度。当用户说"分析当前项目"、"分析一下README"、"项目概览"、"这个项目是做什么的"时使用。
-version: 0.1.0
+description: 一键分析项目并产出结构化项目卡片——技术栈、架构骨架、关键模块、配置要点、近期活跃度。用于"分析当前项目"、"项目概览"、"这个项目是做什么的"场景。
+when_to_use: 当用户说"分析当前项目"、"分析一下README"、"项目概览"、"这个项目是做什么的"时使用。
+context: fork
+agent: Explore
+compatibility: opencode
+metadata:
+  category: analysis
 ---
 
 # Project Intake（项目接入分析）
-
-## 触发信号
-
-### 显式触发（explicit）
-- `harness-project-intake`
-- `project intake`
-- `project-card`
-
-### 语义意图（intent）
-- 分析当前项目并产出项目卡片
-- 分析 README / 项目概览
-- 首次进入新目录快速了解项目
-
-### 证据触发（artifacts）
-- `README.md`
-- `package.json`
-- `Cargo.toml`
-- `go.mod`
-- `pyproject.toml`
-- `git log`
-
-### 避免触发（avoid_when）
-- 只需要直接查看某个文件内容
-- 已在项目中工作过且不需要重新分析
 
 ## 核心原则
 

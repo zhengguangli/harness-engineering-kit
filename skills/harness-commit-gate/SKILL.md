@@ -1,37 +1,14 @@
 ---
 name: harness-commit-gate
-description: 提交代码前自动执行质量检查——diff 审查、测试/构建/lint 验证、commit message 格式化,通过才允许 commit。当用户说"提交代码"、"commit"、"git commit"、"代码提交"、"修复，提交代码"时使用。
-version: 0.1.0
+description: 提交代码前自动执行质量检查——diff 审查、测试/构建/lint 验证、commit message 格式化。用于"提交代码"、"commit"、"git commit"场景。
+when_to_use: 当用户说"提交代码"、"commit"、"git commit"、"代码提交"、"修复，提交代码"时使用。
+disable-model-invocation: true
+allowed-tools: Bash(git *) Bash(npm *) Bash(bun *) Bash(cargo *)
+compatibility: opencode
+metadata:
+  category: workflow
 ---
 # Commit Gate（提交质量门）
-
-## 触发信号
-
-### 显式触发（explicit）
-- `harness-commit-gate`
-- `提交代码`
-- `commit`
-- `git commit`
-
-### 语义意图（intent）
-- 提交代码并执行质量门
-- 先修问题再提交（修复，提交代码）
-- 格式化 commit message 并本地提交
-- 用户要求 agent 处理 commit 流程
-
-### 证据触发（artifacts）
-- `git status`
-- `git diff --staged`
-- `git add`
-- `git commit`
-- `test`
-- `build`
-- `lint`
-
-### 避免触发（avoid_when）
-- 已在 `verification-loop` 完成完整自检且已放行，不再重复门检
-- 工作区无可提交变更（无 staged 文件）
-- 任务是纯探索/分析，不产出可提交代码
 
 ## 核心原则
 
@@ -41,16 +18,14 @@ version: 0.1.0
 
 ## 何时使用
 
-- 用户说"提交代码"、"代码提交"、"commit"
-- 用户说"git commit"并期望 agent 自动处理
-- 用户说"修复，提交代码"（先修再提交的组合指令）
-- 代码变更完成后,需要进入提交流程
+- 用户说"提交代码"、"commit"、"git commit"
+- 用户说"修复，提交代码"（先修再提交）
 
 ## 何时不该用
 
-- 已经在 `verification-loop` 中完成了完整的"实现→自检→测试→评审→修复"循环且所有检查通过——gate 的检查已被循环覆盖,不要重复跑
-- 工作区没有任何可提交的变更(无 staged 文件)——没有东西需要门检
-- 任务是纯调研/分析,不产出代码变更——不需要提交质量门
+- 已在 `verification-loop` 完成全部检查——不要重复跑
+- 无 staged 文件——没有东西需要门检
+- 纯调研/分析，不产出代码变更
 
 ## 方法论
 
@@ -104,11 +79,9 @@ version: 0.1.0
 
 ## 常见陷阱
 
-- **硬编码检查命令**:不同项目使用不同的工具链,不要假设所有项目都用 npm。
-- **静默跳过失败**:测试失败时假装通过,导致破坏构建的代码进入版本历史。
-- **Commit Message 质量差**:写"fix bug"、"update"、"changes"这种无信息量的 message。
-- **忽略 scope creep**:diff 审查时没有检查是否有超出本次任务范围的变更。
-- **忘记检查敏感信息**:没有扫描 API key、密码、token 等敏感信息泄露。
+- **硬编码检查命令**:不同项目用不同工具链,先探测再运行。
+- **静默跳过失败**:测试/构建失败必须明确报告。
+- **Commit Message 质量差**:不用"fix bug"、"update"等无信息量词汇。
 
 ## 配合的 agent
 
@@ -120,4 +93,4 @@ version: 0.1.0
 - `references/commit-message-guide.md`: Commit Message 格式指南
 
 ---
-最后更新: 2026-06-30
+最后更新: 2026-07-01

@@ -10,23 +10,34 @@ for skill_md in "$skills_dir"/harness-*/SKILL.md; do
   skill_name="$(basename "$skill_dir")"
   missing=()
 
-  if ! rg -q "^## 触发信号$" "$skill_md"; then
-    missing+=("missing_section:## 触发信号")
+  # Check frontmatter fields
+  if ! awk '/^---$/{c++} c==1' "$skill_md" | grep -q "^description:"; then
+    missing+=("missing_field:description")
   fi
 
-  for block in "显式触发（explicit）" "语义意图（intent）" "证据触发（artifacts）" "避免触发（avoid_when）"; do
-    if ! rg -q "^### $block$" "$skill_md"; then
-      missing+=("missing_block:$block")
-    fi
-  done
+  if ! awk '/^---$/{c++} c==1' "$skill_md" | grep -q "^when_to_use:"; then
+    missing+=("missing_field:when_to_use")
+  fi
 
-  explicit_count=$(awk "/^### 显式触发（explicit）\$/{f=1;next} /^### /{f=0} f && /^- /{c++} END{print c+0}" "$skill_md")
-  intent_count=$(awk "/^### 语义意图（intent）\$/{f=1;next} /^### /{f=0} f && /^- /{c++} END{print c+0}" "$skill_md")
-  avoid_count=$(awk "/^### 避免触发（avoid_when）\$/{f=1;next} /^###{1,2} /{f=0} f && /^- /{c++} END{print c+0}" "$skill_md")
+  if ! awk '/^---$/{c++} c==1' "$skill_md" | grep -q "^compatibility:"; then
+    missing+=("missing_field:compatibility")
+  fi
 
-  [[ "$explicit_count" -lt 3 ]] && missing+=("explicit_count=$explicit_count<3")
-  [[ "$intent_count" -lt 3 ]] && missing+=("intent_count=$intent_count<3")
-  [[ "$avoid_count" -lt 2 ]] && missing+=("avoid_count=$avoid_count<2")
+  # Check description length (should be > 20 chars)
+  desc_len=$(awk '/^---$/{c++} c==1 && /^description:/{sub(/^description:[[:space:]]*/,""); print length; exit}' "$skill_md")
+  if [[ "${desc_len:-0}" -lt 20 ]]; then
+    missing+=("description_too_short:${desc_len:-0}")
+  fi
+
+  # Verify no legacy 触发信号 section remains
+  if rg -q "^## 触发信号$" "$skill_md"; then
+    missing+=("legacy_section:## 触发信号 still present")
+  fi
+
+  # Verify no version field
+  if awk '/^---$/{c++} c==1' "$skill_md" | grep -q "^version:"; then
+    missing+=("legacy_field:version still present")
+  fi
 
   if [[ ${#missing[@]} -gt 0 ]]; then
     fail=1
@@ -36,21 +47,19 @@ for skill_md in "$skills_dir"/harness-*/SKILL.md; do
   fi
 done
 
-if [[ "$fail" -ne 0 ]]; then
-  echo "\nValidation finished with warnings."
-  exit 1
-fi
-
-echo "\n--- Cross-reference check ---"
+echo ""
+echo "--- Cross-reference check ---"
 cross_ref_fail=0
 cross_ref_total=0
 for skill_md in "$skills_dir"/harness-*/SKILL.md; do
   skill_name="$(basename "$(dirname "$skill_md")")"
-  refs=$(awk '/^### 避免触发（avoid_when）$/{f=1;next} /^### /{f=0} f' "$skill_md" | { grep -oE 'harness-[a-z-]+' || true; } | sort -u)
+  # Only check references in "配合的 agent" section (actual skill cross-refs)
+  refs=$(awk '/^## 配合的 agent$/{found=1;next} found && /^## /{exit} found' "$skill_md" | { grep -oE 'harness-[a-z]+-[a-z-]+' || true; } | sort -u)
   for r in $refs; do
+    if [[ "$r" == "$skill_name" ]]; then continue; fi
     cross_ref_total=$((cross_ref_total + 1))
     if [[ ! -d "$skills_dir/$r" ]]; then
-      echo "[FAIL] $skill_name references non-existent skill: $r"
+      echo "[WARN] $skill_name references non-existent skill: $r"
       cross_ref_fail=1
     fi
   done
@@ -59,12 +68,14 @@ if [[ "$cross_ref_fail" -ne 0 ]]; then
   fail=1
   echo "Cross-reference check failed."
 else
-  echo "[OK] 12 skills cross-referenced ($cross_ref_total refs valid)"
+  echo "[OK] $cross_ref_total cross-references validated"
 fi
 
 if [[ "$fail" -ne 0 ]]; then
-  echo "\nValidation finished with failures."
+  echo ""
+  echo "Validation finished with failures."
   exit 1
 fi
 
-echo "\nAll skill trigger sections validated."
+echo ""
+echo "All skill frontmatter validated."

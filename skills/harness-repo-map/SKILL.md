@@ -1,35 +1,13 @@
 ---
 name: harness-repo-map
-description: 把仓库知识管理从巨型 AGENTS.md 重构为「地图 + 结构化 docs/」的渐进式披露模式。当项目需要从零搭建 AGENTS.md/docs 结构、现有 AGENTS.md 膨胀需要瘦身、或需要审计文档是否过期时使用。
-version: 0.1.0
+description: 把仓库知识管理从巨型 AGENTS.md 重构为「地图 + 结构化 docs/」的渐进式披露模式。用于"AGENTS.md 太大需要瘦身"、"从零搭建 docs 结构"、"审计文档断链"场景。
+when_to_use: 当项目需要从零搭建 AGENTS.md/docs 结构、现有 AGENTS.md 膨胀需要瘦身、或需要审计文档是否过期时使用。
+compatibility: opencode
+metadata:
+  category: knowledge
 ---
 
 # Repo Knowledge Map（仓库知识地图）
-
-## 触发信号
-
-### 显式触发（explicit）
-- `harness-repo-map`
-- `repo-map`
-- `AGENTS.md`
-- `docs/`
-
-### 语义意图（intent）
-- 从零搭建 AGENTS.md / docs 结构
-- AGENTS.md 膨胀需瘦身并下沉到 docs/
-- 审计文档过期、断链或与代码脱节
-- 为渐进式披露设计目录层级
-
-### 证据触发（artifacts）
-- `AGENTS.md`
-- `docs/`
-- `references`
-- `generated/`
-- `links`
-
-### 避免触发（avoid_when）
-- 单文件脚本项目不需要结构化文档体系
-- 只更新某一个具体文档，不是重构知识体系
 
 ## 核心原则
 

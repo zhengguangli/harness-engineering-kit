@@ -1,32 +1,12 @@
 ---
 name: harness-exec-plans
-description: 把跨多个上下文窗口的复杂任务落盘为版本化的执行计划(exec-plan)工件——包含目标、步骤、决策记录与验收标准。
-version: 0.1.0
+description: 把跨多个上下文窗口的复杂任务落盘为版本化的执行计划——包含目标、步骤、决策记录与验收标准。用于"先做个计划"、"任务比较大需要落盘"场景。
+when_to_use: 当用户说"先做个计划"、"改动比较大"、"任务需要落盘"、"跨多个会话"、"跨多窗口接力"时使用。
+compatibility: opencode
+metadata:
+  category: planning
 ---
 # 执行计划（Execution Plans）
-## 触发信号
-
-### 显式触发（explicit）
-- `harness-exec-plans`
-- `exec-plan`
-- `执行计划`
-- `落盘计划`
-
-### 语义意图（intent）
-- 任务复杂需要落盘执行计划
-- 跨多窗口 / 多次会话接力
-- 先做个计划再动手
-- 需要记录“上一轮试过什么、为什么放弃”
-
-### 证据触发（artifacts）
-- `docs/exec-plans/`
-- `plan-architect`
-- `acceptance criteria`
-- `verification-loop`
-
-### 避免触发（avoid_when）
-- 单次会话可完成的小改动
-- 纯文档/配置微调
 
 ## 核心原则
 - **计划是一等公民工件**：和代码一样被版本控制、检查、归档，不是写完就丢的草稿。跨上下文窗口时，唯一能在窗口间存活的是文件系统。

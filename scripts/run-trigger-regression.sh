@@ -18,18 +18,18 @@ if [[ ! -f "$cases_file" ]]; then
 fi
 
 declare -A SKILL_KW
-SKILL_KW[harness-architecture-boundaries]="架构边界 分层架构 循环依赖 层间越界 架构腐化 lint 规则"
-SKILL_KW[harness-authoring]="怎么写一个好的 SKILL.md 给这套 harness 工具集本身添加新能力 瘦身"
-SKILL_KW[harness-bootstrap]="初始化 harness 生成 AGENTS.md docs/ 骨架 CI 模板"
-SKILL_KW[harness-commit-gate]="提交代码 代码提交 commit git commit 先修问题再提交"
-SKILL_KW[harness-exec-plans]="落盘执行计划 先做个计划 跨多窗口 接力 上一轮试过什么"
-SKILL_KW[harness-golden-principles]="黄金原则 周期性扫描 模式漂移 重复模式"
-SKILL_KW[harness-observability-and-browser]="UI bug 用户旅程 P99 截图 日志 浏览器"
-SKILL_KW[harness-orchestration]="我该用哪些 skill 多 skill 协作顺序 进入新项目，不确定先做什么后做什么 路由"
-SKILL_KW[harness-project-intake]="分析当前项目 项目概览 README 摘要 项目卡片"
-SKILL_KW[harness-prompt-optimizer]="优化这个 prompt system prompt prompt 效果不好"
-SKILL_KW[harness-repo-map]="AGENTS.md 瘦身 断链 过期 渐进式披露"
-SKILL_KW[harness-verification-loop]="可合并 自验证循环 实现→自检→测试→评审→修复 迭代"
+SKILL_KW[harness-architecture-boundaries]="分层架构 循环依赖 层间越界 lint 规则 依赖方向 架构腐化"
+SKILL_KW[harness-authoring]="怎么写一个好的 SKILL.md 给 harness 添新能力 skill 还是 subagent 瘦身"
+SKILL_KW[harness-bootstrap]="init harness 为这个项目初始化 harness AGENTS.md docs/ 骨架 CI 模板"
+SKILL_KW[harness-commit-gate]="提交代码 commit git commit 修复，提交代码 代码提交"
+SKILL_KW[harness-exec-plans]="先做个计划 改动比较大 落盘 跨多个会话 跨多窗口 接力 上一轮试过什么"
+SKILL_KW[harness-golden-principles]="周期性扫描 模式漂移 黄金原则 品味编码 重复模式"
+SKILL_KW[harness-observability-and-browser]="复现 UI bug P99 截图 浏览器 验证"
+SKILL_KW[harness-orchestration]="我该用哪些 skill 多 skill 协作 不确定先后顺序 不确定先做什么后做什么 路由"
+SKILL_KW[harness-project-intake]="分析当前项目 项目概览 README 这个项目是做什么的 项目卡片"
+SKILL_KW[harness-prompt-optimizer]="优化这个 prompt prompt 效果不好 system prompt"
+SKILL_KW[harness-repo-map]="AGENTS.md 瘦身 断链 过期 从零搭建 docs 渐进式披露"
+SKILL_KW[harness-verification-loop]="可合并 自验证循环 测试失败 循环迭代 实现→自检→测试→评审→修复 迭代"
 
 match_count() {
   local skill="$1" text="$2" count=0

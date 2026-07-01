@@ -1,37 +1,14 @@
 ---
 name: harness-verification-loop
-description: 实施"自验证循环"(Ralph Wiggum Loop)——agent 实现代码变更后自己审查、本地跑测试/构建/lint、必要时请求额外的 agent 或人工评审,并在反馈里持续迭代,直到所有评审者满意才算完成。当用户要求把代码改动自主推进到"可合并"状态、可验证的代码任务反复失败需要循环迭代、或需要建立提交前自检流程(实现→自检→测试→评审→修复)时使用。
-version: 0.1.0
+description: 实施"自验证循环"——agent 实现代码变更后自己审查、跑测试/构建/lint、请求评审并在反馈中迭代,直到可合并。用于"把改动推进到可合并状态"、"自动修复测试失败"、"建立实现→自检→测试→评审→修复循环"场景。
+when_to_use: 当用户要求把代码改动推进到"可合并"状态、可验证的代码任务反复失败需要循环迭代、或需要建立提交前自检流程时使用。
+disable-model-invocation: true
+compatibility: opencode
+metadata:
+  category: workflow
 ---
 
 # Verification Loop（自验证循环）
-
-## 触发信号
-
-### 显式触发（explicit）
-- `harness-verification-loop`
-- `verification loop`
-- `自验证循环`
-- `Ralph Wiggum Loop`
-
-### 语义意图（intent）
-- 把改动推进到可合并状态
-- 建立实现→自检→测试→评审→修复循环
-- 任务反复失败，需要持续迭代
-- 需要跨窗口接力执行并在反馈中收敛
-
-### 证据触发（artifacts）
-- `exec-plan`
-- `test`
-- `build`
-- `lint`
-- `PR`
-- `review`
-
-### 避免触发（avoid_when）
-- 单行 typo / 配置微调，直接走 `commit-gate`
-- 项目无测试/构建配置，循环缺乏反馈信号
-- 任务只是头脑风暴或纯探索，不产出可验证变更
 
 ## 核心原则
 

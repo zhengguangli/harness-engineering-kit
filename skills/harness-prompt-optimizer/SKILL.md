@@ -1,33 +1,13 @@
 ---
 name: harness-prompt-optimizer
-description: 将自然语言描述转化为高质量、结构化的 LLM prompt——包含角色定义、变量字典、执行链、约束、输出 schema 和 few-shot 示例。当用户说"帮我写/优化一个 prompt"、"这个 prompt 效果不好"、"我需要一个 system prompt"、或在构建复杂 agent 需要高质量系统提示词时使用。
-version: 0.1.1
+description: 将自然语言描述转化为高质量、结构化的 LLM prompt——包含角色定义、变量字典、执行链、约束、输出 schema 和 few-shot 示例。用于"帮我写/优化一个 prompt"、"这个 prompt 效果不好"场景。
+when_to_use: 当用户说"帮我写/优化一个 prompt"、"这个 prompt 效果不好"、"我需要一个 system prompt"时使用。
+compatibility: opencode
+metadata:
+  category: prompt-engineering
 ---
 
 # Prompt Optimizer（提示词优化）
-
-## 触发信号
-
-### 显式触发（explicit）
-- `harness-prompt-optimizer`
-- `prompt-optimizer`
-- `system prompt`
-
-### 语义意图（intent）
-- 写或优化 prompt / system prompt
-- prompt 输出不稳定、易幻觉或缺约束
-- 把粗糙需求转化为结构化 prompt
-
-### 证据触发（artifacts）
-- `prompt`
-- `system prompt`
-- `examples`
-- `schema`
-- `constraints`
-
-### 避免触发（avoid_when）
-- 需要的是代码实现而不是 prompt 工程
-- 任务太简单，不需要六区块结构
 
 ## 核心原则
 
@@ -39,14 +19,9 @@ LLM 的输出质量上限由 prompt 的结构质量决定。一份好的 prompt 
 
 ## 何时使用
 
-- 用户说"帮我写一个 prompt"、"优化这个 prompt"、"这个 prompt 效果不好"等典型 prompt 工程话术。
-- 用户在构建 agent 或自动化流程，需要高质量的 system prompt。
-- 用户给出粗糙需求描述，希望转化为可直接使用的结构化 prompt。
-- 用户的 prompt 缺乏角色定义、输出格式不稳定、幻觉频繁或行为不一致。
-- 用户贴了一段 prompt 但未说明意图 → 主动询问是否需要优化。
-- 用户的 prompt 存在明显问题（缺角色定义、无输出格式、无约束）→ 主动指出并建议优化。
-
-隐式触发模式（句式识别 / 关键词触发）见 `references/implicit-trigger-patterns.md`。
+- 用户说"帮我写一个 prompt"、"优化这个 prompt"、"这个 prompt 效果不好"
+- 用户在构建 agent 或自动化流程，需要高质量的 system prompt
+- 用户给出粗糙需求描述，希望转化为可直接使用的结构化 prompt
 
 ## 何时不该用
 
