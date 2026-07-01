@@ -1,4 +1,4 @@
-.PHONY: triggers-check triggers-regression keyword-consistency triggers-report triggers-all
+.PHONY: triggers-check triggers-regression keyword-consistency triggers-report prompts-sync-check triggers-all
 
 triggers-check:
 	./scripts/validate-skill-triggers.sh
@@ -12,4 +12,7 @@ keyword-consistency:
 triggers-report:
 	./scripts/run-trigger-regression.sh --json
 
-triggers-all: triggers-check keyword-consistency triggers-regression triggers-report
+prompts-sync-check:
+	./scripts/validate-agent-prompt-sync.sh
+
+triggers-all: triggers-check keyword-consistency triggers-regression prompts-sync-check
