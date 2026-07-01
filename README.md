@@ -44,8 +44,7 @@ skills/<name>/
 │   ├── <agent-name>.md                  # Canonical agent 系统提示词（Claude Code + OpenCode 格式）
 │   └── openai.yaml                      # Codex UI 元数据 + 系统提示词（与 .md 同步）
 └── references/
-    ├── *-template.md                    # 模板文件（生成到目标项目的 docs/）
-    └── *-prompt.md                      # Agent 提示词存根（指向 canonical 版本）
+    └── *-template.md                    # 模板文件（生成到目标项目的 docs/）
 ```
 
 ### 跨平台兼容性

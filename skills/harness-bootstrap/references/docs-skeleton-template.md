@@ -1,5 +1,5 @@
 <!-- docs/ 目录骨架模板 — 由 harness-bootstrapper agent 使用 -->
-<!-- 注意: ARCHITECTURE.md 和 QUALITY_SCORE.md 的 canonical 模板分别位于 harness-architecture-boundaries 和 harness-golden-principles。本文件仅引用存根，避免双源维护。 -->
+<!-- 注意: ARCHITECTURE.md 和 QUALITY_SCORE.md 的 canonical 模板分别位于 harness-architecture-boundaries 和 harness-golden-principles。 -->
 
 ## 需要创建的文件列表
 

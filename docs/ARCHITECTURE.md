@@ -44,7 +44,7 @@ skills/<name>/
 ├── agents/           # 配对 agent 的系统定义
 │   ├── <name>.md     # canonical 版本
 │   └── openai.yaml   # Codex UI 元数据
-└── references/       # 模板文件 + 提示词存根
+└── references/       # 模板文件
 ```
 
 ## 支撑基础设施的依赖方向
@@ -62,7 +62,7 @@ tests/   → skills/    （回归用例验证 skill 的触发逻辑）
 ## 数据边界规则
 
 - 每个 `SKILL.md` 的 frontmatter 是 skill 与平台之间的契约——平台只读自己认识的字段，忽略未知字段。
-- Agent 提示词的 canonical 版本在 `agents/<name>.md`，references/ 里的存根必须指向 canonical 文件。
+- Agent 提示词的 canonical 版本在 `agents/<name>.md`。
 
 ## 机械强制现状
 

@@ -87,8 +87,7 @@ metadata:
 ### 8. Agent prompt 文件的 canonical 约定
 
 - **`agents/<name>.md`** 是 canonical 版本——skill 的 "配合的 agent" 章节应引用此路径。
-- **`references/<name>-prompt.md`** 是面向下游工具链的格式化副本,不是独立维护的版本。
-- 修改 agent prompt 时,**只改 `agents/<name>.md`**,然后同步到 `references/` 副本。不要出现两处内容不一致的情况。
+- 修改 agent prompt 时,**只改 `agents/<name>.md`**。
 
 ## 关键要点
 
@@ -113,7 +112,6 @@ metadata:
 
 - `references/scaffold-templates.md`: 新 skill + agent 的脚手架模板（SKILL.md + Claude Code agent）
 - `references/agent-template-codex.yaml`: 新 agent 的 Codex 模板
-- `references/skill-scaffolder-prompt.md`: skill-scaffolder agent 系统提示词（含跨平台工具映射表）
 
 ---
 最后更新: 2026-07-01

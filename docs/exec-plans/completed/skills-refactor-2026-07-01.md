@@ -26,7 +26,7 @@
 - 12 个 SKILL.md 的内容质量优化（结构对齐、冗余精简）
 - 12 个 agents/*.md 的提示词重构（六区块结构化）
 - when_to_use / description 触发词优化
-- references/ 存根文件的一致性检查
+- references/ 文件的一致性检查
 
 **明确不做（非目标）:**
 - 不新增 skill 或 agent
