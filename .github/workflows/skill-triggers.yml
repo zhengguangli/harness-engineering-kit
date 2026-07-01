@@ -20,5 +20,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate skill trigger sections
-        run: ./scripts/validate-skill-triggers.sh
+      - name: Run full trigger validation
+        run: make triggers-all
