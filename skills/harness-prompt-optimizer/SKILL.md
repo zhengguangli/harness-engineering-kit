@@ -1,7 +1,10 @@
 ---
 name: harness-prompt-optimizer
-description: 将自然语言描述转化为高质量、结构化的 LLM prompt——包含角色定义、变量字典、执行链、约束、输出 schema 和 few-shot 示例。用于"帮我写/优化一个 prompt"、"这个 prompt 效果不好"场景。
-when_to_use: 当用户说"帮我写/优化一个 prompt"、"这个 prompt 效果不好"、"我需要一个 system prompt"时使用。
+description: 将自然语言需求或粗糙 prompt 转化为结构化、可直接使用的 LLM prompt——包含角色定义、变量字典、执行链、约束、输出 schema 和 few-shot 示例。
+when_to_use: |
+  显式触发：用户说"帮我写/优化一个 prompt"、"这个 prompt 效果不好"、"我需要一个 system prompt"。
+  隐式触发：用户描述了需要 AI 反复执行的复杂任务（但没有结构化）、贴了一段 prompt 让你"看看"、问"怎么让 AI 做好 XXX"、在构建 agent/自动化流程需要 system prompt、用户的 prompt 存在明显问题（缺角色定义、无输出格式、无约束）。
+  不触发：用户要代码实现、单次工具调用、闲聊头脑风暴、一句话能说清的简单任务。
 compatibility: opencode
 metadata:
   category: prompt-engineering
@@ -19,25 +22,38 @@ LLM 的输出质量上限由 prompt 的结构质量决定。一份好的 prompt 
 
 ## 何时使用
 
-- 用户说"帮我写一个 prompt"、"优化这个 prompt"、"这个 prompt 效果不好"
-- 用户在构建 agent 或自动化流程，需要高质量的 system prompt
-- 用户给出粗糙需求描述，希望转化为可直接使用的结构化 prompt
+触发场景见 frontmatter `when_to_use`。以下是隐式触发的具体判断规则：
+
+- 用户贴了一段 prompt 但没说意图 → 询问："这段 prompt 是否需要优化？"
+- 用户描述了需要 AI 反复执行的复杂任务但没有结构化 → 建议转化为结构化 prompt
+- 用户的 prompt 存在明显问题（缺角色定义、无输出格式、无约束）→ 主动指出并建议优化
+- 用户问"怎么让 AI 做好 XXX"、"这个 agent 行为不对" → 评估是否需要优化 prompt
+
+判断 XXX 是否为 prompt/指令类内容（当用户说"优化这个 XXX"时）：
+
+| XXX 的特征 | 判断 | 处理 |
+|---|---|---|
+| 一段指令/建议/规范文本 | ✅ prompt 类 | 进入优化流程 |
+| 一个名词（如"重构建议"） | ❓ 需确认 | 询问用户具体指什么 |
+| 代码/文件/函数 | ❌ 代码类 | 正常处理，不触发 |
+| 文档/README/说明 | ❌ 文档类 | 正常处理，不触发 |
 
 ## 何时不该用
 
-- 用户要的是代码实现，不是 prompt 工程（编程任务交给 `harness-verification-loop` 或 `harness-bootstrap`）。
+- 用户要的是代码实现，不是 prompt 工程（交给 `harness-verification-loop` 或 `harness-bootstrap`）。
 - 任务可由单次 API 调用或工具使用完成，不需要结构化 prompt。
 - 用户在闲聊或做头脑风暴，无结构化输出需求。
 - 任务一句话就能说清，硬塞六区块反而过度工程化。
 
 ## 方法论
 
-### 步骤 0：触发模式判断
+### 步骤 0：触发处理
 
-- **主动模式**：用户明确要求优化 → 直接进入步骤 1
-- **被动模式**：用户描述需求或贴 prompt → 先询问是否需要优化，确认后进入步骤 1
-- **句式触发**：用户说"优化/改进/看看这个 XXX" → 按判断规则确认后进入步骤 1
-- **关键词触发**：用户消息包含动作词 + 对象词组合 → 询问确认后进入步骤 1
+触发判断依据见 frontmatter `when_to_use` 和上方"何时使用"段。触发后的处理方式：
+
+- **显式触发**（用户明确要求优化）→ 直接进入步骤 1
+- **隐式触发**（用户描述需求/贴 prompt 但未明确要求）→ 先询问是否需要优化，确认后进入步骤 1
+- **不确定** → 用自己的话复述理解，询问确认
 
 ### 步骤 1：分析意图与评估现有 prompt
 
@@ -94,7 +110,7 @@ LLM 的输出质量上限由 prompt 的结构质量决定。一份好的 prompt 
 
 ## 配合的 agent
 
-- `prompt-optimizer` agent：执行型 agent，负责分析需求并生成结构化 prompt。
+- `agents/prompt-optimizer.md`：执行型 agent，负责分析需求并生成结构化 prompt（canonical 版本）。
 
 ## 相关模板
 
