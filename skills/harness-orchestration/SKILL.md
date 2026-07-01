@@ -1,7 +1,7 @@
 ---
 name: harness-orchestration
 description: 编排 harness-engineering-kit 中 skill 的组合与工作流路由——根据用户目标选择正确的 skill 组合和执行顺序。用于"我该用哪些 skill"、"规划多 skill 协作"场景。
-when_to_use: 当用户问"我该用哪些 skill"、面对多个 skill 不知如何组合、进入新项目不确定先后顺序时使用。
+when_to_use: 当用户问"我该用哪些 skill"、"怎么组合这些 skill"、"工作流怎么走"、进入新项目不确定先后顺序时使用。
 compatibility: opencode
 metadata:
   category: routing
@@ -30,7 +30,7 @@ metadata:
 | 4 | 扩展 harness 体系 | `authoring` → `bootstrap`(可选) → `repo-map` | — |
 | 5 | 优化 prompt 质量 | `prompt-optimizer`（独立使用） | — |
 
-详细步骤和决策树见 `references/routing-decision-tree.md`。
+三层路由判断和详细交接点表见 `references/routing-decision-tree.md`。
 ## 方法论
 ### 交接点（上游产出 → 下游消费）
 

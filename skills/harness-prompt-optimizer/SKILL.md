@@ -53,53 +53,9 @@ LLM 的输出质量上限由 prompt 的结构质量决定。一份好的 prompt 
 
 ### 步骤 2：设计架构与填充内容
 
-按六个区块模板设计 prompt 结构。先写 Role 和 Constraints（对行为影响最大），再写 Execution Chain，最后写 Examples。每个区块的填写要点（好/坏例子、tie-breaker 规则、必备约束类型等）见 `references/six-block-design-notes.md`。
+按六区块模板（`references/prompt-architecture-template.md`）设计 prompt 结构。先写 Role 和 Constraints（对行为影响最大），再写 Execution Chain，最后写 Examples。每个区块的填写要点、好/坏例子、tie-breaker 规则、必备约束类型见 `references/six-block-design-notes.md`。
 
-**区块 1：Role（角色定义）**
-
-```
-You are a **[Job Title]** with expertise in [Domain]. You [核心行为特征].
-```
-
-- 好的例子："You are a **Senior Backend Engineer** specializing in Node.js microservices. You prioritize reliability and observability over clever abstractions."
-
-**区块 2：Background & Context（背景与上下文）**
-
-```
-You are part of [System/Pipeline]. Your input is [Data Type]. Your output is consumed by [Downstream Consumer].
-```
-
-**区块 3：Variables Dictionary（变量字典）**
-
-```
-- `{{variable_name}}`: Description. (Type, Required/Optional)
-```
-
-**区块 4：Execution Chain（执行链）**
-
-```
-1. **Step Name**: What to do and why.
-2. **Step Name**: What to do and why.
-```
-
-**区块 5：Constraints（约束）**
-
-```
-- **[Constraint Name]**: [具体规则]. [违反时的行为].
-```
-
-**区块 6：Output Schema + Controlled Examples**
-
-```json
-{
-  "field": "<type|null>",
-  "field2": "<enum_value_1|enum_value_2>"
-}
-```
-
-**Examples 设计原则**
-
-每个 example 包含三部分：Input → Output → (可选) Reasoning。设计 2-3 个 example 覆盖：standard case（正常输入 → 期望输出）、edge case（缺失数据/歧义 → 期望降级行为）、complex case（需要多步推理 → 期望推理过程）。
+六区块顺序：Role → Background & Context → Variables Dictionary → Execution Chain → Constraints → Output Schema + Examples。
 
 ### 步骤 3：自检
 

@@ -1,7 +1,7 @@
 ---
 name: harness-golden-principles
 description: 把人类经验编码为机械化"黄金原则"，建立周期性代码库扫描，持续检测模式漂移并生成小颗粒度修复 PR。用于"治理 AI 生成代码的重复模式"、"周期性扫描"场景。
-when_to_use: 当用户想把人类品味编码为机械化规则、治理 AI 生成代码的重复/不一致模式、建立周期性垃圾回收时使用。
+when_to_use: 当用户想把人类品味编码为机械化规则、治理 AI 生成代码的重复/不一致模式、建立周期性代码扫描机制时使用。
 compatibility: opencode
 metadata:
   category: quality
