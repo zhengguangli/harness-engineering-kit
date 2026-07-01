@@ -22,13 +22,33 @@ metadata:
 - 任务简单，只涉及单个 skill——不需要编排开销。
 ## 五条标准工作流
 
-| # | 场景 | 流程 | 可省略条件 |
-|---|---|---|---|
-| 1 | Greenfield 初始化 | `project-intake` → `bootstrap` → `repo-map` → `architecture-boundaries` + `golden-principles` | 小项目可跳过 `architecture-boundaries` |
-| 2 | 日常功能开发 | `exec-plans`(可选) → 实现 → `verification-loop` → `commit-gate` | 简单改动可跳过 `exec-plans` 和 `verification-loop` |
-| 3 | 代码质量修复 | `golden-principles` → `architecture-boundaries`(可选) → `verification-loop` → `commit-gate` | 纯品味漂移可跳过 `architecture-boundaries` |
-| 4 | 扩展 harness 体系 | `authoring` → `bootstrap`(可选) → `repo-map` | — |
-| 5 | 优化 prompt 质量 | `prompt-optimizer`（独立使用） | — |
+### Workflow 1: Greenfield 初始化
+1. Step 1: 执行 `project-intake`，产出结构化项目卡片
+2. Step 2: 执行 `bootstrap`，生成 AGENTS.md + docs/ 骨架
+3. Step 3: 执行 `repo-map`，校验文档结构完整性
+4. Step 4: 执行 `architecture-boundaries` + `golden-principles`（小项目可跳过 `architecture-boundaries`）
+
+### Workflow 2: 日常功能开发
+1. Step 1: （可选）执行 `exec-plans`，落盘执行计划
+2. Step 2: 实现功能代码
+3. Step 3: 执行 `verification-loop`，自验证循环
+4. Step 4: 执行 `commit-gate`，提交前质量检查
+- 简单改动可跳过 Step 1 和 Step 3
+
+### Workflow 3: 代码质量修复
+1. Step 1: 执行 `golden-principles`，扫描品味漂移
+2. Step 2: （可选）执行 `architecture-boundaries`，处理结构性问题
+3. Step 3: 执行 `verification-loop`，自验证循环
+4. Step 4: 执行 `commit-gate`，提交前质量检查
+- 纯品味漂移可跳过 Step 2
+
+### Workflow 4: 扩展 harness 体系
+1. Step 1: 执行 `authoring`，编写新 skill/agent
+2. Step 2: （可选）执行 `bootstrap`，初始化新结构
+3. Step 3: 执行 `repo-map`，校验文档结构完整性
+
+### Workflow 5: 优化 prompt 质量
+1. Step 1: 执行 `prompt-optimizer`（独立使用，无需其他 skill 配合）
 
 三层路由判断和详细交接点表见 `references/routing-decision-tree.md`。
 ## 方法论
@@ -50,6 +70,10 @@ metadata:
 - 已有完善 harness 结构的项目不重走 Workflow 1。
 - `authoring` 只在扩展 harness 体系时使用。
 - `prompt-optimizer` 只在需要优化提示词时使用。
+## 硬约束
+- **Workflow 1 不得跳过 `project-intake`**：违反则 `bootstrap` 生成的骨架可能与项目实际不符，导致后续返工。
+- **不得对已明确 skill 的用户强制编排**：用户明确说"用 X skill"时直接执行，违反则浪费上下文窗口，降低效率。
+
 ## 关键要点
 - 先判断用户目标属于哪条工作流，再决定 skill 组合。
 - 目标跨多个工作流时，说明组合方式和交接点。

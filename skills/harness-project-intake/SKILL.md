@@ -35,7 +35,7 @@ metadata:
 | 步骤 | 命令 | 采集维度 |
 |---|---|---|
 | 1 | `ls -la` 项目根目录 | 文件类型、目录结构 |
-| 2 | `cat package.json` / `Cargo.toml` / `go.mod` / `pyproject.toml` | 语言、框架、运行时、依赖 |
+| 2 | `cat package.json` / `Cargo.toml` / `go.mod` / `pyproject.toml`（均不存在时 fallback：`ls` 推断语言，标注"推断（无包管理文件）"） | 语言、框架、运行时、依赖 |
 | 3 | `cat README.md`（只提取关键信息） | 项目自述、约束、构建命令 |
 | 4 | `find . -maxdepth 2 -type f \| head -50` | 目录骨架 |
 | 5 | `git log --oneline -10` | 近期活跃度、版本号 |
@@ -86,6 +86,12 @@ metadata:
 ### 已知约束 / 注意事项
 <从 README、配置文件或代码注释中提取的约束条件，如端口限制、API key 要求等>
 ```
+
+## 硬约束
+
+- **不编造信息**：卡片中不得出现任何编造内容（如猜测的版本号、臆断的框架）。若 verification-loop 发现编造信息，应打回并要求重新采集；若某维度确实无法获取，写"未发现"或"未配置"。
+- **信息采集必须覆盖 package.json / README / 入口文件**：三者中任一缺失，必须在卡片对应维度标注"信息不完整"，不得跳过或用猜测填充。
+- **无包管理文件时必须 fallback**：当 `package.json` / `Cargo.toml` / `go.mod` / `pyproject.toml` 均不存在时，执行 `ls` 观察文件后缀推断语言，并在卡片中标注"推断（无包管理文件）"。
 
 ## 关键要点
 

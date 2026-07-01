@@ -85,6 +85,12 @@ docs/
 
 失败信息写成对 agent 友好的修复说明（参考 `harness-architecture-boundaries` 技能里"把修复指令写进报错信息"的做法），让发现问题的 agent 能直接照着修。
 
+## 硬约束
+
+- **AGENTS.md ≤ 100 行**：违反→必须瘦身后才能合并。
+- **docs/ 断链率 = 0**：违反→阻塞合并。
+- **每个 docs/ 文件必须有元数据头**：违反→doc-gardener 标记为 UNKNOWN。
+
 ## 关键要点
 
 - AGENTS.md 超过 100 行就该瘦身，把内容下沉到 `docs/`。
