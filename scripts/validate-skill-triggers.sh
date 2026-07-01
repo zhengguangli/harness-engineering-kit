@@ -41,4 +41,30 @@ if [[ "$fail" -ne 0 ]]; then
   exit 1
 fi
 
+echo "\n--- Cross-reference check ---"
+cross_ref_fail=0
+cross_ref_total=0
+for skill_md in "$skills_dir"/harness-*/SKILL.md; do
+  skill_name="$(basename "$(dirname "$skill_md")")"
+  refs=$(awk '/^### 避免触发（avoid_when）$/{f=1;next} /^### /{f=0} f' "$skill_md" | { grep -oE 'harness-[a-z-]+' || true; } | sort -u)
+  for r in $refs; do
+    cross_ref_total=$((cross_ref_total + 1))
+    if [[ ! -d "$skills_dir/$r" ]]; then
+      echo "[FAIL] $skill_name references non-existent skill: $r"
+      cross_ref_fail=1
+    fi
+  done
+done
+if [[ "$cross_ref_fail" -ne 0 ]]; then
+  fail=1
+  echo "Cross-reference check failed."
+else
+  echo "[OK] 12 skills cross-referenced ($cross_ref_total refs valid)"
+fi
+
+if [[ "$fail" -ne 0 ]]; then
+  echo "\nValidation finished with failures."
+  exit 1
+fi
+
 echo "\nAll skill trigger sections validated."

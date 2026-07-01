@@ -326,3 +326,24 @@ make triggers-all
 - 没有绑定任何具体语言/框架的 lint 工具链——每个 skill 里只给出"要机械强制什么、报错信息要包含什么"的模式,具体用 ESLint/dependency-cruiser/import-linter 还是自己写 AST 脚本,留给你的项目栈决定。
 - 没有提供具体的 CI 配置文件——hook 接入方式因项目的 CI 系统而异,套件只规定"这些检查必须在 CI 里跑、报错要带修复指令",不规定怎么接。
 - 没有附带浏览器自动化或可观测性后端的具体安装步骤——这部分应该使用平台已连接的工具或项目已有的基础设施,本套件只规定"要有这类反馈传感器、怎么用它构成验证循环"。
+
+## 自然语言触发速查表
+
+12 个 skill 的典型触发场景（每个 skill 1-2 个最常见说法）：
+
+| Skill | 典型触发 |
+|---|---|
+| harness-project-intake | "分析当前项目"、"项目概览" |
+| harness-bootstrap | "为这个项目初始化 harness"、"init harness" |
+| harness-repo-map | "AGENTS.md 太大需要瘦身"、"审计文档断链" |
+| harness-architecture-boundaries | "建立分层架构"、"出现了循环依赖" |
+| harness-golden-principles | "治理 AI 生成代码的重复模式"、"周期性扫描" |
+| harness-prompt-optimizer | "优化这个 prompt"、"我的 prompt 效果不好" |
+| harness-exec-plans | "先做个计划"、"任务比较大需要落盘" |
+| harness-verification-loop | "把改动推进到可合并状态"、"自动修复测试失败" |
+| harness-observability-and-browser | "复现 UI bug"、"确认 P99 延迟达标" |
+| harness-commit-gate | "提交代码"、"git commit" |
+| harness-orchestration | "我该用哪些 skill"、"规划多 skill 协作" |
+| harness-authoring | "怎么写一个好的 SKILL.md"、"给 harness 添新能力" |
+
+完整 30 个回归用例见 `tests/triggers/cases.json`。
