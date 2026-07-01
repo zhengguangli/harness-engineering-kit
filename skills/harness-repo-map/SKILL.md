@@ -79,7 +79,7 @@ docs/
 ### 初始化步骤（首次为项目搭建 docs/ 骨架）
 
 1. 创建入口文件（参考 `references/agents-md-map-template.md`），只创建自己平台的。
-2. 在 `docs/` 下创建 `ARCHITECTURE.md`（参考 `references/architecture-template.md`）和 `QUALITY_SCORE.md`（参考 `references/quality-score-template.md`）。这两个文件属于 `docs/`，不要放在根目录。
+2. 在 `docs/` 下创建 `ARCHITECTURE.md`（参考 `../harness-architecture-boundaries/references/architecture-template.md`）和 `QUALITY_SCORE.md`（参考 `../harness-golden-principles/references/quality-score-template.md`）。这两个文件属于 `docs/`，不要放在根目录。
 3. 按需创建空目录：`docs/design-docs/`、`docs/exec-plans/active/`、`docs/exec-plans/completed/`、`docs/generated/`、`docs/product-specs/`、`docs/references/`。
 4. 从 `references/` 子目录的模板创建对应索引文件：`docs/design-docs/index.md`、`docs/design-docs/core-beliefs.md`、`docs/product-specs/index.md`、`docs/exec-plans/tech-debt-tracker.md`。
 5. 按项目实际情况填充模板里的占位符（领域名、代码路径、日期等）。
@@ -124,6 +124,6 @@ docs/
 
 - `references/agents-md-map-template.md`: AGENTS.md 地图模板（含核心信念和写作规则附录）
 - `references/docs-index-templates.md`: 设计文档索引 + 产品规格索引模板
-- `references/architecture-template.md`: 基于 `harness-architecture-boundaries` 的本地适配副本
-- `references/quality-score-template.md`: 基于 `harness-golden-principles` 的本地适配副本
+- `../harness-architecture-boundaries/references/architecture-template.md`: ARCHITECTURE.md 架构文档模板（canonical 版本）
+- `../harness-golden-principles/references/quality-score-template.md`: QUALITY_SCORE.md 质量评分模板（canonical 版本）
 - `agents/doc-gardener.md`: doc-gardener agent 系统提示词（canonical 版本）
