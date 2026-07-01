@@ -5,6 +5,17 @@ on:
   pull_request:
     branches: [ main ]
 jobs:
+  enforce-developer-flow:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ensure PR source is developer branch
+        run: |
+          head="${{ github.head_ref }}"
+          if [ "$head" != "developer" ]; then
+            echo "::error::PR must be opened from developer branch (current: $head)"
+            exit 1
+          fi
   validate:
     runs-on: ubuntu-latest
     steps:
