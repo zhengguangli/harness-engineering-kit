@@ -1,6 +1,6 @@
 ---
 name: harness-repo-map
-description: 把仓库知识管理从巨型 AGENTS.md 重构为「地图 + 结构化 docs/」的渐进式披露模式。当项目需要从零搭建 AGENTS.md/docs 结构、现有 AGENTS.md 膨胀需要瘦身下沉到 docs/、需要审计文档是否过期/断链或与代码行为脱节、需要为渐进式披露设计目录层级、或抱怨 agent 缺乏项目背景时使用。
+description: 把仓库知识管理从巨型 AGENTS.md 重构为「地图 + 结构化 docs/」的渐进式披露模式。当项目需要从零搭建 AGENTS.md/docs 结构、现有 AGENTS.md 膨胀需要瘦身、或需要审计文档是否过期时使用。
 version: 0.1.0
 ---
 
@@ -49,6 +49,7 @@ version: 0.1.0
 
 - 项目很小（单文件脚本），不需要结构化文档。
 - 用户只需要更新某个具体文档，而不是重构整个知识体系。
+- 项目需要从零全面初始化 harness 结构（AGENTS.md + docs/ + .gitignore + CI）——用 `harness-bootstrap`。本 skill 侧重知识治理与渐进式披露，不含 .gitignore/CI 初始化。
 
 ## 方法论
 
