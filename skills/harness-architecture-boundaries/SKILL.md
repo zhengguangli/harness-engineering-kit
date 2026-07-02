@@ -22,21 +22,9 @@ metadata:
 ## 何时使用
 
 - 用户要为项目建立"严格边界、局部自由"的分层架构
-  - 例如：用户说"我想为这个项目建立分层架构"
-  - 例如：用户问"如何组织代码结构，确保模块间依赖清晰"
-  - 例如：用户说"需要定义模块间的依赖方向"
 - 代码已出现架构腐化、循环依赖或层间越界
-  - 例如：发现模块A依赖模块B，模块B又依赖模块A（循环依赖）
-  - 例如：发现UI层直接访问数据库层（层间越界）
-  - 例如：发现代码中存在大量跨层调用
 - 需要设计自定义 lint 规则或定义跨层依赖方向
-  - 例如：用户说"需要定义哪些模块可以互相依赖"
-  - 例如：用户说"需要创建lint规则来检查依赖方向"
-  - 例如：用户说"需要机械强制架构约束"
 - 项目规模较大，模块间存在明显分层需求
-  - 例如：项目有多个业务领域（用户、订单、支付等）
-  - 例如：项目有清晰的分层（UI、业务逻辑、数据访问等）
-  - 例如：项目需要支持多团队协作开发
 
 ## 何时不该用
 
@@ -242,16 +230,6 @@ function parseUserInput(input: unknown): UserInput {
 
 **场景**：项目采用微服务架构，服务间存在依赖关系
 **处理**：为每个服务定义内部架构规则，服务间通过API通信
-**示例**：
-```
-服务内部架构：
-types → repository → service → controller
-
-服务间依赖：
-user-service → shared/types
-order-service → shared/types
-user-service ↔ order-service（通过API通信）
-```
 
 ## 常见陷阱
 
@@ -285,83 +263,10 @@ user-service ↔ order-service（通过API通信）
 
 ### 自动化检查脚本
 
+通用检查脚本，适用于所有 skill：
+
 ```bash
-#!/bin/bash
-# 架构边界自动化检查脚本
-
-SKILLS_DIR="./skills"
-SKILL_NAME="harness-architecture-boundaries"
-REPORT_FILE="docs/quality-reports/architecture-boundaries-check.md"
-
-# 创建报告目录
-mkdir -p docs/quality-reports
-
-# 开始报告
-echo "# 架构边界自动化检查报告" > "$REPORT_FILE"
-echo "" >> "$REPORT_FILE"
-echo "检查时间: $(date)" >> "$REPORT_FILE"
-echo "" >> "$REPORT_FILE"
-
-SKILL_FILE="$SKILLS_DIR/$SKILL_NAME/SKILL.md"
-
-if [ -f "$SKILL_FILE" ]; then
-    echo "## 检查结果" >> "$REPORT_FILE"
-    echo "" >> "$REPORT_FILE"
-    
-    # 检查frontmatter
-    echo "### Frontmatter检查" >> "$REPORT_FILE"
-    if grep -q "^name:" "$SKILL_FILE"; then
-        echo "- [x] name 字段存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] name 字段缺失" >> "$REPORT_FILE"
-    fi
-    
-    if grep -q "^description:" "$SKILL_FILE"; then
-        echo "- [x] description 字段存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] description 字段缺失" >> "$REPORT_FILE"
-    fi
-    
-    # 检查标准章节
-    echo "### 章节结构检查" >> "$REPORT_FILE"
-    if grep -q "^## 核心原则" "$SKILL_FILE"; then
-        echo "- [x] 核心原则章节存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 核心原则章节缺失" >> "$REPORT_FILE"
-    fi
-    
-    if grep -q "^## 何时使用" "$SKILL_FILE"; then
-        echo "- [x] 何时使用章节存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 何时使用章节缺失" >> "$REPORT_FILE"
-    fi
-    
-    if grep -q "^## 方法论" "$SKILL_FILE"; then
-        echo "- [x] 方法论章节存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 方法论章节缺失" >> "$REPORT_FILE"
-    fi
-    
-    # 检查示例数量
-    example_count=$(grep -c "^### 示例\|^#### 示例\|^## 示例" "$SKILL_FILE" || echo "0")
-    echo "### 示例统计" >> "$REPORT_FILE"
-    echo "- 示例数量: $example_count" >> "$REPORT_FILE"
-    
-    # 检查错误处理指导
-    if grep -q "错误处理\|故障排除\|常见问题" "$SKILL_FILE"; then
-        echo "- [x] 包含错误处理指导" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 缺少错误处理指导" >> "$REPORT_FILE"
-    fi
-    
-    echo "" >> "$REPORT_FILE"
-    echo "## 检查完成" >> "$REPORT_FILE"
-else
-    echo "## 错误" >> "$REPORT_FILE"
-    echo "SKILL.md 文件不存在" >> "$REPORT_FILE"
-fi
-
-echo "自动化检查完成，报告已保存到 $REPORT_FILE"
+./scripts/skill-automation-check.sh <skill-name>
 ```
 
 ### CI/CD集成
@@ -382,20 +287,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Check architecture boundaries quality
-        run: |
-          bash scripts/architecture-boundaries-check.sh
+      - name: Check skill quality
+        run: make triggers-all
 ```
 
 ## Agent 提示词
 
 ### boundary-auditor（架构边界审计员）
 
-## 角色定义
+### 角色定义
 
 你是「架构边界审计员」，唯一职责是检测分层架构/依赖方向规则的违规并报告，**绝不修改任何文件**。你擅长使用Grep/Bash等工具进行架构边界检查，能够识别循环依赖、层间越界、数据边界违反等问题。
 
-## 核心能力
+### 核心能力
 
 - 读取 `ARCHITECTURE.md` 或等价架构文档，确认依赖方向规则、分层边界、横切关注点合法入口
 - 使用 Bash 运行项目已有的 lint/test/构建命令（只读输出）
@@ -404,7 +308,7 @@ jobs:
 - 识别循环依赖、层间越界、数据边界违反等架构问题
 - 区分架构不变量和风格偏好，提供针对性的修复建议
 
-## 执行流程
+### 执行流程
 
 1. **读取架构规则**：读取 `ARCHITECTURE.md`（或项目里等价的架构文档），确认当前项目实际定义的依赖方向规则。如果找不到这类文档，先报告"架构规则未被文档化，建议先用 harness-architecture-boundaries 技能补上"，再尽力基于代码现状做合理推断。
    - 检查内容：
@@ -456,7 +360,7 @@ jobs:
      [按严重程度从高到低排列]
      ```
 
-## 约束
+### 约束
 
 - **严格只读**：不调用任何会修改文件的工具。Bash 仅可用于只读命令（lint/test/构建输出、grep 搜索），禁止 rm、mv、cp、chmod、mkdir、touch 等写操作。违反时撤回操作，重新以报告形式输出。
 - **规则不清就报告**：规则定义不清晰导致无法判断违规时，把"规则需要被更精确地编码"作为发现项报告。违反时补充规则模糊的发现项。
@@ -465,7 +369,7 @@ jobs:
 - **区分严重程度**：必须准确区分CRITICAL/HIGH/MEDIUM/LOW级别，不能混淆。违反时重新分类。
 - **提供具体修复建议**：每个违规都必须附带具体的修复建议，包括代码示例和操作步骤。违反时补充具体修复建议。
 
-## 输出规范
+### 输出规范
 
 - **格式**：Markdown 结构化报告
 - **内容**：每个发现项包含文件、行号、违反规则、影响、建议修复

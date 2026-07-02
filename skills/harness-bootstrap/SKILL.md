@@ -106,6 +106,12 @@ Thumbs.db
 - **每个 docs/ 文件底部必须有"最后更新"日期**:这是 harness 体系的硬约束。
 - **定期审计初始化结果**:确保初始化结果的有效性和适用性。
 - **文档化初始化决策**:便于团队理解和遵循。
+- **先探查再初始化**:了解项目结构、技术栈、现有文档后再初始化，避免盲目覆盖，确保结果符合项目实际。
+- **AGENTS.md 指向性明确**:每个条目指向具体的 docs/ 文件，避免模糊指向，确保链接有效。
+- **AGENTS.md 硬约束精简**:只有违反即阻塞合并的规则才放在 AGENTS.md，避免过多硬约束。
+- **docs/ 最小可用集**:只创建 ARCHITECTURE.md、QUALITY_SCORE.md、design-docs/index.md、exec-plans/ 等必要骨架。
+- **docs/ 骨架文件**:每个文件只写骨架，底部标注"最后更新"日期，避免空壳文件。
+- **docs/ 可扩展性**:允许未来按需添加新文件，保持结构清晰。
 
 ## 边界情况处理
 
@@ -121,59 +127,7 @@ Thumbs.db
 **场景**：项目使用多种技术栈，需要特殊处理
 **处理**：为每种技术栈提供定制化配置（.gitignore规则、docs/结构）
 
-## 最佳实践
 
-### 初始化最佳实践
-
-1. **先探查再初始化**
-   - 了解项目结构、技术栈、现有文档
-   - 避免盲目覆盖有价值的内容
-   - 确保初始化结果符合项目实际
-
-2. **最小可用原则**
-   - 只创建必要的文件
-   - 避免生成大量空壳文件
-   - 确保每个文件都有实际内容
-
-3. **增量更新策略**
-   - 保留现有有价值的内容
-   - 只补充缺失的内容
-   - 输出修改清单供用户确认
-
-### AGENTS.md设计最佳实践
-
-1. **保持简洁**
-   - 只包含路由表和硬约束
-   - 不要把所有知识塞进去
-   - 确保易于维护
-
-2. **指向性明确**
-   - 每个条目指向具体的docs/文件
-   - 避免模糊的指向
-   - 确保链接有效
-
-3. **硬约束精简**
-   - 只有违反即阻塞合并的规则才放在这里
-   - 避免过多硬约束
-   - 确保硬约束可执行
-
-### docs/结构最佳实践
-
-1. **最小可用集**
-   - docs/ARCHITECTURE.md：项目架构
-   - docs/QUALITY_SCORE.md：质量评分
-   - docs/design-docs/index.md：设计决策索引
-   - docs/exec-plans/：执行计划
-
-2. **骨架文件**
-   - 每个文件只写骨架
-   - 底部标注"最后更新"日期
-   - 避免空壳文件
-
-3. **可扩展性**
-   - 允许未来添加新文件
-   - 保持结构清晰
-   - 确保易于维护
 
 ## 常见陷阱
 
@@ -202,97 +156,10 @@ Thumbs.db
 
 ### 自动化检查脚本
 
+通用检查脚本，适用于所有 skill：
+
 ```bash
-#!/bin/bash
-# Harness Bootstrap自动化检查脚本
-
-SKILLS_DIR="./skills"
-SKILL_NAME="harness-bootstrap"
-REPORT_FILE="docs/quality-reports/bootstrap-check.md"
-
-# 创建报告目录
-mkdir -p docs/quality-reports
-
-# 开始报告
-echo "# Harness Bootstrap自动化检查报告" > "$REPORT_FILE"
-echo "" >> "$REPORT_FILE"
-echo "检查时间: $(date)" >> "$REPORT_FILE"
-echo "" >> "$REPORT_FILE"
-
-SKILL_FILE="$SKILLS_DIR/$SKILL_NAME/SKILL.md"
-
-if [ -f "$SKILL_FILE" ]; then
-    echo "## 检查结果" >> "$REPORT_FILE"
-    echo "" >> "$REPORT_FILE"
-    
-    # 检查frontmatter
-    echo "### Frontmatter检查" >> "$REPORT_FILE"
-    if grep -q "^name:" "$SKILL_FILE"; then
-        echo "- [x] name 字段存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] name 字段缺失" >> "$REPORT_FILE"
-    fi
-    
-    if grep -q "^description:" "$SKILL_FILE"; then
-        echo "- [x] description 字段存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] description 字段缺失" >> "$REPORT_FILE"
-    fi
-    
-    # 检查标准章节
-    echo "### 章节结构检查" >> "$REPORT_FILE"
-    if grep -q "^## 核心原则" "$SKILL_FILE"; then
-        echo "- [x] 核心原则章节存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 核心原则章节缺失" >> "$REPORT_FILE"
-    fi
-    
-    if grep -q "^## 何时使用" "$SKILL_FILE"; then
-        echo "- [x] 何时使用章节存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 何时使用章节缺失" >> "$REPORT_FILE"
-    fi
-    
-    if grep -q "^## 方法论" "$SKILL_FILE"; then
-        echo "- [x] 方法论章节存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 方法论章节缺失" >> "$REPORT_FILE"
-    fi
-    
-    # 检查示例数量
-    example_count=$(grep -c "^### 示例\|^#### 示例\|^## 示例" "$SKILL_FILE" || echo "0")
-    echo "### 示例统计" >> "$REPORT_FILE"
-    echo "- 示例数量: $example_count" >> "$REPORT_FILE"
-    
-    # 检查错误处理指导
-    if grep -q "错误处理\|故障排除\|常见问题" "$SKILL_FILE"; then
-        echo "- [x] 包含错误处理指导" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 缺少错误处理指导" >> "$REPORT_FILE"
-    fi
-    
-    # 检查边界情况处理
-    if grep -q "边界情况" "$SKILL_FILE"; then
-        echo "- [x] 包含边界情况处理" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 缺少边界情况处理" >> "$REPORT_FILE"
-    fi
-    
-    # 检查最佳实践
-    if grep -q "最佳实践" "$SKILL_FILE"; then
-        echo "- [x] 包含最佳实践" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 缺少最佳实践" >> "$REPORT_FILE"
-    fi
-    
-    echo "" >> "$REPORT_FILE"
-    echo "## 检查完成" >> "$REPORT_FILE"
-else
-    echo "## 错误" >> "$REPORT_FILE"
-    echo "SKILL.md 文件不存在" >> "$REPORT_FILE"
-fi
-
-echo "自动化检查完成，报告已保存到 $REPORT_FILE"
+./scripts/skill-automation-check.sh <skill-name>
 ```
 
 ### CI/CD集成
@@ -313,20 +180,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Check bootstrap quality
-        run: |
-          bash scripts/bootstrap-check.sh
+      - name: Check skill quality
+        run: make triggers-all
 ```
 
 ## Agent 提示词
 
 ### Harness Bootstrapper（Harness 初始化工匠）
 
-## 角色定义
+### 角色定义
 
 你是「Harness 初始化工匠」，职责是根据项目实际情况，生成最小可用的 harness 知识骨架——让 agent 在这个项目里有地图可循。你擅长分析项目结构、技术栈、现有文档，生成符合harness体系规范的初始化文件。
 
-## 核心能力
+### 核心能力
 
 - 用只读工具了解项目结构、技术栈、现有文档
 - 生成地图式 AGENTS.md
@@ -334,7 +200,7 @@ jobs:
 - 更新 .gitignore 规则
 - 处理各种边界情况，提供最佳实践
 
-## 执行流程
+### 执行流程
 
 1. **项目探查**：用只读工具了解项目结构、技术栈、现有文档。如果项目已有 AGENTS.md 或 docs/，先读取现有内容，避免覆盖有价值的信息。
    - 探查内容：
@@ -379,7 +245,7 @@ jobs:
    - `.gitignore` 包含关键规则
    - 列出所有创建/修改的文件清单
 
-## 约束
+### 约束
 
 - **宁可少而准**：不要生成大量空壳文件。不确定是否需要时先不创建，在 AGENTS.md 路由表留占位条目。违反时删除多余文件。
 - **尊重现有内容**：项目已有 AGENTS.md 或 docs/ 时先读取再决定覆盖或增量更新。违反时恢复被覆盖内容。
@@ -390,7 +256,7 @@ jobs:
 - **提供具体指导**：每个初始化步骤都必须提供具体指导，不能模糊。违反时补充具体指导。
 - **处理边界情况**：必须处理各种边界情况，提供最佳实践。违反时补充边界情况处理。
 
-## 输出规范
+### 输出规范
 
 - **格式**：Markdown 文件
 - **内容**：AGENTS.md（路由表 + 硬约束 + 工作方式提示）；docs/ 骨架文件（最小内容 + "最后更新"日期）

@@ -19,20 +19,10 @@ metadata:
 - **一次编码，持续生效**：人类的判断只需给一次，之后每行代码都被这条规则检查，不用每次 review 重复讲同样的话。
 ## 何时使用
 - Agent 生成的代码质量参差不齐，出现重复或不一致的实现模式。
-  - 例如：多个文件中都有相似的错误处理逻辑，但实现方式不一致
-  - 例如：AI生成的代码使用了多种不同的日期格式化方式
 - 团队还在靠人工定期"打扫 AI 写的代码"。
-  - 例如：每周安排专门时间清理AI生成的重复代码
-  - 例如：review时反复指出同样的代码风格问题
 - 想把人类品味编码为机械化规则持续生效。
-  - 例如：团队约定"优先使用async/await而非.then()"，希望自动化检查
-  - 例如：代码review时反复指出"不要使用console.log，要用logger"
 - 扫描代码异味、清理AI代码风格不统一。
-  - 例如：AI生成的代码中存在大量重复的工具函数
-  - 例如：不同文件中相似的业务逻辑实现方式差异很大
 - 给代码库建立自动化lint规则。
-  - 例如：将团队的代码规范转化为ESLint规则
-  - 例如：建立自动化检查确保代码符合团队约定
 ## 何时不该用
 - 需要的是结构性架构约束（依赖方向、数据边界）——用 `harness-architecture-boundaries`。
 - 项目规模极小、没有重复模式——不需要周期性扫描。
@@ -84,6 +74,7 @@ metadata:
 - 质量评分记录（`docs/QUALITY_SCORE.md`）反映长期趋势。
 - 定期审计黄金原则，确保规则的有效性和适用性。
 - 文档化黄金原则，便于团队理解和遵循。
+- 建立统一标准并配套工具支持：提供统一的代码风格指南和自动化 lint 工具，集成到 CI/CD
 
 ## 边界情况处理
 
@@ -99,58 +90,6 @@ metadata:
 **场景**：AI生成的代码质量参差不齐，需要特殊治理
 **处理**：建立AI代码生成规范，使用自动化工具检查，建立AI代码review流程
 
-## 最佳实践
-
-### 黄金原则提炼最佳实践
-
-1. **从真实信号出发**
-   - 基于review反馈、bug报告、重构需求
-   - 避免凭空发明原则
-   - 确保原则有实际依据
-
-2. **从具体到通用**
-   - 把具体问题提炼成通用原则
-   - 确保原则具有普适性
-   - 避免过于具体的原则
-
-3. **编码为机械规则**
-   - 能写lint就写lint
-   - 不能写lint的写进文档
-   - 确保规则可机械检查
-
-### 清扫节奏最佳实践
-
-1. **建立固定节奏**
-   - 每日或每周运行一次扫描
-   - 避免一次性扫完所有问题
-   - 持续改进，逐步提升质量
-
-2. **控制修复PR大小**
-   - 每个修复PR限定到一分钟内能审完
-   - 避免混合多种不相关清理
-   - 确保修复PR易于审核
-
-3. **区分修复类型**
-   - 纯机械修复可配置自动合并
-   - 涉及行为变化必须走人工评审
-   - 确保修复质量
-
-### 团队协作最佳实践
-
-1. **建立统一标准**
-   - 建立统一的代码风格指南
-   - 确保团队成员理解并遵循
-   - 定期审计标准执行情况
-
-2. **提供工具支持**
-   - 提供自动化lint工具
-   - 集成到CI/CD流程
-   - 提供IDE插件支持
-
-3. **持续改进**
-   - 定期审计规则有效性
-   - 根据团队反馈调整规则
-   - 持续优化代码质量
 ## 常见陷阱
 - **凭空发明原则**：不从真实信号出发，规则脱离实际。
   - 解决方案：每个原则都必须有具体的review反馈、bug报告或重构需求作为依据
@@ -172,97 +111,10 @@ metadata:
 
 ### 自动化检查脚本
 
+通用检查脚本，适用于所有 skill：
+
 ```bash
-#!/bin/bash
-# 黄金原则自动化检查脚本
-
-SKILLS_DIR="./skills"
-SKILL_NAME="harness-golden-principles"
-REPORT_FILE="docs/quality-reports/golden-principles-check.md"
-
-# 创建报告目录
-mkdir -p docs/quality-reports
-
-# 开始报告
-echo "# 黄金原则自动化检查报告" > "$REPORT_FILE"
-echo "" >> "$REPORT_FILE"
-echo "检查时间: $(date)" >> "$REPORT_FILE"
-echo "" >> "$REPORT_FILE"
-
-SKILL_FILE="$SKILLS_DIR/$SKILL_NAME/SKILL.md"
-
-if [ -f "$SKILL_FILE" ]; then
-    echo "## 检查结果" >> "$REPORT_FILE"
-    echo "" >> "$REPORT_FILE"
-    
-    # 检查frontmatter
-    echo "### Frontmatter检查" >> "$REPORT_FILE"
-    if grep -q "^name:" "$SKILL_FILE"; then
-        echo "- [x] name 字段存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] name 字段缺失" >> "$REPORT_FILE"
-    fi
-    
-    if grep -q "^description:" "$SKILL_FILE"; then
-        echo "- [x] description 字段存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] description 字段缺失" >> "$REPORT_FILE"
-    fi
-    
-    # 检查标准章节
-    echo "### 章节结构检查" >> "$REPORT_FILE"
-    if grep -q "^## 核心原则" "$SKILL_FILE"; then
-        echo "- [x] 核心原则章节存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 核心原则章节缺失" >> "$REPORT_FILE"
-    fi
-    
-    if grep -q "^## 何时使用" "$SKILL_FILE"; then
-        echo "- [x] 何时使用章节存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 何时使用章节缺失" >> "$REPORT_FILE"
-    fi
-    
-    if grep -q "^## 方法论" "$SKILL_FILE"; then
-        echo "- [x] 方法论章节存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 方法论章节缺失" >> "$REPORT_FILE"
-    fi
-    
-    # 检查示例数量
-    example_count=$(grep -c "^### 示例\|^#### 示例\|^## 示例" "$SKILL_FILE" || echo "0")
-    echo "### 示例统计" >> "$REPORT_FILE"
-    echo "- 示例数量: $example_count" >> "$REPORT_FILE"
-    
-    # 检查错误处理指导
-    if grep -q "错误处理\|故障排除\|常见问题" "$SKILL_FILE"; then
-        echo "- [x] 包含错误处理指导" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 缺少错误处理指导" >> "$REPORT_FILE"
-    fi
-    
-    # 检查边界情况处理
-    if grep -q "边界情况" "$SKILL_FILE"; then
-        echo "- [x] 包含边界情况处理" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 缺少边界情况处理" >> "$REPORT_FILE"
-    fi
-    
-    # 检查最佳实践
-    if grep -q "最佳实践" "$SKILL_FILE"; then
-        echo "- [x] 包含最佳实践" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 缺少最佳实践" >> "$REPORT_FILE"
-    fi
-    
-    echo "" >> "$REPORT_FILE"
-    echo "## 检查完成" >> "$REPORT_FILE"
-else
-    echo "## 错误" >> "$REPORT_FILE"
-    echo "SKILL.md 文件不存在" >> "$REPORT_FILE"
-fi
-
-echo "自动化检查完成，报告已保存到 $REPORT_FILE"
+./scripts/skill-automation-check.sh <skill-name>
 ```
 
 ### CI/CD集成
@@ -283,20 +135,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Check golden principles quality
-        run: |
-          bash scripts/golden-principles-check.sh
+      - name: Check skill quality
+        run: make triggers-all
 ```
 
 ## Agent 提示词
 
 ### entropy-collector（熵增清扫者）
 
-## 角色定义
+### 角色定义
 
 按固定节奏扫描代码库，对照已编码的黄金原则寻找模式漂移，产出小颗粒度修复建议。**只读执行**，不直接修改代码。你擅长使用lint/grep/语义搜索等工具进行代码质量检查，能够识别代码异味、重复模式、风格不一致等问题。
 
-## 核心能力
+### 核心能力
 
 - 读取并理解项目已编码的黄金原则（lint 规则 + 文档品味原则）。
 - 用 lint/grep/语义搜索扫描代码库，定位偏差。
@@ -305,7 +156,7 @@ jobs:
 - 识别代码异味、重复模式、风格不一致等问题。
 - 处理各种边界情况，提供最佳实践。
 
-## 执行流程
+### 执行流程
 
 1. **加载原则**：读取项目已编码的黄金原则。如果既无 lint 规则也无文档化原则，按以下格式报告后终止：
    ```
@@ -362,7 +213,7 @@ jobs:
      - 模式重复：相同问题在多个文件中出现
      - 根本原因：需要建立共享工具包或重构
 
-## 约束
+### 约束
 
 - **只读不改**：不修改任何文件，只产出报告和建议。违反时撤回修改，重新以报告形式输出。
 - **不处理结构性违规**：架构边界问题交给 `boundary-auditor`。违反时将该项移交给正确 agent。
@@ -372,7 +223,7 @@ jobs:
 - **提供具体修复建议**：每个偏差都必须附带具体的修复建议，包括代码示例和操作步骤。违反时补充具体修复建议。
 - **处理边界情况**：必须处理各种边界情况，提供最佳实践。违反时补充边界情况处理。
 
-## 输出规范
+### 输出规范
 
 - **报告格式**：每处偏差包含位置、原则引用、风险等级、修复建议。
 - **修复建议**：具体到可以直接交给执行型 agent 落地（代码片段或操作步骤）。

@@ -23,20 +23,10 @@ metadata:
 ## 何时使用
 
 - 用户说"分析当前项目"、"分析下项目"、"项目概览"、"这个项目是做什么的"。
-  - 例如：用户刚克隆了一个项目，想快速了解项目概况
-  - 例如：用户想了解项目的技术栈和架构
 - 用户说"分析一下 README.md"、"读取 README.md"并期望得到摘要。
-  - 例如：用户说"帮我看看README，这个项目是做什么的"
-  - 例如：用户说"读取README，给我个摘要"
 - 用户进入一个新项目目录，第一次对话时说 hello 或简单问候。
-  - 例如：用户进入项目目录后说"你好"
-  - 例如：用户进入项目目录后说"hi"
 - 用户想了解项目的技术栈和架构。
-  - 例如：用户问"这个项目用什么技术栈"
-  - 例如：用户问"这个项目的架构是什么样的"
 - 用户想了解项目的构建和运行方式。
-  - 例如：用户问"怎么运行这个项目"
-  - 例如：用户问"怎么测试这个项目"
 
 ## 何时不该用
 
@@ -56,13 +46,13 @@ metadata:
 | 5 | `git log --oneline -10` | 近期活跃度、版本号 | 查看最近10次提交记录 |
 | 6 | `rg` 扫描入口文件和关键模块 | 架构理解 | 搜索main、index、app等入口文件 |
 
-### 分析五维度
+具体执行步骤详见 `## Agent 提示词 → 执行流程`。以下仅列出方法论独有的五维度概念说明：
 
-1. **身份**：项目是什么、解决什么问题、一句话概述。
-2. **技术栈**：语言、框架、运行时、包管理器、部署目标。
-3. **架构骨架**：目录结构、入口文件、核心模块划分。
-4. **配置与约束**：环境变量、构建命令、测试命令、部署方式。
-5. **活跃度**：最近 commit、贡献者、版本号、CHANGELOG 状态。
+- **身份识别**: 确定项目身份、技术栈、语言、框架
+- **技术栈分析**: 深度分析技术栈配置与依赖
+- **架构骨架提取**: 提取项目目录结构、模块划分、数据流
+- **配置与约束识别**: 识别项目配置、lint 规则、测试配置
+- **活跃度评估**: 评估项目活跃度、贡献者、更新频率
 
 ### 输出格式
 
@@ -115,6 +105,8 @@ metadata:
 - 发现 README 过时、配置缺失或明显问题时，在"已知约束"里注明。
 - 定期审计项目分析结果，确保分析的有效性和适用性。
 - 文档化分析决策，便于团队理解和遵循。
+- 标注不确定性：信息不完整或推断时在对应维度标注依据
+- 结构化输出：按项目卡片模板输出，包含5个维度，格式清晰易读
 
 ## 边界情况处理
 
@@ -139,59 +131,6 @@ metadata:
 
 **场景**：项目使用多种编程语言
 **处理**：识别所有语言，分别说明每种语言的用途和依赖关系
-
-## 最佳实践
-
-### 信息采集最佳实践
-
-1. **成本递增采集**
-   - 按ls → 包管理文件 → README → 目录骨架 → git log → rg扫描的顺序
-   - 每一步都可能已足够产出卡片
-   - 避免过度探索
-
-2. **静默采集**
-   - 所有信息采集过程对用户不可见
-   - 只输出最终卡片
-   - 避免输出中间过程
-
-3. **快速收敛**
-   - 5维度信息采集在6-8个工具调用内完成
-   - 不要反复探索
-   - 够用即停
-
-### 分析质量最佳实践
-
-1. **结论优先**
-   - 用户要的是结构化卡片，不是原始输出
-   - 读完文件后沉默地综合
-   - 只输出结论
-
-2. **不编造信息**
-   - 某维度信息缺失时写"未发现"或"未配置"
-   - 绝不猜测
-   - 确保信息真实可靠
-
-3. **标注不确定性**
-   - README过时时在"已知约束"里注明
-   - 信息不完整时在对应维度标注
-   - 推断信息时标注推断依据
-
-### 输出格式最佳实践
-
-1. **结构化输出**
-   - 按项目卡片模板输出
-   - 包含5个维度
-   - 格式清晰易读
-
-2. **信息完整**
-   - 覆盖身份、技术栈、架构骨架、配置与约束、活跃度
-   - 每个维度都有具体信息
-   - 避免信息缺失
-
-3. **问题标注**
-   - README过时时注明
-   - 信息不完整时标注
-   - 配置缺失时说明
 
 ## 常见陷阱
 
@@ -221,97 +160,10 @@ metadata:
 
 ### 自动化检查脚本
 
+通用检查脚本，适用于所有 skill：
+
 ```bash
-#!/bin/bash
-# Project Intake自动化检查脚本
-
-SKILLS_DIR="./skills"
-SKILL_NAME="harness-project-intake"
-REPORT_FILE="docs/quality-reports/project-intake-check.md"
-
-# 创建报告目录
-mkdir -p docs/quality-reports
-
-# 开始报告
-echo "# Project Intake自动化检查报告" > "$REPORT_FILE"
-echo "" >> "$REPORT_FILE"
-echo "检查时间: $(date)" >> "$REPORT_FILE"
-echo "" >> "$REPORT_FILE"
-
-SKILL_FILE="$SKILLS_DIR/$SKILL_NAME/SKILL.md"
-
-if [ -f "$SKILL_FILE" ]; then
-    echo "## 检查结果" >> "$REPORT_FILE"
-    echo "" >> "$REPORT_FILE"
-    
-    # 检查frontmatter
-    echo "### Frontmatter检查" >> "$REPORT_FILE"
-    if grep -q "^name:" "$SKILL_FILE"; then
-        echo "- [x] name 字段存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] name 字段缺失" >> "$REPORT_FILE"
-    fi
-    
-    if grep -q "^description:" "$SKILL_FILE"; then
-        echo "- [x] description 字段存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] description 字段缺失" >> "$REPORT_FILE"
-    fi
-    
-    # 检查标准章节
-    echo "### 章节结构检查" >> "$REPORT_FILE"
-    if grep -q "^## 核心原则" "$SKILL_FILE"; then
-        echo "- [x] 核心原则章节存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 核心原则章节缺失" >> "$REPORT_FILE"
-    fi
-    
-    if grep -q "^## 何时使用" "$SKILL_FILE"; then
-        echo "- [x] 何时使用章节存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 何时使用章节缺失" >> "$REPORT_FILE"
-    fi
-    
-    if grep -q "^## 方法论" "$SKILL_FILE"; then
-        echo "- [x] 方法论章节存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 方法论章节缺失" >> "$REPORT_FILE"
-    fi
-    
-    # 检查示例数量
-    example_count=$(grep -c "^### 示例\|^#### 示例\|^## 示例" "$SKILL_FILE" || echo "0")
-    echo "### 示例统计" >> "$REPORT_FILE"
-    echo "- 示例数量: $example_count" >> "$REPORT_FILE"
-    
-    # 检查错误处理指导
-    if grep -q "错误处理\|故障排除\|常见问题" "$SKILL_FILE"; then
-        echo "- [x] 包含错误处理指导" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 缺少错误处理指导" >> "$REPORT_FILE"
-    fi
-    
-    # 检查边界情况处理
-    if grep -q "边界情况" "$SKILL_FILE"; then
-        echo "- [x] 包含边界情况处理" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 缺少边界情况处理" >> "$REPORT_FILE"
-    fi
-    
-    # 检查最佳实践
-    if grep -q "最佳实践" "$SKILL_FILE"; then
-        echo "- [x] 包含最佳实践" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 缺少最佳实践" >> "$REPORT_FILE"
-    fi
-    
-    echo "" >> "$REPORT_FILE"
-    echo "## 检查完成" >> "$REPORT_FILE"
-else
-    echo "## 错误" >> "$REPORT_FILE"
-    echo "SKILL.md 文件不存在" >> "$REPORT_FILE"
-fi
-
-echo "自动化检查完成，报告已保存到 $REPORT_FILE"
+./scripts/skill-automation-check.sh <skill-name>
 ```
 
 ### CI/CD集成
@@ -332,20 +184,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Check project intake quality
-        run: |
-          bash scripts/project-intake-check.sh
+      - name: Check skill quality
+        run: make triggers-all
 ```
 
 ## Agent 提示词
 
 ### project-analyzer
 
-## 角色定义
+### 角色定义
 
 你是「项目分析员」（project-analyzer）。快速、安静地采集项目信息，输出结构化项目卡片。用户要结论，不要过程。你擅长使用只读工具分析项目结构、技术栈、架构，能够识别包管理文件、README、入口文件等关键信息。
 
-## 核心能力
+### 核心能力
 
 - 只读信息采集：`ls`、`cat`、`find`、`git log`、`rg` 等只读命令
 - 目录结构分析：`Glob` 枚举文件和目录
@@ -353,7 +204,7 @@ jobs:
 - 文件阅读：`Read` 读取配置和文档文件
 - 处理各种边界情况，提供最佳实践
 
-## 执行流程
+### 执行流程
 
 1. 读取 README.md → 提取项目名称和一句话描述（不输出全文）
    - 提取内容：
@@ -411,7 +262,7 @@ jobs:
      - 配置缺失
      - 明显问题
 
-## 约束
+### 约束
 
 - **只读不改**：禁止任何文件写入、删除、修改操作；禁止 `npm install`、`bun install` 等改变文件系统的命令。违反时撤回操作。
 - **不编造信息**：信息缺失时写"未发现"或"未配置"，不猜测版本号、框架等。违反时将猜测内容替换为"未发现"。
@@ -421,7 +272,7 @@ jobs:
 - **提供具体信息**：每个维度都必须提供具体信息，不能模糊。违反时补充具体信息。
 - **处理边界情况**：必须处理各种边界情况，提供最佳实践。违反时补充边界情况处理。
 
-## 输出规范
+### 输出规范
 
 - **格式**：按 `harness-project-intake` 定义的项目卡片模板输出。
 - **内容**：包含5个维度（身份、技术栈、架构骨架、配置与约束、活跃度）

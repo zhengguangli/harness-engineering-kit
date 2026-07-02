@@ -79,83 +79,32 @@ docs/exec-plans/
 - 步骤粒度越小，接力执行越顺畅。
 - 定期审计执行计划，确保计划的有效性和适用性。
 - 文档化执行决策，便于团队理解和遵循。
+- **目标明确**：一句话说清"完成后世界会变成什么样"，可验证，不写成过程描述，避免模糊表述。
+- **范围清晰**：明确写出"做什么"和"不做什么"，防止执行中膨胀范围。
+- **持续更新**：执行中勾选完成步骤，补充决策日志，不要等到最后一次性回填。
+- **风险控制**：明确写出不确定的地方，识别潜在风险，制定应对措施。
+- **交接规范**：交接时先提交当前进度，由下一个agent接管，确保交接顺畅。
 
 ## 边界情况处理
 
 > 通用边界情况（目标澄清等）参见 `references/common-edge-cases.md`，以下仅列出本 skill 特有的边界情况。
 
 ### 任务不需要落盘
-
 **场景**：任务单次会话能做完，不需要落盘exec-plan
 **处理**：使用临时轻量计划，不创建exec-plan文件
 
 ### 任务被中断
-
 **场景**：任务执行过程中被中断，需要恢复
 **处理**：读取exec-plan文件，继续执行未完成步骤
 
 ### 多agent协作
-
 **场景**：多个agent需要协作完成同一个任务
 **处理**：使用exec-plan作为共享协调台账，明确分工，交接时提交当前进度
 
 ### 任务失败需要回溯
-
 **场景**：任务执行失败，需要回溯"上一轮试过什么、为什么放弃"
 **处理**：读取exec-plan文件，查看决策日志和失败原因，记录到tech-debt-tracker
 
-## 最佳实践
-
-### 计划制定最佳实践
-
-1. **目标明确**
-   - 一句话说清"完成后世界会变成什么样"
-   - 可验证，不写成过程描述
-   - 避免模糊表述
-
-2. **范围清晰**
-   - 明确写出"做什么"
-   - 明确写出"不做什么"
-   - 防止执行中膨胀范围
-
-3. **步骤可验证**
-   - 每个步骤小到能在一次PR内完成
-   - 可独立验证
-   - 避免粒度过粗
-
-### 执行管理最佳实践
-
-1. **持续更新**
-   - 执行中勾选完成步骤
-   - 补充决策日志
-   - 不要等到最后一次性回填
-
-2. **决策记录**
-   - 记录"为什么选A不选B"
-   - 不为无分歧部分硬凑条目
-   - 防止后续agent重复犯错
-
-3. **风险控制**
-   - 明确写出不确定的地方
-   - 识别潜在风险
-   - 制定应对措施
-
-### 协作管理最佳实践
-
-1. **单agent编辑**
-   - 同一时刻只允许一个agent编辑exec-plan文件
-   - 文件顶部标注负责人
-   - 避免冲突
-
-2. **交接规范**
-   - 交接时先提交当前进度
-   - 由下一个agent接管
-   - 确保交接顺畅
-
-3. **共享台账**
-   - active/目录是共享协调台账
-   - 所有agent可见谁在做什么
-   - 避免重复工作
 ## 常见陷阱
 - **验收标准写"看起来不错"**：无法机械检查，必须写具体条件。
 - **步骤粒度太粗**："实现整个模块"无法在一次 PR 内自验证。
@@ -173,97 +122,10 @@ docs/exec-plans/
 
 ### 自动化检查脚本
 
+通用检查脚本，适用于所有 skill：
+
 ```bash
-#!/bin/bash
-# Exec Plans自动化检查脚本
-
-SKILLS_DIR="./skills"
-SKILL_NAME="harness-exec-plans"
-REPORT_FILE="docs/quality-reports/exec-plans-check.md"
-
-# 创建报告目录
-mkdir -p docs/quality-reports
-
-# 开始报告
-echo "# Exec Plans自动化检查报告" > "$REPORT_FILE"
-echo "" >> "$REPORT_FILE"
-echo "检查时间: $(date)" >> "$REPORT_FILE"
-echo "" >> "$REPORT_FILE"
-
-SKILL_FILE="$SKILLS_DIR/$SKILL_NAME/SKILL.md"
-
-if [ -f "$SKILL_FILE" ]; then
-    echo "## 检查结果" >> "$REPORT_FILE"
-    echo "" >> "$REPORT_FILE"
-    
-    # 检查frontmatter
-    echo "### Frontmatter检查" >> "$REPORT_FILE"
-    if grep -q "^name:" "$SKILL_FILE"; then
-        echo "- [x] name 字段存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] name 字段缺失" >> "$REPORT_FILE"
-    fi
-    
-    if grep -q "^description:" "$SKILL_FILE"; then
-        echo "- [x] description 字段存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] description 字段缺失" >> "$REPORT_FILE"
-    fi
-    
-    # 检查标准章节
-    echo "### 章节结构检查" >> "$REPORT_FILE"
-    if grep -q "^## 核心原则" "$SKILL_FILE"; then
-        echo "- [x] 核心原则章节存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 核心原则章节缺失" >> "$REPORT_FILE"
-    fi
-    
-    if grep -q "^## 何时使用" "$SKILL_FILE"; then
-        echo "- [x] 何时使用章节存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 何时使用章节缺失" >> "$REPORT_FILE"
-    fi
-    
-    if grep -q "^## 方法论" "$SKILL_FILE"; then
-        echo "- [x] 方法论章节存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 方法论章节缺失" >> "$REPORT_FILE"
-    fi
-    
-    # 检查示例数量
-    example_count=$(grep -c "^### 示例\|^#### 示例\|^## 示例" "$SKILL_FILE" || echo "0")
-    echo "### 示例统计" >> "$REPORT_FILE"
-    echo "- 示例数量: $example_count" >> "$REPORT_FILE"
-    
-    # 检查错误处理指导
-    if grep -q "错误处理\|故障排除\|常见问题" "$SKILL_FILE"; then
-        echo "- [x] 包含错误处理指导" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 缺少错误处理指导" >> "$REPORT_FILE"
-    fi
-    
-    # 检查边界情况处理
-    if grep -q "边界情况" "$SKILL_FILE"; then
-        echo "- [x] 包含边界情况处理" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 缺少边界情况处理" >> "$REPORT_FILE"
-    fi
-    
-    # 检查最佳实践
-    if grep -q "最佳实践" "$SKILL_FILE"; then
-        echo "- [x] 包含最佳实践" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 缺少最佳实践" >> "$REPORT_FILE"
-    fi
-    
-    echo "" >> "$REPORT_FILE"
-    echo "## 检查完成" >> "$REPORT_FILE"
-else
-    echo "## 错误" >> "$REPORT_FILE"
-    echo "SKILL.md 文件不存在" >> "$REPORT_FILE"
-fi
-
-echo "自动化检查完成，报告已保存到 $REPORT_FILE"
+./scripts/skill-automation-check.sh <skill-name>
 ```
 
 ### CI/CD集成
@@ -284,27 +146,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Check exec plans quality
-        run: |
-          bash scripts/exec-plans-check.sh
+      - name: Check skill quality
+        run: make triggers-all
 ```
 
 ## Agent 提示词
 
 ### plan-architect（计划架构师）
 
-## 角色定义
+### 角色定义
 
 把一个高层目标转化为可执行、可验证、可在多个上下文窗口之间接力完成的执行计划工件。不负责实现业务代码。你擅长分析项目架构、拆解目标、制定计划，能够识别任务复杂度、制定可验证的步骤、记录决策日志。
 
-## 核心能力
+### 核心能力
 
 - 读取项目架构约束和技术债清单，避免计划与现有设计冲突。
 - 判断任务是否真的需要落盘 exec-plan（单次会话能完成的不需要）。
 - 把目标拆解为可独立验证的小步骤、可机械检查的验收标准、明确的非目标。
 - 处理各种边界情况，提供最佳实践。
 
-## 执行流程
+### 执行流程
 
 1. **读取上下文**：查看 AGENTS.md 和 `docs/` 目录理解架构约束；读取 `docs/exec-plans/tech-debt-tracker.md` 和已完成/进行中的计划，避免冲突。
    - 如 `docs/exec-plans/` 不存在，先创建 `active/` 和 `completed/` 子目录。如 `AGENTS.md` 不存在，在计划中记录建议先运行 harness-bootstrap，但不阻塞。
@@ -344,7 +205,7 @@ jobs:
      - 需要人工确认的步骤
      - 执行顺序和依赖关系
 
-## 约束
+### 约束
 
 - **只产计划不写代码**：不在计划里预写大段实现代码。违反时删除实现代码，改为步骤描述。
 - **验收标准可机械检查**：写"测试通过且覆盖率 ≥ 80%"，不写"看起来不错"。违反时替换为具体条件。
@@ -354,7 +215,7 @@ jobs:
 - **提供具体步骤**：每个步骤都必须具体、可执行，不能模糊。违反时补充具体步骤。
 - **处理边界情况**：必须处理各种边界情况，提供最佳实践。违反时补充边界情况处理。
 
-## 输出规范
+### 输出规范
 
 - **计划文件**：遵循 `references/exec-plan-template.md` 模板。
 - **验收标准**：必须是可机械检查的条件（测试通过、指标达阈值、截图对比），不写"看起来不错"。

@@ -8,6 +8,7 @@ when_to_use: |
 disable-model-invocation: true
 context: fork
 agent: verification-loop-runner
+allowed-tools: Bash(git *) Bash(npm *) Bash(bun *) Bash(cargo *) Bash(vitest *) Bash(tsc *) Bash(bunx *) Bash(make *) Bash(just *)
 compatibility: opencode
 metadata:
   category: workflow
@@ -36,26 +37,12 @@ metadata:
 
 ## 方法论
 
-### 循环的标准步骤
+### 2. 标准循环步骤
 
-```
-1. 实现变更
-2. 本地自检
-   - git diff 通读，确认没有超出范围
-   - 跑相关测试 / lint / 构建
-3. 如有自动化验证手段（浏览器驱动、可观测性查询），
-   用 harness-observability-and-browser 技能产出证据
-4. 请求额外评审
-   - 可以是另一个 agent（如 boundary-auditor 检查架构边界）
-   - 也可以是人工评审，但不强制等待
-5. 处理反馈
-   - 对每条反馈给出修复或有理有据的反驳，不要静默忽略
-6. 重复 1-5，直到：
-   - 所有自动化评审通过，且
-   - 没有未处理的评审意见
-7. 合并 / 标记为完成
-   - 只有在"需要人类判断"时才升级给人类
-```
+具体执行步骤详见 `## Agent 提示词 → 执行流程`。以下仅列出方法论独有的循环控制说明：
+
+- **卡住检测**: 超过 N 轮迭代无进展时触发 stuck 诊断，生成诊断文件 `docs/stuck-loop-diagnostics.md`
+- **完成定义**: 所有自动化检查通过 + 无未处理的评审意见 + exec-plan schema 校验通过
 
 ### 验收标准
 
@@ -93,6 +80,10 @@ metadata:
 - 连续两轮如果尝试方式完全相同却没有进展，停下来指出"缺失的能力是什么"，而不是继续空转。
 - 定期审计验证循环，确保循环的有效性和适用性。
 - 文档化验证决策，便于团队理解和遵循。
+- **不假装完成**:达到迭代上限后必须明确写出卡在哪，说明缺什么能力，不报告虚假完成。
+- **对每条反馈给出响应**:对每条评审意见要么修复，要么写出有理有据的反驳，不静默忽略。
+- **区分反馈类型**:自动化反馈（测试失败、lint报错）和人工反馈（代码review、架构建议），优先处理自动化反馈。
+- **记录反馈处理**:记录每条反馈的处理方式、修复方案和反驳理由。
 
 ## 跨skill交接点
 
@@ -190,58 +181,7 @@ exec-plan路径: [如有]
 **场景**：涉及不可逆操作、产品取舍、安全敏感决策
 **处理**：升级给人类，不自行决定
 
-## 最佳实践
 
-### 验证循环最佳实践
-
-1. **明确完成定义**
-   - 识别哪些自动化检查必须通过
-   - 明确验收标准
-   - 避免模糊表述
-
-2. **设定迭代边界**
-   - 最大迭代次数：默认8轮
-   - 每轮迭代要有实质性变化
-   - 避免无限循环
-
-3. **基于真实反馈迭代**
-   - 使用测试结果、lint报错、评审意见
-   - 不凭一次性输出收工
-   - 确保每轮都有改进
-
-### 卡住检测最佳实践
-
-1. **连续两轮相同尝试必须停止**
-   - 检测git diff输出是否实质相同
-   - 立即停止，进行诊断
-   - 避免空转
-
-2. **诊断缺失能力**
-   - 读取stuck-loop-diagnostics.md
-   - 识别缺失的能力
-   - 决定下一步：修复方向/升级给人类/记录进tech-debt-tracker
-
-3. **不假装完成**
-   - 达到迭代上限后必须明确写出卡在哪
-   - 说明缺什么能力
-   - 不报告虚假完成
-
-### 反馈处理最佳实践
-
-1. **对每条反馈给出响应**
-   - 要么修复
-   - 要么写出有理有据的反驳
-   - 不静默忽略
-
-2. **区分反馈类型**
-   - 自动化反馈：测试失败、lint报错
-   - 人工反馈：代码review、架构建议
-   - 优先处理自动化反馈
-
-3. **记录反馈处理**
-   - 记录每条反馈的处理方式
-   - 记录修复方案
-   - 记录反驳理由
 
 ## 常见陷阱
 
@@ -255,11 +195,11 @@ exec-plan路径: [如有]
 
 ### 自验证循环执行者（verification-loop-runner）
 
-## 角色定义
+### 角色定义
 
 你是「自验证循环执行者」（verification-loop-runner）。把一个明确的改动目标通过"实现 → 自检 → 测试 → 评审 → 修复"循环推进到达成既定完成定义，而不是产出一次性的、未经验证的代码。你擅长使用git、测试工具、lint工具进行代码验证，能够识别测试失败、lint报错、架构边界违反等问题。
 
-## 核心能力
+### 核心能力
 
 - 代码变更：`Edit` 修改现有业务代码，`Write` 创建新测试文件或临时工件
 - 测试执行：`Bash` 运行测试、lint、构建命令
@@ -267,7 +207,7 @@ exec-plan路径: [如有]
 - 循环控制：设定迭代边界、检测卡住状态、管理反馈处理
 - 处理各种边界情况，提供最佳实践
 
-## 执行流程
+### 执行流程
 
 1. **确认完成定义**：明确这次任务要满足哪些可机械检查的条件（哪些测试要通过、架构边界约束、性能预算）。不清楚时先读相关 exec-plan 或 `docs/ARCHITECTURE.md`。如这些文件不存在，注明"缺少 X，本次仅做基本验证"。
    - **exec-plan schema 校验**：如对应 exec-plan，检查必需字段：目标（一句话可验证描述）、步骤（至少一个带验收条件的 checkbox）、验收标准（至少一条机械可检查条件）。缺少任一字段则报告并停止。
@@ -322,7 +262,7 @@ exec-plan路径: [如有]
      - 已知限制
      - 迭代记录
 
-## 约束
+### 约束
 
 - **不假装完成**：达到迭代上限后必须明确写出卡在哪、缺什么能力。违反时补充卡住原因报告。
 - **连续两轮相同尝试必须停止**：`git diff` 输出实质相同时立即停止，读取 `references/stuck-loop-diagnostics.md` 诊断，按结果决定下一步（修复方向 / 升级给人类 / 记录进 `docs/exec-plans/tech-debt-tracker.md`）。违反时停止循环，输出诊断结果。
@@ -332,7 +272,7 @@ exec-plan路径: [如有]
 - **提供具体指导**：每个问题都必须附带具体的修复建议，不能模糊。违反时补充具体指导。
 - **处理卡住状态**：必须处理卡住状态，提供诊断和解决方案。违反时补充卡住处理。
 
-## 输出规范
+### 输出规范
 
 - **完成总结**：做了什么、怎么验证的、已知限制（遵循 `references/completion-summary-template.md`）。
 - **迭代记录**：总迭代轮数、每轮关键变化、卡住检测是否触发。
@@ -349,97 +289,10 @@ exec-plan路径: [如有]
 
 ### 自动化检查脚本
 
+通用检查脚本，适用于所有 skill：
+
 ```bash
-#!/bin/bash
-# Verification Loop自动化检查脚本
-
-SKILLS_DIR="./skills"
-SKILL_NAME="harness-verification-loop"
-REPORT_FILE="docs/quality-reports/verification-loop-check.md"
-
-# 创建报告目录
-mkdir -p docs/quality-reports
-
-# 开始报告
-echo "# Verification Loop自动化检查报告" > "$REPORT_FILE"
-echo "" >> "$REPORT_FILE"
-echo "检查时间: $(date)" >> "$REPORT_FILE"
-echo "" >> "$REPORT_FILE"
-
-SKILL_FILE="$SKILLS_DIR/$SKILL_NAME/SKILL.md"
-
-if [ -f "$SKILL_FILE" ]; then
-    echo "## 检查结果" >> "$REPORT_FILE"
-    echo "" >> "$REPORT_FILE"
-    
-    # 检查frontmatter
-    echo "### Frontmatter检查" >> "$REPORT_FILE"
-    if grep -q "^name:" "$SKILL_FILE"; then
-        echo "- [x] name 字段存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] name 字段缺失" >> "$REPORT_FILE"
-    fi
-    
-    if grep -q "^description:" "$SKILL_FILE"; then
-        echo "- [x] description 字段存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] description 字段缺失" >> "$REPORT_FILE"
-    fi
-    
-    # 检查标准章节
-    echo "### 章节结构检查" >> "$REPORT_FILE"
-    if grep -q "^## 核心原则" "$SKILL_FILE"; then
-        echo "- [x] 核心原则章节存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 核心原则章节缺失" >> "$REPORT_FILE"
-    fi
-    
-    if grep -q "^## 何时使用" "$SKILL_FILE"; then
-        echo "- [x] 何时使用章节存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 何时使用章节缺失" >> "$REPORT_FILE"
-    fi
-    
-    if grep -q "^## 方法论" "$SKILL_FILE"; then
-        echo "- [x] 方法论章节存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 方法论章节缺失" >> "$REPORT_FILE"
-    fi
-    
-    # 检查示例数量
-    example_count=$(grep -c "^### 示例\|^#### 示例\|^## 示例" "$SKILL_FILE" || echo "0")
-    echo "### 示例统计" >> "$REPORT_FILE"
-    echo "- 示例数量: $example_count" >> "$REPORT_FILE"
-    
-    # 检查错误处理指导
-    if grep -q "错误处理\|故障排除\|常见问题" "$SKILL_FILE"; then
-        echo "- [x] 包含错误处理指导" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 缺少错误处理指导" >> "$REPORT_FILE"
-    fi
-    
-    # 检查边界情况处理
-    if grep -q "边界情况" "$SKILL_FILE"; then
-        echo "- [x] 包含边界情况处理" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 缺少边界情况处理" >> "$REPORT_FILE"
-    fi
-    
-    # 检查最佳实践
-    if grep -q "最佳实践" "$SKILL_FILE"; then
-        echo "- [x] 包含最佳实践" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 缺少最佳实践" >> "$REPORT_FILE"
-    fi
-    
-    echo "" >> "$REPORT_FILE"
-    echo "## 检查完成" >> "$REPORT_FILE"
-else
-    echo "## 错误" >> "$REPORT_FILE"
-    echo "SKILL.md 文件不存在" >> "$REPORT_FILE"
-fi
-
-echo "自动化检查完成，报告已保存到 $REPORT_FILE"
+./scripts/skill-automation-check.sh <skill-name>
 ```
 
 ### CI/CD集成
@@ -460,9 +313,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Check verification loop quality
-        run: |
-          bash scripts/verification-loop-check.sh
+      - name: Check skill quality
+        run: make triggers-all
 ```
 
 ---

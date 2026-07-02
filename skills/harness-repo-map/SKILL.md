@@ -104,6 +104,11 @@ docs/
 - 过时的执行记录（如已完成 exec-plan）本身有历史价值，不要删除——真正该清理的是"仍标着 active 却已不准确"的内容。
 - 定期审计知识库，确保文档的有效性和适用性。
 - 文档化知识管理决策，便于团队理解和遵循。
+- 给每个文档补上"这是关于什么的"和"什么时候该看它"，确保文档可被正确导航。
+- 由doc-gardener agent内联执行文档校验，包括断链检测、新鲜度检测、覆盖率检测、结构检测。
+- 失败信息写成对agent友好的修复说明，让发现问题的agent能直接照着修。
+- 每个目录有明确的职责，文件命名规范，避免目录层级过深。
+- 允许未来添加新目录，保持结构清晰，确保易于维护。
 
 ## 边界情况处理
 
@@ -129,58 +134,7 @@ docs/
 **场景**：关键文档超过30天未更新
 **处理**：标记为待校验，更新文档内容，更新"最后更新"日期
 
-## 最佳实践
 
-### 知识库管理最佳实践
-
-1. **渐进式披露**
-   - agent从小入口开始，被教会去哪里找更多
-   - 不要一次性把所有信息塞进一个文件
-   - 确保信息可被机械化发现和校验
-
-2. **地图不是百科全书**
-   - AGENTS.md只放"现在该看哪"
-   - 把详细内容下沉到docs/
-   - 避免上下文被挤占
-
-3. **定期审计**
-   - 定期检查文档是否过期
-   - 定期检查断链
-   - 定期检查覆盖率
-
-### 文档维护最佳实践
-
-1. **元信息补全**
-   - 给每个文档补上"这是关于什么的"
-   - 给每个文档补上"什么时候该看它"
-   - 确保文档可被正确导航
-
-2. **校验机制**
-   - 由doc-gardener agent内联执行文档校验
-   - 包括断链检测、新鲜度检测、覆盖率检测、结构检测
-   - 不需要额外生成独立脚本
-
-3. **修复建议**
-   - 失败信息写成对agent友好的修复说明
-   - 让发现问题的agent能直接照着修
-   - 确保修复建议具体可执行
-
-### 目录结构最佳实践
-
-1. **按需裁剪**
-   - 不是每个项目都需要全部子目录
-   - 按项目实际需要裁剪目录
-   - 但目录本身要记录在AGENTS.md里
-
-2. **结构清晰**
-   - 每个目录有明确的职责
-   - 文件命名规范
-   - 避免目录层级过深
-
-3. **可扩展性**
-   - 允许未来添加新目录
-   - 保持结构清晰
-   - 确保易于维护
 
 ## 常见陷阱
 
@@ -202,97 +156,10 @@ docs/
 
 ### 自动化检查脚本
 
+通用检查脚本，适用于所有 skill：
+
 ```bash
-#!/bin/bash
-# Repo Map自动化检查脚本
-
-SKILLS_DIR="./skills"
-SKILL_NAME="harness-repo-map"
-REPORT_FILE="docs/quality-reports/repo-map-check.md"
-
-# 创建报告目录
-mkdir -p docs/quality-reports
-
-# 开始报告
-echo "# Repo Map自动化检查报告" > "$REPORT_FILE"
-echo "" >> "$REPORT_FILE"
-echo "检查时间: $(date)" >> "$REPORT_FILE"
-echo "" >> "$REPORT_FILE"
-
-SKILL_FILE="$SKILLS_DIR/$SKILL_NAME/SKILL.md"
-
-if [ -f "$SKILL_FILE" ]; then
-    echo "## 检查结果" >> "$REPORT_FILE"
-    echo "" >> "$REPORT_FILE"
-    
-    # 检查frontmatter
-    echo "### Frontmatter检查" >> "$REPORT_FILE"
-    if grep -q "^name:" "$SKILL_FILE"; then
-        echo "- [x] name 字段存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] name 字段缺失" >> "$REPORT_FILE"
-    fi
-    
-    if grep -q "^description:" "$SKILL_FILE"; then
-        echo "- [x] description 字段存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] description 字段缺失" >> "$REPORT_FILE"
-    fi
-    
-    # 检查标准章节
-    echo "### 章节结构检查" >> "$REPORT_FILE"
-    if grep -q "^## 核心原则" "$SKILL_FILE"; then
-        echo "- [x] 核心原则章节存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 核心原则章节缺失" >> "$REPORT_FILE"
-    fi
-    
-    if grep -q "^## 何时使用" "$SKILL_FILE"; then
-        echo "- [x] 何时使用章节存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 何时使用章节缺失" >> "$REPORT_FILE"
-    fi
-    
-    if grep -q "^## 方法论" "$SKILL_FILE"; then
-        echo "- [x] 方法论章节存在" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 方法论章节缺失" >> "$REPORT_FILE"
-    fi
-    
-    # 检查示例数量
-    example_count=$(grep -c "^### 示例\|^#### 示例\|^## 示例" "$SKILL_FILE" || echo "0")
-    echo "### 示例统计" >> "$REPORT_FILE"
-    echo "- 示例数量: $example_count" >> "$REPORT_FILE"
-    
-    # 检查错误处理指导
-    if grep -q "错误处理\|故障排除\|常见问题" "$SKILL_FILE"; then
-        echo "- [x] 包含错误处理指导" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 缺少错误处理指导" >> "$REPORT_FILE"
-    fi
-    
-    # 检查边界情况处理
-    if grep -q "边界情况" "$SKILL_FILE"; then
-        echo "- [x] 包含边界情况处理" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 缺少边界情况处理" >> "$REPORT_FILE"
-    fi
-    
-    # 检查最佳实践
-    if grep -q "最佳实践" "$SKILL_FILE"; then
-        echo "- [x] 包含最佳实践" >> "$REPORT_FILE"
-    else
-        echo "- [ ] 缺少最佳实践" >> "$REPORT_FILE"
-    fi
-    
-    echo "" >> "$REPORT_FILE"
-    echo "## 检查完成" >> "$REPORT_FILE"
-else
-    echo "## 错误" >> "$REPORT_FILE"
-    echo "SKILL.md 文件不存在" >> "$REPORT_FILE"
-fi
-
-echo "自动化检查完成，报告已保存到 $REPORT_FILE"
+./scripts/skill-automation-check.sh <skill-name>
 ```
 
 ### CI/CD集成
@@ -313,20 +180,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Check repo map quality
-        run: |
-          bash scripts/repo-map-check.sh
+      - name: Check skill quality
+        run: make triggers-all
 ```
 
 ## Agent 提示词
 
 ### doc-gardener
 
-## 角色定义
+### 角色定义
 
 你是「文档园丁」（doc-gardener）。让仓库知识库持续保持新鲜、可导航、和代码现状一致，而不是等它腐烂成需要大规模返工的状态。你擅长使用只读工具检查文档健康状态，能够识别断链、过期、结构混乱等问题。
 
-## 核心能力
+### 核心能力
 
 - AGENTS.md 健康检查：行数统计、导航表完整性验证
 - docs/ 结构扫描：文件枚举、断链检测、孤立文档识别
@@ -336,7 +202,7 @@ jobs:
 - **禁止**：文件写入、删除、修改；如需修复，在报告中给出具体建议
 - 处理各种边界情况，提供最佳实践
 
-## 执行流程
+### 执行流程
 
 严格按以下步骤顺序执行，每步用最少的工具调用完成。
 
@@ -387,7 +253,7 @@ jobs:
   - 包含位置、严重程度、修复指令
   - 修复建议具体可执行
 
-## 约束
+### 约束
 
 - **只读不改**：不修改任何文件，只产出报告和建议。违反时撤回修改，重新以报告形式输出。
 - **不删除历史内容**：已完成 exec-plan 的决策记录有历史价值，不删除。违反时恢复已删除内容。
@@ -397,7 +263,7 @@ jobs:
 - **提供具体建议**：每个发现都必须附带具体的修复建议，不能模糊。违反时补充具体建议。
 - **处理边界情况**：必须处理各种边界情况，提供最佳实践。违反时补充边界情况处理。
 
-## 输出规范
+### 输出规范
 
 - **报告结构**：每类发现一条独立建议，包含位置、严重程度、修复指令。
 - **严重程度定义**：HIGH（误导性内容/断链）/ MEDIUM（缺失但不影响功能）/ LOW（建议改进）。
