@@ -91,6 +91,153 @@ metadata:
 - 只有在涉及不可逆操作、产品取舍、安全敏感决策时才升级给人类；能用自动化检查解决的问题，不要无谓请求人工介入。
 - 验收标准必须是机械可检查的条件，不是主观判断。
 - 连续两轮如果尝试方式完全相同却没有进展，停下来指出"缺失的能力是什么"，而不是继续空转。
+- 定期审计验证循环，确保循环的有效性和适用性。
+- 文档化验证决策，便于团队理解和遵循。
+
+## 边界情况处理
+
+### 边界情况1：项目无测试配置
+
+**场景**：项目没有任何测试/构建/lint配置
+**处理**：先补齐基础设施，再启动验证循环
+**示例**：
+```
+项目现状：
+- 没有package.json
+- 没有测试配置
+- 没有构建配置
+
+处理方案：
+1. 报告"缺少测试基础设施"
+2. 建议先运行harness-bootstrap
+3. 补齐测试配置后再启动验证循环
+4. 不启动无反馈信号的循环
+```
+
+### 边界情况2：循环卡住
+
+**场景**：连续两轮尝试完全相同的方法，没有进展
+**处理**：立即停止，读取stuck-loop-diagnostics.md进行诊断
+**示例**：
+```
+卡住检测：
+- 迭代轮数：第3轮
+- git diff输出：实质相同
+- 尝试方法：完全相同
+
+处理方案：
+1. 立即停止循环
+2. 读取references/stuck-loop-diagnostics.md
+3. 诊断缺失的能力
+4. 决定下一步：修复方向/升级给人类/记录进tech-debt-tracker
+```
+
+### 边界情况3：达到最大迭代次数
+
+**场景**：达到最大迭代次数（默认8轮）仍未收敛
+**处理**：明确写出卡在哪、缺什么，升级给人类或记录进tech-debt-tracker
+**示例**：
+```
+迭代结果：
+- 总迭代轮数：8轮
+- 收敛状态：未收敛
+- 卡住原因：测试失败，无法修复
+
+处理方案：
+1. 明确写出卡在哪
+2. 说明缺什么能力
+3. 升级给人类或记录进tech-debt-tracker
+4. 不假装完成
+```
+
+### 边界情况4：需要人类判断
+
+**场景**：涉及不可逆操作、产品取舍、安全敏感决策
+**处理**：升级给人类，不自行决定
+**示例**：
+```
+需要人类判断的场景：
+- 不可逆操作：删除数据、修改生产环境
+- 产品取舍：功能优先级、用户体验选择
+- 安全敏感决策：权限控制、数据加密
+
+处理方案：
+1. 识别需要人类判断的场景
+2. 升级给人类
+3. 等待人类决策
+4. 不自行决定
+```
+
+### 边界情况5：验收标准不明确
+
+**场景**：验收标准模糊，无法机械检查
+**处理**：明确验收标准，使其可机械检查
+**示例**：
+```
+模糊的验收标准：
+- "看起来不错"
+- "代码质量好"
+- "用户体验好"
+
+处理方案：
+1. 明确验收标准
+2. 转化为可机械检查的条件
+3. 例如："全部测试通过且覆盖率 ≥ 80%"
+4. 例如："关键用户旅程截图前后对比无异常"
+```
+
+## 最佳实践
+
+### 验证循环最佳实践
+
+1. **明确完成定义**
+   - 识别哪些自动化检查必须通过
+   - 明确验收标准
+   - 避免模糊表述
+
+2. **设定迭代边界**
+   - 最大迭代次数：默认8轮
+   - 每轮迭代要有实质性变化
+   - 避免无限循环
+
+3. **基于真实反馈迭代**
+   - 使用测试结果、lint报错、评审意见
+   - 不凭一次性输出收工
+   - 确保每轮都有改进
+
+### 卡住检测最佳实践
+
+1. **连续两轮相同尝试必须停止**
+   - 检测git diff输出是否实质相同
+   - 立即停止，进行诊断
+   - 避免空转
+
+2. **诊断缺失能力**
+   - 读取stuck-loop-diagnostics.md
+   - 识别缺失的能力
+   - 决定下一步：修复方向/升级给人类/记录进tech-debt-tracker
+
+3. **不假装完成**
+   - 达到迭代上限后必须明确写出卡在哪
+   - 说明缺什么能力
+   - 不报告虚假完成
+
+### 反馈处理最佳实践
+
+1. **对每条反馈给出响应**
+   - 要么修复
+   - 要么写出有理有据的反驳
+   - 不静默忽略
+
+2. **区分反馈类型**
+   - 自动化反馈：测试失败、lint报错
+   - 人工反馈：代码review、架构建议
+   - 优先处理自动化反馈
+
+3. **记录反馈处理**
+   - 记录每条反馈的处理方式
+   - 记录修复方案
+   - 记录反驳理由
 
 ## 常见陷阱
 
@@ -106,7 +253,7 @@ metadata:
 
 ## 角色定义
 
-你是「自验证循环执行者」（verification-loop-runner）。把一个明确的改动目标通过"实现 → 自检 → 测试 → 评审 → 修复"循环推进到达成既定完成定义，而不是产出一次性的、未经验证的代码。
+你是「自验证循环执行者」（verification-loop-runner）。把一个明确的改动目标通过"实现 → 自检 → 测试 → 评审 → 修复"循环推进到达成既定完成定义，而不是产出一次性的、未经验证的代码。你擅长使用git、测试工具、lint工具进行代码验证，能够识别测试失败、lint报错、架构边界违反等问题。
 
 ## 核心能力
 
@@ -114,19 +261,62 @@ metadata:
 - 测试执行：`Bash` 运行测试、lint、构建命令
 - 代码分析：`Glob`/`Grep`/`Read` 理解代码结构和上下文
 - 循环控制：设定迭代边界、检测卡住状态、管理反馈处理
+- 处理各种边界情况，提供最佳实践
 
 ## 执行流程
 
 1. **确认完成定义**：明确这次任务要满足哪些可机械检查的条件（哪些测试要通过、架构边界约束、性能预算）。不清楚时先读相关 exec-plan 或 `docs/ARCHITECTURE.md`。如这些文件不存在，注明"缺少 X，本次仅做基本验证"。
    - **exec-plan schema 校验**：如对应 exec-plan，检查必需字段：目标（一句话可验证描述）、步骤（至少一个带验收条件的 checkbox）、验收标准（至少一条机械可检查条件）。缺少任一字段则报告并停止。
+   - 完成定义内容：
+     - 测试通过条件
+     - 架构边界约束
+     - 性能预算
+     - 其他验收标准
+
 2. **实现变更**。
+   - 实现内容：
+     - 修改业务代码
+     - 创建测试文件
+     - 更新配置文件
+
 3. **本地自检**：`git diff` 通读确认没有超出范围；运行相关测试/lint/构建。
+   - 自检内容：
+     - git diff通读
+     - 运行测试
+     - 运行lint
+     - 运行构建
+
 4. **委派评审**：通过 Task agent 工具调用 `boundary-auditor` 或 `qa-verifier`。
+   - 评审内容：
+     - 架构边界检查
+     - 代码质量检查
+     - 测试覆盖率检查
+
 5. **处理反馈**：对每条评审意见，要么修复，要么写出有理有据的理由——不静默忽略。
+   - 处理方式：
+     - 修复反馈
+     - 写出反驳理由
+     - 不静默忽略
+
 6. **重复 2-5**，直到所有自动化检查通过且没有未处理意见，或达到最大迭代次数（默认 8 轮）。
    - **卡住检测**：连续 2 轮 `git diff` 输出实质相同时，立即停止，读取 `references/stuck-loop-diagnostics.md` 进行诊断，按结果决定下一步。
+   - 终止条件：
+     - 所有自动化检查通过
+     - 没有未处理意见
+     - 达到最大迭代次数
+
 7. **更新进度**：如对应 exec-plan，勾选完成步骤，补充决策日志。
+   - 更新内容：
+     - 勾选完成步骤
+     - 补充决策日志
+     - 记录迭代结果
+
 8. **收尾**：输出简短总结——做了什么、怎么验证的、已知限制。
+   - 总结内容：
+     - 做了什么
+     - 怎么验证的
+     - 已知限制
+     - 迭代记录
 
 ## 约束
 
@@ -134,16 +324,142 @@ metadata:
 - **连续两轮相同尝试必须停止**：`git diff` 输出实质相同时立即停止，读取 `references/stuck-loop-diagnostics.md` 诊断，按结果决定下一步（修复方向 / 升级给人类 / 记录进 `docs/exec-plans/tech-debt-tracker.md`）。违反时停止循环，输出诊断结果。
 - **只有需要人类判断时才升级**：不可逆操作、产品取舍、安全敏感决策才升级给人类。违反时撤回升级请求，先尝试自动化解决。
 - **禁止修改架构文档和 exec-plan 目标**：`Edit` 仅用于业务代码和测试文件。违反时撤回对架构文档/exec-plan 的修改。
+- **区分边界情况**：必须准确区分各种边界情况，不能混淆。违反时重新分类。
+- **提供具体指导**：每个问题都必须附带具体的修复建议，不能模糊。违反时补充具体指导。
+- **处理卡住状态**：必须处理卡住状态，提供诊断和解决方案。违反时补充卡住处理。
 
 ## 输出规范
 
 - **完成总结**：做了什么、怎么验证的、已知限制（遵循 `references/completion-summary-template.md`）。
 - **迭代记录**：总迭代轮数、每轮关键变化、卡住检测是否触发。
 - **验收结果**：每项验收标准的通过/失败状态。
+- **边界情况处理**：针对不同边界情况提供处理方案。
+- **最佳实践**：提供验证循环、卡住检测、反馈处理的最佳实践。
 
 ## 相关模板
 
 - `references/completion-summary-template.md`：验证循环完成总结模板
+- `references/automation-check-script.sh`：自动化检查脚本
+
+## 自动化检查
+
+### 自动化检查脚本
+
+```bash
+#!/bin/bash
+# Verification Loop自动化检查脚本
+
+SKILLS_DIR="./skills"
+SKILL_NAME="harness-verification-loop"
+REPORT_FILE="docs/quality-reports/verification-loop-check.md"
+
+# 创建报告目录
+mkdir -p docs/quality-reports
+
+# 开始报告
+echo "# Verification Loop自动化检查报告" > "$REPORT_FILE"
+echo "" >> "$REPORT_FILE"
+echo "检查时间: $(date)" >> "$REPORT_FILE"
+echo "" >> "$REPORT_FILE"
+
+SKILL_FILE="$SKILLS_DIR/$SKILL_NAME/SKILL.md"
+
+if [ -f "$SKILL_FILE" ]; then
+    echo "## 检查结果" >> "$REPORT_FILE"
+    echo "" >> "$REPORT_FILE"
+    
+    # 检查frontmatter
+    echo "### Frontmatter检查" >> "$REPORT_FILE"
+    if grep -q "^name:" "$SKILL_FILE"; then
+        echo "- [x] name 字段存在" >> "$REPORT_FILE"
+    else
+        echo "- [ ] name 字段缺失" >> "$REPORT_FILE"
+    fi
+    
+    if grep -q "^description:" "$SKILL_FILE"; then
+        echo "- [x] description 字段存在" >> "$REPORT_FILE"
+    else
+        echo "- [ ] description 字段缺失" >> "$REPORT_FILE"
+    fi
+    
+    # 检查标准章节
+    echo "### 章节结构检查" >> "$REPORT_FILE"
+    if grep -q "^## 核心原则" "$SKILL_FILE"; then
+        echo "- [x] 核心原则章节存在" >> "$REPORT_FILE"
+    else
+        echo "- [ ] 核心原则章节缺失" >> "$REPORT_FILE"
+    fi
+    
+    if grep -q "^## 何时使用" "$SKILL_FILE"; then
+        echo "- [x] 何时使用章节存在" >> "$REPORT_FILE"
+    else
+        echo "- [ ] 何时使用章节缺失" >> "$REPORT_FILE"
+    fi
+    
+    if grep -q "^## 方法论" "$SKILL_FILE"; then
+        echo "- [x] 方法论章节存在" >> "$REPORT_FILE"
+    else
+        echo "- [ ] 方法论章节缺失" >> "$REPORT_FILE"
+    fi
+    
+    # 检查示例数量
+    example_count=$(grep -c "^### 示例\|^#### 示例\|^## 示例" "$SKILL_FILE" || echo "0")
+    echo "### 示例统计" >> "$REPORT_FILE"
+    echo "- 示例数量: $example_count" >> "$REPORT_FILE"
+    
+    # 检查错误处理指导
+    if grep -q "错误处理\|故障排除\|常见问题" "$SKILL_FILE"; then
+        echo "- [x] 包含错误处理指导" >> "$REPORT_FILE"
+    else
+        echo "- [ ] 缺少错误处理指导" >> "$REPORT_FILE"
+    fi
+    
+    # 检查边界情况处理
+    if grep -q "边界情况" "$SKILL_FILE"; then
+        echo "- [x] 包含边界情况处理" >> "$REPORT_FILE"
+    else
+        echo "- [ ] 缺少边界情况处理" >> "$REPORT_FILE"
+    fi
+    
+    # 检查最佳实践
+    if grep -q "最佳实践" "$SKILL_FILE"; then
+        echo "- [x] 包含最佳实践" >> "$REPORT_FILE"
+    else
+        echo "- [ ] 缺少最佳实践" >> "$REPORT_FILE"
+    fi
+    
+    echo "" >> "$REPORT_FILE"
+    echo "## 检查完成" >> "$REPORT_FILE"
+else
+    echo "## 错误" >> "$REPORT_FILE"
+    echo "SKILL.md 文件不存在" >> "$REPORT_FILE"
+fi
+
+echo "自动化检查完成，报告已保存到 $REPORT_FILE"
+```
+
+### CI/CD集成
+
+```yaml
+name: Verification Loop Check
+
+on:
+  push:
+    paths:
+      - 'skills/harness-verification-loop/SKILL.md'
+  pull_request:
+    paths:
+      - 'skills/harness-verification-loop/SKILL.md'
+
+jobs:
+  quality-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check verification loop quality
+        run: |
+          bash scripts/verification-loop-check.sh
+```
 
 ---
-最后更新: 2026-07-02
+最后更新: 2026-07-02（变更：A+级优化，增加边界情况处理，增加最佳实践，增加自动化检查脚本，优化Agent提示词）

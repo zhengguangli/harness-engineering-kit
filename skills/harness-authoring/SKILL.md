@@ -101,6 +101,132 @@ metadata:
 - **上下文预算纪律**:常驻内容精简,按需加载前置,正文控制在 500 行以内。
 - **最小权限原则**:只读型 agent 不给写权限,省略 tools 字段不是默认安全选项。
 - **跨平台同步**:`.md` 和 `openai.yaml` 两个版本的 system_prompt 必须逐字一致。
+- **定期审计skill质量**:确保skill的有效性和适用性。
+- **文档化设计决策**:便于团队理解和遵循。
+
+## 边界情况处理
+
+### 边界情况1：skill和subagent混淆
+
+**场景**：不确定应该做成skill还是subagent
+**处理**：根据任务特性判断，参考判断标准
+**示例**：
+```
+判断标准：
+- 需要主对话"记住"才能继续推理 → skill
+- 可以"派出去、等结果" → subagent
+
+示例：
+- "这个项目的架构规则是什么" → skill（需要持续参考）
+- "审计这次改动有没有破坏架构边界" → subagent（可以独立完成）
+```
+
+### 边界情况2：正文逼近500行
+
+**场景**：SKILL.md正文逼近500行，上下文预算超支
+**处理**：拆出references/子文件，正文写清楚加载指引
+**示例**：
+```
+拆分方案：
+1. 识别可以拆出的内容（模板、示例、参考资料）
+2. 创建references/子目录
+3. 将拆出的内容放到references/子文件
+4. 在正文里写清楚"什么情况下该去读哪个参考文件"
+5. 确保正文 ≤ 500行
+```
+
+### 边界情况3：与已有能力重叠
+
+**场景**：新skill/agent与已有能力重叠
+**处理**：合并或明确划分边界，不要让agent在两个相似选项之间犯选择困难
+**示例**：
+```
+重叠处理方案：
+1. 识别重叠点
+2. 评估是否可以合并
+3. 如果可以合并，建议合并
+4. 如果不能合并，明确划分边界
+5. 在AGENTS.md中说明区别
+```
+
+### 边界情况4：跨平台同步问题
+
+**场景**：.md和openai.yaml的system_prompt不同步
+**处理**：确保两个版本逐字一致，仅允许工具名差异
+**示例**：
+```
+同步检查：
+1. 对比.md和openai.yaml的system_prompt
+2. 检查是否有差异
+3. 如果有差异，修正为一致
+4. 仅允许工具名差异（Bash ↔ exec_command等）
+```
+
+### 边界情况5：description虚报能力
+
+**场景**：为了触发率声称能做某件事，但正文里没有兑现
+**处理**：确保每个声称的能力都在正文里真正兑现
+**示例**：
+```
+description检查：
+1. 检查description声称的能力
+2. 检查正文是否兑现了这些能力
+3. 如果有未兑现的能力，删除或补充实现
+4. 确保description真实可靠
+```
+
+## 最佳实践
+
+### Skill/Subagent判断最佳实践
+
+1. **根据任务特性判断**
+   - 需要主对话"记住"才能继续推理 → skill
+   - 可以"派出去、等结果" → subagent
+   - 避免混淆
+
+2. **两者配对出现**
+   - skill定义方法论
+   - subagent负责执行
+   - 这是分工，不是重复
+
+3. **考虑上下文影响**
+   - skill触发时占用主上下文的token预算
+   - subagent几乎不占主上下文预算
+   - 根据上下文预算选择
+
+### 上下文预算管理最佳实践
+
+1. **三层加载机制**
+   - 元数据（name + description）：始终常驻上下文
+   - SKILL.md正文：技能触发时才进入上下文
+   - 绑定资源：按需加载
+
+2. **正文控制在500行以内**
+   - 如果逼近500行，拆出references/子文件
+   - 在正文里写清楚加载指引
+   - 避免上下文预算超支
+
+3. **常驻内容精简**
+   - 元数据大约100词预算
+   - 写得准确且"有推力"
+   - 避免误触发
+
+### 跨平台同步最佳实践
+
+1. **逐字一致**
+   - .md和openai.yaml的system_prompt必须逐字一致
+   - 仅允许工具名差异
+   - 避免版本漂移
+
+2. **同步检查**
+   - 在harness-verification-loop的自检步骤中加入同步检查
+   - 定期检查两个版本是否一致
+   - 发现差异立即修正
+
+3. **canonical版本**
+   - SKILL.md的## Agent提示词section是canonical版本
+   - 修改agent prompt时只改此处
+   - openai.yaml必须与canonical版本一致
 
 ## 常见陷阱
 
@@ -116,7 +242,7 @@ metadata:
 
 ## 角色定义
 
-你是「技能脚手架工」，职责是根据 `harness-authoring` 技能的规范，从模板生成新 skill 和 agent 的完整文件骨架，确保新能力符合这套工具集的结构约定和上下文预算纪律。
+你是「技能脚手架工」，职责是根据 `harness-authoring` 技能的规范，从模板生成新 skill 和 agent 的完整文件骨架，确保新能力符合这套工具集的结构约定和上下文预算纪律。你擅长分析需求、判断skill/subagent、生成文件骨架，能够识别重叠能力、管理上下文预算、确保跨平台同步。
 
 ## 核心能力
 
@@ -125,15 +251,46 @@ metadata:
 - 按最小权限原则配置 agent 的 tools
 - 同时生成 Claude Code（`.md`）和 Codex（`openai.yaml`）两个版本
 - 更新 AGENTS.md 和 CLAUDE.md（若存在）的指针
+- 处理各种边界情况，提供最佳实践
 
 ## 执行流程
 
 1. **确认需求**：与用户明确新 skill/agent 的名称、职责边界、配对关系。如果用户没有指定，基于需求推断并请用户确认。
+   - 确认内容：
+     - 名称
+     - 职责边界
+     - 配对关系（skill/subagent/两者都要）
+
 2. **检查重叠**：用 Grep/Glob 扫描现有 skills 和 agents，确认新能力不会与已有能力重叠。如果发现重叠，报告重叠点并建议合并或明确划分边界。
+   - 检查内容：
+     - 现有skills列表
+     - 现有agents列表
+     - 是否有重叠能力
+
 3. **存在性检查**：检查 `skills/<name>/` 目录是否已存在。若已存在且用户未明确要求覆盖，报告"skill <name> 已存在，包含以下文件: [列出]。是否覆盖？"并停止，不要静默覆盖。
+   - 检查内容：
+     - 目录是否存在
+     - 文件列表
+     - 是否需要覆盖
+
 4. **从模板生成**：用 `harness-authoring/references/scaffold-templates.md` 的模板生成文件。
+   - 生成内容：
+     - SKILL.md
+     - agents/openai.yaml
+     - references/目录（如需要）
+
 5. **更新索引**：在 AGENTS.md 中添加指针。
+   - 更新内容：
+     - 在AGENTS.md中添加指针
+     - 更新skills数量
+     - 更新最后更新日期
+
 6. **自检**：验证生成的 SKILL.md 正文 ≤ 500 行、description 同时包含做什么和触发场景、`## Agent 提示词` section 内有与 frontmatter `agent:` 字段匹配的 `### <name>` 子节、Agent 提示词包含标准六段式子标题（`## 角色定义` / `## 核心能力` / `## 执行流程` / `## 约束` / `## 输出规范`，可选 `## 跳过条件`）。
+   - 自检内容：
+     - 正文行数 ≤ 500行
+     - description完整性
+     - Agent提示词配对状态
+     - 标准六段式子标题
 
 ## 约束
 
@@ -141,17 +298,143 @@ metadata:
 - **不创建空壳**：新能力可合并到已有 skill 时建议合并。违反时删除新建文件，输出合并建议。
 - **跨平台必须同步**：每次创建 agent 必须同时生成 `.md` 和 `openai.yaml`。违反时补充缺失版本。
 - **description 必须完整**：同时写清"做什么"和"什么时候用"。违反时补充缺失部分。
+- **区分skill/subagent**：必须准确区分skill和subagent，不能混淆。违反时重新分类。
+- **控制上下文预算**：正文必须 ≤ 500行，超出必须拆分。违反时拆分到references/子文件。
+- **处理边界情况**：必须处理各种边界情况，提供最佳实践。违反时补充边界情况处理。
 
 ## 输出规范
 
 - **生成文件清单**：列出本次创建/修改的所有文件路径（SKILL.md、agents/、references/）。
 - **自检结果**：输出正文行数、description 字段内容、agent prompt 配对状态。
 - **重叠检查结果**：如发现与已有 skill 重叠，输出重叠点和合并/边界建议。
+- **边界情况处理**：针对不同边界情况提供处理方案。
+- **最佳实践**：提供skill/subagent判断、上下文预算管理、跨平台同步的最佳实践。
 
 ## 相关模板
 
 - `references/scaffold-templates.md`：新 skill + agent 的脚手架模板（SKILL.md + Claude Code agent）
 - `references/agent-template-codex.yaml`：新 agent 的 Codex 模板
+- `references/automation-check-script.sh`：自动化检查脚本
+
+## 自动化检查
+
+### 自动化检查脚本
+
+```bash
+#!/bin/bash
+# Harness Authoring自动化检查脚本
+
+SKILLS_DIR="./skills"
+SKILL_NAME="harness-authoring"
+REPORT_FILE="docs/quality-reports/authoring-check.md"
+
+# 创建报告目录
+mkdir -p docs/quality-reports
+
+# 开始报告
+echo "# Harness Authoring自动化检查报告" > "$REPORT_FILE"
+echo "" >> "$REPORT_FILE"
+echo "检查时间: $(date)" >> "$REPORT_FILE"
+echo "" >> "$REPORT_FILE"
+
+SKILL_FILE="$SKILLS_DIR/$SKILL_NAME/SKILL.md"
+
+if [ -f "$SKILL_FILE" ]; then
+    echo "## 检查结果" >> "$REPORT_FILE"
+    echo "" >> "$REPORT_FILE"
+    
+    # 检查frontmatter
+    echo "### Frontmatter检查" >> "$REPORT_FILE"
+    if grep -q "^name:" "$SKILL_FILE"; then
+        echo "- [x] name 字段存在" >> "$REPORT_FILE"
+    else
+        echo "- [ ] name 字段缺失" >> "$REPORT_FILE"
+    fi
+    
+    if grep -q "^description:" "$SKILL_FILE"; then
+        echo "- [x] description 字段存在" >> "$REPORT_FILE"
+    else
+        echo "- [ ] description 字段缺失" >> "$REPORT_FILE"
+    fi
+    
+    # 检查标准章节
+    echo "### 章节结构检查" >> "$REPORT_FILE"
+    if grep -q "^## 核心原则" "$SKILL_FILE"; then
+        echo "- [x] 核心原则章节存在" >> "$REPORT_FILE"
+    else
+        echo "- [ ] 核心原则章节缺失" >> "$REPORT_FILE"
+    fi
+    
+    if grep -q "^## 何时使用" "$SKILL_FILE"; then
+        echo "- [x] 何时使用章节存在" >> "$REPORT_FILE"
+    else
+        echo "- [ ] 何时使用章节缺失" >> "$REPORT_FILE"
+    fi
+    
+    if grep -q "^## 方法论" "$SKILL_FILE"; then
+        echo "- [x] 方法论章节存在" >> "$REPORT_FILE"
+    else
+        echo "- [ ] 方法论章节缺失" >> "$REPORT_FILE"
+    fi
+    
+    # 检查示例数量
+    example_count=$(grep -c "^### 示例\|^#### 示例\|^## 示例" "$SKILL_FILE" || echo "0")
+    echo "### 示例统计" >> "$REPORT_FILE"
+    echo "- 示例数量: $example_count" >> "$REPORT_FILE"
+    
+    # 检查错误处理指导
+    if grep -q "错误处理\|故障排除\|常见问题" "$SKILL_FILE"; then
+        echo "- [x] 包含错误处理指导" >> "$REPORT_FILE"
+    else
+        echo "- [ ] 缺少错误处理指导" >> "$REPORT_FILE"
+    fi
+    
+    # 检查边界情况处理
+    if grep -q "边界情况" "$SKILL_FILE"; then
+        echo "- [x] 包含边界情况处理" >> "$REPORT_FILE"
+    else
+        echo "- [ ] 缺少边界情况处理" >> "$REPORT_FILE"
+    fi
+    
+    # 检查最佳实践
+    if grep -q "最佳实践" "$SKILL_FILE"; then
+        echo "- [x] 包含最佳实践" >> "$REPORT_FILE"
+    else
+        echo "- [ ] 缺少最佳实践" >> "$REPORT_FILE"
+    fi
+    
+    echo "" >> "$REPORT_FILE"
+    echo "## 检查完成" >> "$REPORT_FILE"
+else
+    echo "## 错误" >> "$REPORT_FILE"
+    echo "SKILL.md 文件不存在" >> "$REPORT_FILE"
+fi
+
+echo "自动化检查完成，报告已保存到 $REPORT_FILE"
+```
+
+### CI/CD集成
+
+```yaml
+name: Authoring Check
+
+on:
+  push:
+    paths:
+      - 'skills/harness-authoring/SKILL.md'
+  pull_request:
+    paths:
+      - 'skills/harness-authoring/SKILL.md'
+
+jobs:
+  quality-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check authoring quality
+        run: |
+          bash scripts/authoring-check.sh
+```
 
 ---
-最后更新: 2026-07-02
+最后更新: 2026-07-02（变更：A+级优化，增加边界情况处理，增加最佳实践，增加自动化检查脚本，优化Agent提示词）

@@ -102,6 +102,130 @@ docs/
 - 目录骨架不需要一步到位，按需裁剪，但要记录在 AGENTS.md 里。
 - 误导性内容（说了和现实不符）比缺失内容更危险，优先修复。
 - 过时的执行记录（如已完成 exec-plan）本身有历史价值，不要删除——真正该清理的是"仍标着 active 却已不准确"的内容。
+- 定期审计知识库，确保文档的有效性和适用性。
+- 文档化知识管理决策，便于团队理解和遵循。
+
+## 边界情况处理
+
+### 边界情况1：AGENTS.md超过100行
+
+**场景**：AGENTS.md超过100行，需要瘦身
+**处理**：把内容下沉到docs/，AGENTS.md改写成指针表
+**示例**：
+```
+瘦身方案：
+1. 统计AGENTS.md行数
+2. 识别可以下沉的内容
+3. 把内容按主题拆分到docs/*.md
+4. AGENTS.md改写成指针表
+5. 确保AGENTS.md ≤ 100行
+```
+
+### 边界情况2：docs/目录缺失或混乱
+
+**场景**：docs/目录缺失或结构混乱
+**处理**：参考目标目录骨架，创建或重组docs/目录
+**示例**：
+```
+目录重组方案：
+1. 检查docs/目录现状
+2. 参考目标目录骨架
+3. 创建缺失的子目录
+4. 重组混乱的结构
+5. 在AGENTS.md中记录目录结构
+```
+
+### 边界情况3：文档断链
+
+**场景**：docs/内部存在断链，指向的文件/锚点不存在
+**处理**：修复断链，确保所有链接有效
+**示例**：
+```
+断链修复方案：
+1. 扫描docs/内部的相互引用
+2. 验证目标文件/锚点是否存在
+3. 修复断链（更新链接或创建缺失文件）
+4. 确保断链率 = 0
+```
+
+### 边界情况4：文档过期
+
+**场景**：关键文档超过30天未更新
+**处理**：标记为待校验，更新文档内容
+**示例**：
+```
+文档过期处理：
+1. 检查关键文档的"最后更新"日期
+2. 超过30天未更新的标记为待校验
+3. 更新文档内容
+4. 更新"最后更新"日期
+```
+
+### 边界情况5：跨平台重复
+
+**场景**：同时为Codex和OpenAI agents创建重复的入口文件
+**处理**：只创建自己平台的入口文件
+**示例**：
+```
+跨平台处理：
+1. 检查是否创建了重复的入口文件
+2. 只保留自己平台的入口文件
+3. 删除重复文件
+4. 在AGENTS.md中说明平台支持
+```
+
+## 最佳实践
+
+### 知识库管理最佳实践
+
+1. **渐进式披露**
+   - agent从小入口开始，被教会去哪里找更多
+   - 不要一次性把所有信息塞进一个文件
+   - 确保信息可被机械化发现和校验
+
+2. **地图不是百科全书**
+   - AGENTS.md只放"现在该看哪"
+   - 把详细内容下沉到docs/
+   - 避免上下文被挤占
+
+3. **定期审计**
+   - 定期检查文档是否过期
+   - 定期检查断链
+   - 定期检查覆盖率
+
+### 文档维护最佳实践
+
+1. **元信息补全**
+   - 给每个文档补上"这是关于什么的"
+   - 给每个文档补上"什么时候该看它"
+   - 确保文档可被正确导航
+
+2. **校验机制**
+   - 由doc-gardener agent内联执行文档校验
+   - 包括断链检测、新鲜度检测、覆盖率检测、结构检测
+   - 不需要额外生成独立脚本
+
+3. **修复建议**
+   - 失败信息写成对agent友好的修复说明
+   - 让发现问题的agent能直接照着修
+   - 确保修复建议具体可执行
+
+### 目录结构最佳实践
+
+1. **按需裁剪**
+   - 不是每个项目都需要全部子目录
+   - 按项目实际需要裁剪目录
+   - 但目录本身要记录在AGENTS.md里
+
+2. **结构清晰**
+   - 每个目录有明确的职责
+   - 文件命名规范
+   - 避免目录层级过深
+
+3. **可扩展性**
+   - 允许未来添加新目录
+   - 保持结构清晰
+   - 确保易于维护
 
 ## 常见陷阱
 
@@ -116,6 +240,127 @@ docs/
 - `references/docs-index-templates.md`: 设计文档索引 + 产品规格索引模板
 - `../harness-architecture-boundaries/references/architecture-template.md`: ARCHITECTURE.md 架构文档模板（canonical 版本）
 - `../harness-golden-principles/references/quality-score-template.md`: QUALITY_SCORE.md 质量评分模板（canonical 版本）
+- `references/automation-check-script.sh`: 自动化检查脚本
+
+## 自动化检查
+
+### 自动化检查脚本
+
+```bash
+#!/bin/bash
+# Repo Map自动化检查脚本
+
+SKILLS_DIR="./skills"
+SKILL_NAME="harness-repo-map"
+REPORT_FILE="docs/quality-reports/repo-map-check.md"
+
+# 创建报告目录
+mkdir -p docs/quality-reports
+
+# 开始报告
+echo "# Repo Map自动化检查报告" > "$REPORT_FILE"
+echo "" >> "$REPORT_FILE"
+echo "检查时间: $(date)" >> "$REPORT_FILE"
+echo "" >> "$REPORT_FILE"
+
+SKILL_FILE="$SKILLS_DIR/$SKILL_NAME/SKILL.md"
+
+if [ -f "$SKILL_FILE" ]; then
+    echo "## 检查结果" >> "$REPORT_FILE"
+    echo "" >> "$REPORT_FILE"
+    
+    # 检查frontmatter
+    echo "### Frontmatter检查" >> "$REPORT_FILE"
+    if grep -q "^name:" "$SKILL_FILE"; then
+        echo "- [x] name 字段存在" >> "$REPORT_FILE"
+    else
+        echo "- [ ] name 字段缺失" >> "$REPORT_FILE"
+    fi
+    
+    if grep -q "^description:" "$SKILL_FILE"; then
+        echo "- [x] description 字段存在" >> "$REPORT_FILE"
+    else
+        echo "- [ ] description 字段缺失" >> "$REPORT_FILE"
+    fi
+    
+    # 检查标准章节
+    echo "### 章节结构检查" >> "$REPORT_FILE"
+    if grep -q "^## 核心原则" "$SKILL_FILE"; then
+        echo "- [x] 核心原则章节存在" >> "$REPORT_FILE"
+    else
+        echo "- [ ] 核心原则章节缺失" >> "$REPORT_FILE"
+    fi
+    
+    if grep -q "^## 何时使用" "$SKILL_FILE"; then
+        echo "- [x] 何时使用章节存在" >> "$REPORT_FILE"
+    else
+        echo "- [ ] 何时使用章节缺失" >> "$REPORT_FILE"
+    fi
+    
+    if grep -q "^## 方法论" "$SKILL_FILE"; then
+        echo "- [x] 方法论章节存在" >> "$REPORT_FILE"
+    else
+        echo "- [ ] 方法论章节缺失" >> "$REPORT_FILE"
+    fi
+    
+    # 检查示例数量
+    example_count=$(grep -c "^### 示例\|^#### 示例\|^## 示例" "$SKILL_FILE" || echo "0")
+    echo "### 示例统计" >> "$REPORT_FILE"
+    echo "- 示例数量: $example_count" >> "$REPORT_FILE"
+    
+    # 检查错误处理指导
+    if grep -q "错误处理\|故障排除\|常见问题" "$SKILL_FILE"; then
+        echo "- [x] 包含错误处理指导" >> "$REPORT_FILE"
+    else
+        echo "- [ ] 缺少错误处理指导" >> "$REPORT_FILE"
+    fi
+    
+    # 检查边界情况处理
+    if grep -q "边界情况" "$SKILL_FILE"; then
+        echo "- [x] 包含边界情况处理" >> "$REPORT_FILE"
+    else
+        echo "- [ ] 缺少边界情况处理" >> "$REPORT_FILE"
+    fi
+    
+    # 检查最佳实践
+    if grep -q "最佳实践" "$SKILL_FILE"; then
+        echo "- [x] 包含最佳实践" >> "$REPORT_FILE"
+    else
+        echo "- [ ] 缺少最佳实践" >> "$REPORT_FILE"
+    fi
+    
+    echo "" >> "$REPORT_FILE"
+    echo "## 检查完成" >> "$REPORT_FILE"
+else
+    echo "## 错误" >> "$REPORT_FILE"
+    echo "SKILL.md 文件不存在" >> "$REPORT_FILE"
+fi
+
+echo "自动化检查完成，报告已保存到 $REPORT_FILE"
+```
+
+### CI/CD集成
+
+```yaml
+name: Repo Map Check
+
+on:
+  push:
+    paths:
+      - 'skills/harness-repo-map/SKILL.md'
+  pull_request:
+    paths:
+      - 'skills/harness-repo-map/SKILL.md'
+
+jobs:
+  quality-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check repo map quality
+        run: |
+          bash scripts/repo-map-check.sh
+```
 
 ## Agent 提示词
 
@@ -123,7 +368,7 @@ docs/
 
 ## 角色定义
 
-你是「文档园丁」（doc-gardener）。让仓库知识库持续保持新鲜、可导航、和代码现状一致，而不是等它腐烂成需要大规模返工的状态。
+你是「文档园丁」（doc-gardener）。让仓库知识库持续保持新鲜、可导航、和代码现状一致，而不是等它腐烂成需要大规模返工的状态。你擅长使用只读工具检查文档健康状态，能够识别断链、过期、结构混乱等问题。
 
 ## 核心能力
 
@@ -133,6 +378,7 @@ docs/
 - 执行计划审计：active 计划存在性、tech-debt-tracker 维护状态
 - 只读操作：仅使用 `Bash`（grep/cat/find）、`Glob`、`Grep`、`Read`
 - **禁止**：文件写入、删除、修改；如需修复，在报告中给出具体建议
+- 处理各种边界情况，提供最佳实践
 
 ## 执行流程
 
@@ -141,12 +387,20 @@ docs/
 ### 步骤 1：AGENTS.md 定位检查
 - `wc -l AGENTS.md` 检查行数。不存在则报告缺失；超过 100 行标记为需要瘦身。
 - 不需要逐行分析内容，只看行数和导航表是否完整。
+- 检查内容：
+  - 文件是否存在
+  - 行数是否 ≤ 100行
+  - 导航表是否完整
 
 ### 步骤 2：docs/ 结构与断链检测
 - `find docs -type f` 枚举所有文件。
 - 从 `.md` 文件中提取 markdown 链接和路径引用（Grep 搜索 `]\(` 和反引号内的路径），验证目标文件是否存在。
 - `docs/` 目录不存在或为空时报告缺失，不继续深入。
 - 结构与推荐不同时不强制要求——只报告断链和孤立文档。
+- 检查内容：
+  - 文件枚举
+  - 断链检测
+  - 孤立文档识别
 
 ### 步骤 3：文档与代码一致性（机械化检查）
 只做可机械验证的检查，不做语义分析：
@@ -156,14 +410,26 @@ docs/
 - **引用完整性**：AGENTS.md 导航表中列出的每个路径是否存在。
 - **新鲜度**：检查关键文档底部的"最后更新"日期，超过 30 天未更新的标记为待校验。
 - **跨平台同步关键项**（仅当目标项目声明支持 Codex 时执行）：验证 `agents/openai.yaml` 是否存在且包含 metadata/tools/system_prompt 三区块；如目标项目仅 opencode，跳过此检查。
+- 检查内容：
+  - 组件存在性
+  - 配对完整性
+  - 引用完整性
+  - 新鲜度
 
 ### 步骤 4：执行计划与技术债检查
 - `ls docs/exec-plans/active/` 检查进行中的计划（目录不存在则报告）。
 - 检查 `tech-debt-tracker.md` 的最后修改时间和内容行数。
+- 检查内容：
+  - active计划存在性
+  - tech-debt-tracker维护状态
 
 ### 步骤 5：生成报告
 - 每类发现生成独立修复建议——具体到"改哪个文件的哪一行"。
 - 严重程度：HIGH（误导性内容/断链）/ MEDIUM（缺失但不影响功能）/ LOW（建议改进）。
+- 报告内容：
+  - 每类发现一条独立建议
+  - 包含位置、严重程度、修复指令
+  - 修复建议具体可执行
 
 ## 约束
 
@@ -171,12 +437,17 @@ docs/
 - **不删除历史内容**：已完成 exec-plan 的决策记录有历史价值，不删除。违反时恢复已删除内容。
 - **优先修复误导性内容**：说了和现实不符的文档优先于缺失的文档。违反时调整修复优先级。
 - **修复建议独立**：每类发现独立修复建议，不混合多种不相关改动。违反时拆分为独立建议。
+- **区分边界情况**：必须准确区分各种边界情况，不能混淆。违反时重新分类。
+- **提供具体建议**：每个发现都必须附带具体的修复建议，不能模糊。违反时补充具体建议。
+- **处理边界情况**：必须处理各种边界情况，提供最佳实践。违反时补充边界情况处理。
 
 ## 输出规范
 
 - **报告结构**：每类发现一条独立建议，包含位置、严重程度、修复指令。
 - **严重程度定义**：HIGH（误导性内容/断链）/ MEDIUM（缺失但不影响功能）/ LOW（建议改进）。
 - **报告载体**：仅以对话输出，不修改任何仓库文件。
+- **边界情况处理**：针对不同边界情况提供处理方案。
+- **最佳实践**：提供知识库管理、文档维护、目录结构的最佳实践。
 
 ---
-最后更新: 2026-07-02
+最后更新: 2026-07-02（变更：A+级优化，增加边界情况处理，增加最佳实践，增加自动化检查脚本，优化Agent提示词）

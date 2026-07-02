@@ -16,12 +16,13 @@ Harness Engineering Kit：一套通用、与具体项目无关的 skills + agent
 
 | 我想知道… | 去看这里 |
 |---|---|
-| 12 个 skill 的分层架构与依赖方向 | `docs/ARCHITECTURE.md` |
+| 13 个 skill 的分层架构与依赖方向 | `docs/ARCHITECTURE.md` |
 | agent-first 的核心运作信念 | `docs/design-docs/core-beliefs.md` |
 | 设计决策索引 | `docs/design-docs/index.md` |
 | 当前/已完成的执行计划 | `docs/exec-plans/active/`, `docs/exec-plans/completed/` |
 | 已知但暂不处理的技术债 | `docs/exec-plans/tech-debt-tracker.md` |
 | 产品功能规格 | `docs/product-specs/index.md` |
+| 经验教训与最佳实践 | `docs/lessons-learned/` |
 | 各领域的质量评分 | `docs/QUALITY_SCORE.md` |
 | 详细的安装方式、触发速查表、回归用例维护规范 | `README.md` |
 
@@ -35,4 +36,4 @@ Harness Engineering Kit：一套通用、与具体项目无关的 skills + agent
 - **推送代码后**，主动询问用户是否同步技能包到 `~/.agents/skills`，获得允许后执行 `rsync -av --delete skills/ ~/.agents/skills/`。
 
 ---
-最后更新: 2026-07-02（变更：agent 提示词内联到 SKILL.md）
+最后更新: 2026-07-02（变更：13个skills全量A+级优化完成）
