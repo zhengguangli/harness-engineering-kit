@@ -70,7 +70,7 @@ tests/   → skills/    （回归用例验证 skill 的触发逻辑）
 | 规则 | 强制方式 | 状态 |
 |---|---|---|
 | frontmatter 必填字段 | `scripts/validate-skill-triggers.sh` | ✅ 已强制 |
-| 关键词一致性 | `scripts/validate-keyword-consistency.sh` | ✅ 已强制 |
+| 关键词一致性 | 回归测试中覆盖 | ⚠️ 已合并入回归检查 |
 | 触发回归 | `scripts/run-trigger-regression.sh` | ✅ 已强制 |
 | agent 提示词存在性 | `scripts/validate-agent-prompt-sync.sh` | ✅ 已强制 |
 | skill 间无循环依赖 | 人工 review | ⚠️ 仅文档，未强制 |

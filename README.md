@@ -312,8 +312,7 @@ STRICT=1 ./scripts/validate-agent-prompt-sync.sh
 当你新增 case 时，务必保证：
 
 1. 所有用于匹配的关键词在对应 `SKILL.md` 中真实存在
-2. 运行 `make keyword-consistency` 全部通过
-3. 避免“只改用例、不改关键词”导致结果漂移
+2. 避免“只改用例、不改关键词”导致结果漂移
 
 #### 报告与产物
 

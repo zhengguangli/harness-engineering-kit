@@ -8,7 +8,7 @@
 
 - **frontmatter 合规**: 每个 SKILL.md 是否满足必填字段要求
 - **触发回归通过率**: `tests/triggers/cases.json` 中 PASS 的比例
-- **关键词一致性**: `scripts/validate-keyword-consistency.sh` 的通过情况
+- **关键词一致性**: `scripts/run-trigger-regression.sh` 中关键词覆盖情况
 - **文档新鲜度**: docs/ 中关键文档是否在 30 天内被校验过
 
 ## 当前评分
