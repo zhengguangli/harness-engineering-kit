@@ -109,79 +109,17 @@ Thumbs.db
 
 ## 边界情况处理
 
-### 边界情况1：项目已有部分harness结构
+> 通用边界情况（项目规模极小、遗留项目改造、多团队协作等）参见 `docs/references/common-edge-cases.md`，以下仅列出本 skill 特有的边界情况。
+
+### 项目已有部分harness结构
 
 **场景**：项目已有AGENTS.md或docs/目录，但不完整
-**处理**：先读取现有内容，再决定是覆盖还是增量更新
-**示例**：
-```
-项目现状：
-- AGENTS.md存在，但内容不完整
-- docs/目录存在，但缺少某些文件
+**处理**：先读取现有内容，再决定是覆盖还是增量更新，输出修改清单供用户确认
 
-处理方案：
-1. 读取现有AGENTS.md，保留有价值的内容
-2. 读取现有docs/文件，保留有价值的内容
-3. 增量更新，不盲目覆盖
-4. 输出修改清单，供用户确认
-```
-
-### 边界情况2：项目规模极小
-
-**场景**：项目规模极小，不需要完整的harness结构
-**处理**：简化初始化，只创建必要的文件
-**示例**：
-```
-项目规模判断：
-- 文件数量 < 10
-- 代码行数 < 1000
-- 开发团队 < 3人
-
-简化方案：
-1. 只创建AGENTS.md
-2. 只创建docs/ARCHITECTURE.md
-3. 跳过其他docs/文件
-4. 在AGENTS.md中说明简化原因
-```
-
-### 边界情况3：遗留项目改造
-
-**场景**：遗留项目需要改造，但不想破坏现有结构
-**处理**：采用渐进式改造策略，优先处理严重问题
-**示例**：
-```
-改造步骤：
-1. 读取现有项目结构
-2. 识别缺失的harness组件
-3. 逐步添加缺失组件
-4. 保留现有有价值的内容
-```
-
-### 边界情况4：多团队协作
-
-**场景**：多个团队协作开发，需要统一harness结构
-**处理**：建立统一的harness结构，各团队在结构内自由实现
-**示例**：
-```
-团队协作方案：
-1. 建立统一的AGENTS.md模板
-2. 建立统一的docs/结构
-3. 为每个团队提供定制化配置
-4. 定期审计harness结构
-```
-
-### 边界情况5：项目技术栈复杂
+### 项目技术栈复杂
 
 **场景**：项目使用多种技术栈，需要特殊处理
-**处理**：为每种技术栈提供定制化配置
-**示例**：
-```
-技术栈处理方案：
-1. 识别项目使用的技术栈
-2. 为每种技术栈提供.gitignore规则
-3. 为每种技术栈提供docs/结构
-4. 在AGENTS.md中说明技术栈相关配置
-```
+**处理**：为每种技术栈提供定制化配置（.gitignore规则、docs/结构）
 
 ## 最佳实践
 
@@ -253,7 +191,11 @@ Thumbs.db
 ## 相关模板
 
 - `references/agents-md-template.md`: AGENTS.md 生成模板
+- `references/agents-md-examples.md`: 各技术栈 AGENTS.md 示例（Node.js/Python/Go/Rust/Java）
 - `references/docs-skeleton-template.md`: docs/ 目录骨架模板
+- `references/docs-skeleton-by-stack.md`: 各技术栈 docs/ 骨架补充模板
+- `references/gitignore-templates.md`: 各技术栈 .gitignore 模板（Node.js/Python/Go/Rust/Java/PHP/Ruby/C#/Dart/Elixir）
+- `references/init-workflows.md`: 各技术栈初始化流程与额外步骤
 - `references/automation-check-script.sh`: 自动化检查脚本
 
 ## 自动化检查
@@ -408,7 +350,7 @@ jobs:
      - 需要覆盖的内容
      - 需要新增的内容
 
-3. **生成 AGENTS.md**：按 `harness-bootstrap` 技能的 AGENTS.md 模板生成，内容基于项目实际情况填充，不要照抄模板占位符。
+3. **生成 AGENTS.md**：按 `references/agents-md-template.md` 模板生成，参考 `references/agents-md-examples.md` 中对应技术栈的示例，内容基于项目实际情况填充，不要照抄模板占位符。
    - 生成内容：
      - 仓库一句话描述
      - 硬约束（最多5条）
@@ -423,7 +365,7 @@ jobs:
      - docs/exec-plans/active/：当前执行计划目录
      - docs/exec-plans/completed/：已完成执行计划目录
 
-5. **更新 .gitignore**：检查现有 .gitignore，追加缺失的规则（docs/generated/、编辑器文件、OS 文件、依赖目录）。
+5. **更新 .gitignore**：参考 `references/gitignore-templates.md` 中对应技术栈的模板，检查现有 .gitignore，追加缺失的规则（docs/generated/、编辑器文件、OS 文件、依赖目录）。
    - 更新内容：
      - docs/generated/
      - 编辑器文件（.idea/、.vscode/、*.swp、*.swo）

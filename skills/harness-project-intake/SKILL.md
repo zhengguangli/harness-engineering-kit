@@ -118,96 +118,27 @@ metadata:
 
 ## 边界情况处理
 
-### 边界情况1：项目无包管理文件
+> 通用边界情况（项目规模极小等）参见 `docs/references/common-edge-cases.md`，以下仅列出本 skill 特有的边界情况。
+
+### 项目无包管理文件
 
 **场景**：项目没有package.json、Cargo.toml、go.mod、pyproject.toml等包管理文件
 **处理**：执行ls观察文件后缀推断语言，标注"推断（无包管理文件）"
-**示例**：
-```
-项目现状：
-- 没有package.json
-- 没有Cargo.toml
-- 没有go.mod
-- 没有pyproject.toml
 
-处理方案：
-1. 执行ls观察文件后缀
-2. 推断语言（如.py → Python，.js → JavaScript）
-3. 标注"推断（无包管理文件）"
-4. 在技术栈维度说明推断依据
-```
-
-### 边界情况2：README过时
+### README过时
 
 **场景**：README中的信息已过时，与实际情况不符
-**处理**：在"已知约束"里注明README过时
-**示例**：
-```
-README过时检测：
-- README说使用Python 3.8，但package.json显示Node.js 18
-- README说使用npm，但项目有yarn.lock
-- README说端口3000，但配置文件显示端口8080
+**处理**：在"已知约束"里注明README过时，说明实际配置与README的差异
 
-处理方案：
-1. 检测README与实际配置的差异
-2. 在"已知约束"里注明README过时
-3. 说明实际配置与README的差异
-4. 建议更新README
-```
-
-### 边界情况3：信息采集不完整
+### 信息采集不完整
 
 **场景**：package.json、README、入口文件三者中任一缺失
 **处理**：在卡片对应维度标注"信息不完整"
-**示例**：
-```
-信息缺失检测：
-- package.json缺失
-- README.md缺失
-- 入口文件缺失
 
-处理方案：
-1. 检测缺失的信息源
-2. 在卡片对应维度标注"信息不完整"
-3. 说明缺失原因
-4. 建议补充缺失信息
-```
-
-### 边界情况4：项目规模极小
-
-**场景**：项目规模极小，只有几个文件
-**处理**：简化分析，只输出关键信息
-**示例**：
-```
-项目规模判断：
-- 文件数量 < 10
-- 代码行数 < 1000
-- 没有复杂架构
-
-处理方案：
-1. 简化分析流程
-2. 只输出关键信息
-3. 跳过复杂分析
-4. 在卡片中说明项目规模
-```
-
-### 边界情况5：多语言项目
+### 多语言项目
 
 **场景**：项目使用多种编程语言
-**处理**：识别所有语言，分别说明
-**示例**：
-```
-多语言检测：
-- 前端：JavaScript/TypeScript
-- 后端：Python
-- 脚本：Shell
-
-处理方案：
-1. 识别所有语言
-2. 分别说明每种语言的用途
-3. 在技术栈维度列出所有语言
-4. 说明语言间的依赖关系
-```
+**处理**：识别所有语言，分别说明每种语言的用途和依赖关系
 
 ## 最佳实践
 
@@ -280,6 +211,10 @@ README过时检测：
 ## 相关模板
 
 - `references/project-card-template.md`: 项目卡片 Markdown 模板
+- `references/package-manifests.md`: 各语言包管理文件识别规则（Node.js/Python/Go/Rust/Java/PHP/Ruby/Dart/Swift/C#/Haskell）
+- `references/project-structures.md`: 各语言项目结构分析与入口文件识别
+- `references/tech-stack-detection.md`: 各语言框架、运行时、部署目标检测规则
+- `references/activity-analysis.md`: 各语言活跃度分析命令与评级标准
 - `references/automation-check-script.sh`: 自动化检查脚本
 
 ## 自动化检查
@@ -427,7 +362,7 @@ jobs:
      - 关键约束
      - 构建命令
 
-2. 读取包管理文件（`package.json` / `Cargo.toml` / `go.mod` / `pyproject.toml`）→ 提取技术栈；若全部缺失，回退到 `ls` 观察文件后缀并标注"推断（无包管理文件）"
+2. 读取包管理文件（`package.json` / `Cargo.toml` / `go.mod` / `pyproject.toml`）→ 提取技术栈（参考 `references/package-manifests.md` 识别规则和 `references/tech-stack-detection.md` 框架检测）；若全部缺失，回退到 `ls` 观察文件后缀并标注"推断（无包管理文件）"
    - 提取内容：
      - 语言及版本
      - 框架
@@ -435,7 +370,7 @@ jobs:
      - 包管理器
      - 部署目标
 
-3. `find . -maxdepth 2 -type f` 或 `ls -la` + `Glob` → 目录骨架
+3. `find . -maxdepth 2 -type f` 或 `ls -la` + `Glob` → 目录骨架（参考 `references/project-structures.md` 识别项目类型和入口文件）
    - 分析内容：
      - 顶层目录结构
      - 关键文件
@@ -454,7 +389,7 @@ jobs:
      - 测试命令
      - 构建/部署命令
 
-6. `git log --oneline -10` → 近期 commit 和版本号
+6. `git log --oneline -10` → 近期 commit 和版本号（参考 `references/activity-analysis.md` 获取完整活跃度分析）
    - 提取内容：
      - 最近commit
      - 版本号

@@ -129,6 +129,13 @@ LLM 的输出质量上限由 prompt 的结构质量决定。一份好的 prompt 
 - **约束过多**：超过 8 条约束 LLM 反而违反得更多，精选关键约束。
 - **过度工程化**：简单任务不需要完整六区块，为形式完整而增加无用内容只会浪费 token。
 
+## 深入参考
+
+- **Prompt 设计模式**：角色锚定型、执行链驱动型、约束优先型、示例驱动型 → `references/prompt-design-patterns.md`
+- **变量字典设计**：变量声明、类型约束、与 Execution Chain 配合 → `references/variable-dictionary-design-guide.md`
+- **Execution Chain 设计**：步骤设计、条件分支、循环流程、数据流 → `references/execution-chain-design-guide.md`
+- **Output Schema 设计**：完整覆盖、类型明确、校验规则 → `references/output-schema-design-guide.md`
+
 ## 相关模板
 
 - `references/prompt-architecture-template.md`: Prompt 六区块架构模板（可直接复制填充）

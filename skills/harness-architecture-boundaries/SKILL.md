@@ -236,36 +236,9 @@ function parseUserInput(input: unknown): UserInput {
 
 ## 边界情况处理
 
-### 边界情况1：项目规模极小
+> 通用边界情况（项目规模极小、遗留项目改造、多团队协作等）参见 `docs/references/common-edge-cases.md`，以下仅列出本 skill 特有的边界情况。
 
-**场景**：项目只有几个文件，模块间无明显分层需求
-**处理**：不需要建立复杂的分层架构，使用简单的目录结构即可
-**示例**：
-```
-项目结构：
-src/
-├── index.js        # 入口文件
-├── utils.js        # 工具函数
-└── config.js       # 配置文件
-
-依赖方向：index.js → utils.js, config.js
-```
-
-### 边界情况2：遗留项目改造
-
-**场景**：遗留项目存在大量架构违规，需要逐步改造
-**处理**：采用渐进式改造策略，优先修复严重违规
-**示例**：
-```
-改造步骤：
-1. 识别所有架构违规
-2. 按严重程度分类（CRITICAL/HIGH/MEDIUM/LOW）
-3. 优先修复CRITICAL和HIGH级别违规
-4. 建立新规则，防止新增违规
-5. 逐步清理MEDIUM和LOW级别违规
-```
-
-### 边界情况3：微服务架构
+### 微服务架构
 
 **场景**：项目采用微服务架构，服务间存在依赖关系
 **处理**：为每个服务定义内部架构规则，服务间通过API通信
@@ -278,23 +251,6 @@ types → repository → service → controller
 user-service → shared/types
 order-service → shared/types
 user-service ↔ order-service（通过API通信）
-```
-
-### 边界情况4：多团队协作
-
-**场景**：多个团队协作开发，需要统一架构规范
-**处理**：建立统一的架构规范，各团队在规范内自由实现
-**示例**：
-```
-统一规范：
-1. 依赖方向：types → config → repositories → services → controllers
-2. 横切关注点：统一放到providers层
-3. 数据边界：外部数据必须解析为强类型
-
-团队自由：
-1. 具体实现细节
-2. 库选择
-3. 命名规范（在风格偏好范围内）
 ```
 
 ## 常见陷阱
@@ -323,6 +279,7 @@ user-service ↔ order-service（通过API通信）
 - `references/architecture-template.md`: ARCHITECTURE.md 架构文档模板
 - `references/check-pattern-template.md`: 架构检查模式模板（boundary-auditor 参考）
 - `references/automation-check-script.sh`: 自动化检查脚本
+- `references/e2e-architecture-audit-example.md`: 端到端完整示例（Node.js 电商平台架构审计，含项目分析→边界识别→规则生成→验证检查全流程）
 
 ## 自动化检查
 

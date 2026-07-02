@@ -111,77 +111,80 @@ metadata:
 - 定期审计工作流，确保流程的有效性和适用性。
 - 文档化工作流决策，便于团队理解和遵循。
 
+## 跨skill交接点
+
+### 交接点总览
+
+| 上游skill | 产出物 | 下游consumer | 交接方式 |
+|---|---|---|---|
+| `project-intake` | 结构化项目卡片 | `bootstrap` | 卡片信息直接传入 |
+| `exec-plans` | exec-plan文件 | `verification-loop` | 文件路径传递 |
+| `verification-loop` | 验证通过信号 | `commit-gate` | 完成总结传递 |
+| `golden-principles` | 修复队列 | `verification-loop` | 逐项修复清单 |
+| `architecture-boundaries` | lint规则 | `verification-loop`/`commit-gate` | 作为自检项 |
+
+### Workflow 2 交接点详解（日常功能开发）
+
+```
+exec-plans → verification-loop → commit-gate
+```
+
+**交接点1: exec-plans → verification-loop**
+- **前置条件**：exec-plan已创建，包含至少一个带验收条件的步骤
+- **输入**：exec-plan文件路径
+- **输出**：每轮迭代后的步骤勾选状态和决策日志
+- **验证方法**：检查exec-plan文件中是否有已完成步骤的勾选标记
+- **错误处理**：若exec-plan不存在或格式错误，报告并停止
+
+**交接点2: verification-loop → commit-gate**
+- **前置条件**：所有自动化检查通过，无未处理评审意见
+- **输入**：验证完成总结（做了什么、怎么验证的、已知限制）
+- **输出**：commit hash和变更摘要
+- **验证方法**：确认commit-gate执行了git commit并返回hash
+- **错误处理**：若验证未完成（有失败测试/lint），阻塞提交
+
+### Workflow 3 交接点详解（代码质量修复）
+
+```
+golden-principles → verification-loop → commit-gate
+```
+
+**交接点1: golden-principles → verification-loop**
+- **前置条件**：golden-principles已扫描完成，产出修复队列
+- **输入**：修复队列（偏离模式列表）
+- **输出**：逐项修复后的代码状态
+- **验证方法**：检查修复队列中的每项是否已被处理
+- **错误处理**：若修复队列为空，跳过verification-loop直接进入commit-gate
+
+**交接点2: verification-loop → commit-gate**
+- **前置条件**：所有修复项已完成，测试通过
+- **输入**：修复完成总结
+- **输出**：commit hash
+- **验证方法**：确认所有修复项已体现在git diff中
+- **错误处理**：若修复引入新问题，返回verification-loop继续迭代
+
+### 跨工作流组合
+
+**场景**：用户目标涉及多个工作流（如初始化+日常开发）
+
+**组合方式**：
+1. 先完成Workflow 1（初始化）
+2. 确认初始化产出物完整（AGENTS.md + docs/骨架）
+3. 再进入Workflow 2（日常开发）
+
+**交接点验证**：
+- 检查AGENTS.md是否存在且包含正确的skill地图
+- 检查docs/目录结构是否完整
+- 确认architecture-boundaries和golden-principles已配置（如需要）
+
 ## 边界情况处理
 
-### 边界情况1：用户目标不明确
+> 通用边界情况（目标澄清、项目规模极小、遗留项目改造、多团队协作等）参见 `docs/references/common-edge-cases.md`，以下仅列出本 skill 特有的边界情况。
 
-**场景**：用户描述的需求模糊，无法判断属于哪条工作流
-**处理**：先澄清用户目标，再进行路由
-**示例**：
-```
-用户说："我想提高代码质量"
-澄清问题：
-1. 是想建立新的代码质量规则？→ Workflow 3
-2. 是想优化现有代码？→ Workflow 2
-3. 是想建立架构约束？→ Workflow 1
-```
-
-### 边界情况2：跨多个工作流
+### 跨多个工作流
 
 **场景**：用户目标涉及多个工作流
 **处理**：识别跨工作流任务，说明组合方式和交接点
-**示例**：
-```
-用户说："我要建立架构约束，同时优化代码质量"
-组合方式：
-1. Workflow 1（建立架构约束）→ Workflow 3（优化代码质量）
-交接点：
-- Workflow 1 产出：ARCHITECTURE.md
-- Workflow 3 输入：ARCHITECTURE.md
-```
-
-### 边界情况3：项目规模极小
-
-**场景**：项目规模极小，不需要完整的harness体系
-**处理**：简化工作流，只使用必要的skills
-**示例**：
-```
-项目规模判断：
-- 文件数量 < 10
-- 代码行数 < 1000
-- 开发团队 < 3人
-
-简化方案：
-1. 跳过architecture-boundaries
-2. 跳过exec-plans
-3. 只使用verification-loop和commit-gate
-```
-
-### 边界情况4：遗留项目改造
-
-**场景**：遗留项目需要改造，但不想破坏现有结构
-**处理**：采用渐进式改造策略，优先处理严重问题
-**示例**：
-```
-改造步骤：
-1. 执行project-intake，了解项目现状
-2. 执行golden-principles，扫描代码异味
-3. 执行architecture-boundaries，处理结构性问题
-4. 执行verification-loop，验证改造效果
-```
-
-### 边界情况5：多团队协作
-
-**场景**：多个团队协作开发，需要统一工作流
-**处理**：建立统一的工作流规范，各团队在规范内自由实现
-**示例**：
-```
-团队协作方案：
-1. 建立统一的工作流规范
-2. 为每个团队提供定制化的工作流
-3. 定期审计工作流执行情况
-4. 建立工作流review流程
-```
 
 ## 最佳实践
 
@@ -441,4 +444,4 @@ jobs:
 ```
 
 ---
-最后更新: 2026-07-02（变更：A+级优化，增加边界情况处理，增加最佳实践，增加自动化检查脚本，优化Agent提示词）
+最后更新: 2026-07-02（变更：A+级优化，增加边界情况处理，增加最佳实践，增加自动化检查脚本，优化Agent提示词，加强跨skill交接点说明）
