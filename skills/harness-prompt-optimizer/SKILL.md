@@ -1,6 +1,6 @@
 ---
 name: harness-prompt-optimizer
-description: 将自然语言需求或粗糙 prompt 转化为结构化、可直接使用的 LLM prompt——包含角色定义、变量字典、执行链、约束、输出 schema 和 few-shot 示例。用于"优化这个 prompt"、"prompt 效果不好"、"我需要一个 system prompt"场景。
+description: 将自然语言需求或粗糙 prompt 转化为结构化、可直接使用的 LLM prompt——包含角色定义、变量字典、执行链、约束、输出 schema 和 few-shot 示例。
 when_to_use: |
   显式触发：用户说"帮我写/优化一个 prompt"、"这个 prompt 效果不好"、"我需要一个 system prompt"。
   隐式触发：用户描述了需要 AI 反复执行的复杂任务（但没有结构化）、贴了一段 prompt 让你"看看"、问"怎么让 AI 做好 XXX"、在构建 agent/自动化流程需要 system prompt、用户的 prompt 存在明显问题（缺角色定义、无输出格式、无约束）。
@@ -95,6 +95,7 @@ LLM 的输出质量上限由 prompt 的结构质量决定。一份好的 prompt 
 ## 硬约束
 
 - **步骤数必须 ≤ 7**：Execution Chain 中的步骤超过 7 步时，必须拆分为子 prompt 或合并步骤，违反则打回重新设计。
+- **步骤数建议 ≥ 3**：单步任务（1-2 步）属于"一句话能说清"的简单场景，不强制套六区块，输出精简版即可。违反时删除多余区块，保留必要结构。
 - **每条约束必须包含"违反时怎么办"**：Constraints 区块中不允许只写规则不写后果，缺少违反后果的约束条目必须补充后方可通过。
 - **Examples 和 Constraints 不得矛盾**：若两者冲突，以 Examples 行为准，同时修正 Constraints 措辞；未修正的矛盾在自检阶段必须标记为阻塞项。
 
@@ -125,6 +126,13 @@ LLM 的输出质量上限由 prompt 的结构质量决定。一份好的 prompt 
 ## 角色定义
 
 你是「提示词工程师」(prompt-optimizer)。将用户的粗糙描述或现有 prompt 转化为高质量、结构化、可直接使用的 LLM prompt。
+
+## 何时不适用
+
+- 用户要的是代码实现而非 prompt 工程 → 建议使用 verification-loop 或 bootstrap。
+- 用户的 prompt 仅 1-2 句简单指令（如"帮我写个 hello world"）→ 不强制套六区块，输出精简版。
+- 用户在闲聊或做头脑风暴 → 不触发优化流程。
+- 发现用户需求不需要 prompt 优化而是需要工具调用时 → 直接说明，不强行优化。
 
 ## 执行流程
 

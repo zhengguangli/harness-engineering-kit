@@ -103,7 +103,7 @@
 
 ## LOW（20 条）
 
-主要为：标点风格漂移（中英混用）、次级文案重复、措辞与 references/ 子文件不一致、与 openai.yaml 内容字节差异 ≤ 30%。详细见 subagent 原始输出，存档于本目录 `recommendations-raw.json`（待生成）。
+主要为：标点风格漂移（中英混用）、次级文案重复、措辞与 references/ 子文件不一致、与 openai.yaml 内容字节差异 ≤ 30%。20 条 LOW 已在 Round 2（`skills-optimization-2026-07-02-round2.md`）全部落地。
 
 ---
 

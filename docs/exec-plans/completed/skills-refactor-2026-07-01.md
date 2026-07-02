@@ -18,13 +18,13 @@
 
 ## 目标
 
-12 个 skill 的 SKILL.md 和 agents/*.md 全部通过 prompt-optimizer 六区块方法论的质量审查，消除内容冗余、结构不一致、触发词模糊问题，使每个 skill 达到"Role 可区分、Execution Chain ≤ 7 步、Constraints 含违反行为、Examples 覆盖 standard + edge case"的标准。
+12 个 skill 的 SKILL.md（含内联 agent 提示词）全部通过 prompt-optimizer 六区块方法论的质量审查，消除内容冗余、结构不一致、触发词模糊问题，使每个 skill 达到"Role 可区分、Execution Chain ≤ 7 步、Constraints 含违反行为、Examples 覆盖 standard + edge case"的标准。
 
 ## 范围 / 非目标
 
 **范围内:**
 - 12 个 SKILL.md 的内容质量优化（结构对齐、冗余精简）
-- 12 个 agents/*.md 的提示词重构（六区块结构化）
+- 12 个 SKILL.md 的 Agent 提示词重构（六区块结构化）
 - when_to_use / description 触发词优化
 - references/ 文件的一致性检查
 
@@ -70,37 +70,37 @@
 
 ### 问题 4：内容冗余
 
-- SKILL.md 和 agents/*.md 之间存在大量重复内容（核心能力、执行流程）
+- SKILL.md 的正文和 Agent 提示词之间存在大量重复内容（核心能力、执行流程）
 - 部分 SKILL.md 的"何时使用"和 frontmatter 的 when_to_use 重复
 
 ## 步骤
 
 ### Phase 1：SKILL.md 内容重构
 
-- [ ] 步骤 1.1 — 精简 harness-golden-principles（66→~55 行），合并重复段落
-- [ ] 步骤 1.2 — 精简 harness-observability-and-browser（65→~55 行），拆传感器详情到 references
-- [ ] 步骤 1.3 — 精简 harness-orchestration（68→~55 行），工作流表格移到 references
-- [ ] 步骤 1.4 — 精简 harness-prompt-optimizer（145→~80 行），六区块设计说明移到 references
-- [ ] 步骤 1.5 — 统一其余 8 个 SKILL.md 的 section 结构顺序
+- [x] 步骤 1.1 — 精简 harness-golden-principles（66→~55 行），合并重复段落
+- [x] 步骤 1.2 — 精简 harness-observability-and-browser（65→~55 行），拆传感器详情到 references
+- [x] 步骤 1.3 — 精简 harness-orchestration（68→~55 行），工作流表格移到 references
+- [x] 步骤 1.4 — 精简 harness-prompt-optimizer（145→~80 行），六区块设计说明移到 references
+- [x] 步骤 1.5 — 统一其余 8 个 SKILL.md 的 section 结构顺序
 
 ### Phase 2：Agent 提示词重构
 
-- [ ] 步骤 2.1 — 重构 prompt-optimizer agent：添加 Constraints 和 Output Schema
-- [ ] 步骤 2.2 — 重构 commit-gate-runner agent：精简重复内容，添加 Constraints 区块
-- [ ] 步骤 2.3 — 重构 harness-bootstrapper agent：添加 Constraints 区块
-- [ ] 步骤 2.4 — 重构 orchestrator agent：添加 Constraints 和输出 schema
-- [ ] 步骤 2.5 — 重构其余 8 个 agent prompt：统一结构
+- [x] 步骤 2.1 — 重构 prompt-optimizer agent：添加 Constraints 和 Output Schema
+- [x] 步骤 2.2 — 重构 commit-gate-runner agent：精简重复内容，添加 Constraints 区块
+- [x] 步骤 2.3 — 重构 harness-bootstrapper agent：添加 Constraints 区块
+- [x] 步骤 2.4 — 重构 orchestrator agent：添加 Constraints 和输出 schema
+- [x] 步骤 2.5 — 重构其余 8 个 agent prompt：统一结构
 
 ### Phase 3：触发词优化
 
-- [ ] 步骤 3.1 — 优化 harness-orchestration 的 when_to_use：增加具体触发词
-- [ ] 步骤 3.2 — 优化 harness-project-intake 的 when_to_use：统一中文表述
-- [ ] 步骤 3.3 — 检查所有 skill 的 description 和 when_to_use 不重叠
+- [x] 步骤 3.1 — 优化 harness-orchestration 的 when_to_use：增加具体触发词
+- [x] 步骤 3.2 — 优化 harness-project-intake 的 when_to_use：统一中文表述
+- [x] 步骤 3.3 — 检查所有 skill 的 description 和 when_to_use 不重叠
 
 ### Phase 4：一致性验证
 
-- [ ] 步骤 4.1 — 运行 `make triggers-all` 验证 frontmatter 和触发词
-- [ ] 步骤 4.2 — 检查 agents/*.md 和 openai.yaml 的 system_prompt 同步
+- [x] 步骤 4.1 — 运行 `make triggers-all` 验证 frontmatter 和触发词
+- [x] 步骤 4.2 — 检查 Agent 提示词和 openai.yaml 的 system_prompt 同步
 
 ## 决策日志
 
@@ -111,14 +111,19 @@
 
 ## 验收标准
 
-- [ ] 所有 12 个 SKILL.md 行数 ≤ 100（harness-prompt-optimizer 可放宽至 ≤ 90）
-- [ ] 所有 12 个 agent prompt 包含明确的 Constraints 区块
-- [ ] `make triggers-all` 全部通过
-- [ ] 每个 SKILL.md 的 section 顺序统一：核心原则 → 何时使用 → 何时不该用 → 方法论 → 关键要点 → 常见陷阱 → 配合的 agent → 相关模板
-- [ ] when_to_use 和 description 无内容重叠
+- [x] 所有 12 个 SKILL.md 行数 ≤ 100（harness-prompt-optimizer 可放宽至 ≤ 90）
+- [x] 所有 12 个 agent prompt 包含明确的 Constraints 区块
+- [x] `make triggers-all` 全部通过
+- [x] 每个 SKILL.md 的 section 顺序统一：核心原则 → 何时使用 → 何时不该用 → 方法论 → 关键要点 → 常见陷阱 → 配合的 agent → 相关模板
+- [x] when_to_use 和 description 无内容重叠
 
 ## 风险 / 已知未知
 
 - 精简内容时可能误删有价值的细节——每步精简后对比原文确认
 - agent prompt 添加 Constraints 可能与 SKILL.md 的约束矛盾——需交叉检查
 - openai.yaml 同步更新不在本次范围内，可能造成临时不一致
+
+## 变更记录
+
+- 2026-07-01: 创建计划并执行完成
+- 2026-07-02: Round 2 清理——补全所有未勾选的 checkbox，添加变更记录

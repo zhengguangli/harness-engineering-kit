@@ -2,6 +2,8 @@
 name: harness-orchestration
 description: 编排 harness-engineering-kit 中 skill 的组合与工作流路由——根据用户目标选择正确的 skill 组合和执行顺序。用于"我该用哪些 skill"、"规划多 skill 协作"场景。
 when_to_use: 当用户问"我该用哪些 skill"、"怎么组合这些 skill"、"工作流怎么走"、进入新项目不确定先后顺序时使用。
+context: fork
+agent: orchestrator
 compatibility: opencode
 metadata:
   category: routing
@@ -13,10 +15,11 @@ metadata:
 - **按需使用，不全量启动**：12 个 skill 是按需使用的工具箱，不是每次都要全走一遍。
 - **编排是路由知识**：主对话持续记住的决策逻辑，不是"委派出去等结果"的执行任务。
 ## 何时使用
-- 用户问"我该用哪些 skill"或"怎么开始用这套 harness"。
-- 面对多个 skill 不知如何组合。
-- 进入新项目，不确定先做什么后做什么。
-- 复杂任务需要规划多 skill 协作流程。
+- 用户问"我该用哪些 skill"或"怎么开始用这套 harness"
+- 用户问"怎么组合这些 skill"或"工作流怎么走"
+- 面对多个 skill 不知如何组合
+- 进入新项目，不确定先做什么后做什么
+- 复杂任务需要规划多 skill 协作流程
 ## 何时不该用
 - 用户明确知道要用哪个 skill——直接使用，不需要路由。
 - 任务简单，只涉及单个 skill——不需要编排开销。
@@ -99,6 +102,13 @@ metadata:
 - **先澄清再路由**：目标有歧义时先提问，不猜测。
 - **简单任务不绕路**：明确知道用哪个 skill 时直接建议，不需要绕一圈编排。
 - **守住前置依赖**：跨工作流组合时按交接点表确认上游已落盘；尤其 Workflow 1 必须先经 `project-intake` 再 `bootstrap`，否则骨架与项目实际不符。
+
+## 输出规范
+
+- **推荐 skill 列表**:按执行顺序排列，包含 skill 名称和简要职责说明
+- **工作流编号**:明确属于哪条标准工作流（1-5），或标注"跨流组合"
+- **省略建议**:标注哪些步骤可跳过及理由
+- **交接点说明**:跨工作流时，说明每个交接点的前置条件和产出物
 
 ## 相关模板
 - `references/routing-decision-tree.md`：路由决策树与标准工作流

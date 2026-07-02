@@ -39,46 +39,46 @@
 
 ### Phase 1: 试点验证（1 个 skill）
 
-- [ ] 1.1 — 选择 `harness-bootstrap` 作为试点，将 `agents/harness-bootstrapper.md` 内容合并到 `SKILL.md`
+- [x] 1.1 — 选择 `harness-bootstrap` 作为试点，将 `agents/harness-bootstrapper.md` 内容合并到 `SKILL.md`
   - 验证方式：`SKILL.md` 包含完整 agent 提示词，`agents/harness-bootstrapper.md` 已删除
-- [ ] 1.2 — 更新 `harness-bootstrap/SKILL.md` frontmatter，添加 `context: fork` 和 `agent` 字段
+- [x] 1.2 — 更新 `harness-bootstrap/SKILL.md` frontmatter，添加 `context: fork` 和 `agent` 字段
   - 验证方式：frontmatter 包含 `context: fork` 和 `agent: harness-bootstrapper`
-- [ ] 1.3 — 运行 `make triggers-all` 确认试点不破坏现有校验
+- [x] 1.3 — 运行 `make triggers-all` 确认试点不破坏现有校验
   - 验证方式：所有校验脚本退出码为 0
 
 ### Phase 2: 批量迁移（剩余 11 个 skill）
 
 按依赖层级从低到高迁移，每批 3-4 个 skill，每批完成后运行校验：
 
-- [ ] 2.1 — Layer 0-1: `harness-project-intake`、`harness-bootstrap`（试点已完成）
+- [x] 2.1 — Layer 0-1: `harness-project-intake`、`harness-bootstrap`（试点已完成）
   - 验证方式：2 个 skill 的 agent 提示词已内联，`make triggers-all` 通过
-- [ ] 2.2 — Layer 2: `harness-repo-map`、`harness-architecture-boundaries`、`harness-golden-principles`、`harness-prompt-optimizer`
+- [x] 2.2 — Layer 2: `harness-repo-map`、`harness-architecture-boundaries`、`harness-golden-principles`、`harness-prompt-optimizer`
   - 验证方式：4 个 skill 的 agent 提示词已内联，`make triggers-all` 通过
-- [ ] 2.3 — Layer 3: `harness-exec-plans`
+- [x] 2.3 — Layer 3: `harness-exec-plans`
   - 验证方式：agent 提示词已内联，`make triggers-all` 通过
-- [ ] 2.4 — Layer 4: `harness-verification-loop`、`harness-observability-and-browser`
+- [x] 2.4 — Layer 4: `harness-verification-loop`、`harness-observability-and-browser`
   - 验证方式：2 个 skill 的 agent 提示词已内联，`make triggers-all` 通过
-- [ ] 2.5 — Layer 5 + 元层: `harness-commit-gate`、`harness-orchestration`、`harness-authoring`
+- [x] 2.5 — Layer 5 + 元层: `harness-commit-gate`、`harness-orchestration`、`harness-authoring`
   - 验证方式：3 个 skill 的 agent 提示词已内联，`make triggers-all` 通过
 
 ### Phase 3: 基础设施更新
 
-- [ ] 3.1 — 更新 `docs/ARCHITECTURE.md` 目录结构说明，移除 `agents/<name>.md` 描述
+- [x] 3.1 — 更新 `docs/ARCHITECTURE.md` 目录结构说明，移除 `agents/<name>.md` 描述
   - 验证方式：`ARCHITECTURE.md` 中不再引用 `agents/<name>.md` 作为 canonical 位置
-- [ ] 3.2 — 更新 `scripts/validate-agent-prompt-sync.sh`，适配合并后结构
+- [x] 3.2 — 更新 `scripts/validate-agent-prompt-sync.sh`，适配合并后结构
   - 验证方式：脚本能正确从 SKILL.md 中提取 agent 提示词并与 openai.yaml 比对
-- [ ] 3.3 — 更新 `AGENTS.md` 中"每个 skill 的 agent 提示词只维护 `agents/<name>.md` 一处"约束
+- [x] 3.3 — 更新 `AGENTS.md` 中"每个 skill 的 agent 提示词只维护 `agents/<name>.md` 一处"约束
   - 验证方式：AGENTS.md 中约束描述已更新为新结构
-- [ ] 3.4 — 清理残留的 `agents/*.md` 文件（确认全部迁移后）
+- [x] 3.4 — 清理残留的 `agents/*.md` 文件（确认全部迁移后）
   - 验证方式：`find skills/ -name "*.md" -path "*/agents/*"` 返回空
 
 ### Phase 4: 全量验证
 
-- [ ] 4.1 — 运行 `make triggers-all` 全量校验
+- [x] 4.1 — 运行 `make triggers-all` 全量校验
   - 验证方式：所有校验脚本退出码为 0
-- [ ] 4.2 — 抽查 3 个 skill 的合并结果，确认 agent 提示词完整性
+- [x] 4.2 — 抽查 3 个 skill 的合并结果，确认 agent 提示词完整性
   - 验证方式：人工确认合并后的 SKILL.md 包含完整的角色定义、执行流程、约束
-- [ ] 4.3 — 确认 `openai.yaml` 文件未被修改
+- [x] 4.3 — 确认 `openai.yaml` 文件未被修改
   - 验证方式：`git diff --name-only` 中不包含 `openai.yaml`
 
 ## 多 Agent 执行策略
@@ -127,13 +127,13 @@ boundary-auditor（最终架构边界审查）
 
 ## 验收标准
 
-- [ ] `find skills/ -name "*.md" -path "*/agents/*"` 返回空（agents/*.md 全部清除）
-- [ ] `make triggers-all` 全量通过（退出码 0）
-- [ ] `git diff --name-only | grep openai.yaml` 返回空（openai.yaml 未被修改）
-- [ ] 每个 SKILL.md 的 frontmatter 包含 `context: fork` 字段
-- [ ] 每个 SKILL.md 包含 `## Agent 提示词` section，内容与原 agents/*.md 一致
-- [ ] `docs/ARCHITECTURE.md` 中目录结构说明已更新
-- [ ] `AGENTS.md` 中约束描述已更新
+- [x] `find skills/ -name "*.md" -path "*/agents/*"` 返回空（agents/*.md 全部清除）
+- [x] `make triggers-all` 全量通过（退出码 0）
+- [x] `git diff --name-only | grep openai.yaml` 返回空（openai.yaml 未被修改）
+- [x] 每个 SKILL.md 的 frontmatter 包含 `context: fork` 字段
+- [x] 每个 SKILL.md 包含 `## Agent 提示词` section，内容与原 agents/*.md 一致
+- [x] `docs/ARCHITECTURE.md` 中目录结构说明已更新
+- [x] `AGENTS.md` 中约束描述已更新
 
 ## 风险 / 已知未知
 

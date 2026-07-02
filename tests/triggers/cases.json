@@ -365,5 +365,210 @@
     "tags": [
       "commit"
     ]
+  },
+  {
+    "id": "arch-01",
+    "input": "为这个项目建立分层架构和循环依赖检测",
+    "expected_primary_skill": "harness-architecture-boundaries",
+    "expected_candidates": [
+      "harness-architecture-boundaries"
+    ],
+    "tags": [
+      "architecture"
+    ]
+  },
+  {
+    "id": "arch-02",
+    "input": "代码出现层间越界，需要定义依赖方向规则",
+    "expected_primary_skill": "harness-architecture-boundaries",
+    "expected_candidates": [
+      "harness-architecture-boundaries"
+    ],
+    "tags": [
+      "architecture"
+    ]
+  },
+  {
+    "id": "arch-03",
+    "input": "治理架构腐化，补充 lint 规则强制边界",
+    "expected_primary_skill": "harness-architecture-boundaries",
+    "expected_candidates": [
+      "harness-architecture-boundaries",
+      "harness-golden-principles"
+    ],
+    "tags": [
+      "architecture",
+      "ambiguous"
+    ]
+  },
+  {
+    "id": "observability-01",
+    "input": "复现 UI bug 需要浏览器截图验证",
+    "expected_primary_skill": "harness-observability-and-browser",
+    "expected_candidates": [
+      "harness-observability-and-browser"
+    ],
+    "tags": [
+      "observability"
+    ]
+  },
+  {
+    "id": "observability-02",
+    "input": "确认 P99 延迟是否达标，需要查指标",
+    "expected_primary_skill": "harness-observability-and-browser",
+    "expected_candidates": [
+      "harness-observability-and-browser"
+    ],
+    "tags": [
+      "observability"
+    ]
+  },
+  {
+    "id": "observability-03",
+    "input": "验证用户旅程截图前后对比无异常",
+    "expected_primary_skill": "harness-observability-and-browser",
+    "expected_candidates": [
+      "harness-observability-and-browser",
+      "harness-verification-loop"
+    ],
+    "tags": [
+      "observability",
+      "ambiguous"
+    ]
+  },
+  {
+    "id": "intake-03",
+    "input": "这个项目是做什么的，项目概览一下",
+    "expected_primary_skill": "harness-project-intake",
+    "expected_candidates": [
+      "harness-project-intake",
+      "harness-orchestration"
+    ],
+    "tags": [
+      "intake",
+      "implicit"
+    ]
+  },
+  {
+    "id": "prompt-03",
+    "input": "这个 agent 行为不对，帮我优化 system prompt",
+    "expected_primary_skill": "harness-prompt-optimizer",
+    "expected_candidates": [
+      "harness-prompt-optimizer"
+    ],
+    "tags": [
+      "prompt"
+    ]
+  },
+  {
+    "id": "authoring-03",
+    "input": "怎么给 harness 工具集瘦身和拆分 references",
+    "expected_primary_skill": "harness-authoring",
+    "expected_candidates": [
+      "harness-authoring",
+      "harness-repo-map"
+    ],
+    "tags": [
+      "authoring",
+      "ambiguous"
+    ]
+  },
+  {
+    "id": "golden-03",
+    "input": "治理 AI 代码风格不统一，建立品味编码规则",
+    "expected_primary_skill": "harness-golden-principles",
+    "expected_candidates": [
+      "harness-golden-principles"
+    ],
+    "tags": [
+      "golden"
+    ]
+  },
+  {
+    "id": "negative-01",
+    "input": "帮我写一个 React 组件",
+    "expected_primary_skill": "none",
+    "expected_candidates": [],
+    "tags": [
+      "negative"
+    ]
+  },
+  {
+    "id": "negative-02",
+    "input": "这个 API 怎么调用",
+    "expected_primary_skill": "none",
+    "expected_candidates": [],
+    "tags": [
+      "negative"
+    ]
+  },
+  {
+    "id": "negative-03",
+    "input": "解释一下这段代码的含义",
+    "expected_primary_skill": "none",
+    "expected_candidates": [],
+    "tags": [
+      "negative"
+    ]
+  },
+  {
+    "id": "negative-04",
+    "input": "帮我写单元测试",
+    "expected_primary_skill": "none",
+    "expected_candidates": [],
+    "tags": [
+      "negative"
+    ]
+  },
+  {
+    "id": "negative-05",
+    "input": "帮我改一下 README 的格式",
+    "expected_primary_skill": "none",
+    "expected_candidates": [],
+    "tags": [
+      "negative"
+    ]
+  },
+  {
+    "id": "ambiguous-01",
+    "input": "重构代码并确保依赖方向规则不被破坏",
+    "expected_primary_skill": "harness-architecture-boundaries",
+    "expected_candidates": [
+      "harness-architecture-boundaries",
+      "harness-verification-loop"
+    ],
+    "tags": [
+      "architecture",
+      "verification",
+      "ambiguous"
+    ]
+  },
+  {
+    "id": "ambiguous-02",
+    "input": "代码重复模式太多，需要建立 lint 规则和品味编码",
+    "expected_primary_skill": "harness-golden-principles",
+    "expected_candidates": [
+      "harness-golden-principles",
+      "harness-architecture-boundaries"
+    ],
+    "tags": [
+      "golden",
+      "architecture",
+      "ambiguous"
+    ]
+  },
+  {
+    "id": "ambiguous-03",
+    "input": "为这个项目初始化 harness 生成 AGENTS.md 并优化 system prompt",
+    "expected_primary_skill": "harness-bootstrap",
+    "expected_candidates": [
+      "harness-bootstrap",
+      "harness-prompt-optimizer"
+    ],
+    "tags": [
+      "bootstrap",
+      "prompt",
+      "ambiguous"
+    ]
   }
 ]

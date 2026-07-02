@@ -19,7 +19,7 @@ metadata:
 
 ## 何时使用
 
-- 用户说"init harness"、"run harness"、"Build a harness for this project"
+- 用户说"init harness"、"Build a harness for this project"
 - 用户说"为这个项目初始化 harness"、"设计一套 harness 规范"
 - 用户进入一个新项目,希望用 harness 方法论管理 agent 协作
 
@@ -110,6 +110,11 @@ Thumbs.db
 - **AGENTS.md 膨胀**:把所有知识塞进 AGENTS.md,导致文件过大、难以维护。
 - **docs/ 文件缺少日期**:没有"最后更新"日期会导致无法判断信息是否过时。
 
+## 相关 skill
+
+- `harness-project-intake`:初始化前先分析项目（步骤 1 依赖）
+- `harness-repo-map`:初始化后维护 AGENTS.md 和 docs/ 的健康状态
+
 ## 相关模板
 
 - `references/agents-md-template.md`: AGENTS.md 生成模板
@@ -152,11 +157,11 @@ Thumbs.db
 
 ## 约束
 
-- **宁可少而准**：不要生成大量空壳文件。不确定是否需要时先不创建，在 AGENTS.md 路由表留占位条目。违反时删除多余文件。
-- **尊重现有内容**：项目已有 AGENTS.md 或 docs/ 时先读取再决定覆盖或增量更新。违反时恢复被覆盖内容。
-- **AGENTS.md 是地图**：只放路由表和硬约束，不把项目所有知识塞进去。违反时精简内容，下沉到 docs/。
-- **每个 docs/ 文件底部必须有"最后更新"日期**：违反时补充日期。
-- **Write 仅用于创建新文件**：禁止修改现有业务代码、测试文件、配置文件。违反时撤回修改。
+- **宁可少而准**:不要生成大量空壳文件。不确定是否需要时先不创建，在 AGENTS.md 路由表留占位条目。违反时删除多余文件。
+- **尊重现有内容**:项目已有 AGENTS.md 或 docs/ 时先读取再决定覆盖或增量更新。违反时恢复被覆盖内容。
+- **AGENTS.md 是地图**:只放路由表和硬约束，不把项目所有知识塞进去。违反时精简内容，下沉到 docs/。
+- **每个 docs/ 文件底部必须有"最后更新"日期**:违反时补充日期。
+- **Write 仅用于创建新文件**:禁止修改现有业务代码、测试文件、配置文件。违反时撤回修改。
 
 ---
 最后更新: 2026-07-02

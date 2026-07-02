@@ -69,7 +69,14 @@ while IFS= read -r row; do
   done
 
   result="FAIL"; reason=""
-  if [[ $primary_count -gt 0 ]]; then
+  if [[ "$primary" == "none" ]]; then
+    # Negative test case: passes if no candidates matched
+    if [[ ${#matched_candidates[@]} -eq 0 ]]; then
+      result="PASS"; reason="negative case: no skill matched as expected"
+    else
+      result="FAIL"; reason="negative case: unexpected match on ${matched_candidates[*]}"
+    fi
+  elif [[ $primary_count -gt 0 ]]; then
     if [[ "$best_skill" == "$primary" ]]; then
       result="PASS"; reason="primary matched with strongest signal"
     else

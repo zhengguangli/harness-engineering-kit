@@ -3,6 +3,7 @@ name: harness-commit-gate
 description: 提交代码前自动执行质量检查——diff 审查、测试/构建/lint 验证、commit message 格式化。用于"提交代码"、"commit"、"git commit"场景。
 when_to_use: 当用户说"提交代码"、"commit"、"git commit"、"代码提交"、"修复，提交代码"时使用。
 disable-model-invocation: true
+context: fork
 allowed-tools: Bash(git *) Bash(npm *) Bash(bun *) Bash(cargo *) Bash(vitest *) Bash(tsc *) Bash(bunx *) Bash(make *) Bash(just *)
 agent: commit-gate-runner
 compatibility: opencode
@@ -126,11 +127,17 @@ metadata:
 
 ## 约束
 
-- **检查优先于提交**：宁可多花 30 秒跑测试，也不要提交一个破坏构建的 commit。
-- **不要静默跳过**：如果测试失败或构建失败，明确报告。
-- **尊重用户意图**：如果用户说"不推送"，绝对不要执行 `git push`。
-- **Commit message 必须使用英文**：禁止中英文混用。
-- **单个提交保持原子性**：一个提交只做一件事。
+- **检查优先于提交**:宁可多花 30 秒跑测试，也不要提交一个破坏构建的 commit。
+- **不要静默跳过**:如果测试失败或构建失败，明确报告。
+- **尊重用户意图**:如果用户说"不推送"，绝对不要执行 `git push`。
+- **Commit message 必须使用英文**:禁止中英文混用。
+- **单个提交保持原子性**:一个提交只做一件事。
+
+## 输出规范
+
+- **commit hash + 变更摘要**:输出 commit hash、变更文件数、变更行数
+- **测试/构建结果**:简要列出每项检查的通过/失败状态
+- **失败时的报告格式**:明确列出失败项、失败原因、建议修复方向
 
 ## 相关模板
 

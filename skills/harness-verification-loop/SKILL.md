@@ -3,6 +3,7 @@ name: harness-verification-loop
 description: 实施"自验证循环"——agent 实现代码变更后自己审查、跑测试/构建/lint、请求评审并在反馈中迭代,直到可合并。用于"把改动推进到可合并状态"、"自动修复测试失败"、"建立实现→自检→测试→评审→修复循环"场景。
 when_to_use: 当用户要求把代码改动推进到"可合并"状态、可验证的代码任务反复失败需要循环迭代、或需要建立提交前自检流程时使用。
 disable-model-invocation: true
+context: fork
 agent: verification-loop-runner
 compatibility: opencode
 metadata:
@@ -110,7 +111,6 @@ metadata:
 - 测试执行：`Bash` 运行测试、lint、构建命令
 - 代码分析：`Glob`/`Grep`/`Read` 理解代码结构和上下文
 - 循环控制：设定迭代边界、检测卡住状态、管理反馈处理
-- **禁止**：修改架构文档、exec-plan 的目标/范围字段、其他 agent 的配置文件
 
 ## 执行流程
 
@@ -131,6 +131,12 @@ metadata:
 - **连续两轮相同尝试必须停止**：`git diff` 输出实质相同时立即停止，读取 `references/stuck-loop-diagnostics.md` 诊断，按结果决定下一步（修复方向 / 升级给人类 / 记录进 `docs/exec-plans/tech-debt-tracker.md`）。
 - **只有需要人类判断时才升级**：不可逆操作、产品取舍、安全敏感决策才升级给人类。
 - **禁止修改架构文档和 exec-plan 目标**：`Edit` 仅用于业务代码和测试文件。
+
+## 输出规范
+
+- **完成总结**：做了什么、怎么验证的、已知限制（遵循 `references/completion-summary-template.md`）
+- **迭代记录**：总迭代轮数、每轮关键变化、卡住检测是否触发
+- **验收结果**：每项验收标准的通过/失败状态
 
 ## 相关模板
 
