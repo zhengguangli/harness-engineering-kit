@@ -94,6 +94,5 @@ metadata:
 
 ## 相关模板
 - `references/verification-checklist-template.md`：验证检查清单模板
-- `agents/qa-verifier.md`：qa-verifier agent 系统提示词
 ---
 最后更新: 2026-07-02

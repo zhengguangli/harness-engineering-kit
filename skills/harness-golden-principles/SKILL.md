@@ -69,7 +69,6 @@ metadata:
 - **一次性扫完心态**：追求一次清干净所有问题，忽视持续清扫节奏。
 ## 相关模板
 - `references/quality-score-template.md`：质量评分模板
-- `agents/entropy-collector.md`：entropy-collector agent 系统提示词
 
 ## Agent 提示词
 

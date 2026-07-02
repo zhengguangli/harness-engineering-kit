@@ -91,8 +91,9 @@ metadata:
 
 ### 8. Agent prompt 文件的 canonical 约定
 
-- **`agents/<name>.md`** 是 canonical 版本——skill 的 "配合的 agent" 章节应引用此路径。
-- 修改 agent prompt 时,**只改 `agents/<name>.md`**。
+- **`SKILL.md` 的 `## Agent 提示词` section** 是 Claude Code 平台的 canonical 版本——修改 agent prompt 时,只改此处。
+- Codex 平台元数据保留在 `agents/openai.yaml`,其 `system_prompt` 字段必须与 `## Agent 提示词` 逐字一致(详见第 7 节)。
+- 仓库硬约束(AGENTS.md L12):不再使用独立的 `agents/<name>.md` 文件,新建 skill 时不要创建。
 
 ## 关键要点
 

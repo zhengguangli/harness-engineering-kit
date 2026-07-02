@@ -3,7 +3,7 @@ name: harness-commit-gate
 description: 提交代码前自动执行质量检查——diff 审查、测试/构建/lint 验证、commit message 格式化。用于"提交代码"、"commit"、"git commit"场景。
 when_to_use: 当用户说"提交代码"、"commit"、"git commit"、"代码提交"、"修复，提交代码"时使用。
 disable-model-invocation: true
-allowed-tools: Bash(git *) Bash(npm *) Bash(bun *) Bash(cargo *)
+allowed-tools: Bash(git *) Bash(npm *) Bash(bun *) Bash(cargo *) Bash(vitest *) Bash(tsc *) Bash(bunx *) Bash(make *) Bash(just *)
 agent: commit-gate-runner
 compatibility: opencode
 metadata:
