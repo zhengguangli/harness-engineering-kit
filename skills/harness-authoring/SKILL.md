@@ -113,7 +113,7 @@ metadata:
 
 ## 边界情况处理
 
-> 通用边界情况（跨平台同步等）参见 `docs/references/common-edge-cases.md`，以下仅列出本 skill 特有的边界情况。
+> 通用边界情况（跨平台同步等）参见 `references/common-edge-cases.md`，以下仅列出本 skill 特有的边界情况。
 
 ### skill和subagent混淆
 

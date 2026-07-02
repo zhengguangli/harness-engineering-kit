@@ -109,7 +109,7 @@ Thumbs.db
 
 ## 边界情况处理
 
-> 通用边界情况（项目规模极小、遗留项目改造、多团队协作等）参见 `docs/references/common-edge-cases.md`，以下仅列出本 skill 特有的边界情况。
+> 通用边界情况（项目规模极小、遗留项目改造、多团队协作等）参见 `references/common-edge-cases.md`，以下仅列出本 skill 特有的边界情况。
 
 ### 项目已有部分harness结构
 
