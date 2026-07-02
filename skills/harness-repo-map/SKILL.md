@@ -149,6 +149,7 @@ docs/
 只做可机械验证的检查，不做语义分析：
 - **组件存在性**：`ARCHITECTURE.md` 中列出的组件/领域路径是否实际存在。
 - **配对完整性**：每个 SKILL.md frontmatter 的 `agent: <name>` 字段引用的 agent，是否在同文件 `## Agent 提示词` section 内有对应 `### <name>` 子节。
+- **Agent 提示词结构一致性**：每个 `## Agent 提示词` section 的子标题是否使用统一的 `##` 层级，是否包含标准五段（角色定义 / 核心能力 / 执行流程 / 约束 / 输出规范）。
 - **引用完整性**：AGENTS.md 导航表中列出的每个路径是否存在。
 - **新鲜度**：检查关键文档底部的"最后更新"日期，超过 30 天未更新的标记为待校验。
 - **跨平台同步关键项**（仅当目标项目声明支持 Codex 时执行）：验证 `agents/openai.yaml` 是否存在且包含 metadata/tools/system_prompt 三区块；如目标项目仅 opencode，跳过此检查。

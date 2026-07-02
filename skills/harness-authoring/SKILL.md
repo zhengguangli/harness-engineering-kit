@@ -133,7 +133,7 @@ metadata:
 3. **存在性检查**:检查 `skills/<name>/` 目录是否已存在。若已存在且用户未明确要求覆盖,报告"skill <name> 已存在,包含以下文件: [列出]。是否覆盖？"并停止,不要静默覆盖。
 4. **从模板生成**:用 `harness-authoring/references/scaffold-templates.md` 的模板生成文件。
 5. **更新索引**:在 AGENTS.md 中添加指针。
-6. **自检**:验证生成的 SKILL.md 正文 ≤ 500 行、description 同时包含做什么和触发场景、`## Agent 提示词` section 内有与 frontmatter `agent:` 字段匹配的 `### <name>` 子节。
+6. **自检**:验证生成的 SKILL.md 正文 ≤ 500 行、description 同时包含做什么和触发场景、`## Agent 提示词` section 内有与 frontmatter `agent:` 字段匹配的 `### <name>` 子节、Agent 提示词包含标准六段式子标题（`## 角色定义` / `## 核心能力` / `## 执行流程` / `## 约束` / `## 输出规范`，可选 `## 跳过条件`）。
 
 ## 约束
 
