@@ -2,7 +2,9 @@
 
 定义 `boundary-auditor` agent 如何内联检查每一条 `ARCHITECTURE.md` 中记录的架构规则。每条规则对应一个检查模式——描述"查什么、怎么查、违规长什么样"。
 
-> 这不是可执行脚本,而是给 agent 参考的检查方法论——agent 用 Grep/Bash/Glob 等工具组合内联执行这些检查。
+> 这不是可执行脚本,而是给 agent 参考的检查方法论——agent 用 `Grep`/`Bash`/`list_dir` 等工具组合内联执行这些检查。
+>
+> 语言可移植性提示：下面示例中的 import 检索模式以 TypeScript 为主。在不同语言栈中请使用对应语法（如 Python: `import ... from ...` / `import module`；Go: `"import"`；Java: `import ...;`；Rust: `use ...`）。
 
 ## 检查模式结构
 
