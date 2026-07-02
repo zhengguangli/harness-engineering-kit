@@ -85,7 +85,7 @@ metadata:
 
 ### 7. 跨平台 system_prompt 同步纪律
 
-每个 agent 的 `.md`（Claude Code）和 `openai.yaml`（Codex）两个版本的 system_prompt **必须逐字一致**——仅允许工具名差异（`Bash` ↔ `exec_command`、`Edit` ↔ `apply_patch` 等,映射表见 `references/agent-template-codex.yaml` 注释）。不得出现一处版本比另一处更详细、更简略、或措辞微妙不同的情况。
+每个 agent 在 Claude Code 平台(`SKILL.md` 的 `## Agent 提示词` section)和 Codex 平台(`agents/openai.yaml` 的 `system_prompt` 字段)的 system_prompt **必须逐字一致**——仅允许工具名差异(`Bash` ↔ `exec_command`、`Edit` ↔ `apply_patch` 等,映射表见 `references/agent-template-codex.yaml` 注释)。不得出现一处版本比另一处更详细、更简略、或措辞微妙不同的情况。
 
 验证方式:在 `harness-verification-loop` 的自检步骤中,可加入"对比 .md 与 .yaml 的 system_prompt 是否同步"作为检查项。
 

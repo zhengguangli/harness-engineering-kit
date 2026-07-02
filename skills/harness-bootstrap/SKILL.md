@@ -1,6 +1,6 @@
 ---
 name: harness-bootstrap
-description: 为任意项目一键初始化 harness 结构——生成 AGENTS.md 地图、docs/ 骨架、.gitignore 规则、CI 模板。用于"init harness"、"为这个项目初始化 harness"场景。
+description: 为任意项目一键初始化 harness 结构——生成 AGENTS.md 地图、docs/ 骨架与 .gitignore 规则。用于"init harness"、"为这个项目初始化 harness"场景。
 when_to_use: 当用户说"init harness"、"Build a harness for this project"、"为这个项目初始化 harness"、"设计一套 harness 规范"时使用。
 disable-model-invocation: true
 context: fork
