@@ -40,12 +40,13 @@ Layer 5 提交门      harness-commit-gate
 
 ```
 skills/<name>/
-├── SKILL.md          # 方法论正文（含跨平台 frontmatter）
-├── agents/           # 配对 agent 的系统定义
-│   ├── <name>.md     # canonical 版本
+├── SKILL.md          # 方法论正文 + agent 提示词（含跨平台 frontmatter）
+├── agents/
 │   └── openai.yaml   # Codex UI 元数据
 └── references/       # 模板文件
 ```
+
+Agent 提示词已内联到 SKILL.md 的 `## Agent 提示词` section，不再使用独立的 `agents/<name>.md` 文件。
 
 ## 支撑基础设施的依赖方向
 
@@ -62,7 +63,7 @@ tests/   → skills/    （回归用例验证 skill 的触发逻辑）
 ## 数据边界规则
 
 - 每个 `SKILL.md` 的 frontmatter 是 skill 与平台之间的契约——平台只读自己认识的字段，忽略未知字段。
-- Agent 提示词的 canonical 版本在 `agents/<name>.md`。
+- Agent 提示词的 canonical 版本在 `SKILL.md` 的 `## Agent 提示词` section。
 
 ## 机械强制现状
 
@@ -71,8 +72,8 @@ tests/   → skills/    （回归用例验证 skill 的触发逻辑）
 | frontmatter 必填字段 | `scripts/validate-skill-triggers.sh` | ✅ 已强制 |
 | 关键词一致性 | `scripts/validate-keyword-consistency.sh` | ✅ 已强制 |
 | 触发回归 | `scripts/run-trigger-regression.sh` | ✅ 已强制 |
-| agent 提示词同步 | `scripts/validate-agent-prompt-sync.sh` | ✅ 已强制 |
+| agent 提示词存在性 | `scripts/validate-agent-prompt-sync.sh` | ✅ 已强制 |
 | skill 间无循环依赖 | 人工 review | ⚠️ 仅文档，未强制 |
 
 ---
-最后更新: 2026-07-01
+最后更新: 2026-07-02

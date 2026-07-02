@@ -9,7 +9,7 @@ Harness Engineering Kit：一套通用、与具体项目无关的 skills + agent
 ## 硬约束（极少数，违反即阻塞合并）
 
 - 每个 `SKILL.md` 的 frontmatter 必须包含 `description`（≥20 字符）、`when_to_use`、`compatibility` 字段，不含已废弃的 `version` 字段。
-- 每个 skill 的 agent 提示词只维护 `agents/<name>.md` 一处。
+- 每个 skill 的 agent 提示词维护在 `SKILL.md` 的 `## Agent 提示词` section，不再使用独立的 `agents/<name>.md` 文件。
 - Skills 之间不允许循环依赖；依赖方向见 `docs/ARCHITECTURE.md`。
 
 ## 去哪里找更多
@@ -35,4 +35,4 @@ Harness Engineering Kit：一套通用、与具体项目无关的 skills + agent
 - **推送代码后**，主动询问用户是否同步技能包到 `~/.agents/skills`，获得允许后执行 `rsync -av --delete skills/ ~/.agents/skills/`。
 
 ---
-最后更新: 2026-07-01（新增：推送后同步技能包规则）
+最后更新: 2026-07-02（变更：agent 提示词内联到 SKILL.md）
