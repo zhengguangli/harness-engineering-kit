@@ -64,9 +64,10 @@ LLM 的输出质量上限由 prompt 的结构质量决定。一份好的 prompt 
 | 维度 | 检查点 | 常见问题 |
 |---|---|---|
 | 角色定义 | 有明确 persona 和专业领域？ | "你是一个 AI 助手"——太泛，无锚定效果 |
-| 上下文 | 提供了任务背景和约束环境？ | 缺少上下文导致 LLM 自行假设场景 |
+| 上下文/变量字典 | 提供了任务背景和动态输入声明？ | 缺少上下文/变量字典导致 LLM 自行假设场景或硬编码 |
 | 执行链 | 任务拆分为编号步骤？ | 一段需求描述，LLM 自行决定执行顺序 |
 | 约束 | 有安全栏和格式约束？ | 缺少约束导致输出格式不稳定 |
+| 输出 Schema | 有可解析的结构化输出定义？ | 缺少 schema 导致下游消费者需要二次解析 |
 | 示例 | 有 few-shot 示例锚定行为？ | 纯规则描述，LLM 理解规则的方式各异 |
 
 ### 步骤 2：设计架构与填充内容
@@ -130,7 +131,7 @@ LLM 的输出质量上限由 prompt 的结构质量决定。一份好的 prompt 
 1. **采集输入**：从用户消息或文件路径获取需求/现有 prompt。信息不足时列出缺失项向用户提问，不自行假设。
 2. **评估现有 prompt**：用五维评估框架（角色定义 / 上下文 / 执行链 / 约束 / 示例）诊断质量问题，说明薄弱维度。从零开始写 prompt 时跳过此步。
 3. **设计架构**：按六区块模板（`references/prompt-architecture-template.md`）列出每个区块要放什么，确认方向正确。
-4. **填充内容**：Role 和 Constraints 优先（影响最大），Execution Chain 其次，Examples 最后。每条约束包含规则 + 违反时的行为。Execution Chain 控制在 3-7 步。详细填写要点见 `references/six-block-design-notes.md`。
+4. **填充内容**：按六区块顺序 Role → Background & Context → Variables Dictionary → Execution Chain → Constraints → Output Schema + Examples 逐块填写。Role 和 Constraints 优先级最高（影响最大），Execution Chain / Output Schema 其次，Background & Context / Variables Dictionary / Examples 最后补齐。每条约束包含规则 + 违反时的行为。Execution Chain 控制在 3-7 步。详细填写要点见 `references/six-block-design-notes.md`。
 5. **自检**：Role 是否可区分？变量是否全部声明？步骤数 ≤ 7？约束含违反行为？Schema 完整？Examples 覆盖 standard + edge case？规则与示例一致？
 6. **输出**：完整优化后 prompt，可直接复制使用。需求简单时不过度工程化。
 

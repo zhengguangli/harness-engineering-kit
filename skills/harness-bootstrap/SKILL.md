@@ -1,6 +1,6 @@
 ---
 name: harness-bootstrap
-description: 为任意项目一键初始化 harness 结构——生成 AGENTS.md 地图、docs/ 骨架与 .gitignore 规则。用于"init harness"、"为这个项目初始化 harness"场景。
+description: 为任意项目快速初始化 harness 结构——生成 AGENTS.md 地图、docs/ 骨架与 .gitignore 规则。用于"init harness"、"为这个项目初始化 harness"场景。
 when_to_use: 当用户说"init harness"、"Build a harness for this project"、"为这个项目初始化 harness"、"设计一套 harness 规范"时使用。
 disable-model-invocation: true
 context: fork
@@ -76,10 +76,10 @@ AGENTS.md  # 如果是自动生成的
 .DS_Store
 Thumbs.db
 
-# 依赖和构建产物
-node_modules/
-dist/
-build/
+# 依赖和构建产物（按需启用）
+# node_modules/   # Node/JS
+# dist/           # 通用
+# build/          # 通用
 ```
 
 ### 5. 执行步骤
@@ -93,7 +93,7 @@ build/
    - 工作方式提示
 4. **生成 docs/ 骨架**:创建最小可用的 docs/ 目录结构,每个文件只写骨架和"最后更新"日期。
 5. **更新 .gitignore**:检查并补充缺失的 gitignore 规则。
-6. **自检**:验证所有生成的文件存在、格式正确、docs/ 文件底部有"最后更新"日期。
+6. **自检**:验证所有生成的文件存在、格式正确、docs/ 文件底部有"最后更新"日期,并向用户输出"本次创建/修改的文件清单"。
 
 ## 关键要点
 

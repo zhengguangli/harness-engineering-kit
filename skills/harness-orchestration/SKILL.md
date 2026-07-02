@@ -52,18 +52,6 @@ metadata:
 
 三层路由判断和详细交接点表见 `references/routing-decision-tree.md`。
 ## 方法论
-### 交接点（上游产出 → 下游消费）
-
-| 上游 skill | 产出物 | 下游消费者 |
-|---|---|---|
-| `project-intake` | 结构化项目卡片 | `bootstrap` |
-| `exec-plans` | exec-plan 文件 | `verification-loop` |
-| `architecture-boundaries` | lint 规则/结构化测试 | `verification-loop`、`commit-gate` |
-| `observability-and-browser` | 截图/指标查询结果 | `verification-loop`、`commit-gate` |
-| `golden-principles` | 修复队列 | `verification-loop` |
-| `repo-map` | AGENTS.md + docs/ 校验报告 | `bootstrap`、`authoring` |
-| `prompt-optimizer` | 结构化 prompt | `authoring`、其他需要高质量 prompt 的 skill |
-
 ### 常见省略场景
 - 小项目不需要 `architecture-boundaries`（无多层架构要守）。
 - 纯文档改动不需要 `verification-loop` 和 `observability-and-browser`。
@@ -110,6 +98,7 @@ metadata:
 - **只读不执行**：不替用户调用任何 skill，只输出路由建议。
 - **先澄清再路由**：目标有歧义时先提问，不猜测。
 - **简单任务不绕路**：明确知道用哪个 skill 时直接建议，不需要绕一圈编排。
+- **守住前置依赖**：跨工作流组合时按交接点表确认上游已落盘；尤其 Workflow 1 必须先经 `project-intake` 再 `bootstrap`，否则骨架与项目实际不符。
 
 ## 相关模板
 - `references/routing-decision-tree.md`：路由决策树与标准工作流
