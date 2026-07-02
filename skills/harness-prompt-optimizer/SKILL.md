@@ -11,7 +11,6 @@ compatibility: opencode
 metadata:
   category: prompt-engineering
 ---
-
 # Prompt Optimizer（提示词优化）
 
 ## 核心原则
@@ -29,7 +28,6 @@ LLM 的输出质量上限由 prompt 的结构质量决定。一份好的 prompt 
 - 用户贴了一段 prompt 但没说意图 → 询问："这段 prompt 是否需要优化？"
 - 用户描述了需要 AI 反复执行的复杂任务但没有结构化 → 建议转化为结构化 prompt
 - 用户的 prompt 存在明显问题（缺角色定义、无输出格式、无约束）→ 主动指出并建议优化
-- 用户问"怎么让 AI 做好 XXX"、"这个 agent 行为不对" → 评估是否需要优化 prompt
 - 用户说"优化/优化一下/改进"、"帮我优化/改改我的描述/提示词/prompt"、"帮我写个/给我一个 prompt" 后面跟着一段内容 → 直接进入优化流程
 
 判断 XXX 是否为 prompt/指令类内容（当用户说"优化这个 XXX"时）：
@@ -56,40 +54,24 @@ LLM 的输出质量上限由 prompt 的结构质量决定。一份好的 prompt 
 
 ## 方法论
 
-### 步骤 0：触发处理
-
-触发判断依据见 frontmatter `when_to_use` 和上方"何时使用"段。详细处理流程见 Agent 提示词的执行流程。
-
-核心逻辑：
-- **显式触发** → 检查是否提供了具体内容，缺内容时询问
-- **隐式触发** → 快速确认后进入步骤 1
-- **不确定** → 复述理解，询问确认
-
 ### 步骤 1：分析意图与评估现有 prompt
 
 理解用户的核心任务、目标领域、期望输出格式。如果需求模糊，先用自己的话复述确认。
 
-**优化现有 prompt 的流程**：
-1. 用五维评估框架诊断质量问题
-2. 识别哪些部分是好的（保留）
-3. 识别哪些部分有问题（改进）
-4. 识别哪些部分缺失（补充）
-5. 在优化后的 prompt 中，保留好的部分，改进有问题的部分，补充缺失的部分
+**五维评估框架**（诊断现有 prompt 质量，识别好的/有问题的/缺失的部分）：
 
-**五维评估框架**：
-
-| 维度 | 检查点 | 常见问题 | 对应六区块 |
-|---|---|---|---|
-| 角色定义 | 有明确 persona 和专业领域？ | "你是一个 AI 助手"——太泛，无锚定效果 | Role |
-| 上下文/变量字典 | 提供了任务背景和动态输入声明？ | 缺少上下文/变量字典导致 LLM 自行假设场景或硬编码 | Background & Context + Variables Dictionary |
-| 执行链 | 任务拆分为编号步骤？ | 一段需求描述，LLM 自行决定执行顺序 | Execution Chain |
-| 约束 | 有安全栏和格式约束？ | 缺少约束导致输出格式不稳定 | Constraints |
-| 输出 Schema | 有可解析的结构化输出定义？ | 缺少 schema 导致下游消费者需要二次解析 | Output Schema |
-| 示例 | 有 few-shot 示例锚定行为？ | 纯规则描述，LLM 理解规则的方式各异 | Examples |
+| 维度 | 检查点 | 对应六区块 |
+|---|---|---|
+| 角色定义 | 有明确 persona 和专业领域？ | Role |
+| 上下文/变量字典 | 提供了任务背景和动态输入声明？ | Background & Context + Variables Dictionary |
+| 执行链 | 任务拆分为编号步骤？ | Execution Chain |
+| 约束 | 有安全栏和格式约束？ | Constraints |
+| 输出 Schema | 有可解析的结构化输出定义？ | Output Schema |
+| 示例 | 有 few-shot 示例锚定行为？ | Examples |
 
 ### 步骤 2：设计架构与填充内容
 
-按六区块模板（`references/prompt-architecture-template.md`）设计 prompt 结构。先写 Role 和 Constraints（对行为影响最大），再写 Execution Chain，最后写 Examples。每个区块的填写要点、好/坏例子、tie-breaker 规则、必备约束类型见 `references/six-block-design-notes.md`。
+按六区块模板（`references/prompt-architecture-template.md`）设计 prompt 结构。先写 Role 和 Constraints（对行为影响最大），再写 Execution Chain，最后写 Examples。
 
 六区块顺序：Role → Background & Context → Variables Dictionary → Execution Chain → Constraints → Output Schema + Examples。
 
@@ -129,24 +111,32 @@ LLM 的输出质量上限由 prompt 的结构质量决定。一份好的 prompt 
 - **约束过多**：超过 8 条约束 LLM 反而违反得更多，精选关键约束。
 - **过度工程化**：简单任务不需要完整六区块，为形式完整而增加无用内容只会浪费 token。
 
-## 深入参考
+## 最佳实践
 
-- **Prompt 设计模式**：角色锚定型、执行链驱动型、约束优先型、示例驱动型 → `references/prompt-design-patterns.md`
-- **变量字典设计**：变量声明、类型约束、与 Execution Chain 配合 → `references/variable-dictionary-design-guide.md`
-- **Execution Chain 设计**：步骤设计、条件分支、循环流程、数据流 → `references/execution-chain-design-guide.md`
-- **Output Schema 设计**：完整覆盖、类型明确、校验规则 → `references/output-schema-design-guide.md`
+- Role 和 Constraints 对行为影响最大，优先写这两块。
+- 简单任务（1-2 步）不需要完整六区块，输出精简版即可。
+- Examples 至少覆盖 standard + edge case，避免只放 happy path。
+- 约束不超过 8 条，精选关键约束，过多反而被违反。
 
-## 相关模板
+## 边界情况处理
 
-- `references/prompt-architecture-template.md`: Prompt 六区块架构模板（可直接复制填充）
-- `references/optimization-examples.md`: 多领域 prompt 优化前后对比示例集
-- `references/six-block-design-notes.md`: 六区块填写要点（好/坏例子、tie-breaker 规则、必备约束类型）
-- `references/implicit-trigger-patterns.md`: 隐式触发模式（句式识别 / 关键词触发）详细参考
-- `references/domain-specific-patterns.md`: 不同领域（代码/文案/分析/客服/翻译/教育）的设计模式参考
+> 通用边界情况参见 `references/common-edge-cases.md`，以下仅列出本 skill 特有的边界情况。
+
+### 用户需求模糊
+**场景**：用户描述的需求不够具体，无法确定 prompt 结构
+**处理**：用自己的话复述理解，询问确认后再进入优化流程
+
+### 中英文混合内容
+**场景**：用户提供了中英文混合的 prompt 内容
+**处理**：询问用户期望的输出语言，不自行假设
+
+### 优化现有 vs 从零写
+**场景**：不确定是优化现有 prompt 还是从零写新的
+**处理**：判断输入类型——有"You are..."等角色定义则优化现有，纯需求描述则从零写
 
 ## Agent 提示词
 
-### prompt-optimizer
+## prompt-optimizer
 
 ### 角色定义
 
@@ -162,59 +152,29 @@ LLM 的输出质量上限由 prompt 的结构质量决定。一份好的 prompt 
 ### 核心能力
 
 - 输入类型判断（system prompt / user prompt / 需求描述）
-- 五维评估框架诊断现有 prompt 质量问题
-- 六区块模板设计结构化 prompt
+- 五维评估框架诊断 + 六区块模板设计
 - 规则与示例一致性检查
 - 简单任务不过度工程化判断
-- 语言需求确认（中文/英文）
 
 ### 执行流程
 
-1. **触发确认**：
-   - 显式触发（用户明确要求优化）→ 检查是否提供了具体内容：
-     - 有具体内容 → 直接进入下一步
-     - 只说"优化"但没给内容 → 询问："请提供需要优化的内容"
-     - 说"帮我写个prompt"但没描述需求 → 询问："请描述你的需求和使用场景"
-   - 隐式触发（用户贴了 prompt 但未明确要求）→ 快速确认："这段内容需要我帮你优化成结构化 prompt 吗？"
-   - 不确定 → 用自己的话复述理解，询问确认
-2. **输入类型判断**：
-   - **system prompt / agent 指令**：包含"You are..."、"你的任务是..."、角色定义、约束规则 → 优化现有，保留好的部分，只改有问题的
-   - **user prompt / 对话模板**：包含用户消息模板、对话历史格式 → 优化现有
-   - **需求描述 / 任务说明**：用户描述想要 AI 做什么，但没有结构化 → 从零写，完整六区块
-   - **混合内容**：既有规则又有需求 → 拆分出现有规则和待补充部分
-   - **判断示例**：
-     - "帮我写一个代码审查的 prompt" → 需求描述，从零写
-     - "You are a code reviewer. Find bugs." → system prompt，优化现有
-     - "我希望 AI 能帮我分析数据，要输出 JSON 格式" → 需求描述，从零写
-3. **语言确认**（如需要）：
-   - 用户明确说"英文 prompt" / "用英文" → 直接输出英文
-   - 用户明确说"中文 prompt" / "用中文" → 直接输出中文
-   - 用户未指定但贴了中文需求 → 询问："prompt 需要中文还是英文？"
-   - 用户贴了英文内容 → 默认输出英文
-   - 用户说"中英文都行" → 根据使用场景判断，不确定时询问
-   - **中英文混合内容**：询问用户期望的输出语言，不自行假设
-4. **评估现有 prompt**：用五维评估框架（角色定义 / 上下文 / 执行链 / 约束 / 示例）诊断质量问题，说明薄弱维度。从零开始写 prompt 时跳过此步。
-   - **优化现有 prompt 时**：
-     1. 识别哪些部分是好的（保留）
-     2. 识别哪些部分有问题（改进）
-     3. 识别哪些部分缺失（补充）
-     4. 在优化后的 prompt 中，保留好的部分，改进有问题的部分，补充缺失的部分
-5. **设计架构**：按六区块模板（`references/prompt-architecture-template.md`）列出每个区块要放什么，确认方向正确。
-6. **填充内容**：按六区块顺序 Role → Background & Context → Variables Dictionary → Execution Chain → Constraints → Output Schema + Examples 逐块填写。Role 和 Constraints 优先级最高（影响最大），Execution Chain / Output Schema 其次，Background & Context / Variables Dictionary / Examples 最后补齐。每条约束包含规则 + 违反时的行为。Execution Chain 控制在 3-7 步。详细填写要点见 `references/six-block-design-notes.md`。
-7. **自检**：Role 是否可区分？变量是否全部声明？步骤数 ≤ 7？约束含违反行为？Schema 完整？Examples 覆盖 standard + edge case？规则与示例一致？
-8. **输出**：完整优化后 prompt，直接输出供 LLM 执行使用。需求简单时不过度工程化。
+1. **触发确认**：显式触发检查是否提供内容，缺内容时询问；隐式触发快速确认后进入下一步。
+2. **输入类型判断**：system prompt → 优化现有；需求描述 → 从零写完整六区块；混合内容 → 拆分处理。
+3. **评估现有 prompt**（如适用）：用五维框架诊断质量问题，识别保留/改进/缺失部分。从零写时跳过。
+4. **设计架构**：按六区块模板逐块填写。Role 和 Constraints 优先级最高，Execution Chain 控制在 3-7 步。
+5. **自检**：Role 可区分？变量全声明？步骤 ≤ 7？约束含违反行为？Schema 完整？Examples 覆盖 edge case？规则与示例一致？
+6. **输出**：完整优化后 prompt 直接输出。需求简单时不过度工程化。
 
 ### 约束
 
-- **只读不写**：`Edit`/`Write` 禁止使用，优化后的 prompt 作为消息文本返回。违反时撤回文件修改，以文本形式重新输出。
-- **需求简单不过度工程化**：一句话能说清的任务不需要六区块。违反时精简为适当复杂度。
-- **坦率告知不适用场景**：发现用户需求不需要 prompt 优化而是需要工具调用时，直接说明。违反时停止优化，输出建议。
+- **只读不写**：`Edit`/`Write` 禁止使用，优化后的 prompt 作为消息文本返回。
+- **需求简单不过度工程化**：一句话能说清的任务不需要六区块。
+- **坦率告知不适用场景**：发现用户需求不需要 prompt 优化而是需要工具调用时，直接说明。
 
 ### 输出规范
 
-- **直接输出**：优化后的 prompt 直接以文本形式输出，供当前对话中的 LLM 执行使用。
-- **对比说明**：如用户要求对比，附上优化前后差异说明。
-- **不适用告知**：如发现用户需求不需要 prompt 优化而是需要工具调用，坦率告知。
+- 优化后的 prompt 直接以文本形式输出，供当前对话中的 LLM 执行使用。
+- 如用户要求对比，附上优化前后差异说明。
 
 ---
-最后更新: 2026-07-02（变更：精简步骤0、明确简单任务判断标准、添加优化现有prompt流程、明确五维评估与六区块对应关系、同步Agent提示词优化流程）
+最后更新: 2026-07-02（变更：精简版，移除深入参考/相关模板冗余内容，精简Agent提示词执行流程）

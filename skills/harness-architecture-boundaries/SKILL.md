@@ -62,67 +62,7 @@ Utils 只能被 Providers 使用,不能反向依赖业务领域内部。
 
 关键不是这个具体的六层模型,而是模式:**固定方向 + 有限的合法边数 + 横切关注点收口到单一入口**。
 
-**示例1：Node.js项目分层**
-```
-项目结构：
-src/
-├── types/          # 类型定义
-├── config/         # 配置管理
-├── repositories/   # 数据访问层
-├── services/       # 业务逻辑层
-├── controllers/    # 控制器层
-├── routes/         # 路由层
-└── providers/      # 横切关注点（认证、日志等）
-
-依赖方向：
-types → config → repositories → services → controllers → routes
-providers → services → controllers → routes
-```
-
-**示例2：React项目分层**
-```
-项目结构：
-src/
-├── types/          # TypeScript类型
-├── config/         # 环境配置
-├── hooks/          # 自定义hooks
-├── services/       # API服务层
-├── components/     # UI组件
-├── pages/          # 页面组件
-└── providers/      # Context Providers
-
-依赖方向：
-types → config → services → hooks → components → pages
-providers → hooks → components → pages
-```
-
-**示例3：微服务项目分层**
-```
-项目结构：
-services/
-├── user-service/
-│   ├── types/
-│   ├── repository/
-│   ├── service/
-│   └── controller/
-├── order-service/
-│   ├── types/
-│   ├── repository/
-│   ├── service/
-│   └── controller/
-└── shared/
-    ├── types/
-    ├── config/
-    └── providers/
-
-依赖方向（单个服务内）：
-types → repository → service → controller
-shared/providers → service → controller
-
-依赖方向（服务间）：
-user-service → shared/types
-order-service → shared/types
-```
+**不同项目的实现差异**：Node.js 项目用 `types/config/repositories/services/controllers`；React 项目用 `types/config/hooks/services/components/pages`；微服务则在每个服务内部复用同一分层模式，服务间仅共享类型定义。
 
 ### 3. "Parse, don't validate" 作为数据边界规则
 
@@ -162,57 +102,12 @@ function parseUserInput(input: unknown): UserInput {
 
 ### 4. 执行步骤
 
-1. **和用户一起明确**：这个仓库/领域的依赖方向应该是什么?横切关注点的合法入口是什么?
-   - 示例问题：
-     - "这个项目有哪些主要业务领域？"
-     - "数据流向是怎样的？从哪里到哪里？"
-     - "哪些模块可以互相依赖？哪些必须单向依赖？"
-     - "横切关注点（认证、日志、配置等）应该如何组织？"
-
+1. **和用户一起明确**依赖方向和横切关注点的合法入口
 2. **把规则写进 `docs/ARCHITECTURE.md`**（模板见 `references/architecture-template.md`）
-   - 包含内容：
-     - 分层模型和依赖方向
-     - 横切关注点的合法入口
-     - 数据边界规则
-     - 违规检查方法
-
-3. **把检查交给 `boundary-auditor` agent 内联执行**——agent 用 Grep/Bash 等工具直接检查依赖方向是否违规,不需要项目预先配置独立的 lint 工具链
-   - 检查方法：
-     - 使用Grep搜索import语句
-     - 使用Bash运行现有lint命令
-     - 检查文件依赖关系
-
-4. **给每条检查发现配上"如何修复"的具体指令文本**
-   - 修复建议格式：
-     ```
-     ### [严重程度] <一行标题>
-     - 文件: `<path>`, 行号: <Lx-Ly>
-     - 违反规则: <ARCHITECTURE.md 中的哪条规则>
-     - 影响: <为什么这是个问题>
-     - 建议修复: <最小修复方式，具体到足以直接执行>
-     ```
-
-5. **区分"必须挡住"和"建议但不强制"**：真正的不变量交给 `boundary-auditor` 阻塞检查;风格偏好交给 `harness-golden-principles` 周期性清扫
-   - 不变量示例：
-     - 循环依赖
-     - 层间越界
-     - 数据边界违反
-   - 风格偏好示例：
-     - 命名规范
-     - 代码格式
-     - 注释风格
-
-6. **让 `boundary-auditor` 的检查成为 `harness-verification-loop` 自验证循环里的一步**
-   - 集成方式：
-     - 在verification-loop中添加架构边界检查步骤
-     - 将检查结果作为验证的一部分
-     - 架构违规必须修复才能通过验证
-
-7. **定期审计**：是否出现了新的越界模式?补充新规则
-   - 审计频率：
-     - 每月一次架构审计
-     - 重大重构后立即审计
-     - 发现新的越界模式时补充规则
+3. **把检查交给 `boundary-auditor` agent 内联执行**——用 Grep/Bash 直接检查依赖方向违规，不需要项目预配置 lint 工具链
+4. **给每条检查发现配上"如何修复"的具体指令文本**——格式：`### [严重程度] <标题>` + 文件行号 + 违反规则 + 影响 + 建议修复
+5. **区分"必须挡住"和"建议但不强制"**——不变量（循环依赖、层间越界、数据边界违反）交给 boundary-auditor 阻塞检查；风格偏好交给 harness-golden-principles 周期性清扫
+6. **集成到 `harness-verification-loop`**——架构违规必须修复才能通过自验证循环
 
 ## 关键要点
 
@@ -259,41 +154,16 @@ function parseUserInput(input: unknown): UserInput {
 - `references/automation-check-script.sh`: 自动化检查脚本
 - `references/e2e-architecture-audit-example.md`: 端到端完整示例（Node.js 电商平台架构审计，含项目分析→边界识别→规则生成→验证检查全流程）
 
-## 自动化检查
+## 最佳实践
 
-### 自动化检查脚本
-
-通用检查脚本，适用于所有 skill：
-
-```bash
-./scripts/skill-automation-check.sh <skill-name>
-```
-
-### CI/CD集成
-
-```yaml
-name: Architecture Boundaries Check
-
-on:
-  push:
-    paths:
-      - 'skills/harness-architecture-boundaries/SKILL.md'
-  pull_request:
-    paths:
-      - 'skills/harness-architecture-boundaries/SKILL.md'
-
-jobs:
-  quality-check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Check skill quality
-        run: make triggers-all
-```
+- 约束不变量，不管实现细节：严格约束模块间依赖方向和数据边界形态。
+- 报错要有修复指引：违反规则的报错要写成具体的修复指引，不只说"违反规则 X"。
+- 区分不变量和风格偏好：真正的不变量阻塞检查，风格偏好周期性清扫。
+- 定期审计架构规则：架构规则随项目演进而更新。
 
 ## Agent 提示词
 
-### boundary-auditor（架构边界审计员）
+## boundary-auditor（架构边界审计员）
 
 ### 角色定义
 
@@ -310,55 +180,11 @@ jobs:
 
 ### 执行流程
 
-1. **读取架构规则**：读取 `ARCHITECTURE.md`（或项目里等价的架构文档），确认当前项目实际定义的依赖方向规则。如果找不到这类文档，先报告"架构规则未被文档化，建议先用 harness-architecture-boundaries 技能补上"，再尽力基于代码现状做合理推断。
-   - 检查内容：
-     - 分层模型和依赖方向
-     - 横切关注点的合法入口
-     - 数据边界规则
-     - 违规检查方法
-
-2. **运行检查**：使用 Bash 运行项目已有的 lint/构建命令（只读输出），并结合 Grep/Glob 内联检查依赖方向违规。不需要项目预先配置独立脚本——你本身的 Grep/Bash 工具组合就足以执行这些检查。
-   - 检查方法：
-     - 使用Grep搜索import语句
-     - 使用Bash运行现有lint命令
-     - 检查文件依赖关系
-     - 识别循环依赖模式
-
-3. **记录违规**：对发现的每一处违规，按以下格式记录：
-   ```
-   ### [严重程度] <一行标题>
-   - 文件: `<path>`, 行号: <Lx-Ly>
-   - 违反规则: <ARCHITECTURE.md 中的哪条规则>
-   - 影响: <为什么这是个问题>
-   - 建议修复: <最小修复方式，具体到足以直接执行>
-   ```
-
-4. **严重程度分类**：
-   - CRITICAL：破坏核心不变量，必须阻塞合并
-     - 示例：循环依赖、层间越界、数据边界违反
-   - HIGH：明显越界但局部影响
-     - 示例：横切关注点散落、依赖方向错误
-   - MEDIUM：风格性的边界模糊
-     - 示例：命名不规范、代码格式问题
-   - LOW：可以留给周期性清扫处理，建议转给 entropy-collector
-     - 示例：轻微的代码风格问题
-
-5. **生成报告**：报告开头固定使用 `## 架构边界审计报告` 作为一级标题，按严重程度从高到低排列发现项。报告末尾附简短总结（违规总数、各严重级别数量、是否建议阻塞合并）。
-   - 报告结构：
-     ```
-     ## 架构边界审计报告
-     
-     ### 总结
-     - 违规总数：X
-     - CRITICAL：X
-     - HIGH：X
-     - MEDIUM：X
-     - LOW：X
-     - 建议：阻塞合并/可以合并
-     
-     ### 详细发现
-     [按严重程度从高到低排列]
-     ```
+1. **读取架构规则**：读取 `ARCHITECTURE.md`，确认依赖方向、横切关注点入口、数据边界规则。找不到则先报告"规则未文档化"，再基于代码推断。
+2. **运行检查**：用 Bash 运行 lint/构建命令（只读），用 Grep/Glob 搜索跨层 import，检查循环依赖。
+3. **记录违规**：格式 `### [严重程度] <标题>` + 文件行号 + 违反规则 + 影响 + 建议修复。
+4. **严重程度分类**：CRITICAL（循环依赖/越界，阻塞合并）、HIGH（横切关注点散落）、MEDIUM（风格模糊）、LOW（留给周期性清扫）。
+5. **生成报告**：标题 `## 架构边界审计报告`，按严重程度排列，末尾附总结（总数、各级别数量、是否阻塞）。
 
 ### 约束
 

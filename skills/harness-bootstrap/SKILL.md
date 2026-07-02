@@ -60,58 +60,27 @@ metadata:
 
 ### 4. .gitignore 规则
 
-Harness 初始化时应确保以下内容在 `.gitignore` 中:
-
-**重要**: `docs/` 是项目的源知识目录,绝对不能整体忽略。只有 `docs/generated/`（agent 自动生成的内容）才应该被忽略。
-
-```gitignore
-# 自动生成的文件（不要手改）
-docs/generated/
-AGENTS.md  # 如果是自动生成的
-
-# 编辑器和 IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# 操作系统
-.DS_Store
-Thumbs.db
-
-# 依赖和构建产物（按需启用）
-# node_modules/   # Node/JS
-# dist/           # 通用
-# build/          # 通用
-```
+确保 `docs/generated/`、编辑器文件（`.idea/`、`.vscode/`、`*.swp`）、OS 文件（`.DS_Store`、`Thumbs.db`）被忽略。`docs/` 本身不能整体忽略。
 
 ### 5. 执行步骤
 
-1. **项目探查**:执行 `harness-project-intake` 技能的分析流程,了解项目技术栈、结构、现有文档。
-2. **确认范围**:与用户确认哪些组件需要初始化（AGENTS.md / docs/ / .gitignore / CI）。
-3. **生成 AGENTS.md**:根据项目实际情况,生成地图式 AGENTS.md,包含:
-   - 仓库一句话描述
-   - 硬约束（从用户偏好或项目约定中提取,最多 5 条）
-   - "去哪里找更多"路由表
-   - 工作方式提示
-4. **生成 docs/ 骨架**:创建最小可用的 docs/ 目录结构,每个文件只写骨架和"最后更新"日期。
-5. **更新 .gitignore**:检查并补充缺失的 gitignore 规则。
-6. **自检**:验证所有生成的文件存在、格式正确、docs/ 文件底部有"最后更新"日期,并向用户输出"本次创建/修改的文件清单"。
+1. **项目探查**:执行 `harness-project-intake` 分析流程,了解技术栈、结构、现有文档。
+2. **确认范围**:与用户确认需要初始化的组件（AGENTS.md / docs/ / .gitignore）。
+3. **生成 AGENTS.md**:生成地图式 AGENTS.md（一句话描述 + 硬约束 + 路由表 + 工作方式提示）。
+4. **生成 docs/ 骨架**:创建最小可用 docs/ 目录,每个文件只写骨架和"最后更新"日期。
+5. **更新 .gitignore**:检查并补充缺失规则。
+6. **自检**:验证文件存在、格式正确、docs/ 底部有日期,输出创建/修改清单。
 
 ## 关键要点
 
-- **宁可少而准**:不要生成大量空壳文件。如果不确定某个 docs/ 文件是否需要,先不创建,在 AGENTS.md 的路由表里留一个占位条目即可。
-- **尊重现有内容**:如果项目已有 AGENTS.md 或 docs/,先读取再决定是覆盖还是增量更新。永远不要盲目覆盖。
-- **AGENTS.md 是地图**:只放路由表和硬约束,不要把项目的所有知识塞进去。
+- **宁可少而准**:不确定是否需要时先不创建,在 AGENTS.md 路由表留占位条目。
+- **尊重现有内容**:已有 AGENTS.md 或 docs/ 时先读取,再决定覆盖或增量更新。
+- **AGENTS.md 是地图**:只放路由表和硬约束,不把所有知识塞进去。
 - **每个 docs/ 文件底部必须有"最后更新"日期**:这是 harness 体系的硬约束。
-- **定期审计初始化结果**:确保初始化结果的有效性和适用性。
-- **文档化初始化决策**:便于团队理解和遵循。
-- **先探查再初始化**:了解项目结构、技术栈、现有文档后再初始化，避免盲目覆盖，确保结果符合项目实际。
-- **AGENTS.md 指向性明确**:每个条目指向具体的 docs/ 文件，避免模糊指向，确保链接有效。
-- **AGENTS.md 硬约束精简**:只有违反即阻塞合并的规则才放在 AGENTS.md，避免过多硬约束。
-- **docs/ 最小可用集**:只创建 ARCHITECTURE.md、QUALITY_SCORE.md、design-docs/index.md、exec-plans/ 等必要骨架。
-- **docs/ 骨架文件**:每个文件只写骨架，底部标注"最后更新"日期，避免空壳文件。
-- **docs/ 可扩展性**:允许未来按需添加新文件，保持结构清晰。
+- **AGENTS.md 硬约束精简**:只有违反即阻塞合并的规则才放在 AGENTS.md。
+- **docs/ 最小可用集**:只创建必要骨架（ARCHITECTURE.md、QUALITY_SCORE.md、design-docs/index.md、exec-plans/）。
+- **AGENTS.md 指向性明确**:每个条目指向具体 docs/ 文件,确保链接有效。
+- **docs/ 可扩展性**:允许未来按需添加新文件,保持结构清晰。
 
 ## 边界情况处理
 
@@ -126,8 +95,6 @@ Thumbs.db
 
 **场景**：项目使用多种技术栈，需要特殊处理
 **处理**：为每种技术栈提供定制化配置（.gitignore规则、docs/结构）
-
-
 
 ## 常见陷阱
 
@@ -152,45 +119,18 @@ Thumbs.db
 - `references/init-workflows.md`: 各技术栈初始化流程与额外步骤
 - `references/automation-check-script.sh`: 自动化检查脚本
 
-## 自动化检查
+## 最佳实践
 
-### 自动化检查脚本
-
-通用检查脚本，适用于所有 skill：
-
-```bash
-./scripts/skill-automation-check.sh <skill-name>
-```
-
-### CI/CD集成
-
-```yaml
-name: Bootstrap Check
-
-on:
-  push:
-    paths:
-      - 'skills/harness-bootstrap/SKILL.md'
-  pull_request:
-    paths:
-      - 'skills/harness-bootstrap/SKILL.md'
-
-jobs:
-  quality-check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Check skill quality
-        run: make triggers-all
-```
+- 宁可少而准：不确定是否需要时先不创建，在 AGENTS.md 路由表留占位条目。
+- 尊重现有内容：项目已有 AGENTS.md 或 docs/ 时先读取再决定覆盖或增量更新。
+- AGENTS.md 是地图：只放路由表和硬约束，不把项目所有知识塞进去。
+- 每个 docs/ 文件底部必须有"最后更新"日期。
 
 ## Agent 提示词
 
-### Harness Bootstrapper（Harness 初始化工匠）
-
 ### 角色定义
 
-你是「Harness 初始化工匠」，职责是根据项目实际情况，生成最小可用的 harness 知识骨架——让 agent 在这个项目里有地图可循。你擅长分析项目结构、技术栈、现有文档，生成符合harness体系规范的初始化文件。
+你是「Harness 初始化工匠」，职责是根据项目实际情况，生成最小可用的 harness 知识骨架——让 agent 在这个项目里有地图可循。
 
 ### 核心能力
 
@@ -202,68 +142,25 @@ jobs:
 
 ### 执行流程
 
-1. **项目探查**：用只读工具了解项目结构、技术栈、现有文档。如果项目已有 AGENTS.md 或 docs/，先读取现有内容，避免覆盖有价值的信息。
-   - 探查内容：
-     - 项目根目录结构
-     - 技术栈和框架
-     - 现有AGENTS.md和docs/内容
-     - .gitignore规则
-
-2. **与用户确认**：如果项目已有部分 harness 结构，列出已有内容并询问是否覆盖或增量更新。如果项目是全新的，直接进入下一步。
-   - 确认内容：
-     - 现有harness结构清单
-     - 需要保留的内容
-     - 需要覆盖的内容
-     - 需要新增的内容
-
-3. **生成 AGENTS.md**：按 `references/agents-md-template.md` 模板生成，参考 `references/agents-md-examples.md` 中对应技术栈的示例，内容基于项目实际情况填充，不要照抄模板占位符。
-   - 生成内容：
-     - 仓库一句话描述
-     - 硬约束（最多5条）
-     - "去哪里找更多"路由表
-     - 工作方式提示
-
-4. **生成 docs/ 骨架**：创建 `docs/ARCHITECTURE.md`、`docs/QUALITY_SCORE.md`、`docs/design-docs/index.md`、`docs/exec-plans/active/`、`docs/exec-plans/completed/`。每个文件只写骨架，底部标注"最后更新"日期。
-   - 创建内容：
-     - docs/ARCHITECTURE.md：项目架构
-     - docs/QUALITY_SCORE.md：质量评分
-     - docs/design-docs/index.md：设计决策索引
-     - docs/exec-plans/active/：当前执行计划目录
-     - docs/exec-plans/completed/：已完成执行计划目录
-
-5. **更新 .gitignore**：参考 `references/gitignore-templates.md` 中对应技术栈的模板，检查现有 .gitignore，追加缺失的规则（docs/generated/、编辑器文件、OS 文件、依赖目录）。
-   - 更新内容：
-     - docs/generated/
-     - 编辑器文件（.idea/、.vscode/、*.swp、*.swo）
-     - OS文件（.DS_Store、Thumbs.db）
-     - 依赖目录（按需启用）
-
-6. **自检**：
-   - `AGENTS.md` 存在且包含路由表
-   - `docs/ARCHITECTURE.md` 存在且底部有日期
-   - `docs/QUALITY_SCORE.md` 存在且底部有日期
-   - `.gitignore` 包含关键规则
-   - 列出所有创建/修改的文件清单
+1. **项目探查**：用只读工具了解项目结构、技术栈、现有文档。已有 AGENTS.md 或 docs/ 时先读取，避免覆盖。
+2. **与用户确认**：已有部分 harness 结构时，列出已有内容并询问是否覆盖或增量更新。
+3. **生成 AGENTS.md**：按 `references/agents-md-template.md` 模板生成，参考 `references/agents-md-examples.md` 中对应技术栈示例，内容基于项目实际填充。
+4. **生成 docs/ 骨架**：创建 ARCHITECTURE.md、QUALITY_SCORE.md、design-docs/index.md、exec-plans/active/、exec-plans/completed/。每个文件只写骨架，底部标注日期。
+5. **更新 .gitignore**：参考 `references/gitignore-templates.md`，追加缺失规则。
+6. **自检**：验证 AGENTS.md 存在且含路由表、docs/ 文件存在且有日期、.gitignore 包含关键规则，列出文件清单。
 
 ### 约束
 
-- **宁可少而准**：不要生成大量空壳文件。不确定是否需要时先不创建，在 AGENTS.md 路由表留占位条目。违反时删除多余文件。
-- **尊重现有内容**：项目已有 AGENTS.md 或 docs/ 时先读取再决定覆盖或增量更新。违反时恢复被覆盖内容。
-- **AGENTS.md 是地图**：只放路由表和硬约束，不把项目所有知识塞进去。违反时精简内容，下沉到 docs/。
-- **每个 docs/ 文件底部必须有"最后更新"日期**：违反时补充日期。
-- **Write 仅用于创建新文件**：禁止修改现有业务代码、测试文件、配置文件。违反时撤回修改。
-- **区分项目规模**：根据项目规模调整初始化内容，小项目简化初始化。违反时调整初始化内容。
-- **提供具体指导**：每个初始化步骤都必须提供具体指导，不能模糊。违反时补充具体指导。
-- **处理边界情况**：必须处理各种边界情况，提供最佳实践。违反时补充边界情况处理。
+- **Write 仅用于创建新文件**：禁止修改现有业务代码、测试文件、配置文件。
+- **区分项目规模**：小项目简化初始化。
+- **提供具体指导**：每个步骤必须可执行，不能模糊。
+- **处理边界情况**：必须处理各种边界情况，提供最佳实践。
 
 ### 输出规范
 
 - **格式**：Markdown 文件
 - **内容**：AGENTS.md（路由表 + 硬约束 + 工作方式提示）；docs/ 骨架文件（最小内容 + "最后更新"日期）
-- **原则**：宁可少而准，不要多而空
 - **修改清单**：列出所有创建/修改的文件清单
-- **边界情况处理**：针对不同边界情况提供处理方案
-- **最佳实践**：提供初始化的最佳实践
 
 ---
 最后更新: 2026-07-02（变更：A+级优化，增加边界情况处理，增加最佳实践，增加自动化检查脚本，优化Agent提示词）
