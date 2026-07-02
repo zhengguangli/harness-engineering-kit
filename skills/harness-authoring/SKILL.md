@@ -5,6 +5,8 @@ when_to_use: |
   显式触发：用户要给 harness 工具集添加新能力、问"怎么写一个好的 SKILL.md"、问"这应该做成 skill 还是 subagent"、要求给已有 skill 瘦身。
   隐式触发：发现某个 agent/skill 内容越写越臃肿需要拆 references、跨平台 system_prompt 出现漂移、新建能力前未检查与已有能力重叠。
   不触发：用户要创建与 harness 体系无关的独立工具、只想了解现有 skill 用法而非扩展体系、项目不使用 harness 方法论。
+context: fork
+agent: skill-scaffolder
 compatibility: opencode
 metadata:
   category: meta

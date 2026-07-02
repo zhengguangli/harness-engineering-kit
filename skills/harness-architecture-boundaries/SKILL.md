@@ -1,6 +1,6 @@
 ---
 name: harness-architecture-boundaries
-description: 为 agent 大量生成代码的仓库设计分层架构与依赖方向规则——通过自定义 lint 规则和结构化测试机械化强制约束。用于"建立分层架构"、"出现循环依赖"、"需要 lint 规则"场景。
+description: 为 agent 大量生成代码的仓库设计分层架构与依赖方向规则——通过自定义 lint 规则和结构化测试机械化强制约束。用于"建立分层架构"、"出现循环依赖"场景。
 when_to_use: 当用户要建立分层架构、出现循环依赖或层间越界、需要设计自定义 lint 规则时使用。
 context: fork
 agent: boundary-auditor
