@@ -1,6 +1,6 @@
 ---
 name: harness-prompt-optimizer
-description: 将自然语言需求或粗糙 prompt 转化为结构化、可直接使用的 LLM prompt——包含角色定义、变量字典、执行链、约束、输出 schema 和 few-shot 示例。
+description: 将自然语言需求或粗糙 prompt 转化为结构化、可直接使用的 LLM prompt——包含角色定义、变量字典、执行链、约束、输出 schema 和 few-shot 示例。用于"优化这个 prompt"、"prompt 效果不好"、"我需要一个 system prompt"场景。
 when_to_use: |
   显式触发：用户说"帮我写/优化一个 prompt"、"这个 prompt 效果不好"、"我需要一个 system prompt"。
   隐式触发：用户描述了需要 AI 反复执行的复杂任务（但没有结构化）、贴了一段 prompt 让你"看看"、问"怎么让 AI 做好 XXX"、在构建 agent/自动化流程需要 system prompt、用户的 prompt 存在明显问题（缺角色定义、无输出格式、无约束）。

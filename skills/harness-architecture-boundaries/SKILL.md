@@ -1,6 +1,6 @@
 ---
 name: harness-architecture-boundaries
-description: 为 agent 大量生成代码的仓库设计分层架构与依赖方向规则——通过自定义 linter 和结构化测试机械化强制约束。用于"建立分层架构"、"出现循环依赖"、"需要 lint 规则"场景。
+description: 为 agent 大量生成代码的仓库设计分层架构与依赖方向规则——通过自定义 lint 规则和结构化测试机械化强制约束。用于"建立分层架构"、"出现循环依赖"、"需要 lint 规则"场景。
 when_to_use: 当用户要建立分层架构、出现循环依赖或层间越界、需要设计自定义 lint 规则时使用。
 context: fork
 agent: boundary-auditor
@@ -89,13 +89,10 @@ Utils 只能被 Providers 使用,不能反向依赖业务领域内部。
 
 - `references/architecture-template.md`: ARCHITECTURE.md 架构文档模板
 - `references/check-pattern-template.md`: 架构检查模式模板（boundary-auditor 参考）
-- `agents/boundary-auditor.md`: boundary-auditor agent 系统提示词（canonical 版本）
 
 ## Agent 提示词
 
-### boundary-auditor
-
-# Boundary Auditor（架构边界审计员）
+### boundary-auditor（架构边界审计员）
 
 ## 角色定义
 

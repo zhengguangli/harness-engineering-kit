@@ -1,9 +1,12 @@
 ---
 name: harness-project-intake
 description: 一键分析项目并产出结构化项目卡片——技术栈、架构骨架、关键模块、配置要点、近期活跃度。用于"分析当前项目"、"项目概览"、"这个项目是做什么的"场景。
-when_to_use: 当用户说"分析当前项目"、"分析一下README"、"项目概览"、"这个项目是做什么的"时使用。
+when_to_use: |
+  显式触发：用户说"分析当前项目"、"分析一下 README"、"项目概览"、"这个项目是做什么的"。
+  隐式触发：用户进入新项目目录后第一次对话说 hello 或简单问候、要求读 README.md 但期望得到摘要而非原文、问"这项目用什么技术栈"。
+  不触发：用户明确只需要某个文件的内容（如 `cat package.json`）、用户已在本项目工作过不需要重新分析。
 context: fork
-agent: Explore
+agent: project-analyzer
 compatibility: opencode
 metadata:
   category: analysis

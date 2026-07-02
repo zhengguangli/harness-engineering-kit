@@ -1,6 +1,6 @@
 ---
 name: harness-repo-map
-description: 把仓库知识管理从巨型 AGENTS.md 重构为「地图 + 结构化 docs/」的渐进式披露模式。用于"AGENTS.md 太大需要瘦身"、"从零搭建 docs 结构"、"审计文档断链"场景。
+description: 把仓库知识管理从巨型 AGENTS.md 重构为「地图 + 结构化 docs/」的渐进式披露模式——避免上下文被挤占和文档腐烂。用于"AGENTS.md 太大需要瘦身"、"从零搭建 docs 结构"、"审计文档断链"场景。
 when_to_use: 当项目需要从零搭建 AGENTS.md/docs 结构、现有 AGENTS.md 膨胀需要瘦身、或需要审计文档是否过期时使用。
 context: fork
 agent: doc-gardener
@@ -113,7 +113,6 @@ docs/
 - `references/docs-index-templates.md`: 设计文档索引 + 产品规格索引模板
 - `../harness-architecture-boundaries/references/architecture-template.md`: ARCHITECTURE.md 架构文档模板（canonical 版本）
 - `../harness-golden-principles/references/quality-score-template.md`: QUALITY_SCORE.md 质量评分模板（canonical 版本）
-- `agents/doc-gardener.md`: doc-gardener agent 系统提示词（canonical 版本）
 
 ## Agent 提示词
 
