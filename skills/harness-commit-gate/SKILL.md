@@ -1,7 +1,10 @@
 ---
 name: harness-commit-gate
-description: 提交代码前自动执行质量检查——diff 审查、测试/构建/lint 验证、commit message 格式化。用于"提交代码"、"commit"、"git commit"场景。
-when_to_use: 当用户说"提交代码"、"commit"、"git commit"、"代码提交"、"修复，提交代码"时使用。
+description: 提交代码前自动执行质量检查——diff 审查、测试/构建/lint 验证、commit message 格式化。用于"提交代码"、"commit"、"git commit"、"代码提交"、"修复，提交代码"场景。
+when_to_use: |
+  显式触发：用户说"提交代码"、"commit"、"git commit"、"代码提交"、"修复，提交代码"。
+  隐式触发：用户完成了代码修改并准备提交、verification-loop 已完成并需要提交、用户询问如何提交代码。
+  不触发：已在 verification-loop 完成全部检查（不要重复跑）、无 staged 文件（没有东西需要门检）、纯调研/分析不产出代码变更。
 disable-model-invocation: true
 context: fork
 allowed-tools: Bash(git *) Bash(npm *) Bash(bun *) Bash(cargo *) Bash(vitest *) Bash(tsc *) Bash(bunx *) Bash(make *) Bash(just *)
@@ -103,7 +106,7 @@ metadata:
 
 ## 角色定义
 
-你是「提交质量门执行者」,职责是在每次提交前执行轻量质量门,确保变更通过基本检查后再进入版本历史。
+你是「提交质量门执行者」，职责是在每次提交前执行轻量质量门，确保变更通过基本检查后再进入版本历史。
 
 ## 核心能力
 
@@ -111,37 +114,37 @@ metadata:
 - 运行 `git diff --staged` 进行 diff 审查
 - 探测项目工具链并运行测试/构建/lint
 - 生成规范的 commit message
-- 执行 git commit(可选 git push)
+- 执行 git commit（可选 git push）
 
 ## 执行流程
 
-1. **检查工作区**:运行 `git status` 和 `git diff --stat`,了解变更范围。
-2. **Stage 文件**:如果用户没有手动 stage,根据变更内容 `git add` 相关文件。
-3. **Diff 审查**:`git diff --staged` 获取完整 diff，用 `Grep` 扫描调试代码、敏感信息、TODO hack。
-4. **探测项目工具链**:读取 `package.json` scripts、`Makefile`、`Cargo.toml` 等。
-5. **运行验证**:按探测到的工具链依次运行测试和构建。
-6. **生成 Commit Message**:遵循项目约定，≤72 字符，使用英文祈使语气。
-7. **执行提交**:运行 `git commit -m "<message>"`。
-8. **处理推送**:默认不推送。若用户说"提交并推送"则追加 `git push`;说"不推送"或"本次不推送"则明确跳过;未提及则仅完成本地 commit。
-9. **确认输出**:输出 commit hash 和变更摘要(变更文件数与行数)。
+1. **检查工作区**：运行 `git status` 和 `git diff --stat`，了解变更范围。
+2. **Stage 文件**：如果用户没有手动 stage，根据变更内容 `git add` 相关文件。
+3. **Diff 审查**：`git diff --staged` 获取完整 diff，用 `Grep` 扫描调试代码、敏感信息、TODO hack。
+4. **探测项目工具链**：读取 `package.json` scripts、`Makefile`、`Cargo.toml` 等。
+5. **运行验证**：按探测到的工具链依次运行测试和构建。
+6. **生成 Commit Message**：遵循项目约定，≤72 字符，使用英文祈使语气。
+7. **执行提交**：运行 `git commit -m "<message>"`。
+8. **处理推送**：默认不推送。若用户说"提交并推送"则追加 `git push`；说"不推送"或"本次不推送"则明确跳过；未提及则仅完成本地 commit。
+9. **确认输出**：输出 commit hash 和变更摘要（变更文件数与行数）。
 
 ## 约束
 
-- **检查优先于提交**:宁可多花 30 秒跑测试，也不要提交一个破坏构建的 commit。
-- **不要静默跳过**:如果测试失败或构建失败，明确报告。
-- **尊重用户意图**:如果用户说"不推送"，绝对不要执行 `git push`。
-- **Commit message 必须使用英文**:禁止中英文混用。
-- **单个提交保持原子性**:一个提交只做一件事。
+- **检查优先于提交**：宁可多花 30 秒跑测试，也不要提交一个破坏构建的 commit。违反时中止提交，先修复问题。
+- **不要静默跳过**：如果测试失败或构建失败，明确报告。违反时补充失败报告。
+- **尊重用户意图**：如果用户说"不推送"，绝对不要执行 `git push`。违反时撤回推送操作。
+- **Commit message 必须使用英文**：禁止中英文混用。违反时重新生成英文 message。
+- **单个提交保持原子性**：一个提交只做一件事。违反时拆分为多个提交。
 
 ## 输出规范
 
-- **commit hash + 变更摘要**:输出 commit hash、变更文件数、变更行数
-- **测试/构建结果**:简要列出每项检查的通过/失败状态
-- **失败时的报告格式**:明确列出失败项、失败原因、建议修复方向
+- **commit hash + 变更摘要**：输出 commit hash、变更文件数、变更行数。
+- **测试/构建结果**：简要列出每项检查的通过/失败状态。
+- **失败时的报告格式**：明确列出失败项、失败原因、建议修复方向。
 
 ## 相关模板
 
-- `references/commit-message-guide.md`: Commit Message 格式指南
+- `references/commit-message-guide.md`：Commit Message 格式指南
 
 ---
 最后更新: 2026-07-02

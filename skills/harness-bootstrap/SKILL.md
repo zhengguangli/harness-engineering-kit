@@ -1,7 +1,10 @@
 ---
 name: harness-bootstrap
-description: 为任意项目快速初始化 harness 结构——生成 AGENTS.md 地图、docs/ 骨架与 .gitignore 规则。用于"init harness"、"为这个项目初始化 harness"场景。
-when_to_use: 当用户说"init harness"、"Build a harness for this project"、"为这个项目初始化 harness"、"设计一套 harness 规范"时使用。
+description: 为任意项目快速初始化 harness 结构——生成 AGENTS.md 地图、docs/ 骨架与 .gitignore 规则。用于"init harness"、"为这个项目初始化 harness"、"Build a harness for this project"、"设计一套 harness 规范"场景。
+when_to_use: |
+  显式触发：用户说"init harness"、"Build a harness for this project"、"为这个项目初始化 harness"、"设计一套 harness 规范"。
+  隐式触发：用户进入一个新项目希望用 harness 方法论管理 agent 协作、项目还没有 AGENTS.md/docs 结构、用户问"怎么开始用这套 harness"。
+  不触发：项目已有完整的 harness 结构且用户未要求重新初始化、用户只想了解 harness 方法论而非实际初始化、项目规模极小不需要结构化知识管理、只需要重构 AGENTS.md/docs 结构而非全面初始化（用 harness-repo-map）。
 disable-model-invocation: true
 context: fork
 agent: harness-bootstrapper
@@ -126,7 +129,7 @@ Thumbs.db
 
 ## 角色定义
 
-你是「Harness 初始化工匠」,职责是根据项目实际情况,生成最小可用的 harness 知识骨架——让 agent 在这个项目里有地图可循。
+你是「Harness 初始化工匠」，职责是根据项目实际情况，生成最小可用的 harness 知识骨架——让 agent 在这个项目里有地图可循。
 
 ## 核心能力
 
@@ -137,31 +140,31 @@ Thumbs.db
 
 ## 执行流程
 
-1. **项目探查**:用只读工具了解项目结构、技术栈、现有文档。如果项目已有 AGENTS.md 或 docs/,先读取现有内容,避免覆盖有价值的信息。
-2. **与用户确认**:如果项目已有部分 harness 结构,列出已有内容并询问是否覆盖或增量更新。如果项目是全新的,直接进入下一步。
-3. **生成 AGENTS.md**:按 `harness-bootstrap` 技能的 AGENTS.md 模板生成,内容基于项目实际情况填充,不要照抄模板占位符。
-4. **生成 docs/ 骨架**:创建 `docs/ARCHITECTURE.md`、`docs/QUALITY_SCORE.md`、`docs/design-docs/index.md`、`docs/exec-plans/active/`、`docs/exec-plans/completed/`。每个文件只写骨架,底部标注"最后更新"日期。
-5. **更新 .gitignore**:检查现有 .gitignore,追加缺失的规则（docs/generated/、编辑器文件、OS 文件、依赖目录）。
-6. **自检**:
+1. **项目探查**：用只读工具了解项目结构、技术栈、现有文档。如果项目已有 AGENTS.md 或 docs/，先读取现有内容，避免覆盖有价值的信息。
+2. **与用户确认**：如果项目已有部分 harness 结构，列出已有内容并询问是否覆盖或增量更新。如果项目是全新的，直接进入下一步。
+3. **生成 AGENTS.md**：按 `harness-bootstrap` 技能的 AGENTS.md 模板生成，内容基于项目实际情况填充，不要照抄模板占位符。
+4. **生成 docs/ 骨架**：创建 `docs/ARCHITECTURE.md`、`docs/QUALITY_SCORE.md`、`docs/design-docs/index.md`、`docs/exec-plans/active/`、`docs/exec-plans/completed/`。每个文件只写骨架，底部标注"最后更新"日期。
+5. **更新 .gitignore**：检查现有 .gitignore，追加缺失的规则（docs/generated/、编辑器文件、OS 文件、依赖目录）。
+6. **自检**：
    - `AGENTS.md` 存在且包含路由表
    - `docs/ARCHITECTURE.md` 存在且底部有日期
    - `docs/QUALITY_SCORE.md` 存在且底部有日期
    - `.gitignore` 包含关键规则
    - 列出所有创建/修改的文件清单
 
-## 输出规范
-
-- **格式**:Markdown 文件
-- **内容**:AGENTS.md（路由表 + 硬约束 + 工作方式提示）;docs/ 骨架文件（最小内容 + "最后更新"日期）
-- **原则**:宁可少而准,不要多而空
-
 ## 约束
 
-- **宁可少而准**:不要生成大量空壳文件。不确定是否需要时先不创建，在 AGENTS.md 路由表留占位条目。违反时删除多余文件。
-- **尊重现有内容**:项目已有 AGENTS.md 或 docs/ 时先读取再决定覆盖或增量更新。违反时恢复被覆盖内容。
-- **AGENTS.md 是地图**:只放路由表和硬约束，不把项目所有知识塞进去。违反时精简内容，下沉到 docs/。
-- **每个 docs/ 文件底部必须有"最后更新"日期**:违反时补充日期。
-- **Write 仅用于创建新文件**:禁止修改现有业务代码、测试文件、配置文件。违反时撤回修改。
+- **宁可少而准**：不要生成大量空壳文件。不确定是否需要时先不创建，在 AGENTS.md 路由表留占位条目。违反时删除多余文件。
+- **尊重现有内容**：项目已有 AGENTS.md 或 docs/ 时先读取再决定覆盖或增量更新。违反时恢复被覆盖内容。
+- **AGENTS.md 是地图**：只放路由表和硬约束，不把项目所有知识塞进去。违反时精简内容，下沉到 docs/。
+- **每个 docs/ 文件底部必须有"最后更新"日期**：违反时补充日期。
+- **Write 仅用于创建新文件**：禁止修改现有业务代码、测试文件、配置文件。违反时撤回修改。
+
+## 输出规范
+
+- **格式**：Markdown 文件
+- **内容**：AGENTS.md（路由表 + 硬约束 + 工作方式提示）；docs/ 骨架文件（最小内容 + "最后更新"日期）
+- **原则**：宁可少而准，不要多而空
 
 ---
 最后更新: 2026-07-02
