@@ -97,10 +97,10 @@ skills/<name>/
 - 提交前跑 `make triggers-all` 确保 frontmatter 校验、关键词一致性、回归测试全部通过。
 - 不确定某条规则是否仍然有效？去对应的 docs 文件查"最后校验日期"，过期的规则应该被标记而不是被信任。
 - 要给这套体系添加新能力，参考 `harness-authoring` skill。
-- **推送代码后**，主动询问用户是否同步技能包到 `~/.agents/skills`，获得允许后执行：
+- **推送代码后**，主动询问用户是否同步技能包到 `~/.claude/skills`，获得允许后执行：
 
   ```bash
-  rsync -av --delete skills/ ~/.agents/skills/
+  rsync -av skills/ ~/.claude/skills/
   ```
 
 ## CI Pipeline
