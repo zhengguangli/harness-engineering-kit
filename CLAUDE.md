@@ -47,7 +47,7 @@ Layer 5 提交门      harness-commit-gate
 
 ## Quality gates
 
-提交前必须运行 `make triggers-all`。当前全 13 个 skill 评分 9.57/10（A+ 级），4 个维度达标：结构完整性 9.80、内容质量 9.65、设计模式 9.65、可用性 9.62。
+提交前必须运行 `make triggers-all`。当前全 13 个 skill 质量评分 9.66/10（A+ 级）。详细维度评分见 `docs/QUALITY_SCORE.md`。
 
 ## Skill 文件结构
 
