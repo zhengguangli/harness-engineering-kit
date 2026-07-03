@@ -21,6 +21,8 @@ make prompts-sync-check   # 仅 agent prompt 存在性检查
 - `docs/ARCHITECTURE.md` — 13 个 skill 的分层架构与依赖方向
 - `docs/design-docs/core-beliefs.md` — 10 条 agent-first 核心信念
 - `skills/` — 13 个 skill，每个含方法论正文 + agent 提示词 + 模板
+- `docs/QUALITY_SCORE.md` — 质量评分与趋势追踪
+- `docs/quality-reports/` — 技能生成的报告统一输出目录（扫描/审计/评估）
 
 ## Architecture
 
