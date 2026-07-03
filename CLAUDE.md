@@ -12,6 +12,7 @@
 make triggers-all     # 完整验证流水线（frontmatter 校验 + 关键词回归 + agent prompt 存在性检查）
 make triggers-check   # 仅 frontmatter 字段校验
 make triggers-regression  # 仅触发关键词回归测试（48 个测试用例）
+make triggers-report  # 触发关键词回归 JSON 报告（含详细判定信息）
 make prompts-sync-check   # 仅 agent prompt 存在性检查
 ```
 
@@ -73,8 +74,6 @@ skills/<name>/
 └── references/         # 模板文件、边界情况指南
 ```
 
-Agent 提示词 canonical 版本在 `SKILL.md` 的 `## Agent 提示词` section；`disable-model-invocation: true` 的 skill 必须通过 subagent 调用。
-
 **frontmatter 字段说明**：`description`（做什么 + 什么时候用）、`when_to_use`（触发场景）、`context`（执行模式，如 `fork`）、`allowed-tools`（工具白名单）。各字段仅 Claude Code 读取。
 
 ## Testing
@@ -103,6 +102,15 @@ Agent 提示词 canonical 版本在 `SKILL.md` 的 `## Agent 提示词` section�
   ```bash
   rsync -av --delete skills/ ~/.agents/skills/
   ```
+
+## CI Pipeline
+
+```yaml
+push → main:      make triggers-all
+PR → main:        确保 source 为 developer 分支 + make triggers-all
+```
+
+详情见 `.github/workflows/skill-triggers.yml`。PR 必须从 `developer` 分支发起，不可直接从特性分支向 `main` 提 PR。
 
 ---
 
