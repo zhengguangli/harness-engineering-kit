@@ -61,7 +61,32 @@ metadata:
 3. 检查 `Cargo.toml` → 用 `cargo test` / `cargo check`
 4. 如果什么都没找到,只做 diff 审查 + commit
 
-### 3. 何时跳过自动验证
+### 3. 工具链探测流程
+
+```
+是否有 package.json?
+├─ 是 → 读取 scripts 字段
+│  ├─ test? → bun test / npm test / vitest run
+│  ├─ build? → npm run build
+│  └─ lint? → npm run lint
+├─ 否 → 是否有 Cargo.toml?
+│  ├─ 是 → cargo test / cargo check
+│  └─ 否 → 是否有 Makefile?
+│     ├─ 是 → make test / make build
+│     └─ 否 → 只做 diff 审查
+是否有 bun.lock / bun.lockb?
+└─ 是 → 优先用 bun 运行（bun test > npm test）
+```
+
+**探测命令推荐顺序**：
+1. `ls package.json bun.lock 2>/dev/null && bun test`（Bun 优先）
+2. `ls package.json 2>/dev/null && npm test`（npm 后备）
+3. `ls Cargo.toml 2>/dev/null && cargo test`（Rust）
+4. `ls Makefile 2>/dev/null && make test`（Makefile）
+5. `ls Justfile 2>/dev/null && just test`（Justfile）
+6. 均无 → 仅 diff 审查
+
+### 4. 何时跳过自动验证
 
 - 项目没有任何测试或构建配置 → 只做 diff 审查
 - 用户明确说"不要跑测试" → 跳过自动化验证
@@ -69,7 +94,7 @@ metadata:
 - 已在 verification-loop 完成全部检查 → 不要重复跑
 - 无 staged 文件 → 没有东西需要门检
 
-### 4. 执行步骤
+### 5. 执行步骤
 
 具体执行步骤详见 `## Agent 提示词 → 执行流程`。以下仅列出方法论独有的检查粒度说明：
 
@@ -132,10 +157,16 @@ metadata:
 
 ## 最佳实践
 
-- 先探测项目工具链（package.json/Makefile/Cargo.toml），再运行对应检查命令。
-- Commit message 使用英文祈使语气，≤72 字符，描述具体做了什么。
-- 单个提交保持原子性，一个提交只做一件事，便于 review 和 revert。
-- 发现敏感信息立即阻塞提交，不静默跳过。
+- `git diff --staged` 审查时逐个文件标注是否属于本次任务范围，超出范围的变更暂存到新分支。
+- 敏感信息扫描优先用 Grep 搜索环境变量模式（`API_KEY`/`TOKEN`/`SECRET`），而非仅搜索字面值。
+- commit message 首字母大写，正文如需补充则在空行后写，正文行宽 ≤ 72 字符。
+- 使用 `git commit --verbose` 时，确保 message 以 `#` 注释与 diff 分隔，避免注释混入 message 正文。
+
+## 相关 Skill
+
+- `harness-verification-loop`：上游。verification-loop 完成检查后转入 commit-gate，commit-gate 不重复跑已通过的检查。
+- `harness-observability-and-browser`：上游。验证通过的改动转入 commit。
+- `harness-exec-plans`：上游。执行计划完成后经 verification-loop 转入 commit。
 
 ## Agent 提示词
 
@@ -179,16 +210,20 @@ metadata:
 - **Commit message 必须使用英文**：禁止中英文混用。违反时重新生成英文 message。
 - **单个提交保持原子性**：一个提交只做一件事。违反时拆分为多个提交。
 - **处理敏感信息**：发现 API key、密码、token 等敏感信息立即阻塞提交。违反时中止提交并要求移除。
+- **工具链探测先行**：不允许硬编码检查命令——必须先探测 `package.json`/`Cargo.toml`/`Makefile` 再确定命令。违反时回撤到探测步骤，重新走检测流程。
+- **输出路径标准化**：所有失败报告输出到当前会话而非文件——commit-gate 是轻量门检，不需要持久化报告。
 
 ### 输出规范
 
 - **commit hash + 变更摘要**：输出 commit hash、变更文件数、变更行数。
 - **测试/构建结果**：简要列出每项检查的通过/失败状态。
 - **失败时的报告格式**：明确列出失败项、失败原因、建议修复方向。
+- **报告位置**：仅以对话输出，不落盘到文件——与 verification-loop 不同，commit-gate 每次运行即弃。
 
 ## 相关模板
 
 - `references/commit-message-guide.md`：Commit Message 格式指南
+- `references/ci-integration-guide.md`：CI 集成指南（GitHub Actions / GitLab CI 配置）
 
 ---
-最后更新: 2026-07-02（变更：A+级优化，增加边界情况处理，增加最佳实践，优化Agent提示词，加强跨skill交接点说明）
+最后更新: 2026-07-03（变更：S1 关键要点/最佳实践去重）

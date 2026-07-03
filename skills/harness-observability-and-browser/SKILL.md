@@ -35,6 +35,17 @@ metadata:
 2. **可观测性回路**：性能预算、可靠性约束、跨服务行为验证。应用输出结构化日志/指标/追踪，agent 通过查询接口验证约束，不读代码猜测运行时行为。
 串联使用：实现修复 → 可观测性确认底层行为 → 浏览器确认用户可见结果 → 两类证据附在 PR/exec-plan 里。
 
+### 浏览器自动化配置参考
+
+Playwright 和 Puppeteer 是两种主流浏览器自动化工具。在本 skill 中通过 `npx playwright install` 按需安装浏览器引擎后即可使用。
+
+**常用配置**：
+- **Chrome/Chromium 无头模式**：`npx playwright install chromium` → `npx playwright test --headed=false`
+- **移动端模拟**：`playwright.devices['iPhone 14']`（Playwright）或 `puppeteer.devices['iPhone 14']`（Puppeteer）
+- **视觉回归**：Playwright 的 `page.screenshot({fullPage: true})` + 像素级 diff 工具（如 `pixelmatch`）
+- **网络节流**：Playwright 的 `page.route()` 拦截请求，模拟弱网环境
+- **真实设备云**：BrowserStack / Sauce Labs 集成（配置项见 `references/browser-automation-guide.md`）
+
 ### 验收标准示例
 
 - "P99 延迟 < 800ms"（指标查询验证）
@@ -97,10 +108,10 @@ metadata:
 
 ## 最佳实践
 
-- 没有证据支撑的结论不要下——要么补充验证手段，要么明确说"无法验证"。
-- 浏览器和可观测性是互补的：浏览器看用户视角，可观测性看系统视角。
-- 验证产出物要具体到可直接附进 PR 描述或 exec-plan 验收记录。
-- 使用结构化日志（JSON 格式），包含时间戳、级别、请求ID。
+- 浏览器验证前先确认 dev server 可访问：`curl -o /dev/null -s -w "%{http_code}" http://localhost:<port>`。
+- 截图文件名包含测试用例标识和时间戳：`login-flow-before-20260703T1430Z.png`，便于归档比对。
+- 性能验证的查询窗口使用最近 N 次运行的中位数而非平均值，排除单次毛刺干扰。
+- 在 PR 描述中嵌入截图时，用 `<details><summary>Before / After</summary>![截图]</details>` 折叠，避免 PR 正文过长。
 
 ## 相关 Skill
 
@@ -148,6 +159,7 @@ metadata:
 - **无证据不下结论**：每个结论必须附带证据（截图、日志片段、查询结果）。违反时补上缺失证据。
 - **不退回读代码猜测**：环境缺少浏览器自动化工具且任务为 UI 验证时，报告能力缺口而非读代码推断。违反时停止推断并报告环境缺失。
 - **区分验证类型**：必须准确区分UI验证、性能验证、可靠性验证，不能混淆。违反时重新分类。
+- **截图元数据强制**：每张截图必须包含时间戳和页面 URL——缺少任一元的截图视为无效证据。违反时重新截图补全元数据。
 
 ### 输出规范
 
@@ -155,6 +167,7 @@ metadata:
 - 结论格式："是/否 + 证据链接 + 时间戳"。
 - 如环境缺工具，标"环境缺失 X，本次仅做静态推断，结论置信度低"。
 - 按UI问题、性能问题、可靠性问题分类，每个问题附带修复建议。
+- 输出以对话为主——如需留档，将截图和查询结果附在 PR 描述或 exec-plan 验收记录中，不留独立文件。
 
 ---
-最后更新: 2026-07-02（变更：精简版，移除相关模板/自动化检查冗余内容，精简Agent提示词执行流程）
+最后更新: 2026-07-03（变更：S1 关键要点/最佳实践去重）

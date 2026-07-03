@@ -61,7 +61,61 @@ metadata:
 三层路由判断和详细交接点表见 `references/routing-decision-tree.md`。
 
 ## 方法论
-### 常见省略场景
+
+### 1. 三层路由判断框架
+
+路由决策从粗到细分三层，每层缩小范围，避免一次性在 13 个 skill 中搜索：
+
+```
+用户目标 → Layer 1: 项目生命周期阶段 → Layer 2: 任务类型 → Layer 3: 具体 skill 及顺序
+```
+
+**Layer 1 — 项目阶段判断**：
+- 新项目 → Workflow 1（Greenfield）
+- 已有 harness 的开发中项目 → 看 Layer 2
+- 已有 harness 且正在扩展 → Workflow 4
+
+**Layer 2 — 任务类型判断**：
+- 实现新功能 → Workflow 2
+- 修复代码质量/风格 → Workflow 3
+- 优化 prompt → Workflow 5
+- 多个目标同时出现 → 先拆解为独立子目标，各自路由再拼合
+
+**Layer 3 — 具体 skill 匹配**：
+- 参考 `references/routing-decision-tree.md` 中的关键词匹配表
+- 输出 `[skill 名称] → [执行顺序] → [省略建议]`
+
+### 2. 用户意图匹配快速指南
+
+根据用户的自然语言表述快速定位工作流：
+
+| 用户说… | 可能属于… | 默认工作流 | 确认提问 |
+|---------|----------|-----------|---------|
+| "初始化"、"新建项目"、"开始" | Workflow 1 | Workflow 1 | "是否需要搭骨架？" |
+| "实现"、"添加"、"开发"、"功能" | Workflow 2 | Workflow 2 | "是功能开发还是修复问题？" |
+| "修复"、"清理"、"重构"、"风格"、"质量" | Workflow 3 | Workflow 2 | "是功能缺陷还是代码质量问题？" |
+| "新建 skill"、"新 agent"、"添加能力" | Workflow 4 | Workflow 4 | "确认是扩展 harness 体系？" |
+| "优化 prompt"、"改提示词"、"写好 prompt" | Workflow 5 | Workflow 5 | — |
+
+匹配到"修复"时先确认是功能缺陷还是代码质量——前者走 Workflow 2，后者走 Workflow 3。
+
+### 3. 复杂度判断与裁剪
+
+根据项目规模和用户需求决定 skill 的省略或保留：
+
+| 场景 | 保留 skill | 可省略 |
+|------|-----------|--------|
+| 单文件脚本修改 | verification-loop, commit-gate | exec-plans, architecture-boundaries |
+| 小型功能（< 3 文件） | commit-gate | verification-loop（走快速检查） |
+| 大型功能（> 10 文件） | 全量 Workflow 2 | — |
+| 纯文档改动 | commit-gate（仅 diff 审查） | verification-loop, observability |
+| 已有 CI 覆盖测试 | commit-gate（不必重复跑） | verification-loop 的测试步骤 |
+| 用户明确"不用测试" | commit-gate（仅 diff+commit） | 自动化验证 |
+
+### 4. 常见省略场景（快速参考）
+
+以下为快速判断场景，无需经过三层路由框架——直接匹配最频繁的绕过场景：
+
 - 小项目不需要 `architecture-boundaries`（无多层架构要守）。
 - 纯文档改动不需要 `verification-loop` 和 `observability-and-browser`。
 - 已有完善 harness 结构的项目不重走 Workflow 1。
@@ -121,10 +175,10 @@ metadata:
 
 ## 最佳实践
 
-- 先判断用户目标属于哪条工作流，再决定 skill 组合，避免全量启动。
-- 简单任务跳过重量级 skill（如 exec-plans、verification-loop），避免过度工程。
-- 目标有歧义时先澄清再路由，不猜测用户意图。
-- 跨工作流组合时按交接点表确认上游已落盘，再进入下一步。
+- 用户说"帮我看看"或"看看这个项目"时，默认为 Workflow 1（Greenfield 初始化）的前两步：project-intake → repo-map。
+- 用户说"修复"时，先区分是"功能缺陷"（Workflow 2）还是"代码质量"（Workflow 3），用一句确认提问即可消除歧义。
+- 多层嵌套路由时，优先匹配具象工作流（Workflow 2-5），不匹配再降级到 Workflow 1。
+- 工作流执行期间如有新的用户请求，先完成当前工作流再进入新路由，避免上下文碎片化。
 
 ## Agent 提示词
 
@@ -161,6 +215,7 @@ metadata:
 - **守住前置依赖**：跨工作流组合时按交接点表确认上游已落盘；尤其 Workflow 1 必须先经 `project-intake` 再 `bootstrap`。违反时补充缺失的前置步骤。
 - **区分工作流类型**：必须准确区分初始化、日常开发、质量修复、扩展 harness、prompt 优化等类型，不能混淆。违反时重新分类。
 - **提供具体建议**：每个建议都必须具体、可执行，不能模糊。违反时补充具体建议。
+- **输出不自投**：路由建议以对话输出，不调用 skill、不创建文件。违反时撤回对 skill 的调用。
 
 ### 输出规范
 
@@ -168,10 +223,17 @@ metadata:
 - **工作流编号**：明确属于哪条标准工作流（1-5），或标注"跨流组合"。
 - **省略建议**：标注哪些步骤可跳过及理由。
 - **交接点说明**：跨工作流时，说明每个交接点的前置条件和产出物。
+- **输出位置**：仅对话输出，不创建文件——编排是路由建议，不是执行结果。
+
+## 相关 Skill
+
+- 上游 **无**：本 skill 为元层路由入口，不依赖其他 skill 的产出物
+- 下游 **project-intake / exec-plans / authoring / golden-principles / prompt-optimizer**：本 skill 根据用户目标路由到对应 skill
 
 ## 相关模板
 
 - `references/routing-decision-tree.md`：路由决策树与标准工作流
+- `references/workflow-execution-examples.md`：五条标准工作流的实际执行示例
 
 ---
-最后更新: 2026-07-03（变更：修正 "12 个 skill" → "13 个 skill"）
+最后更新: 2026-07-03（变更：S1 关键要点/最佳实践去重）

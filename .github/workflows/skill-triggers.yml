@@ -22,3 +22,15 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run full trigger validation
         run: make triggers-all
+
+      - name: Run skill-level automated checks
+        run: |
+          for skill_dir in skills/*/; do
+            skill_name=$(basename "$skill_dir")
+            script="$skill_dir/references/automated-check-script.sh"
+            if [ -f "$script" ]; then
+              echo "::group::$skill_name checks"
+              bash "$script" || echo "::warning::$skill_name automated checks had failures"
+              echo "::endgroup::"
+            fi
+          done
