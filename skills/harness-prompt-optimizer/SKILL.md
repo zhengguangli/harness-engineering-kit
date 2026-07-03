@@ -8,6 +8,7 @@ when_to_use: |
 context: fork
 agent: prompt-optimizer
 compatibility: claude-code
+allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *)
 metadata:
   category: prompt-engineering
 ---
@@ -144,6 +145,12 @@ LLM 的输出质量上限由 prompt 的结构质量决定。一份好的 prompt 
 ### 优化现有 vs 从零写
 **场景**：不确定是优化现有 prompt 还是从零写新的
 **处理**：判断输入类型——有"You are..."等角色定义则优化现有，纯需求描述则从零写
+
+## 相关 Skill
+
+- 上游 **harness-project-intake**: 接收产出物（项目上下文信息）作为 prompt 优化的输入
+- 上游 **harness-repo-map**: 接收产出物（知识库信息）作为 prompt 优化的上下文参考
+- 下游 **所有需要结构化 prompt 的 skill**: 本 skill 产出（优化后的 prompt 文本）传递给下游供执行使用
 
 ## 相关模板
 

@@ -8,6 +8,7 @@ when_to_use: |
 context: fork
 agent: qa-verifier
 compatibility: claude-code
+allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *) Bash(npx *)
 metadata:
   category: verification
 ---
@@ -100,6 +101,11 @@ metadata:
 - 浏览器和可观测性是互补的：浏览器看用户视角，可观测性看系统视角。
 - 验证产出物要具体到可直接附进 PR 描述或 exec-plan 验收记录。
 - 使用结构化日志（JSON 格式），包含时间戳、级别、请求ID。
+
+## 相关 Skill
+
+- 上游 **harness-verification-loop**: 接收产出物（验证循环触发信号）作为运行时验证的触发条件
+- 下游 **harness-commit-gate**: 本 skill 产出（验证结果证据）传递给下游作为质量门通过的依据
 
 ## 相关模板
 

@@ -8,6 +8,7 @@ when_to_use: |
 context: fork
 agent: plan-architect
 compatibility: claude-code
+allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *)
 metadata:
   category: planning
 ---
@@ -122,6 +123,11 @@ docs/exec-plans/
 - 步骤粒度越小，接力执行越顺畅。
 - 决策日志防止后续 agent 重复犯错或意外推翻设计。
 - 多个 agent 并行时，active/ 目录就是共享协调台账。
+
+## 相关 Skill
+
+- 上游 **harness-orchestration**: 接收产出物（大型任务识别结果）作为需要落盘执行计划的触发信号
+- 下游 **harness-verification-loop**: 本 skill 产出（执行计划文件）传递给下游进行分步验证
 
 ## 相关模板
 

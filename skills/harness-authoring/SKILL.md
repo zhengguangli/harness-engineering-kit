@@ -8,6 +8,7 @@ when_to_use: |
 context: fork
 agent: skill-scaffolder
 compatibility: claude-code
+allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *)
 metadata:
   category: meta
 ---
@@ -197,6 +198,11 @@ metadata:
 - **生成文件清单**：列出本次创建/修改的所有文件路径。
 - **自检结果**：正文行数、description 内容、agent prompt 配对状态。
 - **重叠检查结果**：发现重叠时输出合并/边界建议。
+
+## 相关 Skill
+
+- 上游 **harness-orchestration**: 接收产出物（编排决策）作为何时创建新 skill 的触发信号
+- 下游 **所有其他 skill**: 本 skill 产出（新 skill 模板和规范）传递给下游作为搭建骨架
 
 ## 相关模板
 

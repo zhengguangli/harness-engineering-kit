@@ -9,6 +9,7 @@ disable-model-invocation: true
 context: fork
 agent: harness-bootstrapper
 compatibility: claude-code
+allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *) Write(*) Edit(*)
 metadata:
   category: workflow
 ---

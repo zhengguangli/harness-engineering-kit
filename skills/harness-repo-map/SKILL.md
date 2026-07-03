@@ -8,6 +8,7 @@ when_to_use: |
 context: fork
 agent: doc-gardener
 compatibility: claude-code
+allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *)
 metadata:
   category: knowledge
 ---
@@ -144,6 +145,11 @@ docs/
 - **只建不维护**：创建了 docs/ 结构但没有校验机制，文档很快腐烂。
 - **删除历史记录**：把过时的 exec-plan 决策记录删除——过时的执行记录仍有历史价值。
 - **入口文件冗余**：同时为多个平台创建重复的入口文件，只需创建自己平台的。
+
+## 相关 Skill
+
+- 上游 **harness-bootstrap**: 接收产出物（初始化 docs/ 骨架）作为文档体系搭建的基础
+- 下游 **所有 skill**: 本 skill 产出（知识库结构和 docs/ 文档）传递给下游进行上下文获取
 
 ## 相关模板
 

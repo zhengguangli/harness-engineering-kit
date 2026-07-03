@@ -8,6 +8,7 @@ when_to_use: |
 context: fork
 agent: boundary-auditor
 compatibility: claude-code
+allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *)
 metadata:
   category: architecture
 ---
@@ -165,6 +166,13 @@ function parseUserInput(input: unknown): UserInput {
 
 **示例 3**：用户说"帮我设计分层架构"
 **处理**：分析项目领域划分和数据流向 → 与用户确认依赖方向和横切关注点入口 → 写入 ARCHITECTURE.md → 交给 boundary-auditor 验证
+
+## 相关 Skill
+
+- 上游 **harness-project-intake**: 接收产出物（项目信息分析结果）作为架构边界分析的输入
+- 上游 **harness-bootstrap**: 接收产出物（初始化骨架）作为架构边界搭建的输入
+- 下游 **harness-golden-principles**: 本 skill 产出（风格偏好分类标准）传递给下游进行周期性清扫
+- 下游 **harness-verification-loop**: 本 skill 产出（架构规则文档）传递给下游进行验证
 
 ## 相关模板
 

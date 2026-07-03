@@ -8,6 +8,7 @@ when_to_use: |
 context: fork
 agent: entropy-collector
 compatibility: claude-code
+allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *)
 metadata:
   category: quality
 ---
@@ -102,6 +103,12 @@ metadata:
 - 修复 PR 越小越好，审核者一分钟内能看懂。
 - 频繁触发的原则是信号而非噪音，说明需要建共享工具包或从根本上重构。
 - 能写 lint 的品味原则优先写成 lint，不能的写进文档作为周期性扫描依据。
+
+## 相关 Skill
+
+- 上游 **harness-project-intake**: 接收产出物（项目代码模式分析）作为提炼黄金原则的输入
+- 上游 **harness-architecture-boundaries**: 接收产出物（架构边界上下文）作为区分不变量与风格偏好的依据
+- 下游 **harness-commit-gate**: 本 skill 产出（黄金原则规则集）传递给下游进行质量门检查
 
 ## 相关模板
 

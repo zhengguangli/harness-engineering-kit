@@ -143,6 +143,11 @@ metadata:
 - **信息采集不完整**：没有覆盖package.json/README/入口文件。
   - 解决方案：信息采集必须覆盖package.json/README/入口文件，三者中任一缺失必须在卡片对应维度标注"信息不完整"
 
+## 相关 Skill
+
+- 上游 **无**: 本 skill 为 Layer 0 入口，不依赖其他 skill 的产出物
+- 下游 **harness-bootstrap**: 本 skill 产出（项目卡片）传递给下游进行骨架搭建
+
 ## 相关模板
 
 - `references/project-card-template.md`: 项目卡片 Markdown 模板
