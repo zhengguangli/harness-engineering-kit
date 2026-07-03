@@ -7,7 +7,7 @@ when_to_use: |
   不触发：用户要代码实现、单次工具调用、闲聊头脑风暴、一句话能说清的简单任务。
 context: fork
 agent: prompt-optimizer
-compatibility: opencode
+compatibility: claude-code
 metadata:
   category: prompt-engineering
 ---

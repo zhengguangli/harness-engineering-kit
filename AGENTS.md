@@ -4,7 +4,7 @@
 
 ## 这个仓库是什么
 
-Harness Engineering Kit：一套通用、与具体项目无关的 skills + agents 套件，适用于 Claude Code、OpenCode 和 Codex。把 OpenAI 和 LangChain 两篇 harness engineering 文章的核心方法论，落地为可直接放进任意仓库的可执行工件。
+Harness Engineering Kit：一套通用、与具体项目无关的 skills + agents 套件，完美适配 Claude Code CLI。把 OpenAI 和 LangChain 两篇 harness engineering 文章的核心方法论，落地为可直接放进任意仓库的可执行工件。
 
 ## 硬约束（极少数，违反即阻塞合并）
 

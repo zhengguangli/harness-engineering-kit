@@ -7,7 +7,7 @@ when_to_use: |
   不触发：单次会话能做完的小改动（用临时轻量计划）、纯文档/配置微调（不需要落盘追踪）。
 context: fork
 agent: plan-architect
-compatibility: opencode
+compatibility: claude-code
 metadata:
   category: planning
 ---

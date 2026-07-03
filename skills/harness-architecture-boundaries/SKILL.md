@@ -7,7 +7,7 @@ when_to_use: |
   不触发：纯风格偏好类问题（交给 harness-golden-principles）、项目规模极小模块间无明显分层需求、用户明确表示不需要架构约束。
 context: fork
 agent: boundary-auditor
-compatibility: opencode
+compatibility: claude-code
 metadata:
   category: architecture
 ---
@@ -170,7 +170,6 @@ function parseUserInput(input: unknown): UserInput {
 
 - `references/architecture-template.md`: ARCHITECTURE.md 架构文档模板
 - `references/check-pattern-template.md`: 架构检查模式模板（boundary-auditor 参考）
-- `references/automation-check-script.sh`: 自动化检查脚本
 - `references/e2e-architecture-audit-example.md`: 端到端完整示例（Node.js 电商平台架构审计，含项目分析→边界识别→规则生成→验证检查全流程）
 
 ## 最佳实践

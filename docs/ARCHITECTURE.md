@@ -40,13 +40,11 @@ Layer 5 提交门      harness-commit-gate
 
 ```
 skills/<name>/
-├── SKILL.md          # 方法论正文 + agent 提示词（含跨平台 frontmatter）
-├── agents/
-│   └── openai.yaml   # Codex UI 元数据
+├── SKILL.md          # 方法论正文 + agent 提示词（含 frontmatter）
 └── references/       # 模板文件
 ```
 
-Agent 提示词已内联到 SKILL.md 的 `## Agent 提示词` section，不再使用独立的 `agents/<name>.md` 文件。
+Agent 提示词已内联到 SKILL.md 的 `## Agent 提示词` section。
 
 ## 支撑基础设施的依赖方向
 

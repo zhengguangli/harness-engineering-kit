@@ -1,7 +1,7 @@
 # Skills质量评估报告模板
 
 更新时间: 2026-07-02
-更新者: opencode
+更新者: claude-code
 
 ## 详细报告模板
 
@@ -11,7 +11,7 @@
 ## 基本信息
 
 - **评估日期**：2026-07-02
-- **评估者**：opencode
+- **评估者**：claude-code
 - **评估模式**：详细评估
 - **评估范围**：所有skills
 
@@ -145,7 +145,7 @@
 {
   "report_metadata": {
     "evaluation_date": "2026-07-02",
-    "evaluator": "opencode",
+    "evaluator": "claude-code",
     "evaluation_mode": "详细评估",
     "total_skills_evaluated": 13,
     "evaluation_duration": "2小时"

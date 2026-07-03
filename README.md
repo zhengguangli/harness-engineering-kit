@@ -1,6 +1,6 @@
 # Harness Engineering Kit
 
-一套通用、与具体项目无关的 **skills + agents** 套件,适用于 **Claude Code** 和 **Codex**。把 OpenAI《Harness engineering: leveraging Codex in an agent-first world》和 LangChain《The Anatomy of an Agent Harness》两篇文章里的核心方法论,落地成可以直接放进任意仓库的可执行工件。
+一套通用、与具体项目无关的 **skills + agents** 套件,完美适配 **Claude Code CLI**。把 OpenAI《Harness engineering: leveraging Codex in an agent-first world》和 LangChain《The Anatomy of an Agent Harness》两篇文章里的核心方法论,落地成可以直接放进任意仓库的可执行工件。
 
 > Agent = Model + Harness。模型提供智能,harness 提供让这份智能变成可靠产出所需要的一切:状态、工具、反馈回路、可机械强制的约束。这套工具集就是 harness 的一部分。
 
@@ -33,34 +33,17 @@ harness-engineering-kit/
 ```
 
 安装后由 agent 按项目生成的文件(不在仓库中):
-- `AGENTS.md` — Codex 入口地图
+- `AGENTS.md` — 入口地图
 - `CLAUDE.md` — Claude Code 入口地图
 - `docs/` — 架构文档、执行计划、质量评分等
 
 每个 skill 内部结构:
 ```
 skills/<name>/
-├── SKILL.md                             # 方法论正文（含跨平台 frontmatter）
-├── agents/
-│   ├── <agent-name>.md                  # Canonical agent 系统提示词（Claude Code + OpenCode 格式）
-│   └── openai.yaml                      # Codex UI 元数据 + 系统提示词（与 .md 同步）
+├── SKILL.md                             # 方法论正文（含 frontmatter）
 └── references/
     └── *-template.md                    # 模板文件（生成到目标项目的 docs/）
 ```
-
-### 跨平台兼容性
-
-SKILL.md 的 frontmatter 设计为跨平台兼容——各平台只读自己认识的字段，忽略未知字段：
-
-| 字段 | Claude Code | OpenCode | Codex |
-|---|---|---|---|
-| `name` | ✅ | ✅ (必须) | ✅ |
-| `description` | ✅ | ✅ (必须) | ✅ |
-| `when_to_use` | ✅ | ✅ (触发匹配) | ❌ 忽略 |
-| `disable-model-invocation` | ✅ | ✅ | ❌ 忽略 |
-| `allowed-tools` | ✅ | ✅ | ❌ 忽略 |
-| `compatibility` | ❌ 忽略 | ✅ | ❌ 忽略 |
-| `metadata` | ❌ 忽略 | ✅ | ❌ 忽略 |
 
 ## Skill 与 Agent 的使用方式
 
@@ -128,12 +111,8 @@ Skill 不直接"调用" Agent。主对话根据 Skill 的指导决定何时 spaw
 ```
 
 - **约束**区块包含每条规则 + 违反时的行为，确保 agent 在边界内运行
-- `.md`（Claude Code / OpenCode）和 `openai.yaml`（Codex）两个版本的系统提示词保持同步
-- 工具名映射：`Bash` ↔ `exec_command`、`Edit` ↔ `apply_patch`、`Write` ↔ `apply_patch`、`Read` ↔ `read_file`、`Glob` ↔ `list_dir`、`Grep` ↔ `grep`
 
 ## 安装方式
-
-### Claude Code
 
 Skills 和 agents 都是按位置发现的纯文本文件,直接复制即可。
 
@@ -141,60 +120,21 @@ Skills 和 agents 都是按位置发现的纯文本文件,直接复制即可。
 
 ```bash
 cp -r skills/*  <你的项目>/.claude/skills/
-cp skills/*/agents/*.md  <你的项目>/.claude/agents/
 ```
 
 **用户级(跨项目个人习惯)**
 
 ```bash
 cp -r skills/*  ~/.claude/skills/
-cp skills/*/agents/*.md  ~/.claude/agents/
 ```
 
 项目级与用户级同名时,项目级优先。
-
-### OpenCode
-
-OpenCode 从 `.opencode/skills/`、`.claude/skills/`、`.agents/skills/` 三个位置发现 skills。
-
-**项目级(推荐)**
-
-```bash
-cp -r skills/*  <你的项目>/.opencode/skills/
-```
-
-**用户级(跨项目)**
-
-```bash
-cp -r skills/*  ~/.config/opencode/skills/
-```
-
-OpenCode 也兼容 `.claude/skills/` 路径,所以如果项目已为 Claude Code 安装过,无需重复复制。
-
-### Codex
-
-Skills 是 Codex 的能力扩展机制。安装到项目的 `.codex/skills/` 目录即可。
-
-**项目级(推荐)**
-
-```bash
-mkdir -p <你的项目>/.codex/skills/
-cp -r skills/*  <你的项目>/.codex/skills/
-```
-
-**用户级(跨项目)**
-
-```bash
-cp -r skills/*  ~/.codex/skills/
-```
-
-安装后重启 Codex 生效。
 
 > 模板文件已内嵌在各 skill 的 `references/` 子目录中,由 agent 首次为项目初始化 docs/ 骨架时按需生成,无需手动拷贝。
 
 ## 技能同步(nacos-cli skill-sync)
 
-手动复制容易遗漏或版本不一致。[`nacos-cli skill-sync`](https://nacos.io/skill-sync/SKILL.md) 可以把仓库里的 skills 自动同步到多个 agent 目录（Codex、Claude 等）,支持 local 模式（symlink 保持一致）和 Nacos 模式（团队远程同步）。
+手动复制容易遗漏或版本不一致。[`nacos-cli skill-sync`](https://nacos.io/skill-sync/SKILL.md) 可以把仓库里的 skills 自动同步到 `.claude/skills/` 目录,支持 local 模式（symlink 保持一致）和 Nacos 模式（团队远程同步）。
 
 ### 前置安装
 
@@ -245,7 +185,7 @@ nacos-cli skill-sync add --all --non-interactive
 nacos-cli skill-sync start --non-interactive
 
 # 遇到冲突时（某 skill 在多个 agent 目录有不同版本）
-nacos-cli skill-sync resolve <skill-name> --use-agent codex --non-interactive
+nacos-cli skill-sync resolve <skill-name> --use-agent claude-code --non-interactive
 ```
 
 > local 模式下 symlink 自动保持同步,大部分时候只需 `status` 看一眼。Nacos 模式下 daemon 会轮询远端变更。
@@ -275,17 +215,15 @@ make triggers-check
 
 ```bash
 make triggers-all
-# 依次执行：结构校验 -> 关键词一致性校验 -> 回归测试 -> 跨平台 prompt 同步校验
+# 依次执行：结构校验 -> 关键词一致性校验 -> 回归测试 -> agent prompt 存在性校验
 ```
 
-### 跨平台 Prompt 同步校验
+### Agent Prompt 存在性校验
 
-每个 agent 的 `.md` 和 `openai.yaml` 系统提示词必须保持同步。`make prompts-sync-check` 比较两者规范化后的字节比，比值在 `[0.95, 1.05]` 区间内视为同步。
+`make prompts-sync-check` 验证每个 SKILL.md 是否包含 `## Agent 提示词` section。
 
 ```bash
 make prompts-sync-check
-# 或严格模式（阻断 CI）
-STRICT=1 ./scripts/validate-agent-prompt-sync.sh
 ```
 
 ### 回归用例维护规范（Case Guide）

@@ -17,8 +17,8 @@
 | SKILL.md frontmatter | 🟢 PASS | 13/13 通过全部字段检查 |
 | 6 段式 Agent Prompt | 🟡 PARTIAL | 4/13 完整，9/13 缺 `## 跳过条件` |
 | SKILL.md 行数 | 🟡 2/13 ≥ 500 | architecture-boundaries (520)、commit-gate (519) |
-| openai.yaml 同步 | 🔴 DRIFT | 13/13 均不同步（已知 TD-002） |
-| openai.yaml 教过时规则 | 🔴 STALE | harness-authoring 仍引 `agents/<name>.md` |
+| openai.yaml 同步 | ✅ RESOLVED | 2026-07-03 已全部删除，Codex/OpenCode 平台不再支持 |
+| openai.yaml 教过时规则 | ✅ RESOLVED | 2026-07-03 已全部删除 |
 | `.bak` 文件 | 🟢 CLEAN | 已清理 2 个残留 |
 
 ---

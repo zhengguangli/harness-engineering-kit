@@ -21,7 +21,7 @@
 name: domain-knowledge
 description: 为 XXX 场景提供领域知识参考。
 context: fork
-compatibility: opencode
+compatibility: claude-code
 ---
 # Domain Knowledge
 
@@ -58,7 +58,7 @@ compatibility: opencode
 name: workflow-guide
 description: 引导 XXX 流程的执行——从 A 到 B 到 C。
 context: fork
-compatibility: opencode
+compatibility: claude-code
 ---
 # Workflow Guide
 
@@ -104,7 +104,7 @@ compatibility: opencode
 name: quality-checklist
 description: 检查 XXX 是否符合质量标准。
 context: fork
-compatibility: opencode
+compatibility: claude-code
 ---
 # Quality Checklist
 
@@ -144,7 +144,7 @@ compatibility: opencode
 name: tool-orchestrator
 description: 编排 XXX 工具链完成 YYY 任务。
 context: fork
-compatibility: opencode
+compatibility: claude-code
 ---
 # Tool Orchestrator
 
@@ -181,7 +181,7 @@ compatibility: opencode
 name: progressive-knowledge
 description: XXX 领域知识——按需深入。
 context: fork
-compatibility: opencode
+compatibility: claude-code
 ---
 # Progressive Knowledge
 

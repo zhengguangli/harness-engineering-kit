@@ -5,9 +5,9 @@
 
 ## 背景
 
-原架构中每个 skill 的 agent 提示词维护在独立的 `agents/<name>.md` 文件中，与 `openai.yaml`（Codex 元数据）并存。这种模式存在以下问题：
+原架构中每个 skill 的 agent 提示词维护在独立的 `agents/<name>.md` 文件中。这种模式存在以下问题：
 
-1. **维护成本高**：修改 agent 提示词需同步 `.md` 和 `openai.yaml` 两个文件
+1. **维护成本高**：agent 提示词分散在多个文件中
 2. **不符合官方规范**：Claude Code 官方文档展示的 skill 模式是单文件指令（SKILL.md 包含完整指令）
 3. **结构冗余**：agent 提示词与 skill 方法论高度耦合，拆分为独立文件增加导航成本
 
@@ -20,8 +20,6 @@
 ```
 skills/<name>/
 ├── SKILL.md          # 方法论正文 + agent 提示词
-├── agents/
-│   └── openai.yaml   # Codex UI 元数据（保留）
 └── references/       # 模板文件
 ```
 
@@ -34,7 +32,7 @@ description: <做什么 + 什么时候用>
 when_to_use: <触发场景>
 context: fork          # 新增：指定在子 agent 中运行
 agent: <agent-name>    # 新增：指定使用的 agent 类型
-compatibility: opencode
+compatibility: claude-code
 ---
 # <Skill 标题>
 
@@ -83,12 +81,10 @@ compatibility: opencode
 |---|---|---|
 | 迁移到 `.claude/agents/` | 移动到项目级 agent 目录 | 改动面过大，12 个 agent 全部迁移 |
 | 保持现状 | 维持 `skills/*/agents/` 结构 | 不符合官方推荐布局 |
-| 合并进 frontmatter | 将 agent 提示词放入 YAML frontmatter | 会破坏 Codex 解析 |
+| 合并进 frontmatter | 将 agent 提示词放入 YAML frontmatter | 会破坏 frontmatter 解析 |
 
-## 跨平台同步注意事项
+## 注意事项
 
-- `openai.yaml` 的 `system_prompt` 字段仍引用旧的 agent 提示词内容
-- 后续 PR 需同步更新 `openai.yaml` 与 SKILL.md 中的 agent 提示词
 - 校验脚本 `validate-agent-prompt-sync.sh` 已改为检查 section 存在性
 
 ## 相关文件

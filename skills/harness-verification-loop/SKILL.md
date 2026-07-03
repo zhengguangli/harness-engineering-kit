@@ -9,7 +9,7 @@ disable-model-invocation: true
 context: fork
 agent: verification-loop-runner
 allowed-tools: Bash(git *) Bash(npm *) Bash(bun *) Bash(cargo *) Bash(vitest *) Bash(tsc *) Bash(bunx *) Bash(make *) Bash(just *)
-compatibility: opencode
+compatibility: claude-code
 metadata:
   category: workflow
 ---

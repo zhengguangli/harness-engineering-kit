@@ -7,7 +7,8 @@ when_to_use: |
   不触发：用户明确只需要某个文件的内容（如 `cat package.json`）、用户已在本项目工作过不需要重新分析。
 context: fork
 agent: project-analyzer
-compatibility: opencode
+compatibility: claude-code
+allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *)
 metadata:
   category: analysis
 ---
@@ -149,8 +150,6 @@ metadata:
 - `references/project-structures.md`: 各语言项目结构分析与入口文件识别
 - `references/tech-stack-detection.md`: 各语言框架、运行时、部署目标检测规则
 - `references/activity-analysis.md`: 各语言活跃度分析命令与评级标准
-- `references/automation-check-script.sh`: 自动化检查脚本
-
 ## 最佳实践
 
 - 结论优先：用户要结构化卡片，不是 cat README.md 的原始输出。

@@ -7,7 +7,8 @@ when_to_use: |
   不触发：用户只想了解skill用法而非评估质量、项目不使用harness体系、只需要单次简单检查而非系统评估。
 context: fork
 agent: skill-quality-assessor
-compatibility: opencode
+compatibility: claude-code
+allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *) Bash(bc *) Bash(sort *) Bash(uniq *) Bash(cut *) Bash(tr *) Bash(paste *)
 metadata:
   category: quality-assurance
 ---

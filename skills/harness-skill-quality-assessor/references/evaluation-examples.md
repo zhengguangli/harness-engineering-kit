@@ -91,7 +91,7 @@
 {
   "skill_name": "harness-prompt-optimizer",
   "evaluation_date": "2026-07-02",
-  "evaluator": "opencode",
+  "evaluator": "claude-code",
   "evaluation_mode": "详细评估",
   "total_score": 9.5,
   "grade": "A+",
@@ -230,7 +230,7 @@
 {
   "skill_name": "harness-bootstrap",
   "evaluation_date": "2026-07-02",
-  "evaluator": "opencode",
+  "evaluator": "claude-code",
   "evaluation_mode": "详细评估",
   "total_score": 8.5,
   "grade": "B",
@@ -309,7 +309,7 @@
 ```json
 {
   "evaluation_date": "2026-07-02",
-  "evaluator": "opencode",
+  "evaluator": "claude-code",
   "evaluation_mode": "批量评估",
   "total_skills": 12,
   "average_score": 8.2,
@@ -424,7 +424,7 @@
 ## 基本信息
 
 - **评估日期**：2026-07-02
-- **评估者**：opencode
+- **评估者**：claude-code
 - **评估模式**：详细评估
 
 ## 评估结果

@@ -7,7 +7,7 @@ when_to_use: |
   不触发：需要结构性架构约束（用 harness-architecture-boundaries）、项目规模极小没有重复模式、用户只想了解现有规则而非建立新规则。
 context: fork
 agent: entropy-collector
-compatibility: opencode
+compatibility: claude-code
 metadata:
   category: quality
 ---

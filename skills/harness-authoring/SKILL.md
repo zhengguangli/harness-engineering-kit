@@ -3,11 +3,11 @@ name: harness-authoring
 description: 指导如何为这套 harness 体系编写新的 skill、subagent 或扩充知识库——遵循渐进式披露与上下文预算原则。用于"怎么写一个好的 SKILL.md"、"给 harness 添新能力"、"这应该做成 skill 还是 subagent"、"给已有 skill 瘦身"场景。
 when_to_use: |
   显式触发：用户要给 harness 工具集添加新能力、问"怎么写一个好的 SKILL.md"、问"这应该做成 skill 还是 subagent"、要求给已有 skill 瘦身。
-  隐式触发：发现某个 agent/skill 内容越写越臃肿需要拆 references、跨平台 system_prompt 出现漂移、新建能力前未检查与已有能力重叠。
+  隐式触发：发现某个 agent/skill 内容越写越臃肿需要拆 references、新建能力前未检查与已有能力重叠。
   不触发：用户要创建与 harness 体系无关的独立工具、只想了解现有 skill 用法而非扩展体系、项目不使用 harness 方法论。
 context: fork
 agent: skill-scaffolder
-compatibility: opencode
+compatibility: claude-code
 metadata:
   category: meta
 ---
@@ -82,19 +82,17 @@ metadata:
 6. 在 AGENTS.md/README 里登记新指针。
 7. 自检:正文 ≤ 500 行?tools 最小权限?description 完整?
 
-### 7. 跨平台同步与 canonical 约定
+### 7. Agent 提示词 canonical 版本约定
 
-- `SKILL.md` 的 `## Agent 提示词` 是 Claude Code 平台的 canonical 版本——改 prompt 只改此处。
-- `agents/openai.yaml` 的 `system_prompt` 必须与 `## Agent 提示词` 逐字一致(仅允许工具名差异: `Bash` ↔ `exec_command`、`Edit` ↔ `apply_patch`)。
+- `SKILL.md` 的 `## Agent 提示词` 是 canonical 版本——改 prompt 只改此处。
 - 不再使用独立的 `agents/<name>.md` 文件。
 
 ## 硬约束
 
 1. **正文不得超过 500 行**：SKILL.md 正文（含 Agent 提示词）超过 500 行时必须拆分到 references/ 子文件。违反则打回要求拆分。
 2. **description 必须同时写清"做什么"和"什么时候用"**：只写其一视为不完整。违反则补充缺失部分。
-3. **跨 platform 的 system_prompt 必须逐字一致**：SKILL.md 的 `## Agent 提示词` 与 agents/openai.yaml 的 system_prompt 必须保持同步，仅允许工具名差异。违反则补充缺失版本或纠正差异。
-4. **新增 skill 前必须检查与已有能力重叠**：用 Grep/Glob 扫描现有 skills/，发现重叠时必须报告并建议合并或划分边界。违反则先完成重叠检查再继续。
-5. **最小权限配置 agent tools**：只读型 agent 不给 Edit/Write，省略 tools 字段等于继承全部工具（非默认安全选项）。违反则重新按最小权限授权。
+3. **新增 skill 前必须检查与已有能力重叠**：用 Grep/Glob 扫描现有 skills/，发现重叠时必须报告并建议合并或划分边界。违反则先完成重叠检查再继续。
+4. **最小权限配置 agent tools**：只读型 agent 不给 Edit/Write，省略 tools 字段等于继承全部工具（非默认安全选项）。违反则重新按最小权限授权。
 
 ## 示例
 
@@ -109,7 +107,6 @@ metadata:
 - **Skill 是知识,Subagent 是执行**:两者配对出现是分工,不是重复。
 - **上下文预算纪律**:常驻内容精简,按需加载前置,正文 ≤ 500 行。
 - **最小权限原则**:只读型 agent 不给写权限,省略 tools 不是默认安全选项。
-- **跨平台同步**:`.md` 和 `openai.yaml` 的 system_prompt 必须逐字一致。
 - **三层加载机制**:元数据常驻→正文触发时载入→绑定资源按需加载。
 - **description 必须真实**:每个声称的能力都要在正文里兑现。
 - **避免能力重叠**:新增前检查已有能力,重叠则合并或划分边界。
@@ -119,11 +116,10 @@ metadata:
 
 - **Skill/Subagent 设计模式**：→ `references/skill-design-patterns.md`、`references/subagent-design-patterns.md`
 - **上下文预算管理**：→ `references/context-budget-management-guide.md`
-- **跨平台同步**：→ `references/cross-platform-sync-guide.md`
 
 ## 边界情况处理
 
-> 通用边界情况（跨平台同步等）参见 `references/common-edge-cases.md`，以下仅列出本 skill 特有的边界情况。
+> 通用边界情况参见 `references/common-edge-cases.md`，以下仅列出本 skill 特有的边界情况。
 
 ### skill和subagent混淆
 
@@ -150,7 +146,6 @@ metadata:
 - **Skill 和 Subagent 混淆**:把可以独立完成的任务做成 Skill 占用主上下文;把需要持续参考的知识做成 Subagent 导致上下文断裂。
 - **description 虚报能力**:为了触发率声称能做某件事,但正文里没有兑现。
 - **正文膨胀**:逼近 500 行不拆分,导致上下文预算超支。
-- **跨平台漂移**:`.md` 和 `openai.yaml` 的 system_prompt 渐进式不同步。
 - **忽略已有能力重叠**:创建新 skill/agent 前不检查是否和已有能力重叠,导致选择困难。
 
 ## 最佳实践
@@ -176,10 +171,9 @@ metadata:
 
 ### 核心能力
 
-- 从模板生成 SKILL.md、agents/、references/ 目录结构
+- 从模板生成 SKILL.md、references/ 目录结构
 - 检查新能力是否与已有能力重叠
 - 按最小权限原则配置 agent 的 tools
-- 同时生成 Claude Code（`.md`）和 Codex（`openai.yaml`）两个版本
 - 更新 AGENTS.md 指针
 
 ### 执行流程
@@ -187,7 +181,7 @@ metadata:
 1. **确认需求**：与用户明确新 skill/agent 的名称、职责边界、配对关系。未指定则推断并请确认。
 2. **检查重叠**：用 Grep/Glob 扫描现有 skills/agents，发现重叠则报告并建议合并或划分边界。
 3. **存在性检查**：`skills/<name>/` 已存在时询问用户是否覆盖，不静默覆盖。
-4. **从模板生成**：用 `references/scaffold-templates.md` 生成 SKILL.md、agents/openai.yaml、references/。
+4. **从模板生成**：用 `references/scaffold-templates.md` 生成 SKILL.md、references/。
 5. **更新索引**：在 AGENTS.md 中添加指针。
 6. **自检**：正文 ≤ 500 行、description 完整、Agent 提示词与 frontmatter agent 字段匹配、包含标准六段式子标题。
 
@@ -195,7 +189,6 @@ metadata:
 
 - **不静默覆盖**：skill 已存在时必须询问用户。违反时要求用户先确认再继续。
 - **不创建空壳**：可合并到已有 skill 时建议合并。违反时停止创建并给出合并建议。
-- **跨平台必须同步**：每次创建 agent 必须同时生成 `.md` 和 `openai.yaml`。违反时补充缺失的跨平台版本。
 - **description 必须完整**：同时写清"做什么"和"什么时候用"。违反时补充缺失部分。
 - **控制上下文预算**：正文 ≤ 500 行，超出拆分到 references/ 子文件。违反时重新分配内容结构。
 
@@ -208,7 +201,6 @@ metadata:
 ## 相关模板
 
 - `references/scaffold-templates.md`：新 skill + agent 的脚手架模板
-- `references/agent-template-codex.yaml`：新 agent 的 Codex 模板
 
 ---
-最后更新: 2026-07-02（变更：A+级优化，增加边界情况处理，增加最佳实践，优化Agent提示词）
+最后更新: 2026-07-03（变更：移除 Codex/OpenCode 双平台支持，精简为 Claude Code 独占）

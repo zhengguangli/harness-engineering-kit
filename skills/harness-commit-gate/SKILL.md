@@ -9,7 +9,7 @@ disable-model-invocation: true
 context: fork
 allowed-tools: Bash(git *) Bash(npm *) Bash(bun *) Bash(cargo *) Bash(vitest *) Bash(tsc *) Bash(bunx *) Bash(make *) Bash(just *)
 agent: commit-gate-runner
-compatibility: opencode
+compatibility: claude-code
 metadata:
   category: workflow
 ---
@@ -189,7 +189,6 @@ metadata:
 ## 相关模板
 
 - `references/commit-message-guide.md`：Commit Message 格式指南
-- `references/automation-check-script.sh`：自动化检查脚本
 
 ---
 最后更新: 2026-07-02（变更：A+级优化，增加边界情况处理，增加最佳实践，优化Agent提示词，加强跨skill交接点说明）

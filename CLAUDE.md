@@ -56,14 +56,12 @@ Layer 5 提交门      harness-commit-gate
 ```
 skills/<name>/
 ├── SKILL.md           # 方法论正文 + frontmatter + ## Agent 提示词
-├── agents/
-│   └── openai.yaml    # Codex UI 元数据（与 SKILL.md 逐字同步）
 └── references/         # 模板文件、边界情况指南
 ```
 
-Agent 提示词 canonical 版本在 `SKILL.md` 的 `## Agent 提示词` section；`disable-model-invocation: true` 的 skill 必须通过 subagent 调用。
+Agent 提示词 canonical 版本在 `SKILL.md` 的 `## Agent 提示词` section。`disable-model-invocation: true` 的 skill 必须通过 subagent 调用。
 
-**frontmatter 是跨平台契约**：Claude Code 读 `description`/`when_to_use`/`context`/`allowed-tools`；Codex 读 `name`/`description`/`compatibility`/`metadata`。各平台忽略自己不识别的字段，不要用同一字段存放不同内容。
+**frontmatter 字段说明**：`description`（做什么 + 什么时候用）、`when_to_use`（触发场景）、`context`（执行模式，如 `fork`）、`allowed-tools`（工具白名单）。各字段仅 Claude Code 读取。
 
 ## Testing
 
@@ -73,7 +71,7 @@ Agent 提示词 canonical 版本在 `SKILL.md` 的 `## Agent 提示词` section�
 
 修改 skill 后按此顺序操作：
 
-1. 修改 `skills/<name>/SKILL.md`（同步更新 `agents/openai.yaml` 的 system_prompt）
+1. 修改 `skills/<name>/SKILL.md`
 2. 运行 `make triggers-all` 确保无断裂
 3. 用 `harness-skill-quality-assessor` 评估修改质量
 4. 提交前运行 `make triggers-all` — **这是硬约束，提交前必须通过**

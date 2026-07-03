@@ -8,7 +8,7 @@ when_to_use: |
 disable-model-invocation: true
 context: fork
 agent: harness-bootstrapper
-compatibility: opencode
+compatibility: claude-code
 metadata:
   category: workflow
 ---
@@ -132,8 +132,6 @@ metadata:
 - `references/docs-skeleton-by-stack.md`: 各技术栈 docs/ 骨架补充模板
 - `references/gitignore-templates.md`: 各技术栈 .gitignore 模板（Node.js/Python/Go/Rust/Java/PHP/Ruby/C#/Dart/Elixir）
 - `references/init-workflows.md`: 各技术栈初始化流程与额外步骤
-- `references/automation-check-script.sh`: 自动化检查脚本
-
 ## 最佳实践
 
 - 宁可少而准：不确定是否需要时先不创建，在 AGENTS.md 路由表留占位条目。

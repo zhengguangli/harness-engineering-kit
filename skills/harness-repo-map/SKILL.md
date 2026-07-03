@@ -7,7 +7,7 @@ when_to_use: |
   不触发：项目很小（单文件脚本）不需要结构化文档、用户只需要更新某个具体文档而非重构整个知识体系、项目需要从零全面初始化 harness 结构（用 harness-bootstrap）。
 context: fork
 agent: doc-gardener
-compatibility: opencode
+compatibility: claude-code
 metadata:
   category: knowledge
 ---
@@ -143,7 +143,7 @@ docs/
 - **百科全书式 AGENTS.md**：把所有规则塞进一个文件，agent 无法有效导航，上下文被挤占。
 - **只建不维护**：创建了 docs/ 结构但没有校验机制，文档很快腐烂。
 - **删除历史记录**：把过时的 exec-plan 决策记录删除——过时的执行记录仍有历史价值。
-- **跨平台重复**：同时为 Codex 和 OpenAI agents 创建重复的入口文件，只需创建自己平台的。
+- **入口文件冗余**：同时为多个平台创建重复的入口文件，只需创建自己平台的。
 
 ## 相关模板
 
@@ -191,7 +191,7 @@ docs/
 
 **步骤 2：docs/ 结构与断链检测** — `find docs -type f` 枚举文件，提取 markdown 链接验证目标存在性。不强制结构一致，只报告断链和孤立文档。
 
-**步骤 3：文档与代码一致性** — 只做可机械验证的检查：组件存在性（ARCHITECTURE.md 中路径是否存在）、配对完整性（frontmatter agent 字段与 Agent 提示词 section 是否匹配）、引用完整性（导航表路径是否存在）、新鲜度（最后更新超 30 天的标记待校验）。跨平台检查仅当项目声明支持 Codex 时执行。
+**步骤 3：文档与代码一致性** — 只做可机械验证的检查：组件存在性（ARCHITECTURE.md 中路径是否存在）、配对完整性（frontmatter agent 字段与 Agent 提示词 section 是否匹配）、引用完整性（导航表路径是否存在）、新鲜度（最后更新超 30 天的标记待校验）。
 
 **步骤 4：执行计划与技术债检查** — 检查 `docs/exec-plans/active/` 存在性和 `tech-debt-tracker.md` 维护状态。
 

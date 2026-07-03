@@ -7,7 +7,7 @@ when_to_use: |
   不触发：改动是纯文档/配置变更、改动可通过静态分析完全验证、环境中无浏览器自动化工具且任务不依赖运行时信号（先报告能力缺口即可）。
 context: fork
 agent: qa-verifier
-compatibility: opencode
+compatibility: claude-code
 metadata:
   category: verification
 ---

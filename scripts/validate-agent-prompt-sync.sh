@@ -4,8 +4,9 @@
 # Agent 提示词存在性校验：检查每个 skill 的 SKILL.md 中
 # 是否包含 "## Agent 提示词" section。
 #
-# 原有的跨平台 prompt 一致性校验（.md vs openai.yaml）
-# 已不再适用，因为 agent 提示词已内联到 SKILL.md 中。
+# agent 提示词存在性校验。
+# 跨平台 prompt 一致性校验（.md vs openai.yaml）已移除，
+# Codex/OpenCode 平台不再支持。
 # ------------------------------------------------------------
 set -euo pipefail
 
