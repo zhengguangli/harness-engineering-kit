@@ -7,7 +7,7 @@ when_to_use: |
   不触发：项目已有完整的 harness 结构且用户未要求重新初始化、用户只想了解 harness 方法论而非实际初始化、项目规模极小不需要结构化知识管理、只需要重构 AGENTS.md/docs 结构而非全面初始化（用 harness-repo-map）。
 disable-model-invocation: true
 context: fork
-agent: harness-bootstrapper
+agent: harness-bootstrap
 compatibility: claude-code
 allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *) Write(*) Edit(*)
 metadata:
@@ -142,7 +142,7 @@ metadata:
 
 ## Agent 提示词
 
-## harness-bootstrapper（Harness 初始化工匠）
+## harness-bootstrap（Harness 初始化工匠）
 
 ### 跳过条件
 

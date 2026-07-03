@@ -1,6 +1,6 @@
 ---
 name: harness-orchestration
-description: 编排 harness-engineering-kit 中 skill 的组合与工作流路由——根据用户目标选择正确的 skill 组合和执行顺序。用于"我该用哪些 skill"、"规划多 skill 协作"、"工作流怎么走"、"进入新项目不确定先后顺序"场景。
+description: 编排当前项目中 skill 的组合与工作流路由——根据用户目标选择正确的 skill 组合和执行顺序。用于"我该用哪些 skill"、"规划多 skill 协作"、"工作流怎么走"、"进入新项目不确定先后顺序"场景。
 when_to_use: |
   显式触发：用户问"我该用哪些 skill"、"怎么组合这些 skill"、"工作流怎么走"、"进入新项目不确定先后顺序"。
   隐式触发：用户面对多个 skill 不知如何组合、复杂任务需要规划多 skill 协作流程、用户进入新项目后第一次对话。

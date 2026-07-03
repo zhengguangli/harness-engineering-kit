@@ -334,9 +334,9 @@ assess_skill() {
     check_fm_field "$file" "agent" "false"
     check_fm_no_version "$file"
     check_fm_metadata "$file"
-    check_fm_context
-    check_fm_allowed_tools
-    check_fm_metadata_category
+    check_fm_context "$file"
+    check_fm_allowed_tools "$file"
+    check_fm_metadata_category "$file"
     check_fm_description_length "$file"
 
     # 章节结构检查（含硬约束）
