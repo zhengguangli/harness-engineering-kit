@@ -16,7 +16,7 @@
 ```
 harness-engineering-kit/
 ├── .gitignore                           # 忽略 docs/generated/、AGENTS.md、CLAUDE.md（均由 agent 按项目生成）
-└── skills/                              # 12 个 skill（方法论 + agent 提示词 + 模板）
+└── skills/                              # 13 个 skill（方法论 + agent 提示词 + 模板）
     ├── harness-architecture-boundaries/ # 分层架构与依赖方向的机械强制
     ├── harness-authoring/               # 元技能:如何给这套体系本身加新能力
     ├── harness-bootstrap/               # 一键初始化 harness 结构
@@ -26,8 +26,9 @@ harness-engineering-kit/
     ├── harness-observability-and-browser/ # 浏览器 + 可观测性反馈传感器
     ├── harness-orchestration/           # 技能编排与工作流路由
     ├── harness-project-intake/          # 项目接入分析与项目卡片
-    ├── harness-prompt-optimizer/          # 提示词优化与结构化 Prompt 工程
+    ├── harness-prompt-optimizer/        # 提示词优化与结构化 Prompt 工程
     ├── harness-repo-map/                # 入口文件地图 + docs/ 系统记录
+    ├── harness-skill-quality-assessor/  # Skills质量评估与改进建议
     └── harness-verification-loop/       # Ralph Wiggum 自验证循环
 ```
 
@@ -39,14 +40,27 @@ harness-engineering-kit/
 每个 skill 内部结构:
 ```
 skills/<name>/
-├── SKILL.md                             # 方法论正文
+├── SKILL.md                             # 方法论正文（含跨平台 frontmatter）
 ├── agents/
-│   ├── <agent-name>.md                  # 配对 agent 的系统定义
-│   └── openai.yaml                      # Codex UI 元数据（Claude Code 忽略）
+│   ├── <agent-name>.md                  # Canonical agent 系统提示词（Claude Code + OpenCode 格式）
+│   └── openai.yaml                      # Codex UI 元数据 + 系统提示词（与 .md 同步）
 └── references/
-    ├── *-template.md                    # 模板文件（生成到目标项目的 docs/）
-    └── *-prompt.md                      # Agent 系统提示词
+    └── *-template.md                    # 模板文件（生成到目标项目的 docs/）
 ```
+
+### 跨平台兼容性
+
+SKILL.md 的 frontmatter 设计为跨平台兼容——各平台只读自己认识的字段，忽略未知字段：
+
+| 字段 | Claude Code | OpenCode | Codex |
+|---|---|---|---|
+| `name` | ✅ | ✅ (必须) | ✅ |
+| `description` | ✅ | ✅ (必须) | ✅ |
+| `when_to_use` | ✅ | ✅ (触发匹配) | ❌ 忽略 |
+| `disable-model-invocation` | ✅ | ✅ | ❌ 忽略 |
+| `allowed-tools` | ✅ | ✅ | ❌ 忽略 |
+| `compatibility` | ❌ 忽略 | ✅ | ❌ 忽略 |
+| `metadata` | ❌ 忽略 | ✅ | ❌ 忽略 |
 
 ## Skill 与 Agent 的使用方式
 
@@ -105,6 +119,18 @@ Skill 不直接"调用" Agent。主对话根据 Skill 的指导决定何时 spaw
 | harness-project-intake | 分析项目产出结构化卡片 | project-analyzer |
 | harness-prompt-optimizer | 优化/创建结构化 Prompt | （纯知识型，主对话直接执行） |
 
+### Agent 提示词结构
+
+每个 agent 的系统提示词遵循统一的五区块结构：
+
+```
+角色定义 → 核心能力 → 执行流程 → 约束 → 输出规范
+```
+
+- **约束**区块包含每条规则 + 违反时的行为，确保 agent 在边界内运行
+- `.md`（Claude Code / OpenCode）和 `openai.yaml`（Codex）两个版本的系统提示词保持同步
+- 工具名映射：`Bash` ↔ `exec_command`、`Edit` ↔ `apply_patch`、`Write` ↔ `apply_patch`、`Read` ↔ `read_file`、`Glob` ↔ `list_dir`、`Grep` ↔ `grep`
+
 ## 安装方式
 
 ### Claude Code
@@ -126,6 +152,24 @@ cp skills/*/agents/*.md  ~/.claude/agents/
 ```
 
 项目级与用户级同名时,项目级优先。
+
+### OpenCode
+
+OpenCode 从 `.opencode/skills/`、`.claude/skills/`、`.agents/skills/` 三个位置发现 skills。
+
+**项目级(推荐)**
+
+```bash
+cp -r skills/*  <你的项目>/.opencode/skills/
+```
+
+**用户级(跨项目)**
+
+```bash
+cp -r skills/*  ~/.config/opencode/skills/
+```
+
+OpenCode 也兼容 `.claude/skills/` 路径,所以如果项目已为 Claude Code 安装过,无需重复复制。
 
 ### Codex
 
@@ -206,6 +250,76 @@ nacos-cli skill-sync resolve <skill-name> --use-agent codex --non-interactive
 
 > local 模式下 symlink 自动保持同步,大部分时候只需 `status` 看一眼。Nacos 模式下 daemon 会轮询远端变更。
 
+
+## Skill Frontmatter QA（frontmatter 质量校验）
+
+每个 `SKILL.md` 的 frontmatter 应包含 `description`、`when_to_use`、`compatibility` 字段，不应包含已废弃的 `version` 字段或正文中的 `## 触发信号` 节。仓库提供轻量校验脚本，用于防止格式漂移。
+
+### 本地运行
+
+```bash
+make triggers-check
+# 或
+./scripts/validate-skill-triggers.sh
+```
+
+### 校验规则
+
+- 每个 skill 必须有 `description` 字段（≥ 20 字符）
+- 每个 skill 必须有 `when_to_use` 字段
+- 每个 skill 必须有 `compatibility` 字段
+- 不应包含 `version` 字段或 `## 触发信号` 正文章节
+
+> 当前为 warn-only 本地门禁，不阻断开发；后续可按需要升级为 CI gate。
+### 本地全量检查（推荐）
+
+```bash
+make triggers-all
+# 依次执行：结构校验 -> 关键词一致性校验 -> 回归测试 -> 跨平台 prompt 同步校验
+```
+
+### 跨平台 Prompt 同步校验
+
+每个 agent 的 `.md` 和 `openai.yaml` 系统提示词必须保持同步。`make prompts-sync-check` 比较两者规范化后的字节比，比值在 `[0.95, 1.05]` 区间内视为同步。
+
+```bash
+make prompts-sync-check
+# 或严格模式（阻断 CI）
+STRICT=1 ./scripts/validate-agent-prompt-sync.sh
+```
+
+### 回归用例维护规范（Case Guide）
+
+新增或修改回归用例时，请遵循：
+
+- 用例文件：`tests/triggers/cases.json`
+- 每条 case 至少包含：
+  - `id`：唯一 ID，建议格式 `skill-topic-NN`
+  - `input`：自然语言输入（尽量贴近用户原话）
+  - `expected_primary_skill`：首选命中 skill
+  - `expected_candidates`：可接受候选列表（用于歧义场景）
+  - `tags`：分类标签（如 `commit`、`plan`、`ambiguous`）
+
+#### 判定规则
+
+- `PASS`：主 skill 命中且为最强信号
+- `WARN`：主 skill 命中但不是最强信号（候选歧义仍存在）
+- `FAIL`：主 skill 未命中
+
+#### 关键词一致性要求
+
+回归脚本依赖静态关键词映射（`scripts/run-trigger-regression.sh` 中的 `SKILL_KW`）。  
+当你新增 case 时，务必保证：
+
+1. 所有用于匹配的关键词在对应 `SKILL.md` 中真实存在
+2. 避免“只改用例、不改关键词”导致结果漂移
+
+#### 报告与产物
+
+- 回归报告：`tests/triggers/report.json`
+- 推荐更新节奏：每次修改触发词/用例后都跑一次 `make triggers-all`
+
+
 ## 推荐的接入顺序
 
 以下是基于各 skill 之间**实际依赖关系**推导出的分层接入顺序。每一层依赖上一层的产出,不可跳步。
@@ -266,3 +380,24 @@ nacos-cli skill-sync resolve <skill-name> --use-agent codex --non-interactive
 - 没有绑定任何具体语言/框架的 lint 工具链——每个 skill 里只给出"要机械强制什么、报错信息要包含什么"的模式,具体用 ESLint/dependency-cruiser/import-linter 还是自己写 AST 脚本,留给你的项目栈决定。
 - 没有提供具体的 CI 配置文件——hook 接入方式因项目的 CI 系统而异,套件只规定"这些检查必须在 CI 里跑、报错要带修复指令",不规定怎么接。
 - 没有附带浏览器自动化或可观测性后端的具体安装步骤——这部分应该使用平台已连接的工具或项目已有的基础设施,本套件只规定"要有这类反馈传感器、怎么用它构成验证循环"。
+
+## 自然语言触发速查表
+
+12 个 skill 的典型触发场景（每个 skill 1-2 个最常见说法）：
+
+| Skill | 典型触发 |
+|---|---|
+| harness-project-intake | "分析当前项目"、"这个项目是做什么的" |
+| harness-bootstrap | "为这个项目初始化 harness"、"init harness" |
+| harness-repo-map | "AGENTS.md 太大需要瘦身"、"审计文档断链" |
+| harness-architecture-boundaries | "建立分层架构"、"出现了循环依赖" |
+| harness-golden-principles | "治理 AI 生成代码的重复模式"、"建立周期性代码扫描机制" |
+| harness-prompt-optimizer | "优化这个 prompt"、"帮我写一个 system prompt" |
+| harness-exec-plans | "先做个计划"、"任务比较大需要落盘" |
+| harness-verification-loop | "把改动推进到可合并状态"、"自动修复测试失败" |
+| harness-observability-and-browser | "复现 UI bug"、"确认 P99 延迟达标" |
+| harness-commit-gate | "提交代码"、"git commit" |
+| harness-orchestration | "我该用哪些 skill"、"怎么组合这些 skill" |
+| harness-authoring | "怎么写一个好的 SKILL.md"、"给 harness 添新能力" |
+
+完整 30 个回归用例见 `tests/triggers/cases.json`。
