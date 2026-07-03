@@ -51,7 +51,7 @@ metadata:
 2. 判断每条能否写成 lint：能 → 优先 lint；不能 → 写进文档作为品味原则。
 3. 设计清扫节奏和范围限定规则。
 4. 委派 `entropy-collector` 执行周期性扫描，生成独立小颗粒度修复 PR。
-5. 本轮未处理的发现记录进 `docs/exec-plans/tech-debt-tracker.md`，不悄悄丢弃。
+5. 本轮未处理的发现记录进 `docs/exec-plans/tech-debt-tracker.md`，不悄悄丢弃。扫描报告输出到 `docs/quality-reports/golden-principles-scan.md`（同名覆盖，历史版本在 git 中）。
 6. 信号标注：频繁触发的原则特别标出——说明对应模式未从根本上解决。
 ## 硬约束
 
