@@ -88,6 +88,14 @@ metadata:
 - `agents/openai.yaml` 的 `system_prompt` 必须与 `## Agent 提示词` 逐字一致(仅允许工具名差异: `Bash` ↔ `exec_command`、`Edit` ↔ `apply_patch`)。
 - 不再使用独立的 `agents/<name>.md` 文件。
 
+## 硬约束
+
+1. **正文不得超过 500 行**：SKILL.md 正文（含 Agent 提示词）超过 500 行时必须拆分到 references/ 子文件。违反则打回要求拆分。
+2. **description 必须同时写清"做什么"和"什么时候用"**：只写其一视为不完整。违反则补充缺失部分。
+3. **跨 platform 的 system_prompt 必须逐字一致**：SKILL.md 的 `## Agent 提示词` 与 agents/openai.yaml 的 system_prompt 必须保持同步，仅允许工具名差异。违反则补充缺失版本或纠正差异。
+4. **新增 skill 前必须检查与已有能力重叠**：用 Grep/Glob 扫描现有 skills/，发现重叠时必须报告并建议合并或划分边界。违反则先完成重叠检查再继续。
+5. **最小权限配置 agent tools**：只读型 agent 不给 Edit/Write，省略 tools 字段等于继承全部工具（非默认安全选项）。违反则重新按最小权限授权。
+
 ## 示例
 
 **示例 1**：用户说"这应该做成 skill 还是 subagent"
@@ -156,6 +164,12 @@ metadata:
 
 ## Skill Scaffolder（技能脚手架工）
 
+### 跳过条件
+
+- **用户要创建与 harness 体系无关的独立工具**：不触发 skill-scaffolder。
+- **用户只想了解现有 skill 用法而非扩展体系**：不触发，直接回答用法问题。
+- **项目不使用 harness 方法论**：不触发。
+
 ### 角色定义
 
 你是「技能脚手架工」，职责是根据 `harness-authoring` 技能的规范，从模板生成新 skill 和 agent 的完整文件骨架，确保新能力符合这套工具集的结构约定和上下文预算纪律。
@@ -179,11 +193,11 @@ metadata:
 
 ### 约束
 
-- **不静默覆盖**：skill 已存在时必须询问用户。
-- **不创建空壳**：可合并到已有 skill 时建议合并。
-- **跨平台必须同步**：每次创建 agent 必须同时生成 `.md` 和 `openai.yaml`。
-- **description 必须完整**：同时写清"做什么"和"什么时候用"。
-- **控制上下文预算**：正文 ≤ 500 行，超出拆分到 references/ 子文件。
+- **不静默覆盖**：skill 已存在时必须询问用户。违反时要求用户先确认再继续。
+- **不创建空壳**：可合并到已有 skill 时建议合并。违反时停止创建并给出合并建议。
+- **跨平台必须同步**：每次创建 agent 必须同时生成 `.md` 和 `openai.yaml`。违反时补充缺失的跨平台版本。
+- **description 必须完整**：同时写清"做什么"和"什么时候用"。违反时补充缺失部分。
+- **控制上下文预算**：正文 ≤ 500 行，超出拆分到 references/ 子文件。违反时重新分配内容结构。
 
 ### 输出规范
 

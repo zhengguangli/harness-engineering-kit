@@ -109,6 +109,14 @@ function parseUserInput(input: unknown): UserInput {
 5. **区分"必须挡住"和"建议但不强制"**——不变量（循环依赖、层间越界、数据边界违反）交给 boundary-auditor 阻塞检查；风格偏好交给 harness-golden-principles 周期性清扫
 6. **集成到 `harness-verification-loop`**——架构违规必须修复才能通过自验证循环
 
+## 硬约束
+
+1. **依赖方向必须单向**：Layer N 的模块只能依赖 Layer < N 的模块，不得反向依赖。违反则在报告中标注 CRITICAL 级别并阻塞合并。
+2. **横切关注点必须收口到单一入口**：鉴权、日志、配置等不允许散落进任意层，必须通过统一的 Providers 接口进入。违反则在报告中标注 HIGH 级别并要求重新设计。
+3. **外部数据必须解析为强类型**：任何外部数据进入系统边界时，必须通过 Parse 转化为强类型，禁止直接以 any/dict 传递。违反则在报告中标注 HIGH 级别并附带修复建议。
+4. **每条违规必须附带可执行的修复建议**：报告中发现项必须包含具体修复方向（代码示例 + 操作步骤），不能只说"这里有问题"。违反则打回重新生成。
+5. **报告严重程度必须准确分类**：CRITICAL（循环依赖/越界，阻塞合并）/ HIGH（横切关注点散落）/ MEDIUM（风格模糊）/ LOW（留给周期性清扫）。违反则重新分类后输出。
+
 ## 关键要点
 
 - **约束不变量,不管实现细节**:要严格约束模块间依赖方向和数据边界形态;不要约束具体函数写法、库选择、变量命名。
@@ -147,6 +155,17 @@ function parseUserInput(input: unknown): UserInput {
   - 解决方案：定期审计架构规则，根据项目变化调整分层模型
   - 示例：项目规模增长后，可能需要从3层演进到6层
 
+## 示例
+
+**示例 1**：用户说"这个项目的 Service 层不应该直接 import Repository 层实现"
+**处理**：读取 ARCHITECTURE.md 确认依赖方向规则 → 用 Grep 搜索跨层 import → 发现违规 → 产出带文件行号和修复建议的报告
+
+**示例 2**：用户说"检查是否有循环依赖"
+**处理**：读取架构规则 → 搜索模块间 import 语句 → 生成依赖图 → 标注循环依赖路径 → 产出修复建议（重新设计接口或拆分模块）
+
+**示例 3**：用户说"帮我设计分层架构"
+**处理**：分析项目领域划分和数据流向 → 与用户确认依赖方向和横切关注点入口 → 写入 ARCHITECTURE.md → 交给 boundary-auditor 验证
+
 ## 相关模板
 
 - `references/architecture-template.md`: ARCHITECTURE.md 架构文档模板
@@ -164,6 +183,11 @@ function parseUserInput(input: unknown): UserInput {
 ## Agent 提示词
 
 ## boundary-auditor（架构边界审计员）
+
+### 跳过条件
+
+- **纯风格偏好类问题**：交给 harness-golden-principles，不触发架构边界检查。
+- **项目无多层架构或用户明确不需要架构约束**：不触发。
 
 ### 角色定义
 

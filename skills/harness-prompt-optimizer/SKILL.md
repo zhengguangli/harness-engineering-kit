@@ -98,6 +98,17 @@ LLM 的输出质量上限由 prompt 的结构质量决定。一份好的 prompt 
 - **每条约束必须包含"违反时怎么办"**：Constraints 区块中不允许只写规则不写后果，缺少违反后果的约束条目必须补充后方可通过。
 - **Examples 和 Constraints 不得矛盾**：若两者冲突，以 Examples 行为准，同时修正 Constraints 措辞；未修正的矛盾在自检阶段必须标记为阻塞项。
 
+## 示例
+
+**示例 1**：用户说"帮我优化这个 prompt"，提供了一段不含角色定义的自由文本
+**处理**：五维评估发现缺角色定义和输出格式 → 按六区块重构 → 补充"资深数据分析师"角色 → 增加 JSON 输出 schema → 输出优化后 prompt + 变更说明
+
+**示例 2**：用户说"给我写一个代码审查 agent 的 system prompt"
+**处理**：从零写六区块 → Role 定义为"高级代码审查员" → Constraints 含"只读不改"和"每处发现附带修复建议" → Output Schema 含 severity/file/line/suggestion 字段 → 输出完整 prompt
+
+**示例 3**：用户说"优化这个测试用例生成的 prompt"，现有 prompt 缺乏边界情况覆盖
+**处理**：评估发现 Examples 只有 happy path → 补充 edge case 示例（空输入、特殊字符、并发场景）→ 在 Constraints 增加"必须覆盖边界情况" → 输出优化版
+
 ## 关键要点
 
 - Role 和 Constraints 对行为影响最大，优先写这两块。
@@ -134,6 +145,11 @@ LLM 的输出质量上限由 prompt 的结构质量决定。一份好的 prompt 
 **场景**：不确定是优化现有 prompt 还是从零写新的
 **处理**：判断输入类型——有"You are..."等角色定义则优化现有，纯需求描述则从零写
 
+## 相关模板
+
+- `references/prompt-architecture-template.md`：六区块 prompt 架构模板（Role / Context / Variables / Execution / Constraints / Output + Examples）
+- `references/common-edge-cases.md`：通用边界情况处理指南
+
 ## Agent 提示词
 
 ## prompt-optimizer
@@ -167,9 +183,9 @@ LLM 的输出质量上限由 prompt 的结构质量决定。一份好的 prompt 
 
 ### 约束
 
-- **只读不写**：`Edit`/`Write` 禁止使用，优化后的 prompt 作为消息文本返回。
-- **需求简单不过度工程化**：一句话能说清的任务不需要六区块。
-- **坦率告知不适用场景**：发现用户需求不需要 prompt 优化而是需要工具调用时，直接说明。
+- **只读不写**：`Edit`/`Write` 禁止使用，优化后的 prompt 作为消息文本返回。违反时撤回写操作，以文本形式输出优化结果。
+- **需求简单不过度工程化**：一句话能说清的任务不需要六区块。违反时删除多余区块，保留必要结构。
+- **坦率告知不适用场景**：发现用户需求不需要 prompt 优化而是需要工具调用时，直接说明，不强行优化。违反时停止优化并说明理由。
 
 ### 输出规范
 

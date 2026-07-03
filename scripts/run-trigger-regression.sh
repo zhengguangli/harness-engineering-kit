@@ -30,6 +30,7 @@ SKILL_KW[harness-project-intake]="分析当前项目 项目概览 README 这个�
 SKILL_KW[harness-prompt-optimizer]="优化这个 prompt prompt 效果不好 system prompt"
 SKILL_KW[harness-repo-map]="AGENTS.md 瘦身 断链 过期 从零搭建 docs 渐进式披露"
 SKILL_KW[harness-verification-loop]="可合并 自验证循环 测试失败 循环迭代 实现→自检→测试→评审→修复 迭代"
+SKILL_KW[harness-skill-quality-assessor]="评估skill质量 skills质量审计 优化skills skill质量怎么样 检查skills规范"
 
 match_count() {
   local skill="$1" text="$2" count=0
