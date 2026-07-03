@@ -1,78 +1,78 @@
-# 通用边界情况参考文档
+# Common Edge Cases Reference Document
 
-## 概述
+## Overview
 
-本文档汇总了 Skill Quality Assessor（技能质量评估）处理中的通用边界情况。引用本文档以避免在 SKILL.md 中重复定义。
+This document summarizes common edge cases encountered when processing with the Skill Quality Assessor. Reference this document to avoid redundant definitions in SKILL.md.
 
-## 通用边界情况
+## Common Edge Cases
 
-### 1. 最小技能评估（文件行数 < 80）
+### 1. Minimal Skill Evaluation (file lines < 80)
 
-**场景**：被评估的 skill 文件行数很少（< 80 行），内容精简
+**Scenario**: The evaluated skill file has very few lines (< 80 lines), with concise content
 
-**处理原则**：
-- 不因行数少而自动扣分
-- 评估重点是：行数少是因为"够用"还是"缺失"？
-- 如果精简结构完整、核心信息齐全，结构完整性仍可给高分
-- 扣分点集中在内容质量和文档质量维度
+**Handling Principles**:
+- Do not automatically deduct points for fewer lines
+- Evaluate whether fewer lines means "sufficient" or "missing"
+- If the concise structure is complete and core information is comprehensive, structure completeness can still score high
+- Deductions should focus on content quality and documentation quality dimensions
 
-**判断标准**：
-- 行数 < 80：启用精简模式评估
-- 行数 80-150：标准模式
-- 行数 > 150：详细模式（8 维度全量评估）
+**Judgment Criteria**:
+- Lines < 80: Enable streamlined evaluation mode
+- Lines 80-150: Standard mode
+- Lines > 150: Detailed mode (full 8-dimension evaluation)
 
-### 2. 新创建的 skill
+### 2. Newly Created Skill
 
-**场景**：被评估的 skill 刚创建不久（最后更新日期 < 3 天前）
+**Scenario**: The evaluated skill was recently created (last update date < 3 days ago)
 
-**处理原则**：
-- 适当降低参考文件数量的权重（刚创建时 references 可能不完整）
-- 重点评估：结构完整性、Agent 提示词质量、核心原则
-- 标注"新技能"，表示后续评估可能会因为 content 充实而提升
+**Handling Principles**:
+- Appropriately reduce the weighting for reference file count (references may be incomplete when newly created)
+- Focus evaluation on: structure completeness, agent prompt quality, core principles
+- Label as "New Skill" to indicate that subsequent evaluations may improve as content becomes more substantial
 
-### 3. 技能类型为 disable-model-invocation
+### 3. Skill Type is disable-model-invocation
 
-**场景**：被评估的 skill 标注了 `disable-model-invocation: true`（需要通过 subagent 调用）
+**Scenario**: The evaluated skill has `disable-model-invocation: true` (requires subagent invocation)
 
-**处理原则**：
-- Agent 提示词质量维度的评估重点从"能否直接使用"转为"能否被 subagent 正确理解"
-- 自动化友好度适当扣分（需要额外步骤调用）
-- 评估报告中标注"disable-model-invocation"以解释某些维度的分数
+**Handling Principles**:
+- Shift the evaluation focus of agent prompt quality from "can it be used directly" to "can it be correctly understood by the subagent"
+- Slightly deduct automation friendliness points (requires additional steps to invoke)
+- Mark "disable-model-invocation" in the evaluation report to explain scores in certain dimensions
 
-### 4. 评分波动大（标准差 > 1.0）
+### 4. Large Score Fluctuation (standard deviation > 1.0)
 
-**场景**：不同评估轮次之间，同一技能的评分变化超过 1.0 分
+**Scenario**: The same skill's score varies by more than 1.0 points across different evaluation rounds
 
-**处理原则**：
-- 检查是否有评估标准变更（如权重调整、新增维度）
-- 检查是否有 content 实质性变化（如删除/新增大段内容）
-- 在趋势对比中注明波动原因
-- 有正当理由的波动不视为问题
+**Handling Principles**:
+- Check if there were evaluation standard changes (e.g., weight adjustments, new dimensions)
+- Check if there were substantial content changes (e.g., removal/addition of large sections)
+- Note the reason for fluctuation in trend comparisons
+- Fluctuations with valid justifications are not considered issues
 
-### 5. 技能没有 references/ 目录
+### 5. Skill Has No references/ Directory
 
-**场景**：被评估的 skill 没有 references/ 目录或目录为空
+**Scenario**: The evaluated skill has no references/ directory or the directory is empty
 
-**处理原则**：
-- 文档质量维度大幅扣分（此维度 50% 权重与参考文件相关）
-- 总分上限锁定在 B 级
-- 评估报告中建议立即补充参考文件
+**Handling Principles**:
+- Significantly deduct points in the documentation quality dimension (50% of this dimension's weight relates to reference files)
+- Cap the total score at B grade
+- Recommend immediately supplementing reference files in the evaluation report
 
-### 6. 自评估冲突
+### 6. Self-Evaluation Conflict
 
-**场景**：Skill Quality Assessor 评估自身（self-evaluation）
+**Scenario**: Skill Quality Assessor evaluating itself (self-evaluation)
 
-**处理原则**：
-- 仍然执行完整评估流程
-- 在报告中标注"self-evaluation"
-- 评分作为一个参考值，不作为最终质量结论
-- 建议用其他 skill（如 prompt-optimizer）交叉验证
+**Handling Principles**:
+- Still execute the full evaluation process
+- Mark "self-evaluation" in the report
+- Score serves as a reference value, not a final quality conclusion
+- Recommend cross-validation with other skills (e.g., prompt-optimizer)
 
-## 使用指南
+## Usage Guide
 
-Skill Quality Assessor 特有的边界情况直接写在本文件中。处理边界情况时：
-1. 如果属于通用类型，引用本文档对应章节
-2. 按格式：场景 → 处理原则（1-2行）
+Skill Quality Assessor specific edge cases are written directly in this document. When handling edge cases:
+1. If it is a general type, reference the corresponding section of this document
+2. Follow the format: Scenario -> Handling Principles (1-2 lines)
 
 ---
-最后更新: 2026-07-03
+Last updated: 2026-07-03

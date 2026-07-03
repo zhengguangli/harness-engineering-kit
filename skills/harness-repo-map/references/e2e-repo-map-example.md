@@ -1,60 +1,60 @@
-# 端到端示例：React 项目知识库重构
+# End-to-end example: React project knowledge base refactoring
 
-## 场景背景
+## Scenario background
 
-一个 React + TypeScript 项目，AGENTS.md 已膨胀到 350 行，包含架构说明、API 文档、部署流程、故障排查等所有内容。agent 经常找不到信息或读取过时内容。
+A React + TypeScript project with CLAUDE.md bloated to 350 lines, containing architecture descriptions, API docs, deployment workflows, troubleshooting, and everything else. The agent frequently can't find information or reads stale content.
 
-目标：将百科全书式 AGENTS.md 重构为地图 + 结构化 docs/ 的渐进式披露模式。
+Goal: Refactor the encyclopedia-style CLAUDE.md into a "map + structured docs/" progressive disclosure model.
 
 ---
 
-## 步骤 1：盘点现状
+## Step 1: Inventory current state
 
-**输入**：项目根目录
+**Input**: Project root directory
 
-**操作**：
+**Operations**:
 
 ```bash
-# 检查 AGENTS.md 行数
-wc -l AGENTS.md
+# Check CLAUDE.md line count
+wc -l CLAUDE.md
 
-# 检查 docs/ 目录
-ls -la docs/ 2>/dev/null || echo "docs/ 不存在"
+# Check docs/ directory
+ls -la docs/ 2>/dev/null || echo "docs/ does not exist"
 
-# 检查现有文档结构
+# Check existing document structure
 find . -name "*.md" -not -path "./node_modules/*" | head -20
 ```
 
-**输出**：
+**Output**:
 ```
-350 AGENTS.md
-docs/ 不存在
+350 CLAUDE.md
+docs/ does not exist
 ./README.md
-./AGENTS.md
+./CLAUDE.md
 ./CHANGELOG.md
 ```
 
-**现状分析**：
-- AGENTS.md：350 行（严重超标，应 ≤ 100 行）
-- docs/：不存在
-- 内容混杂：架构、API、部署、故障排查全在一个文件
+**Current state analysis**:
+- CLAUDE.md: 350 lines (severely over limit; should be <= 100 lines)
+- docs/: does not exist
+- Content mixed: architecture, API, deployment, troubleshooting all in one file
 
 ---
 
-## 步骤 2：设计目录骨架
+## Step 2: Design directory skeleton
 
-**输入**：项目技术栈（React + TypeScript）和现状分析
+**Input**: Project tech stack (React + TypeScript) and current state analysis
 
-**操作**：按需裁剪目标骨架
+**Operations**: Trim the target skeleton as needed
 
 ```
-AGENTS.md                  # 瘦身到 ~80 行的地图
+CLAUDE.md                  # Slimmed down to ~80 line map
 docs/
-├── ARCHITECTURE.md        # 架构说明
-├── QUALITY_SCORE.md       # 质量评分
+├── ARCHITECTURE.md        # Architecture description
+├── QUALITY_SCORE.md       # Quality score
 ├── design-docs/
-│   ├── index.md           # 设计文档索引
-│   └── core-beliefs.md    # 核心信念
+│   ├── index.md           # Design document index
+│   └── core-beliefs.md    # Core beliefs
 ├── exec-plans/
 │   ├── active/
 │   ├── completed/
@@ -67,276 +67,276 @@ docs/
 
 ---
 
-## 步骤 3：拆分搬运
+## Step 3: Split and relocate
 
-**输入**：现有 AGENTS.md（350 行）
+**Input**: Existing CLAUDE.md (350 lines)
 
-**操作**：按主题拆分到 docs/
+**Operations**: Split by topic into docs/
 
-### 3.1 创建 ARCHITECTURE.md
+### 3.1 Create ARCHITECTURE.md
 
-从 AGENTS.md 提取架构相关内容：
+Extract architecture-related content from CLAUDE.md:
 
 ```markdown
 ---
-title: React 项目架构
+title: React Project Architecture
 last_verified: 2026-07-02
 related_code: src/
 ---
 
-# 架构说明
+# Architecture Description
 
-## 技术栈
+## Tech Stack
 - React 18 + TypeScript
-- Zustand 状态管理
-- React Query 数据获取
-- Tailwind CSS 样式
+- Zustand for state management
+- React Query for data fetching
+- Tailwind CSS for styling
 
-## 目录结构
+## Directory Structure
 src/
-├── components/     # 可复用 UI 组件
-├── pages/          # 页面组件
-├── hooks/          # 自定义 hooks
-├── services/       # API 服务层
+├── components/     # Reusable UI components
+├── pages/          # Page components
+├── hooks/          # Custom hooks
+├── services/       # API service layer
 ├── stores/         # Zustand stores
-└── types/          # TypeScript 类型
+└── types/          # TypeScript types
 
-## 依赖方向
-types → services → hooks → components → pages
-stores → hooks → components → pages
+## Dependency Direction
+types -> services -> hooks -> components -> pages
+stores -> hooks -> components -> pages
 
-## 状态管理
-- 全局状态：Zustand stores（用户认证、主题设置）
-- 服务端状态：React Query（API 数据缓存）
-- 局部状态：useState/useReducer（组件内部状态）
+## State Management
+- Global state: Zustand stores (user auth, theme settings)
+- Server state: React Query (API data caching)
+- Local state: useState/useReducer (component internal state)
 ```
 
-### 3.2 创建 design-docs/core-beliefs.md
+### 3.2 Create design-docs/core-beliefs.md
 
 ```markdown
 ---
-title: 核心信念
+title: Core Beliefs
 last_verified: 2026-07-02
 ---
 
-# 核心信念
+# Core Beliefs
 
-## Agent-First 设计
-- 所有文档必须可被 agent 机械化发现和校验
-- 避免依赖人脑记忆或口头共识
-- 渐进式披露：从小入口开始，教会 agent 去哪找更多
+## Agent-First Design
+- All documentation must be mechanically discoverable and verifiable by agents
+- Avoid relying on human memory or verbal consensus
+- Progressive disclosure: start with a small entry point, teach the agent where to find more
 
-## 代码即文档
-- 代码结构本身就是最好的文档
-- 类型定义即接口契约
-- 测试即使用示例
+## Code as Documentation
+- Code structure itself is the best documentation
+- Type definitions are the interface contract
+- Tests are usage examples
 
-## 持续验证
-- 文档必须与代码行为一致
-- 过时的文档比没有文档更危险
-- 定期审计确保文档新鲜度
+## Continuous Verification
+- Documentation must stay consistent with code behavior
+- Outdated documentation is more dangerous than no documentation
+- Regular audits ensure documentation freshness
 ```
 
-### 3.3 创建 design-docs/index.md
+### 3.3 Create design-docs/index.md
 
 ```markdown
 ---
-title: 设计文档索引
+title: Design Document Index
 last_verified: 2026-07-02
 ---
 
-# 设计文档索引
+# Design Document Index
 
-| 文档 | 用途 | 最后校验 |
-|------|------|----------|
-| [core-beliefs.md](./core-beliefs.md) | 核心运作信念 | 2026-07-02 |
+| Document | Purpose | Last Verified |
+|----------|---------|---------------|
+| [core-beliefs.md](./core-beliefs.md) | Core operating beliefs | 2026-07-02 |
 
-## 新增文档
-设计新功能时，先在 `docs/design-docs/` 创建 ADR（Architecture Decision Record）。
+## New Documents
+When designing new features, first create an ADR (Architecture Decision Record) in `docs/design-docs/`.
 ```
 
-### 3.4 创建 product-specs/index.md
+### 3.4 Create product-specs/index.md
 
 ```markdown
 ---
-title: 产品规格索引
+title: Product Spec Index
 last_verified: 2026-07-02
 ---
 
-# 产品规格索引
+# Product Spec Index
 
-| 规格 | 状态 | 最后更新 |
-|------|------|----------|
-| 用户认证流程 | 已实现 | 2026-06-15 |
-| 订单管理功能 | 开发中 | 2026-07-01 |
+| Spec | Status | Last Updated |
+|------|--------|--------------|
+| User Authentication Flow | Shipped | 2026-06-15 |
+| Order Management Feature | In Development | 2026-07-01 |
 ```
 
-### 3.5 创建 tech-debt-tracker.md
+### 3.5 Create tech-debt-tracker.md
 
 ```markdown
 ---
-title: 技术债跟踪
+title: Tech Debt Tracker
 last_verified: 2026-07-02
 ---
 
-# 技术债跟踪
+# Tech Debt Tracker
 
-## 待处理
-| 项目 | 影响范围 | 创建日期 | 原因 |
-|------|----------|----------|------|
-| 迁移到 React Query v5 | services/ | 2026-06-20 | 旧版本不支持 Suspense |
+## Pending
+| Item | Affected Area | Created | Reason |
+|------|---------------|---------|--------|
+| Migrate to React Query v5 | services/ | 2026-06-20 | Old version does not support Suspense |
 
-## 已完成
-| 项目 | 完成日期 | 解决方案 |
-|------|----------|----------|
+## Completed
+| Item | Completed | Solution |
+|------|-----------|----------|
 | - | - | - |
 ```
 
 ---
 
-## 步骤 4：改写 AGENTS.md 为地图
+## Step 4: Rewrite CLAUDE.md as a map
 
-**输入**：原 AGENTS.md（350 行）+ 步骤 3 的 docs/
+**Input**: Original CLAUDE.md (350 lines) + docs/ from step 3
 
-**操作**：精简为 ~80 行的导航地图
+**Operations**: Condense into an ~80-line navigation map
 
 ```markdown
-# 项目地图
+# Project Map
 
-> 这个文件是地图，不是百科全书；深入信息请看 docs/
+> This file is a map, not an encyclopedia; in-depth information can be found in docs/
 
-## 快速导航
+## Quick Navigation
 
-| 我想知道… | 去看这里 |
+| I want to know... | Go here |
 |---|---|
-| 项目架构和分层规则 | `docs/ARCHITECTURE.md` |
-| 设计决策和核心信念 | `docs/design-docs/` |
-| 产品功能规格 | `docs/product-specs/index.md` |
-| 执行计划和技术债 | `docs/exec-plans/` |
-| 质量评分 | `docs/QUALITY_SCORE.md` |
+| Project architecture and layering rules | `docs/ARCHITECTURE.md` |
+| Design decisions and core beliefs | `docs/design-docs/` |
+| Product feature specs | `docs/product-specs/index.md` |
+| Execution plans and tech debt | `docs/exec-plans/` |
+| Quality scores | `docs/QUALITY_SCORE.md` |
 
-## 目录结构
+## Directory Structure
 
 ```
 docs/
-├── ARCHITECTURE.md        # 架构说明
-├── QUALITY_SCORE.md       # 质量评分
-├── design-docs/           # 设计文档
-├── exec-plans/            # 执行计划
-├── generated/             # 自动生成
-├── product-specs/         # 产品规格
-└── references/            # 第三方参考
+├── ARCHITECTURE.md        # Architecture description
+├── QUALITY_SCORE.md       # Quality score
+├── design-docs/           # Design documents
+├── exec-plans/            # Execution plans
+├── generated/             # Auto-generated
+├── product-specs/         # Product specs
+└── references/            # Third-party references
 ```
 
-## 工作方式
+## How It Works
 
-1. 先看本文件了解信息分布
-2. 按需深入 docs/ 子目录
-3. 不确定时，问用户或检查 docs/
+1. First look at this file to understand information distribution
+2. Dive into docs/ subdirectories as needed
+3. When uncertain, ask the user or check docs/
 ```
 
 ---
 
-## 步骤 5：质量验证
+## Step 5: Quality verification
 
-**输入**：重构后的 docs/ 结构
+**Input**: Refactored docs/ structure
 
-**操作**：doc-gardener agent 内联执行校验
+**Operations**: doc-gardener agent runs inline checks
 
-### 5.1 断链检测
+### 5.1 Broken link detection
 
 ```bash
-# 扫描 docs/ 内部链接
+# Scan internal links in docs/
 rg '\]\(\./' docs/ --no-filename | while read -r link; do
-  # 提取链接目标并验证
+  # Extract link target and verify
   target=$(echo "$link" | sed 's/.*](\(.*\)).*/\1/')
   if [ ! -f "docs/$target" ]; then
-    echo "断链: $link -> $target"
+    echo "Broken link: $link -> $target"
   fi
 done
 ```
 
-### 5.2 新鲜度检测
+### 5.2 Freshness detection
 
 ```bash
-# 检查文档最后更新日期
+# Check document last updated dates
 rg "last_verified:" docs/ --no-filename | while read -r line; do
   date=$(echo "$line" | sed 's/.*: //')
-  # 计算天数差
+  # Calculate day difference
   days=$(( ($(date +%s) - $(date -j -f "%Y-%m-%d" "$date" +%s)) / 86400 ))
   if [ "$days" -gt 30 ]; then
-    echo "过期文档: $line (已 $days 天)"
+    echo "Outdated document: $line ($days days old)"
   fi
 done
 ```
 
-### 5.3 覆盖率检测
+### 5.3 Coverage detection
 
 ```bash
-# 检查 ARCHITECTURE.md 是否覆盖所有目录
+# Check if ARCHITECTURE.md covers all directories
 for dir in src/*/; do
   dirname=$(basename "$dir")
   if ! grep -q "$dirname" docs/ARCHITECTURE.md; then
-    echo "未覆盖目录: $dirname"
+    echo "Uncovered directory: $dirname"
   fi
 done
 ```
 
 ---
 
-## 步骤 6：生成报告
+## Step 6: Generate report
 
-**输出**：
+**Output**:
 
 ```markdown
-## 文档健康报告
+## Document Health Report
 
-### 总结
-- 问题总数：3
-- HIGH：1（断链）
-- MEDIUM：1（覆盖率不足）
-- LOW：1（建议改进）
+### Summary
+- Total issues: 3
+- HIGH: 1 (broken link)
+- MEDIUM: 1 (insufficient coverage)
+- LOW: 1 (suggested improvement)
 
-### 详细发现
+### Detailed Findings
 
-### [HIGH] AGENTS.md 导航表断链
-- 文件: `AGENTS.md`, 行号: L15
-- 问题: 导航表指向 `docs/QUALITY_SCORE.md`，但该文件不存在
-- 影响: agent 无法找到质量评分信息
-- 修复: 创建 `docs/QUALITY_SCORE.md` 或更新导航表
+### [HIGH] CLAUDE.md navigation table broken link
+- File: `CLAUDE.md`, Line: L15
+- Issue: Navigation table points to `docs/QUALITY_SCORE.md`, but the file does not exist
+- Impact: Agent cannot find quality score information
+- Fix: Create `docs/QUALITY_SCORE.md` or update the navigation table
 
-### [MEDIUM] ARCHITECTURE.md 未覆盖 hooks/ 目录
-- 文件: `docs/ARCHITECTURE.md`
-- 问题: `src/hooks/` 目录存在但未在架构说明中描述
-- 影响: agent 不了解 hooks 层的职责
-- 修复: 在 ARCHITECTURE.md 中添加 hooks/ 说明
+### [MEDIUM] ARCHITECTURE.md does not cover hooks/ directory
+- File: `docs/ARCHITECTURE.md`
+- Issue: `src/hooks/` directory exists but is not described in the architecture documentation
+- Impact: Agent does not understand the hooks layer's responsibilities
+- Fix: Add hooks/ description to ARCHITECTURE.md
 
-### [LOW] design-docs/ 文档较少
-- 文件: `docs/design-docs/`
-- 问题: 只有 2 个文档，建议补充更多设计决策记录
-- 影响: 团队决策历史不完整
-- 修复: 新功能开发时创建 ADR 文档
+### [LOW] design-docs/ has few documents
+- File: `docs/design-docs/`
+- Issue: Only 2 documents, suggest adding more design decision records
+- Impact: Incomplete team decision history
+- Fix: Create ADR documents when developing new features
 ```
 
 ---
 
-## 错误处理
+## Error handling
 
-### 场景 1：docs/ 目录创建失败
-**处理**：检查文件系统权限，确认父目录存在，重新创建。
+### Scenario 1: docs/ directory creation fails
+**Handling**: Check filesystem permissions, confirm parent directory exists, and re-create.
 
-### 场景 2：内容拆分后信息丢失
-**处理**：对比原 AGENTS.md 和新 docs/，确保所有关键信息被迁移。
+### Scenario 2: Information lost during content splitting
+**Handling**: Compare the original CLAUDE.md against the new docs/ to ensure all critical information was migrated.
 
-### 场景 3：文档与代码不一致
-**处理**：doc-gardener 标记为 HIGH 优先级，优先修复误导性内容。
+### Scenario 3: Document and code are inconsistent
+**Handling**: doc-gardener marks as HIGH priority, proactively fix misleading content.
 
 ---
 
-## 验收标准
+## Acceptance criteria
 
-- [ ] AGENTS.md ≤ 100 行
-- [ ] docs/ 断链率 = 0
-- [ ] 每个 docs/ 文件有元数据头（title, last_verified）
-- [ ] ARCHITECTURE.md 覆盖所有顶层目录
-- [ ] 导航表指向的文件全部存在
+- [ ] CLAUDE.md <= 100 lines
+- [ ] docs/ broken link rate = 0
+- [ ] Every docs/ file has metadata headers (title, last_verified)
+- [ ] ARCHITECTURE.md covers all top-level directories
+- [ ] All files pointed to by the navigation table exist

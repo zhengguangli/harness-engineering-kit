@@ -1,42 +1,42 @@
-# 验证循环完成总结
+# Verification Loop Completion Summary
 
-由 `verification-loop-runner` agent 在每次验证循环收敛后填充。
+Filled by the `verification-loop-runner` agent after each verification loop converges.
 
-## 改动概览
+## Change Overview
 
-| 字段 | 内容 |
-|------|------|
-| 改动目标 | <!-- 这次循环要实现的改动 --> |
-| 对应 exec-plan | <!-- 如适用：docs/exec-plans/active/<plan-id>.md --> |
-| 完成日期 | <YYYY-MM-DD> |
-| 迭代轮次 | <!-- 实际完成的循环次数 --> |
+| Field | Content |
+|------|--------|
+| Change Goal | <!-- The change this loop aims to implement --> |
+| Related Exec-Plan | <!-- If applicable: docs/exec-plans/active/<plan-id>.md --> |
+| Completion Date | <YYYY-MM-DD> |
+| Iterations | <!-- Actual number of loops completed --> |
 
-## 做了什么
+## What Was Done
 
-- <!-- 列出实际实施的代码变更，每项一行 -->
+- <!-- List actual code changes implemented, one per line -->
 
-## 验证结果
+## Verification Results
 
-| 检查项 | 工具/方法 | 结果 |
-|--------|-----------|------|
-| 测试 | <!-- 运行的测试命令 --> | ✅ 通过 / ❌ 失败 |
-| 架构边界 | <!-- boundary-auditor 报告引用 --> | ✅ / ❌ |
-| QA 验证 | <!-- qa-verifier 报告引用 --> | ✅ / ❌ |
-| Lint | <!-- lint 命令 --> | ✅ / ❌ |
+| Check Item | Tool/Method | Result |
+|-----------|-------------|--------|
+| Tests | <!-- Test commands run --> | ✅ Pass / ❌ Fail |
+| Architecture Boundaries | <!-- boundary-auditor report reference --> | ✅ / ❌ |
+| QA Verification | <!-- qa-verifier report reference --> | ✅ / ❌ |
+| Lint | <!-- Lint command --> | ✅ / ❌ |
 
-## 关键决策日志
+## Key Decision Log
 
-| 决策 | 理由 | 备选方案 |
-|------|------|----------|
-| <!-- 遇到的权衡和选择 --> | | |
+| Decision | Rationale | Alternatives |
+|---------|-----------|-------------|
+| <!-- Trade-offs and choices encountered --> | | |
 
-## 已知限制
+## Known Limitations
 
-- <!-- 未在本次循环中解决的问题，可以记录进 tech-debt-tracker.md -->
+- <!-- Issues not resolved in this loop; can be recorded in tech-debt-tracker.md -->
 
-## 备注
+## Notes
 
-- <!-- 其他需要记录的信息 -->
+- <!-- Other information to record -->
 
 ---
-最后更新: <YYYY-MM-DD>
+Last updated: <YYYY-MM-DD>

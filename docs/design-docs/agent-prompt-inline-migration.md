@@ -91,7 +91,7 @@ compatibility: claude-code
 
 - `docs/exec-plans/completed/consolidate-agents-into-skills.md`：完整执行计划
 - `docs/ARCHITECTURE.md`：目录结构说明
-- `AGENTS.md`：硬约束描述
+- `CLAUDE.md`：硬约束描述
 
 ---
 最后更新: 2026-07-02

@@ -1,100 +1,100 @@
-# Workflow 执行示例
+# Workflow Execution Examples
 
-## Workflow 1: Greenfield 初始化示例
+## Workflow 1: Greenfield Initialization Example
 
-**场景**：新创建的 Node.js/React 前端项目，需要初始化 harness 结构
+**Scenario**: A newly created Node.js/React frontend project that needs harness structure initialization
 
 ```
-用户说："帮我初始化这个项目的 harness"
+User says: "Help me initialize the harness for this project"
 
-1. project-intake → 分析 package.json → 识别 React+TypeScript+Vite
-2. bootstrap → 生成 AGENTS.md（路由表） + docs/（ARCHITECTURE.md、QUALITY_SCORE.md）
-3. repo-map → 校验：AGENTS.md ≤ 100 行？链接有效？
-4. architecture-boundaries → 定义 3 层模型：Types → Components → Pages
-   golden-principles → 注册 ESLint 规则和代码风格规范
+1. project-intake → analyze package.json → identify React+TypeScript+Vite
+2. bootstrap → generate CLAUDE.md (routing table) + docs/ (ARCHITECTURE.md, QUALITY_SCORE.md)
+3. repo-map → verify: CLAUDE.md ≤ 100 lines? Links valid?
+4. architecture-boundaries → define 3-layer model: Types → Components → Pages
+   golden-principles → register ESLint rules and code style standards
 ```
 
-**裁剪判断**：项目规模为"小型"，跳过 exec-plans/completed 目录，仅保留 active/。
+**Trimming Decision**: Project scale is "small", skip exec-plans/completed directory, keep only active/.
 
 ---
 
-## Workflow 2: 日常功能开发示例
+## Workflow 2: Daily Feature Development Example
 
-**场景**：已有 harness 的项目需要添加"用户登录"功能
-
-```
-用户说："实现用户登录功能，后端 API + 前端页面"
-
-1. exec-plans → 创建 auth-implementation.md
-   - 目标：用户能用邮箱密码登录
-   - 步骤：[POST /api/auth/login] [登录表单组件] [错误处理]
-2. 实现 → agent 编写 API 路由 + React 组件
-3. verification-loop → 实现→自检→测试→修复 循环
-4. commit-gate → diff 审查 → 测试 → commit message 格式化
-```
-
----
-
-## Workflow 3: 代码质量修复示例
-
-**场景**：现有代码出现大量 `any` 类型滥用
+**Scenario**: An existing harness project needs to add a "user login" feature
 
 ```
-用户说："代码中太多 any 类型了，清理一下"
+User says: "Implement user login functionality, backend API + frontend page"
 
-1. golden-principles → 注册"禁止使用 any"原则 → 扫描所有 .ts 文件
-2. architecture-boundaries（可选）→ 若 any 出现在数据边界，补充 Parse 规则
-3. verification-loop → 逐文件修复 → 类型检查通过
-4. commit-gate → 原子提交
+1. exec-plans → create auth-implementation.md
+   - Goal: User can log in with email and password
+   - Steps: [POST /api/auth/login] [Login form component] [Error handling]
+2. Implementation → agent writes API routes + React components
+3. verification-loop → implement→self-check→test→fix loop
+4. commit-gate → diff review → test → commit message formatting
 ```
 
 ---
 
-## Workflow 4: 扩展 harness 体系示例
+## Workflow 3: Code Quality Repair Example
 
-**场景**：团队决定添加一个新的数据库迁移 skill
+**Scenario**: Existing code has widespread `any` type abuse
 
 ```
-用户说："我想添加一个数据库迁移管理的 skill"
+User says: "There are too many 'any' types in the code, clean them up"
 
-1. authoring → 新建 skills/harness-db-migration/
-   - 判断：做 skill（方法论需要主对话参考）
-   - description：写清"什么时候用"+"做什么"
-   - 模板：按 scaffold-templates.md 生成
-2. bootstrap（可选）→ 如涉及新的 docs/ 结构
-3. repo-map → AGENTS.md 新增路由条目
+1. golden-principles → register "no any" principle → scan all .ts files
+2. architecture-boundaries (optional) → if any appears at data boundaries, add Parse rules
+3. verification-loop → fix file by file → type check passes
+4. commit-gate → atomic commits
 ```
 
 ---
 
-## Workflow 5: Prompt 优化示例
+## Workflow 4: Extending the Harness System Example
 
-**场景**：某个 skill 的 Agent 提示词效果不佳
+**Scenario**: The team decides to add a new database migration skill
 
 ```
-用户说："优化一下 verification-loop 的 Agent 提示词"
+User says: "I want to add a database migration management skill"
 
-1. prompt-optimizer → 读取 verification-loop SKILL.md
-   - 分析现有提示词 → 五维评估（角色清晰度、执行链完整性等）
-   - 重构 → 六区块模板重组
-   - 输出 → 优化后的 ## Agent 提示词 section
+1. authoring → create skills/harness-db-migration/
+   - Decision: skill (methodology needs main conversation reference)
+   - description: clearly state "when to use" + "what it does"
+   - Template: generate per scaffold-templates.md
+2. bootstrap (optional) → if new docs/ structure is involved
+3. repo-map → add routing entry in CLAUDE.md
 ```
 
 ---
 
-## 跨流组合示例
+## Workflow 5: Prompt Optimization Example
 
-**场景**：新项目需要初始化 harness，且已有的代码风格需要清理
+**Scenario**: A skill's Agent prompt is underperforming
 
 ```
-用户说："新项目，先初始化 harness，再把现有代码风格统一一下"
+User says: "Optimize the Agent prompt for verification-loop"
 
-跨流：Workflow 1 + Workflow 3
+1. prompt-optimizer → read verification-loop SKILL.md
+   - Analyze existing prompt → five-dimension evaluation (role clarity, execution chain completeness, etc.)
+   - Refactor → six-block template reorganization
+   - Output → optimized ## Agent Prompt section
+```
 
-执行顺序：
-1. project-intake（分析现有代码）
-2. bootstrap（初始化骨架）
-3. repo-map（校验）
-4. golden-principles（注册风格规则 + 扫描）
-5. commit-gate（提交）
+---
+
+## Cross-Flow Combination Example
+
+**Scenario**: A new project needs harness initialization, and existing code style needs cleanup
+
+```
+User says: "New project, first initialize harness, then standardize the existing code style"
+
+Cross-flow: Workflow 1 + Workflow 3
+
+Execution order:
+1. project-intake (analyze existing code)
+2. bootstrap (initialize skeleton)
+3. repo-map (verify)
+4. golden-principles (register style rules + scan)
+5. commit-gate (commit)
 ```

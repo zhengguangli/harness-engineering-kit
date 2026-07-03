@@ -1,34 +1,34 @@
-# 黄金原则制定检查清单
+# Golden Principle Formulation Checklist
 
-在将一条"人类品味"编码为黄金原则之前，逐项确认以下问题。全部通过则表示该原则适合纳入集。
+Before encoding a piece of "human taste" as a golden principle, verify each item below. Pass all items to indicate the principle is suitable for inclusion.
 
-## 1. 信号来源检查
+## 1. Signal Source Check
 
-| 检查 | 是否通过 | 说明 |
-|------|---------|------|
-| 该反馈在最近 review 中出现过 ≥ 2 次 | □ | 至少来自两条独立 review |
-| 对应一个可追溯的 bug/缺陷报告 | □ | 不是"感觉应该这样" |
-| 来自风格讨论而非架构争论 | □ | 架构问题归 architecture-boundaries |
-| 有具体的代码示例说明"什么是不好" | □ | 不能只有抽象描述 |
+| Check | Passed? | Notes |
+|-------|---------|-------|
+| The feedback has appeared ≥ 2 times in recent reviews | □ | From at least two independent reviews |
+| Corresponds to a traceable bug/defect report | □ | Not "it just feels this way" |
+| Comes from style discussion, not architectural debate | □ | Architectural issues belong to architecture-boundaries |
+| Has concrete code examples showing "what is bad" | □ | Cannot rely on abstract description alone |
 
-## 2. 可执行性检查
+## 2. Executability Check
 
-| 检查 | 是否通过 | 说明 |
-|------|---------|------|
-| 能否写成 lint 规则？ | □ 能 □ 不能 | 能则优先写 lint |
-| 不能写 lint 时，能否用 grep 搜索检测？ | □ | 至少有 80% 的检测率 |
-| 修复步骤是否具体到"哪个文件改什么"？ | □ | 不能只说"重构 XXX" |
-| 修复是否需要 ≥ 10 分钟？ | □ 是 □ 否 | 超过则考虑拆分原则 |
+| Check | Passed? | Notes |
+|-------|---------|-------|
+| Can it be written as a lint rule? | □ Yes □ No | If yes, prefer writing a lint rule |
+| If not a lint rule, can it be detected via grep? | □ | At least 80% detection rate |
+| Are the fix steps specific enough to say "which file to change what"? | □ | Cannot just say "refactor XXX" |
+| Does the fix require ≥ 10 minutes? | □ Yes □ No | If yes, consider splitting the principle |
 
-## 3. 影响范围检查
+## 3. Impact Scope Check
 
-| 检查 | 是否通过 | 说明 |
-|------|---------|------|
-| 该原则是否适用于项目 > 80% 的文件？ | □ | 只影响少数文件的规则不值得每周扫 |
-| 违反该原则是否会引发随时间恶化的后果？ | □ | 如"不处理则积累大量技术债" |
-| 自动修复后是否可在一分钟内审完？ | □ | fix PR 必须足够小 |
+| Check | Passed? | Notes |
+|-------|---------|-------|
+| Does the principle apply to > 80% of project files? | □ | Rules affecting only a few files are not worth scanning weekly |
+| Does violating the principle lead to deteriorating consequences over time? | □ | e.g., "unaddressed, it accumulates significant tech debt" |
+| Can an auto-fix be reviewed in under a minute? | □ | Fix PRs must be small enough |
 
-## 4. 周期复查提醒
+## 4. Periodic Review Reminder
 
-- 季度审计时重新检查本清单。连续三个周期无匹配的原则应当淘汰。
-- 因框架升级/重构导致某原则过时时，标注已过时而非直接删除（保留历史上下文）。
+- Re-check this checklist during quarterly audits. Principles with no matches for three consecutive cycles should be retired.
+- When a principle becomes obsolete due to framework upgrades or refactoring, mark it as deprecated rather than deleting it directly (preserve historical context).

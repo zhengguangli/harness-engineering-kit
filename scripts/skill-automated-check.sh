@@ -46,7 +46,7 @@ for field in name description when_to_use compatibility; do
 done
 
 # Check key sections
-for section in "核心原则" "何时使用" "方法论" "关键要点"; do
+for section in "Core Principles" "When to Use" "Methodology" "Key Points"; do
     grep -qE "^##\s+${section}" "$FILE" && check_pass "section-$section" || check_warn "section-$section" "Missing $section"
 done
 
@@ -54,10 +54,10 @@ done
 grep -qE "^##\s+Agent 提示词" "$FILE" && check_pass "agent-prompt" || check_warn "agent-prompt" "Missing Agent 提示词 section"
 
 # Check last updated
-grep -qE "最后更新" "$FILE" && check_pass "last-updated" || check_warn "last-updated" "Missing last updated date"
+grep -qE "[Ll]ast [Uu]pdated" "$FILE" && check_pass "last-updated" || check_warn "last-updated" "Missing last updated date"
 
 # Check common-edge-cases
-grep -qE "边界情况" "$FILE" && check_pass "edge-cases" || check_warn "edge-cases" "No edge cases section"
+grep -qiE "Edge Case" "$FILE" && check_pass "edge-cases" || check_warn "edge-cases" "No edge cases section"
 
 # Calculate score
 if [ $TOTAL_CHECKS -gt 0 ]; then

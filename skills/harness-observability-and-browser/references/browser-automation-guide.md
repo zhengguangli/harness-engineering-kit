@@ -1,29 +1,29 @@
-# 浏览器自动化工具使用指南
+# Browser Automation Tool Guide
 
-## 工具选型
+## Tool Selection
 
-| 工具 | 适用场景 | 优势 | 劣势 |
+| Tool | Use Case | Strengths | Weaknesses |
 |---|---|---|---|
-| Playwright | E2E 测试、跨浏览器验证 | 多浏览器支持、自动等待、截图/DOM 快照 | 学习曲线较陡 |
-| Puppeteer | Chrome 专项测试 | 轻量、Chrome 原生支持 | 仅支持 Chrome |
-| Cypress | 组件测试、E2E 测试 | 实时调试、时间旅行 | 仅支持 Chrome/Firefox |
+| Playwright | E2E testing, cross-browser verification | Multi-browser support, auto-wait, screenshots/DOM snapshots | Steeper learning curve |
+| Puppeteer | Chrome-specific testing | Lightweight, native Chrome support | Chrome only |
+| Cypress | Component testing, E2E testing | Live debugging, time travel | Chrome/Firefox only |
 
-**推荐**：优先使用 Playwright，覆盖 Chrome/Firefox/Safari 三个引擎。
+**Recommendation**: Prefer Playwright, covering Chrome/Firefox/Safari engines.
 
-## Playwright 使用模式
+## Playwright Usage Patterns
 
-### 安装与配置
+### Installation and Configuration
 
 ```bash
-# 安装
+# Install
 npm init playwright@latest
 
-# 或手动安装
+# Or install manually
 npm install -D @playwright/test
 npx playwright install
 ```
 
-### 基础验证循环
+### Basic Verification Loop
 
 ```typescript
 import { chromium } from 'playwright';
@@ -32,26 +32,26 @@ async function verifyUI(url: string, selector: string) {
   const browser = await chromium.launch();
   const page = await browser.newPage();
 
-  // 导航到目标页面
+  // Navigate to target page
   await page.goto(url);
 
-  // 等待关键元素加载
+  // Wait for key element to load
   await page.waitForSelector(selector);
 
-  // 截图（触发后状态）
+  // Screenshot (post-action state)
   await page.screenshot({
     path: `verification-${Date.now()}.png`,
     fullPage: true
   });
 
-  // DOM 快照
+  // DOM snapshot
   const domSnapshot = await page.content();
 
-  // 控制台日志
+  // Console logs
   const logs: string[] = [];
   page.on('console', msg => logs.push(msg.text()));
 
-  // 网络请求
+  // Network requests
   const requests: string[] = [];
   page.on('request', req => requests.push(req.url()));
 
@@ -61,46 +61,46 @@ async function verifyUI(url: string, selector: string) {
 }
 ```
 
-### 截图最佳实践
+### Screenshot Best Practices
 
 ```typescript
-// ✅ 好：包含元数据
+// ✅ Good: includes metadata
 await page.screenshot({
   path: `verification-${Date.now()}.png`,
   fullPage: true
 });
-// 文件名包含时间戳，便于追溯
+// Filename includes timestamp for traceability
 
-// ❌ 差：无元数据
+// ❌ Bad: no metadata
 await page.screenshot({ path: 'screenshot.png' });
-// 无法追溯何时、何地截取
+// Cannot trace when and where it was captured
 ```
 
-### DOM 快照对比
+### DOM Snapshot Comparison
 
 ```typescript
-// 触发前快照
+// Pre-action snapshot
 const beforeSnapshot = await page.content();
 
-// 执行操作
+// Execute action
 await page.click('#submit-button');
 
-// 等待状态变化
+// Wait for state change
 await page.waitForTimeout(1000);
 
-// 触发后快照
+// Post-action snapshot
 const afterSnapshot = await page.content();
 
-// 对比差异
+// Compare differences
 if (beforeSnapshot !== afterSnapshot) {
-  console.log('DOM 发生变化');
+  console.log('DOM changed');
 }
 ```
 
-### 移动端模拟
+### Mobile Device Emulation
 
 ```typescript
-// 使用 Playwright 内置设备模拟
+// Use Playwright built-in device emulation
 const iPhone = devices['iPhone 13'];
 const context = await browser.newContext({
   ...iPhone,
@@ -111,96 +111,96 @@ await page.goto(url);
 await page.screenshot({ path: 'mobile-verification.png' });
 ```
 
-### 等待策略
+### Wait Strategies
 
 ```typescript
-// ✅ 好：等待具体条件
+// ✅ Good: wait for specific conditions
 await page.waitForSelector('#loading-spinner', { state: 'hidden' });
 await page.waitForLoadState('networkidle');
 
-// ❌ 差：固定等待
-await page.waitForTimeout(3000); // 不可靠
+// ❌ Bad: fixed wait
+await page.waitForTimeout(3000); // Unreliable
 ```
 
-## 常见验证场景
+## Common Verification Scenarios
 
-### 场景一：按钮点击验证
+### Scenario 1: Button Click Verification
 
 ```typescript
-// 验证按钮点击后页面响应
+// Verify page response after button click
 const button = await page.$('#submit-button');
 const isDisabled = await button?.isDisabled();
-console.log(`按钮初始状态: ${isDisabled ? '禁用' : '启用'}`);
+console.log(`Button initial state: ${isDisabled ? 'disabled' : 'enabled'}`);
 
 await page.click('#submit-button');
 
-// 验证加载状态
+// Verify loading state
 await page.waitForSelector('#loading-spinner');
 await page.waitForSelector('#loading-spinner', { state: 'hidden' });
 
-// 验证结果
+// Verify result
 const result = await page.$eval('#result', el => el.textContent);
-console.log(`操作结果: ${result}`);
+console.log(`Operation result: ${result}`);
 ```
 
-### 场景二：表单验证
+### Scenario 2: Form Validation
 
 ```typescript
-// 验证表单提交
+// Verify form submission
 await page.fill('#email', 'test@example.com');
 await page.fill('#password', 'password123');
 await page.click('#login-button');
 
-// 验证错误提示
+// Verify error message
 const error = await page.$('.error-message');
 if (error) {
   const errorText = await error.textContent();
-  console.log(`错误提示: ${errorText}`);
+  console.log(`Error message: ${errorText}`);
 }
 
-// 验证跳转
+// Verify redirect
 await page.waitForURL('**/dashboard');
-console.log('登录成功，已跳转到 dashboard');
+console.log('Login successful, redirected to dashboard');
 ```
 
-### 场景三：视觉回归验证
+### Scenario 3: Visual Regression Verification
 
 ```typescript
-// 截图对比（需要 pixelmatch 等库）
+// Screenshot comparison (requires pixelmatch or similar library)
 import { compareScreenshots } from './visual-regression';
 
 const baseline = await page.screenshot({ path: 'baseline.png' });
-// 执行改动
+// Execute changes
 const current = await page.screenshot({ path: 'current.png' });
 
 const diff = await compareScreenshots(baseline, current);
 if (diff.percentage > 0.01) {
-  console.log(`视觉差异: ${(diff.percentage * 100).toFixed(2)}%`);
+  console.log(`Visual difference: ${(diff.percentage * 100).toFixed(2)}%`);
 }
 ```
 
-## 错误处理
+## Error Handling
 
-| 错误 | 原因 | 处理 |
+| Error | Cause | Handling |
 |---|---|---|
-| `TimeoutError` | 元素未在指定时间内出现 | 检查选择器是否正确，增加等待时间 |
-| `Navigation timeout` | 页面加载超时 | 检查网络，增加超时时间 |
-| `Element not found` | 选择器匹配不到元素 | 检查 DOM 结构，使用更稳定的选择器 |
-| `Browser not found` | 浏览器未安装 | 运行 `npx playwright install` |
+| `TimeoutError` | Element did not appear within timeout | Check selector correctness, increase wait time |
+| `Navigation timeout` | Page load timed out | Check network, increase timeout |
+| `Element not found` | Selector does not match any element | Check DOM structure, use more stable selectors |
+| `Browser not found` | Browser not installed | Run `npx playwright install` |
 
-## 性能优化
+## Performance Optimization
 
 ```typescript
-// 复用浏览器实例
+// Reuse browser instance
 const browser = await chromium.launch();
 
-// 并行验证多个页面
+// Verify multiple pages in parallel
 const pages = await Promise.all([
   browser.newPage().then(async p => { await p.goto(url1); return p; }),
   browser.newPage().then(async p => { await p.goto(url2); return p; }),
 ]);
 
-// 批量截图
+// Batch screenshots
 await Promise.all(pages.map((p, i) =>
   p.screenshot({ path: `page-${i}.png` })
 ));
@@ -208,7 +208,7 @@ await Promise.all(pages.map((p, i) =>
 await browser.close();
 ```
 
-## CI/CD 集成
+## CI/CD Integration
 
 ```yaml
 # GitHub Actions

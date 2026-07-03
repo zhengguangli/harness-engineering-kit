@@ -1,156 +1,156 @@
-# 端到端示例：Node.js 电商平台架构边界审计
+# End-to-End Example: Node.js E-Commerce Platform Architecture Boundary Audit
 
-## 场景背景
+## Scenario Background
 
-一个中型 Node.js 电商平台，代码量约 5 万行，团队 8 人。近期出现以下问题：
-- `OrderService` 直接 `require` 了 `UserRepository`（层间越界）
-- 认证逻辑散落在 3 个不同的 Service 里（横切关注点未收口）
-- 一个循环依赖导致启动时偶发 crash
+A medium-sized Node.js e-commerce platform, approximately 50,000 lines of code, with an 8-person team. Recently the following issues have emerged:
+- `OrderService` directly `require`s `UserRepository` (cross-layer boundary violation)
+- Authentication logic scattered across 3 different Services (cross-cutting concerns not unified)
+- A circular dependency causing intermittent startup crashes
 
-目标：建立分层架构规则，通过机械化检查防止问题复发。
+Goal: Establish layered architecture rules and prevent recurrence through mechanical checks.
 
 ---
 
-## 步骤 1：分析项目现状
+## Step 1: Analyze Project Current State
 
-**输入**：项目代码目录
+**Input**: Project code directory
 
-**操作**：
+**Actions**:
 
 ```bash
-# 列出顶层目录结构
+# List top-level directory structure
 ls src/
 
-# 识别主要模块
+# Identify main modules
 find src -maxdepth 2 -type d | head -30
 ```
 
-**输出**：
+**Output**:
 ```
 src/
-├── types/          # TypeScript 类型定义
-├── config/         # 配置管理
-├── repositories/   # 数据访问层
-├── services/       # 业务逻辑层
-├── controllers/    # 控制器层
-├── routes/         # 路由层
-├── middleware/     # 中间件（认证、日志等）
-└── utils/          # 工具函数
+├── types/          # TypeScript type definitions
+├── config/         # Configuration management
+├── repositories/   # Data access layer
+├── services/       # Business logic layer
+├── controllers/    # Controller layer
+├── routes/         # Routing layer
+├── middleware/     # Middleware (authentication, logging, etc.)
+└── utils/          # Utility functions
 ```
 
-**发现**：
-- 项目有清晰的 6 层结构
-- `middleware/` 目录存在但未被统一引用
-- `utils/` 里混入了业务逻辑
+**Findings**:
+- The project has a clear 6-layer structure
+- `middleware/` directory exists but is not uniformly referenced
+- Business logic is mixed into `utils/`
 
 ---
 
-## 步骤 2：识别依赖方向
+## Step 2: Identify Dependency Direction
 
-**输入**：项目目录结构
+**Input**: Project directory structure
 
-**操作**：
+**Actions**:
 
 ```bash
-# 检查当前依赖方向（搜索 import/require 语句）
+# Check current dependency direction (search import/require statements)
 rg "require\(|from ['\"]" src/ --no-filename | sort | uniq -c | sort -rn | head -20
 
-# 检查跨层依赖
-rg "require.*repositories" src/services/  # Service 是否直接引用 Repository
-rg "require.*services" src/routes/        # Route 是否直接引用 Service
+# Check cross-layer dependencies
+rg "require.*repositories" src/services/  # Whether Service directly references Repository
+rg "require.*services" src/routes/        # Whether Route directly references Service
 ```
 
-**输出**：
+**Output**:
 ```
-# 发现违规：
+# Violations found:
 src/services/OrderService.ts:1  const userRepo = require('../repositories/UserRepository')
 src/services/PaymentService.ts:1  const { verifyToken } = require('../middleware/auth')
 src/controllers/UserController.ts:1  const { db } = require('../repositories')
 ```
 
-**识别的依赖方向**：
+**Identified Dependency Direction**:
 ```
 types → config → repositories → services → controllers → routes
 ```
 
-**横切关注点**：`middleware/`（认证、日志、错误处理）
+**Cross-Cutting Concerns**: `middleware/` (authentication, logging, error handling)
 
 ---
 
-## 步骤 3：定义架构规则
+## Step 3: Define Architecture Rules
 
-**输入**：步骤 1-2 的分析结果
+**Input**: Analysis results from Steps 1-2
 
-**操作**：与用户确认以下规则
+**Actions**: Confirm the following rules with the user
 
 ```markdown
-## 依赖方向规则
+## Dependency Direction Rules
 
-### 正向依赖（必须单向）
+### Forward Dependencies (must be unidirectional)
 types → config → repositories → services → controllers → routes
 
-### 横切关注点入口
-middleware/ 只能被 routes/ 引用，不能被 services/ 或 controllers/ 直接引用。
+### Cross-Cutting Concern Entry Point
+middleware/ can only be referenced by routes/, not directly by services/ or controllers/.
 
-### 禁止的依赖
-- services/ 不能直接 import repositories/ 的实现（必须通过接口）
-- controllers/ 不能直接 import repositories/（必须经过 services/）
-- 任何层不能反向依赖上层
+### Prohibited Dependencies
+- services/ must not directly import repositories/ implementations (must go through interfaces)
+- controllers/ must not directly import repositories/ (must go through services/)
+- No layer may reverse-depend on an upper layer
 ```
 
-**输出**：写入 `docs/ARCHITECTURE.md`
+**Output**: Write to `docs/ARCHITECTURE.md`
 
 ---
 
-## 步骤 4：生成检查规则
+## Step 4: Generate Check Rules
 
-**输入**：步骤 3 的架构规则
+**Input**: Architecture rules from Step 3
 
-**操作**：boundary-auditor agent 内联执行检查
+**Actions**: boundary-auditor agent executes checks inline
 
 ```bash
-# 检查 1：Service 层直接引用 Repository
+# Check 1: Service layer directly referencing Repository
 rg "require.*repositories|from.*repositories" src/services/
 
-# 检查 2：Controller 层直接引用 Repository
+# Check 2: Controller layer directly referencing Repository
 rg "require.*repositories|from.*repositories" src/controllers/
 
-# 检查 3：横切关注点散落
+# Check 3: Cross-cutting concerns scattered
 rg "require.*middleware|from.*middleware" src/services/ src/controllers/
 
-# 检查 4：循环依赖检测
-# 使用 madge 或手动检查 import 链
+# Check 4: Circular dependency detection
+# Use madge or manually inspect import chains
 npx madge --circular src/
 ```
 
 ---
 
-## 步骤 5：执行审计并生成报告
+## Step 5: Execute Audit and Generate Report
 
-**输入**：步骤 4 的检查结果
+**Input**: Check results from Step 4
 
-**输出**：
+**Output**:
 
 ```markdown
-## 架构边界审计报告
+## Architecture Boundary Audit Report
 
-### 总结
-- 违规总数：5
-- CRITICAL：1
-- HIGH：3
-- MEDIUM：1
-- LOW：0
-- 建议：阻塞合并（存在 CRITICAL 级别循环依赖）
+### Summary
+- Total violations: 5
+- CRITICAL: 1
+- HIGH: 3
+- MEDIUM: 1
+- LOW: 0
+- Recommendation: Block merge (CRITICAL-level circular dependency exists)
 
-### 详细发现
+### Detailed Findings
 
-### [CRITICAL] 循环依赖导致启动 crash
-- 文件: `src/services/OrderService.ts`, 行号: L1-L5
-- 违反规则: 依赖方向必须单向，不能存在循环
-- 影响: 导致模块加载顺序不确定，偶发启动 crash
-- 建议修复:
-  1. 将 `OrderService` 对 `UserService` 的依赖提取为接口
-  2. 使用依赖注入替代直接 require
+### [CRITICAL] Circular dependency causing startup crash
+- File: `src/services/OrderService.ts`, line: L1-L5
+- Rule violated: Dependency direction must be unidirectional, no cycles allowed
+- Impact: Causes module loading order uncertainty, intermittent startup crashes
+- Suggested Fix:
+  1. Extract `OrderService`'s dependency on `UserService` into an interface
+  2. Use dependency injection instead of direct require
   ```typescript
   // Before
   const UserService = require('./UserService');
@@ -162,40 +162,40 @@ npx madge --circular src/
   constructor(private userService: UserServiceInterface) {}
   ```
 
-### [HIGH] Service 层直接引用 Repository 实现
-- 文件: `src/services/OrderService.ts`, 行号: L1
-- 违反规则: services/ 不能直接 import repositories/ 的实现
-- 影响: 违反分层架构，Service 与数据访问层耦合
-- 建议修复:
-  1. 在 `src/types/` 中定义 `UserRepositoryInterface`
-  2. 通过依赖注入传入 Repository 实例
+### [HIGH] Service layer directly referencing Repository implementation
+- File: `src/services/OrderService.ts`, line: L1
+- Rule violated: services/ must not directly import repositories/ implementations
+- Impact: Violates layered architecture, Service coupled with data access layer
+- Suggested Fix:
+  1. Define `UserRepositoryInterface` in `src/types/`
+  2. Pass Repository instance through dependency injection
   ```typescript
   // Before
   const userRepo = require('../repositories/UserRepository');
 
-  // After (在构造函数中注入)
+  // After (inject in constructor)
   constructor(private userRepo: UserRepositoryInterface) {}
   ```
 
-### [HIGH] 横切关注点散落进 Service 层
-- 文件: `src/services/PaymentService.ts`, 行号: L1
-- 违反规则: middleware/ 只能被 routes/ 引用
-- 影响: 认证逻辑与业务逻辑耦合，无法统一管理
-- 建议修复:
-  1. 移除 `PaymentService` 中的 `verifyToken` 调用
-  2. 将认证检查移到 `routes/payment.ts` 的中间件链中
+### [HIGH] Cross-cutting concern leaking into Service layer
+- File: `src/services/PaymentService.ts`, line: L1
+- Rule violated: middleware/ can only be referenced by routes/
+- Impact: Authentication logic coupled with business logic, cannot be managed uniformly
+- Suggested Fix:
+  1. Remove the `verifyToken` call from `PaymentService`
+  2. Move authentication check to the middleware chain in `routes/payment.ts`
   ```typescript
   // routes/payment.ts
   router.post('/pay', authMiddleware, PaymentController.pay);
   ```
 
-### [HIGH] Controller 层直接引用 Repository
-- 文件: `src/controllers/UserController.ts`, 行号: L1
-- 违反规则: controllers/ 不能直接 import repositories/
-- 影响: 跳过业务逻辑层，直接操作数据
-- 建议修复:
-  1. 将数据操作逻辑移入 `UserService`
-  2. Controller 只调用 Service 方法
+### [HIGH] Controller layer directly referencing Repository
+- File: `src/controllers/UserController.ts`, line: L1
+- Rule violated: controllers/ must not directly import repositories/
+- Impact: Bypasses business logic layer, directly operates on data
+- Suggested Fix:
+  1. Move data operation logic into `UserService`
+  2. Controller only calls Service methods
   ```typescript
   // Before
   const { db } = require('../repositories');
@@ -204,65 +204,65 @@ npx madge --circular src/
   const user = await this.userService.getUser(id);
   ```
 
-### [MEDIUM] utils/ 混入业务逻辑
-- 文件: `src/utils/validation.ts`, 行号: L10-L25
-- 违反规则: utils/ 只能包含通用工具函数
-- 影响: 工具函数与业务耦合，难以复用
-- 建议修复:
-  1. 将 `validateOrder` 移入 `src/services/OrderService`
-  2. utils/ 只保留纯工具函数（如日期格式化、字符串处理）
+### [MEDIUM] Business logic mixed into utils/
+- File: `src/utils/validation.ts`, line: L10-L25
+- Rule violated: utils/ should only contain generic utility functions
+- Impact: Utility functions coupled with business logic, hard to reuse
+- Suggested Fix:
+  1. Move `validateOrder` into `src/services/OrderService`
+  2. utils/ should only keep pure utility functions (e.g., date formatting, string processing)
 ```
 
 ---
 
-## 步骤 6：集成到验证循环
+## Step 6: Integrate into Verification Loop
 
-**输入**：步骤 5 的审计报告
+**Input**: Audit report from Step 5
 
-**操作**：将检查集成到 `harness-verification-loop`
+**Actions**: Integrate checks into `harness-verification-loop`
 
 ```yaml
-# 在 verification-loop 配置中添加
+# Add to verification-loop configuration
 verification_steps:
   - name: architecture-boundaries-check
     command: |
-      # 由 boundary-auditor agent 内联执行
-      # 检查依赖方向、循环依赖、横切关注点
-    blocking: true  # CRITICAL/HIGH 违规阻塞合并
+      # Executed inline by boundary-auditor agent
+      # Check dependency direction, circular dependencies, cross-cutting concerns
+    blocking: true  # CRITICAL/HIGH violations block merge
 ```
 
 ---
 
-## 步骤 7：定期审计
+## Step 7: Regular Audits
 
-**频率**：每月一次 / 重大重构后
+**Frequency**: Monthly / After major refactoring
 
-**操作**：
+**Actions**:
 ```bash
-# 运行边界检查
-# boundary-auditor agent 执行步骤 4 的检查
-# 对比上次审计结果，识别新增违规
+# Run boundary check
+# boundary-auditor agent executes Step 4 checks
+# Compare with previous audit results to identify new violations
 ```
 
 ---
 
-## 错误处理
+## Error Handling
 
-### 场景 1：ARCHITECTURE.md 不存在
-**处理**：boundary-auditor 报告"架构规则未被文档化"，建议先用 `harness-architecture-boundaries` 技能补上，再基于代码现状做合理推断。
+### Scenario 1: ARCHITECTURE.md does not exist
+**Handling**: boundary-auditor reports "Architecture rules are not documented," recommends using the `harness-architecture-boundaries` skill first, then makes reasonable inferences based on the current codebase state.
 
-### 场景 2：规则定义模糊导致无法判断
-**处理**：boundary-auditor 将"规则需要被更精确地编码"作为发现项报告，不自行放宽规则。
+### Scenario 2: Rule definition too vague to judge
+**Handling**: boundary-auditor reports "Rule needs to be encoded more precisely" as a finding item, without loosening the rule on its own.
 
-### 场景 3：修复建议不可执行
-**处理**：boundary-auditor 补充具体修复方向，包括代码示例和操作步骤。
+### Scenario 3: Fix suggestion is not actionable
+**Handling**: boundary-auditor supplements with concrete fix directions, including code examples and operational steps.
 
 ---
 
-## 验收标准
+## Acceptance Criteria
 
-- [ ] `docs/ARCHITECTURE.md` 包含完整的分层模型和依赖方向规则
-- [ ] boundary-auditor 能识别所有 CRITICAL/HIGH 违规
-- [ ] 每个违规都附带可执行的修复建议
-- [ ] 循环依赖被消除（`npx madge --circular src/` 无输出）
-- [ ] 横切关注点统一通过 middleware/ 入口
+- [ ] `docs/ARCHITECTURE.md` contains the complete layering model and dependency direction rules
+- [ ] boundary-auditor can identify all CRITICAL/HIGH violations
+- [ ] Each violation comes with an actionable fix suggestion
+- [ ] Circular dependencies eliminated (`npx madge --circular src/` produces no output)
+- [ ] Cross-cutting concerns uniformly routed through the middleware/ entry point

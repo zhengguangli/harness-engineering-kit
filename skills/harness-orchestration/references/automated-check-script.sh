@@ -25,28 +25,28 @@ for ref_file in "routing-decision-tree.md" "workflow-execution-examples.md"; do
   fi
 done
 
-# Check SKILL.md has 五条标准工作流 section
+# Check SKILL.md has Five Standard Workflows section
 ((++TOTAL_EXTRA))
-if grep -qE "五条标准工作流" "$SKILL_DIR/SKILL.md"; then
+if grep -qE "Five Standard Workflows" "$SKILL_DIR/SKILL.md"; then
   ((++PASSED_EXTRA))
 else
-  echo "  [FAIL] Missing 五条标准工作流 section"
+  echo "  [FAIL] Missing Five Standard Workflows section"
 fi
 
-# Check SKILL.md has 跨skill交接点 or 相关 Skill section
+# Check SKILL.md has Cross-Skill Handoff Points or Related Skills section
 ((++TOTAL_EXTRA))
-if grep -qE "^##\s+跨skill交接点|^##\s+相关 Skill" "$SKILL_DIR/SKILL.md"; then
+if grep -qE "^##\s+Cross-Skill Handoff Points|^##\s+Related Skills" "$SKILL_DIR/SKILL.md"; then
   ((++PASSED_EXTRA))
 else
-  echo "  [FAIL] Missing 跨skill交接点 or 相关 Skill section"
+  echo "  [FAIL] Missing Cross-Skill Handoff Points or Related Skills section"
 fi
 
-# Check for 常见省略场景 section
+# Check for Common Omission Scenarios section
 ((++TOTAL_EXTRA))
-if grep -qE "常见省略场景" "$SKILL_DIR/SKILL.md"; then
+if grep -qE "Common Omission Scenarios" "$SKILL_DIR/SKILL.md"; then
   ((++PASSED_EXTRA))
 else
-  echo "  [FAIL] Missing 常见省略场景 section"
+  echo "  [FAIL] Missing Common Omission Scenarios section"
 fi
 
 echo "---"

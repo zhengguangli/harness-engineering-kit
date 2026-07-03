@@ -1,36 +1,36 @@
-### 1. 浏览器驱动验证
+### 1. Browser-Driven Verification
 
-适用于:UI bug 复现、交互流程验证、视觉回归检查。
+Applies to: UI bug reproduction, interaction flow verification, visual regression checks.
 
-标准循环:
+Standard cycle:
 
 ```
-选定目标(要复现的 bug / 要验证的用户旅程)
-  → 触发前拍快照(DOM 状态 / 截图)
-  → 执行触发路径(点击、输入、导航)
-  → 观察运行时事件(控制台报错、网络请求、状态变化)
-  → 诊断问题
-  → 实施修复(*)
-  → 重启应用
-  → 重新执行同一条路径
-  → 触发后拍快照,和触发前对比
-  → 循环直到状态符合预期
+Select target (bug to reproduce / user journey to verify)
+  → Take pre-action snapshot (DOM state / screenshot)
+  → Execute trigger path (click, input, navigation)
+  → Observe runtime events (console errors, network requests, state changes)
+  → Diagnose issue
+  → Apply fix (*)
+  → Restart application
+  → Re-execute the same path
+  → Take post-action snapshot, compare with pre-action
+  → Loop until state matches expectations
 ```
 
-> (*) 注意:修复和重启由执行型 agent(如 verification-loop-runner)完成;qa-verifier 只负责到"诊断问题"和"拍摄对比证据",不自行修复。
+> (*) Note: fix and restart are handled by an execution agent (e.g., verification-loop-runner); qa-verifier is only responsible up to "diagnose issue" and "capture comparison evidence", and does not apply fixes itself.
 
-如果项目里已经配置了浏览器自动化工具(例如某个 Playwright/Chrome DevTools 相关的 MCP 工具),优先使用它;没有配置时,提醒用户这是一个值得补上的环境能力缺口,而不是退回去"读代码猜测 UI 行为"。
+If a browser automation tool is already configured in the project (e.g., a Playwright/Chrome DevTools-related MCP tool), prefer using it; if not configured, remind the user that this is a worthwhile environment capability gap to fill, rather than falling back to "reading code to guess UI behavior".
 
-### 失败分支（统一降级）
+### Failure Branches (Unified Degradation)
 
-- 缺浏览器/驱动不可用：报告“环境能力缺口：缺少浏览器自动化工具”，改为非 UI 验证（日志/指标）或直接退出并给出补环境建议。
-- 页面不可达/启动失败：记录错误证据（截图/日志），报告根因（端口占用/鉴权失败/启动脚本错误），不自行修复。
-- 权限受限（CI 无头环境限制）：启用 headless 模式或降级为结构化日志/指标验证。
-- 页面不稳定（flaky）：标记为“不稳定路径”，建议重试一次并附证据；若仍不稳定，归类为需要更高权限评审。
+- Missing browser / driver unavailable: Report "environment capability gap: missing browser automation tool", fall back to non-UI verification (logs/metrics) or exit with environment setup recommendations.
+- Page unreachable / startup failure: Record error evidence (screenshot/logs), report root cause (port conflict/auth failure/startup script error), do not self-fix.
+- Permission constraints (CI headless environment restrictions): Enable headless mode or degrade to structured log/metric verification.
+- Unstable page (flaky): Mark as "unstable path", suggest one retry with evidence attached; if still unstable, classify as requiring higher-permission review.
 
-**关键产出物**:修复前后的截图/录屏对比。这不只是给人看的证据,也是 agent 自己判断"这次真的修好了"的依据——产出物本身就是验证手段,不是验证完成后的附加文档。
+**Key deliverable**: Pre- and post-fix screenshot/screen recording comparison. This is not just evidence for humans, but also the basis for the agent to judge "this fix is really done" — the deliverable itself is the verification means, not an attachment after verification is complete.
 
-**环境隔离建议**:如果可能,让每个并行的任务/worktree 对应一份独立可启动的应用实例,这样多个 agent 同时验证不同改动时不会互相污染彼此看到的状态。
+**Environment isolation recommendation**: If possible, have each parallel task/worktree correspond to an independent launchable application instance, so that multiple agents verifying different changes simultaneously do not pollute each other's observed state.
 
 ---
-最后更新: 2026-06-29
+Last updated: 2026-06-29

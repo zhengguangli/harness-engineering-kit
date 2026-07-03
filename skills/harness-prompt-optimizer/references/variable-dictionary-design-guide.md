@@ -1,174 +1,174 @@
-# 变量字典设计指南
+# Variable Dictionary Design Guide
 
-## 什么是变量字典
+## What is a Variable Dictionary
 
-变量字典是 prompt 中对动态输入的声明——告诉 LLM "这些值会在运行时注入，你不需要自己假设"。
+A Variable Dictionary is a declaration of dynamic inputs within a prompt — it tells the LLM "these values will be injected at runtime, you don't need to assume them yourself."
 
-## 为什么需要变量字典
+## Why You Need a Variable Dictionary
 
-| 没有变量字典 | 有变量字典 |
+| Without Variable Dictionary | With Variable Dictionary |
 |---|---|
-| LLM 自行假设场景 | LLM 知道输入来源 |
-| 硬编码示例值 | 动态注入实际值 |
-| 输出格式不稳定 | 输出与输入对应 |
-| 难以复用 | 同一 prompt 适用于不同输入 |
+| LLM makes assumptions about the scenario | LLM knows the input source |
+| Hard-coded example values | Dynamically injected actual values |
+| Unstable output format | Output corresponds to input |
+| Hard to reuse | Same prompt applicable to different inputs |
 
-## 变量字典结构
+## Variable Dictionary Structure
 
 ```markdown
 # Variables Dictionary
 
-| 变量名 | 类型 | 必填 | 说明 | 示例值 |
+| Variable | Type | Required | Description | Example Value |
 |---|---|---|---|---|
-| user_input | string | 是 | 用户的原始输入 | "帮我优化这段代码" |
-| target_language | string | 否 | 目标输出语言 | "zh" / "en" |
-| max_length | number | 否 | 输出最大长度 | 500 |
-| context | object | 否 | 额外上下文信息 | {"project": "my-app"} |
+| user_input | string | Yes | User's original input | "Help me optimize this code" |
+| target_language | string | No | Target output language | "zh" / "en" |
+| max_length | number | No | Maximum output length | 500 |
+| context | object | No | Additional context information | {"project": "my-app"} |
 ```
 
-## 设计原则
+## Design Principles
 
-### 原则一：显式声明所有动态输入
+### Principle 1: Explicitly Declare All Dynamic Inputs
 
 ```markdown
-# ❌ 差：未声明变量
-请分析这段代码的问题。
+# ❌ Bad: Undeclared variables
+Please analyze the issues in this code.
 
-# ✅ 好：显式声明
+# ✅ Good: Explicit declaration
 # Variables Dictionary
-| 变量名 | 类型 | 必填 | 说明 |
+| Variable | Type | Required | Description |
 |---|---|---|---|
-| code_snippet | string | 是 | 需要分析的代码片段 |
-| language | string | 是 | 代码语言（如 "typescript"） |
-| focus | string | 否 | 关注点（"performance" / "readability" / "security"） |
+| code_snippet | string | Yes | Code snippet to analyze |
+| language | string | Yes | Programming language (e.g., "typescript") |
+| focus | string | No | Focus area ("performance" / "readability" / "security") |
 
-请分析以下代码的问题：
-\`\`\`{{language}}
+Please analyze the issues in the following code:
+```{{language}}
 {{code_snippet}}
-\`\`\`
-关注点：{{focus}}
+```
+Focus area: {{focus}}
 ```
 
-### 原则二：变量名语义化
+### Principle 2: Semantic Variable Names
 
 ```markdown
-# ❌ 差：变量名无意义
-| 变量名 | 说明 |
+# ❌ Bad: Meaningless variable names
+| Variable | Description |
 |---|---|
-| x | 输入 |
-| y | 输出 |
+| x | Input |
+| y | Output |
 
-# ✅ 好：变量名自解释
-| 变量名 | 说明 |
+# ✅ Good: Self-explanatory variable names
+| Variable | Description |
 |---|---|
-| raw_user_message | 用户的原始消息 |
-| parsed_intent | 解析后的用户意图 |
-| response_format | 响应格式要求 |
+| raw_user_message | User's original message |
+| parsed_intent | Parsed user intent |
+| response_format | Response format requirements |
 ```
 
-### 原则三：提供默认值或标注可选
+### Principle 3: Provide Default Values or Mark as Optional
 
 ```markdown
 # Variables Dictionary
-| 变量名 | 类型 | 必填 | 默认值 | 说明 |
+| Variable | Type | Required | Default | Description |
 |---|---|---|---|---|
-| language | string | 否 | "zh" | 输出语言 |
-| verbose | boolean | 否 | false | 是否输出详细解释 |
-| max_retries | number | 否 | 3 | 最大重试次数 |
+| language | string | No | "en" | Output language |
+| verbose | boolean | No | false | Whether to output detailed explanation |
+| max_retries | number | No | 3 | Maximum retry count |
 ```
 
-### 原则四：变量在 prompt 中的引用方式
+### Principle 4: Variable Reference Methods in the Prompt
 
 ```markdown
-# 方式一：Mustache 模板（推荐）
-请用 {{language}} 语言回答以下问题：
+# Method 1: Mustache Template (Recommended)
+Please answer the following question in {{language}}:
 {{question}}
 
-# 方式二：占位符
-请用 [LANGUAGE] 语言回答以下问题：
+# Method 2: Placeholder
+Please answer the following question in [LANGUAGE]:
 [QUESTION]
 
-# 方式三：自然语言引用
-请用用户指定的语言（由 language 变量提供）回答问题。
+# Method 3: Natural Language Reference
+Please answer the question in the language specified by the language variable.
 ```
 
-## 变量类型设计
+## Variable Type Design
 
-### 基础类型
+### Basic Types
 
-| 类型 | 说明 | 示例 |
+| Type | Description | Example |
 |---|---|---|
-| string | 文本 | "hello" |
-| number | 数字 | 42 |
-| boolean | 布尔 | true / false |
-| enum | 枚举 | "zh" / "en" |
+| string | Text | "hello" |
+| number | Numeric | 42 |
+| boolean | Boolean | true / false |
+| enum | Enumeration | "en" / "zh" |
 
-### 复合类型
+### Composite Types
 
-| 类型 | 说明 | 示例 |
+| Type | Description | Example |
 |---|---|---|
-| object | 对象 | {"key": "value"} |
-| array | 数组 | ["item1", "item2"] |
-| union | 联合类型 | string \| number |
+| object | Object | {"key": "value"} |
+| array | Array | ["item1", "item2"] |
+| union | Union type | string \| number |
 
-### 类型约束
+### Type Constraints
 
 ```markdown
 # Variables Dictionary
-| 变量名 | 类型 | 约束 | 说明 |
+| Variable | Type | Constraint | Description |
 |---|---|---|---|
-| temperature | number | 0.0 - 2.0 | 生成温度 |
-| top_p | number | 0.0 - 1.0 | 核采样参数 |
-| max_tokens | number | ≥ 1 | 最大生成 token 数 |
-| language | enum | "zh" \| "en" \| "ja" | 输出语言 |
+| temperature | number | 0.0 - 2.0 | Generation temperature |
+| top_p | number | 0.0 - 1.0 | Nucleus sampling parameter |
+| max_tokens | number | ≥ 1 | Maximum generation tokens |
+| language | enum | "en" \| "zh" \| "ja" | Output language |
 ```
 
-## 与 Execution Chain 的配合
+## Coordination with Execution Chain
 
-变量字典为 Execution Chain 提供输入：
+The Variable Dictionary provides input for the Execution Chain:
 
 ```markdown
 # Variables Dictionary
-| 变量名 | 类型 | 必填 | 说明 |
+| Variable | Type | Required | Description |
 |---|---|---|---|
-| raw_data | string | 是 | 原始数据（JSON 格式） |
-| target_metric | string | 是 | 目标指标名称 |
-| threshold | number | 是 | 阈值 |
+| raw_data | string | Yes | Raw data (JSON format) |
+| target_metric | string | Yes | Target metric name |
+| threshold | number | Yes | Threshold value |
 
 # Execution Chain
-1. 解析 {{raw_data}} 为结构化数据
-2. 提取 {{target_metric}} 的值
-3. 比较该值与 {{threshold}}
-4. 输出比较结果和建议
+1. Parse {{raw_data}} into structured data
+2. Extract the value of {{target_metric}}
+3. Compare the value with {{threshold}}
+4. Output comparison result and suggestion
 ```
 
-## 与 Output Schema 的配合
+## Coordination with Output Schema
 
-变量字典中的变量可能出现在输出中：
+Variables from the Variable Dictionary may appear in the output:
 
 ```markdown
 # Variables Dictionary
-| 变量名 | 类型 | 必填 | 说明 |
+| Variable | Type | Required | Description |
 |---|---|---|---|
-| analysis_target | string | 是 | 分析目标 |
-| report_format | enum | 是 | 报告格式（"brief" / "detailed"） |
+| analysis_target | string | Yes | Analysis target |
+| report_format | enum | Yes | Report format ("brief" / "detailed") |
 
 # Output Schema
 {
-  "target": "{{analysis_target}}",  // 引用变量
-  "format": "{{report_format}}",    // 引用变量
+  "target": "{{analysis_target}}",  // Variable reference
+  "format": "{{report_format}}",    // Variable reference
   "findings": [...],
   "recommendations": [...]
 }
 ```
 
-## 常见错误
+## Common Mistakes
 
-| 错误 | 后果 | 修正 |
+| Mistake | Consequence | Fix |
 |---|---|---|
-| 未声明变量 | LLM 自行假设值 | 显式声明所有动态输入 |
-| 变量名不语义化 | 维护困难 | 使用描述性变量名 |
-| 缺少类型约束 | LLM 输出格式不稳定 | 添加类型和约束 |
-| 变量太多 | 维护成本高 | 精简到必要的变量 |
-| 缺少默认值 | 每次都要提供所有变量 | 为可选变量提供默认值 |
-| 变量和示例值不匹配 | LLM 混淆 | 保持变量声明和示例一致 |
+| Undeclared variables | LLM assumes values on its own | Explicitly declare all dynamic inputs |
+| Non-semantic variable names | Difficult to maintain | Use descriptive variable names |
+| Missing type constraints | LLM output format unstable | Add types and constraints |
+| Too many variables | High maintenance cost | Trim to essential variables |
+| Missing default values | Must provide all variables every time | Provide defaults for optional variables |
+| Variables and example values don't match | LLM confused | Keep variable declarations and examples consistent |

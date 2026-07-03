@@ -1,94 +1,94 @@
-# 通用边界情况参考文档
+# Common Edge Cases Reference
 
-## 概述
+## Overview
 
-本文档汇总了 Commit Gate（提交门禁）处理中的通用边界情况。引用本文档以避免在 SKILL.md 中重复定义。
+This document consolidates common edge cases encountered during Commit Gate processing. Reference this document to avoid redefining them in SKILL.md.
 
-## 通用边界情况
+## Common Edge Cases
 
-### 1. 无变更可提交
+### 1. No Changes to Commit
 
-**场景**：工作区干净，没有待提交的变更
+**Scenario**: Working directory is clean, no pending changes to commit
 
-**处理原则**：
-- 检查 git status 确认无变更
-- 报告"工作区干净，无需提"
-- 不运行任何检查流程
+**Handling Principle**:
+- Check git status to confirm no changes
+- Report "Working directory clean, nothing to commit"
+- Do not run any check process
 
-**判断标准**：
-- `git status --porcelain` 输出为空
-- `git diff --stat` 和 `git diff --cached --stat` 均为空
+**Criteria**:
+- `git status --porcelain` output is empty
+- Both `git diff --stat` and `git diff --cached --stat` are empty
 
-### 2. 大规模变更（文件数 > 20 或变更行数 > 500）
+### 2. Large-Scale Changes (> 20 files or > 500 changed lines)
 
-**场景**：单次提交包含大量文件变更，逐一运行完整门禁流程耗时过长
+**Scenario**: A single commit contains a large number of file changes; running the full gate process file-by-file takes too long
 
-**处理原则**：
-- 先判断是否为单一意图（重构、批量格式化、依赖升级等）
-- 单一意图：合并运行关键检查（lint + 类型检查 + 测试），不逐一检视 diff
-- 非单一意图：建议拆分为多个提交，每个聚焦一个变更意图
-- 必要时允许用户选择跳过后门禁
+**Handling Principle**:
+- First determine if it is a single intent (refactoring, bulk formatting, dependency upgrades, etc.)
+- Single intent: run critical checks together (lint + type check + tests), do not inspect each diff individually
+- Mixed intent: suggest splitting into multiple commits, each focused on a single change intent
+- If necessary, allow the user to bypass the gate
 
-### 3. 遗留项目首次提交通道
+### 3. Legacy Project First-Time Commit
 
-**场景**：首次在遗留项目运行 commit gate，存在大量既有 lint/类型/测试问题
+**Scenario**: Running commit gate for the first time on a legacy project with many pre-existing lint/type/test issues
 
-**处理原则**：
-- 区分既有问题和新引入问题
-- 只阻止新引入的问题，既有问题记入 tech-debt-tracker
-- 在报告中明确标注哪些是既有问题、哪些是新问题
+**Handling Principle**:
+- Distinguish between pre-existing issues and newly introduced issues
+- Only block newly introduced issues; pre-existing issues are logged in tech-debt-tracker
+- Clearly label in the report which issues are pre-existing and which are new
 
-**区分方法**：
-1. 先在提交前运行一遍 lint/类型检查/测试，记录既有失败
-2. 应用变更后再运行一遍，只报告新增的失败
+**Differentiation Method**:
+1. First run lint/type check/tests before committing, recording pre-existing failures
+2. Apply changes and run again, reporting only new failures
 
-### 4. 构建/测试基础设施缺失
+### 4. Missing Build/Test Infrastructure
 
-**场景**：项目中缺少必要的最小检查配置（如无 lint 配置、无测试框架）
+**Scenario**: The project lacks the minimum required check configuration (e.g., no lint config, no test framework)
 
-**处理原则**：
-- 报告能力缺口（明确列出缺失的配置项）
-- 建议先运行 harness-bootstrap 补齐基础设施
-- 不强制阻塞提交（允许跳过缺失项对应的检查）
-- 在报告中标注"因缺失 X 配置，跳过 Y 检查"
+**Handling Principle**:
+- Report capability gaps (explicitly list missing configuration items)
+- Suggest running harness-bootstrap first to fill in the infrastructure
+- Do not force-block the commit (allow skipping checks corresponding to missing items)
+- Note in the report "Skipping Y check due to missing X configuration"
 
-### 5. 非代码文件变更
+### 5. Non-Code File Changes
 
-**场景**：提交只包含文档、配置文件、图片等非代码文件
+**Scenario**: The commit only contains non-code files such as documentation, configuration files, images, etc.
 
-**处理原则**：
-- 跳过代码质量检查（lint、类型检查、测试）
-- 触发文档/配置文件一致性检查（如有）
-- 如果是 AGENTS.md 变更，触发 repo-map 相关检查
+**Handling Principle**:
+- Skip code quality checks (lint, type check, tests)
+- Trigger documentation/configuration consistency checks (if any)
+- If CLAUDE.md is changed, trigger repo-map related checks
 
-**判断标准**：
-- 变更文件全部在 `docs/`、`*.md`、`*.json`、`*.yaml`、`*.png` 等非源码后缀
+**Criteria**:
+- All changed files are in non-source extensions such as `docs/`, `*.md`, `*.json`, `*.yaml`, `*.png`, etc.
 
-### 6. 紧急修复绕过
+### 6. Emergency Fix Bypass
 
-**场景**：生产环境紧急问题需要立即修复，无法等待完整门禁流程
+**Scenario**: An urgent production issue requires immediate fix and cannot wait for the full gate process
 
-**处理原则**：
-- 用户必须显式声明紧急绕过的原因
-- 记录绕过原因到 commit message 的 `Hotfix:` 前缀
-- 要求事后补运行门禁流程（创建 follow-up 任务）
-- 不允许连续 3 次以上紧急绕过
+**Handling Principle**:
+- The user must explicitly state the reason for the emergency bypass
+- Record the bypass reason in the commit message under a `Hotfix:` prefix
+- Require running the gate process post-fix (create a follow-up task)
+- Do not allow more than 3 consecutive emergency bypasses
 
-### 7. 敏感信息检测
+### 7. Sensitive Information Detection
 
-**场景**：变更包含疑似敏感信息（密钥、token、密码、内网地址）
+**Scenario**: Changes contain suspected sensitive information (keys, tokens, passwords, internal network addresses)
 
-**处理原则**：
-- 阻止提交，列出疑似敏感信息的位置
-- 建议使用环境变量或密钥管理服务替换
-- 如果是测试用的假密钥，在 commit message 中标注 `[test-key]`
-- 如果是内网地址，标注 `[internal]`
+**Handling Principle**:
+- Block the commit and list the locations of suspected sensitive information
+- Suggest using environment variables or a secrets management service instead
+- If it is a fake key for testing, annotate it with `[test-key]` in the commit message
+- If it is an internal network address, annotate it with `[internal]`
 
-## 使用指南
+## Usage Guide
 
-Commit Gate 特有的边界情况直接写在本文件中。处理边界情况时：
-1. 如果属于通用类型，引用本文档对应章节
-2. 按格式：场景 → 处理原则（1-2行）
+Commit Gate-specific edge cases are written directly in this file. When handling edge cases:
+1. If it is a common type, reference the corresponding section in this document
+2. Follow the format: Scenario → Handling Principle (1-2 lines)
 
 ---
-最后更新: 2026-07-03
+Last updated: 2026-07-03

@@ -1,6 +1,6 @@
 ---
 name: harness-golden-principles
-description: 把人类经验编码为机械化"黄金原则"，建立周期性代码库扫描，持续检测模式漂移并生成小颗粒度修复 PR。用于"扫描代码异味"、"清理 AI 代码"、"建立 lint 规则"、"代码风格不统一"、"治理 AI 生成代码的重复模式"、"把 review 反馈固化为规则"场景。
+description: Encode human expertise as mechanized Golden Principles, establish periodic codebase scanning, continuously detect pattern drift, and generate small-grained fix PRs. Used for scanning code smells, cleaning AI-generated code, establishing lint rules, unifying code style, and encoding review feedback as rules.
 when_to_use: |
   显式触发：用户想把人类品味编码为机械化规则、治理 AI 生成代码的重复/不一致模式、建立周期性代码扫描机制、扫描代码异味、清理 AI 代码风格不统一、给代码库建立自动化 lint 规则。
   隐式触发：review 里反复出现同类反馈、代码质量参差不齐出现重复模式、团队靠人工定期"打扫 AI 写的代码"、用户问"怎么让代码风格统一"。
@@ -12,159 +12,166 @@ allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(
 metadata:
   category: quality
 ---
-# 黄金原则与垃圾回收（Golden Principles & GC）
+# Golden Principles & Garbage Collection
 
-## 核心原则
-- **偏差存活时间趋近于零**：不一致模式出现后，几天内被下一轮扫描发现并修复，而非积累数月。
-- **小额持续还款**：技术债利息很高——持续小额偿还远比攒到无法忍受时集中处理划算。
-- **一次编码，持续生效**：人类的判断只需给一次，之后每行代码都被这条规则检查，不用每次 review 重复讲同样的话。
-## 何时使用
+## Core Principles
+- **Deviation lifetime approaches zero**: Inconsistent patterns are detected and fixed within days of the next scan, rather than accumulating for months.
+- **Small continuous repayments**: Technical debt interest is high — making continuous small repayments is far more economical than waiting until it becomes unbearable and tackling it all at once.
+- **Code once, enforce forever**: Human judgment only needs to be given once; thereafter, every line of code is checked against this rule without having to repeat the same feedback in every review.
+
+## When to Use
 - Agent 生成的代码质量参差不齐，出现重复或不一致的实现模式。
 - 团队还在靠人工定期"打扫 AI 写的代码"。
 - 想把人类品味编码为机械化规则持续生效。
 - 扫描代码异味、清理AI代码风格不统一。
 - 给代码库建立自动化lint规则。
-## 何时不该用
+
+## When Not to Use
 - 需要的是结构性架构约束（依赖方向、数据边界）——用 `harness-architecture-boundaries`。
 - 项目规模极小、没有重复模式——不需要周期性扫描。
-## 黄金原则 vs 架构边界
+
+## Golden Principles vs Architecture Boundaries
 
 | | `architecture-boundaries` | `golden-principles` |
 |---|---|---|
-| 性质 | 结构性不变量 | 习惯/品味一致性 |
-| 强制时机 | 合并前阻塞（CI 红线） | 合并后周期性清扫 |
-| 违反后果 | 必须修复才能合并 | 进入清扫队列，可自动合并修复 |
-| 例子 | "Service 层不能 import Runtime 内部模块" | "优先用共享工具包而非手写 helper" |
+| Nature | Structural invariants | Habit/taste consistency |
+| Enforcement timing | Pre-merge blocking (CI red line) | Post-merge periodic sweep |
+| Violation consequence | Must fix before merge | Enters sweep queue, can auto-merge fix |
+| Example | "Service layer must not import Runtime internal modules" | "Prefer shared utility packages over handwritten helpers" |
 
-不要混淆：品味偏好不做 CI 硬阻塞（拖慢吞吐量），结构性约束不当"建议"（等于没有约束）。
-## 方法论
-### 提炼黄金原则
-1. **从真实信号捕捉**：review 里反复出现的同类反馈、重复出现的用户 bug、重构 PR 里反复修的同类问题。
-2. **从具体到通用**：把"这次怎么改"提炼成"以后都应该怎么做"的通用陈述。
-3. **编码为机械规则**：能写 lint 就写 lint，不能的写进文档作为周期性扫描的对照依据。
-### 设计清扫节奏
-- **项目初始化阶段**：首周每日扫描，集中清理初始的积累偏差。
-- **稳态阶段**：每周一次扫描（周一早），每个修复 PR 限定 3-5 类偏差。
-- **紧急修复后**：相关原则立即加扫一轮，防止同类模式扩散。
-- **季度审计**：每季度复审黄金原则集，淘汰过时规则、合并重叠检查。
-- 每个修复 PR 限定到"一分钟内能审完"的大小。
-- **纯机械修复**（重命名、抽公共方法、替换为标准 SDK）→ 可配置自动合并。
-- **涉及行为变化** → 必须走人工评审。
-### 操作步骤
-1. 和用户盘点：最近 review/bug 里反复出现的同类反馈，列为候选黄金原则。
-2. 判断每条能否写成 lint：能 → 优先 lint；不能 → 写进文档作为品味原则。
-3. 设计清扫节奏和范围限定规则。
-4. 委派 `entropy-collector` 执行周期性扫描，生成独立小颗粒度修复 PR。
-5. 本轮未处理的发现记录进 `docs/exec-plans/tech-debt-tracker.md`，不悄悄丢弃。扫描报告输出到 `docs/quality-reports/golden-principles-scan.md`（同名覆盖，历史版本在 git 中）。
-6. 信号标注：频繁触发的原则特别标出——说明对应模式未从根本上解决。
-## 硬约束
+Don't confuse them: taste preferences should not be CI hard blocks (they slow throughput), and structural constraints should not be treated as "suggestions" (that's equivalent to having no constraints).
 
-1. **原则必须来自真实信号**：禁止凭空发明——违反会导致规则脱离实际、团队不买账，整条原则被废弃。
-2. **品味偏好不得做成 CI 硬阻塞**：违反会拖慢合并吞吐量、引发团队绕过机制，削弱架构边界的权威性。
-3. **修复 PR 必须一分钟内能审完**：违反会导致审核积压、PR 被忽略，清扫节奏失效。
-4. **未处理发现必须记录到 tech-debt-tracker**：违反会导致下次扫描重犯相同问题，技术债隐性增长。
-5. **原则优先写成 lint**：能写 lint 而未写的品味原则，违反会导致人工 review 重复讲同样的话，违背"一次编码持续生效"。
+## Methodology
+### Distilling Golden Principles
+1. **Capture from real signals**: Repeated similar feedback in reviews, recurring user bugs, similar issues repeatedly fixed in refactoring PRs.
+2. **From specific to general**: Distill "how to fix this time" into a general statement of "how it should always be done."
+3. **Encode as mechanical rules**: If it can be written as a lint rule, write a lint rule; otherwise, document it as a reference for periodic scanning.
 
-## 示例
+### Designing Sweep Rhythm
+- **Project initialization phase**: Daily scans for the first week to clean up accumulated deviations.
+- **Steady state**: One scan per week (Monday morning), with each fix PR limited to 3-5 deviation types.
+- **After emergency fixes**: Immediately run an additional scan on related principles to prevent similar patterns from spreading.
+- **Quarterly audit**: Review the golden principles set quarterly, retire outdated rules, and merge overlapping checks.
+- Each fix PR should be limited to a size that can be reviewed within one minute.
+- **Purely mechanical fixes** (renames, extracting shared methods, replacing with standard SDKs) → can be configured for auto-merge.
+- **Involving behavioral changes** → must go through manual review.
 
-**示例 1**：review 中反复指出"不要使用 var，要用 const/let"
-**处理**：编码为 lint 规则 `no-var`、`prefer-const`，纳入周期性扫描
+### Operation Steps
+1. Take stock with the user: recurring similar feedback from recent reviews/bugs as candidate golden principles.
+2. Determine whether each can be written as lint: yes → prioritize lint; no → document as taste principle.
+3. Design the sweep rhythm and scope-limiting rules.
+4. Delegate `entropy-collector` to execute periodic scans and generate independent small-grained fix PRs.
+5. Record findings not addressed in this round into `docs/exec-plans/tech-debt-tracker.md` — do not silently discard. Output the scan report to `docs/quality-reports/golden-principles-scan.md` (overwrite in place; history is in git).
+6. Signal annotation: highlight frequently triggered principles — they indicate that the corresponding pattern has not been fundamentally resolved.
 
-**示例 2**：多个 bug 因未处理异步错误导致
-**处理**：建立异步错误处理规范，写入文档作为品味原则
+## Hard Constraints
 
-## 关键要点
-- 和 `architecture-boundaries` 的区分至关重要——不要把品味偏好做成合并阻塞。
-- 修复 PR 越小越好，审核者一分钟内能看懂。
-- 频繁触发的原则是信号而非噪音，说明需要建共享工具包或从根本上重构。
-- 质量评分记录（`docs/QUALITY_SCORE.md`）反映长期趋势。
-- 定期审计黄金原则，确保规则的有效性和适用性。
-- 文档化黄金原则，便于团队理解和遵循。
+1. **Principles must originate from real signals**: Prohibited from inventing out of thin air — violation causes rules to detach from reality, the team won't buy in, and the entire principle gets abandoned.
+2. **Taste preferences must not be made CI hard blocks**: Violation slows merge throughput, causes teams to circumvent the mechanism, and undermines the authority of architecture boundaries.
+3. **Fix PRs must be reviewable within one minute**: Violation leads to review backlog, PRs being ignored, and the sweep rhythm breaking down.
+4. **Unprocessed findings must be recorded in tech-debt-tracker**: Violation means the same issues will reappear in the next scan, with technical debt growing invisibly.
+5. **Principles should be prioritized as lint rules**: Taste principles that could be lint rules but aren't lead to repeated human review feedback, violating the "code once, enforce forever" principle.
 
-## 边界情况处理
+## Examples
 
-> 通用边界情况（项目规模极小、遗留项目改造、多团队协作等）参见 `references/common-edge-cases.md`，以下仅列出本 skill 特有的边界情况。
+**Example 1**: Reviews repeatedly point out "don't use var, use const/let instead"
+**Resolution**: Encode as lint rules `no-var`, `prefer-const`, incorporate into periodic scanning
 
-### 多语言项目
+**Example 2**: Multiple bugs caused by unhandled async errors
+**Resolution**: Establish async error handling standards, document as taste principles
+
+## Key Points
+- Distinguishing from `architecture-boundaries` is critical — don't make taste preferences into merge blockers.
+- Fix PRs should be as small as possible, reviewable within one minute.
+- Frequently triggered principles are signals, not noise — they indicate the need for a shared utility package or fundamental refactoring.
+- Quality score records (`docs/QUALITY_SCORE.md`) reflect long-term trends.
+- Regularly audit golden principles to ensure effectiveness and applicability.
+- Document golden principles for team understanding and adherence.
+
+## Edge Case Handling
+
+> For general edge cases (very small projects, legacy project migration, multi-team collaboration, etc.) see `references/common-edge-cases.md`. The following lists only edge cases specific to this skill.
+
+### Multi-language Projects
 **场景**：项目使用多种编程语言，需要统一代码风格
 **处理**：为每种语言建立独立的lint规则，使用统一的扫描工具
 
-### AI生成代码治理
+### AI-generated Code Governance
 **场景**：AI生成的代码质量参差不齐，需要特殊治理
 **处理**：建立AI代码生成规范，使用自动化工具检查，建立AI代码review流程
 
-## 常见陷阱
-- **凭空发明原则**：不从真实信号出发，规则脱离实际 → 每个原则都必须有具体的review反馈、bug报告或重构需求作为依据
-- **把品味做成 CI 硬阻塞**：拖慢吞吐量，却不增加安全边际 → 品味偏好只做周期性扫描，不做合并阻塞
-- **修复 PR 太大**：混入多种不相关清理，审核成本飙升 → 每个修复PR只处理一类偏差，确保一分钟内能审完
-- **丢弃未处理发现**：不记录到 tech-debt-tracker，下次扫描重犯 → 所有未处理发现必须记录到tech-debt-tracker
-- **一次性扫完心态**：追求一次清干净所有问题，忽视持续清扫节奏 → 建立固定的清扫节奏，每次只处理部分问题
+## Common Pitfalls
+- **Inventing principles out of thin air**: Not starting from real signals, rules detached from reality → every principle must be backed by specific review feedback, bug reports, or refactoring requirements.
+- **Making taste preferences into CI hard blocks**: Slows throughput without increasing safety margin → taste preferences are only periodic scans, not merge blockers.
+- **Fix PRs too large**: Mixing unrelated cleanups, review cost skyrockets → each fix PR handles only one type of deviation, ensuring review within one minute.
+- **Discarding unprocessed findings**: Not recording to tech-debt-tracker, same issues reappear → all unprocessed findings must be recorded in tech-debt-tracker.
+- **One-time cleanup mindset**: Pursuing all issues in one sweep, ignoring continuous rhythm → establish a fixed sweep rhythm, only handle a portion each time.
 
-## 最佳实践
+## Best Practices
 
-- 新黄金原则从"本周 review 中最常出现的 3 条反馈"入手，不要一次性从零罗列十条规则。
-- 扫描报告只输出已编码规则对应的偏差——不额外生成未编码的新规则建议，避免噪音。
-- 自动合并的修复 PR 命名统一加 `[GC-auto]` 前缀，便于人工在合并队列中快速识别。
-- 季度审计时优先淘汰触发频率为零、已连续三个周期无匹配的原则。
+- Start new golden principles from "the top 3 recurring feedback items from this week's reviews" — don't enumerate ten rules from scratch at once.
+- Scan reports should only output deviations corresponding to encoded rules — don't generate suggestions for new unencoded rules to avoid noise.
+- Fix PRs for auto-merge should be uniformly named with the `[GC-auto]` prefix so humans can quickly identify them in the merge queue.
+- During quarterly audits, prioritize retiring principles with zero triggers for three consecutive cycles.
 
-## 相关 Skill
+## Related Skills
 
-- 上游 **harness-project-intake**: 接收产出物（项目代码模式分析）作为提炼黄金原则的输入
-- 上游 **harness-architecture-boundaries**: 接收产出物（架构边界上下文）作为区分不变量与风格偏好的依据
-- 下游 **harness-commit-gate**: 本 skill 产出（黄金原则规则集）传递给下游进行质量门检查
+- Upstream **harness-project-intake**: Receives output (project code pattern analysis) as input for distilling golden principles
+- Upstream **harness-architecture-boundaries**: Receives output (architecture boundary context) as a basis for distinguishing invariants from style preferences
+- Downstream **harness-commit-gate**: This skill's output (golden principle ruleset) is passed downstream for quality gate checks
 
-## 相关模板
+## Related Templates
 
-- `references/pr-guidelines.md`：修复 PR 规格指南（大小限制、自动合并规则）
-- `references/quality-score-template.md`：质量评分模板（`docs/QUALITY_SCORE.md`）
-- `references/principle-prioritization.md`：黄金原则优先级排序指南
-- `references/rule-formulation-checklist.md`：黄金原则制定检查清单
+- `references/pr-guidelines.md`: Fix PR guidelines (size limits, auto-merge rules)
+- `references/quality-score-template.md`: Quality score template (`docs/QUALITY_SCORE.md`)
+- `references/principle-prioritization.md`: Golden principle prioritization guide
+- `references/rule-formulation-checklist.md`: Golden principle formulation checklist
 
 ## Agent 提示词
 
-## entropy-collector（熵增清扫者）
+## entropy-collector (Entropy Sweeper)
 
-### 跳过条件
+### Skip Conditions
 
 - **需要结构性架构约束**（依赖方向、数据边界）：交给 harness-architecture-boundaries，不触发 golden-principles。
 - **项目规模极小、无重复模式**：不需要周期性扫描。
 - **用户只想了解现有原则而非建立新原则**：不触发扫描，直接回答。
 
-### 角色定义
+### Role Definition
 
-按固定节奏扫描代码库，对照已编码的黄金原则寻找模式漂移，产出小颗粒度修复建议。**只读执行**，不直接修改代码。擅长使用lint/grep/语义搜索等工具进行代码质量检查。
+Scan the codebase on a fixed rhythm, comparing against encoded golden principles to find pattern drift, and produce small-grained fix recommendations. **Read-only execution**, do not directly modify code. Skilled at using lint/grep/semantic search tools for code quality checking.
 
-### 核心能力
+### Core Capabilities
 
-- 读取并理解项目已编码的黄金原则（lint 规则 + 文档品味原则）。
-- 用 lint/grep/语义搜索扫描代码库，定位偏差。
-- 判断每处偏差的风险等级（纯机械 vs 涉及行为变化）。
-- 产出结构化报告，附带修复建议和影响范围。
+- Read and understand the project's encoded golden principles (lint rules + documented taste principles).
+- Scan the codebase using lint/grep/semantic search to locate deviations.
+- Judge the risk level of each deviation (purely mechanical vs. involving behavioral changes).
+- Produce structured reports with fix recommendations and impact scope.
 
-### 执行流程
+### Execution Flow
 
-1. **加载原则**：读取项目已编码的黄金原则。如果既无 lint 规则也无文档化原则，按格式报告后终止。
-2. **扫描偏差**：优先用已有 lint/检查脚本，无自动化覆盖的原则用 grep/语义搜索近似排查。
-3. **风险分级**：纯机械修复标注"建议自动合并"，涉及行为变化标注"需要人工评审"。
-4. **范围限定**：每类偏差一个独立修复建议，不混合多种不相关清理。
-5. **更新评分与记录**：更新质量评分，未处理发现记录进 `tech-debt-tracker.md`。
-6. **信号标注**：频繁触发的原则特别标出——说明对应模式未根本解决。
+1. **Load principles**: Read the project's encoded golden principles. If there are neither lint rules nor documented principles, report in format and terminate.
+2. **Scan for deviations**: Prioritize existing lint/check scripts; for principles without automated coverage, use grep/semantic search for approximate inspection.
+3. **Risk classification**: Tag purely mechanical fixes as "suggest auto-merge", those involving behavioral changes as "requires manual review".
+4. **Scope limitation**: One independent fix recommendation per deviation type — do not mix unrelated cleanups.
+5. **Update scores and records**: Update quality scores, record unprocessed findings in `tech-debt-tracker.md`.
+6. **Signal annotation**: Highlight frequently triggered principles — they indicate the corresponding pattern has not been fundamentally resolved.
 
-### 约束
+### Constraints
 
-- **只读不改**：不修改任何文件，只产出报告和建议。违反时撤回写操作，以报告形式输出。
-- **不处理结构性违规**：架构边界问题交给 `boundary-auditor`。违反时将结构性发现转发给 boundary-auditor。
-- **不凭空发明原则**：只扫描已编码的原则，不自行定义新规则。违反时删除自创规则。
-- **修复建议范围小**：每类偏差一个独立修复建议。违反时拆分为独立建议。
-- **区分风险等级**：必须准确区分纯机械修复和涉及行为变化。违反时重新标注风险等级。
-- **扫描报告单一路径**：输出到 `docs/quality-reports/golden-principles-scan.md`（同名覆盖，历史版本在 git 中）。违反时撤回写到其他路径的内容。
+- **Read-only, no modifications**: Do not modify any files; only produce reports and recommendations. On violation, retract write operations and output as a report.
+- **Do not handle structural violations**: Architecture boundary issues go to `boundary-auditor`. On violation, forward structural findings to boundary-auditor.
+- **Do not invent principles out of thin air**: Only scan encoded principles; do not define new rules on your own. On violation, delete self-created rules.
+- **Keep fix recommendations small**: One independent fix recommendation per deviation type. On violation, split into independent recommendations.
+- **Distinguish risk levels**: Must accurately distinguish purely mechanical fixes from those involving behavioral changes. On violation, re-tag risk levels.
+- **Single scan report path**: Output to `docs/quality-reports/golden-principles-scan.md` (overwrite in place; history is in git). On violation, retract writes to other paths.
 
-### 输出规范
+### Output Specifications
 
-- 每处偏差包含位置、原则引用、风险等级、修复建议。
-- 修复建议具体到可直接交给执行型 agent 落地。
-- 结构性架构违规由 `boundary-auditor` 处理，不修改任何文件。
-- **落盘路径**：`docs/quality-reports/golden-principles-scan.md`（同名覆盖，历史版本在 git 中）。
+- Each deviation includes location, principle reference, risk level, and fix recommendation.
+- Fix recommendations should be specific enough to be directly actionable by an execution agent.
+- Structural architecture violations are handled by `boundary-auditor`; do not modify any files.
+- **Output path**: `docs/quality-reports/golden-principles-scan.md` (overwrite in place; history is in git).
 
 ---
-最后更新: 2026-07-03（变更：S1 关键要点/最佳实践去重）
+Last updated: 2026-07-03 (Changes: S1 deduplication of Key Points/Best Practices)

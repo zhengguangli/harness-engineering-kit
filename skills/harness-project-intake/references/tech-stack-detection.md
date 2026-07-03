@@ -1,24 +1,24 @@
-<!-- 各语言技术栈检测 — 由 project-analyzer agent 使用 -->
-<!-- 从配置文件中提取框架、运行时、部署目标等信息 -->
+<!-- Tech stack detection by language — used by project-analyzer agent -->
+<!-- Extract framework, runtime, deployment target and other information from configuration files -->
 
-## 检测维度
+## Detection Dimensions
 
-技术栈信息从以下维度提取：
+Tech stack information is extracted across the following dimensions:
 
-| 维度 | 数据来源 | 提取方式 |
+| Dimension | Data Source | Extraction Method |
 |---|---|---|
-| 语言 | 包管理文件 + 文件后缀 | 模式匹配 |
-| 版本 | 包管理文件 + CLI 命令 | 正则提取 |
-| 框架 | dependencies 列表 | 关键词匹配 |
-| 运行时 | 配置文件 + engines 字段 | 正则提取 |
-| 包管理器 | lock 文件 | 文件存在性 |
-| 部署目标 | 配置文件 + CI 配置 | 关键词匹配 |
+| Language | Package manifest + file extensions | Pattern matching |
+| Version | Package manifest + CLI commands | Regex extraction |
+| Framework | Dependencies list | Keyword matching |
+| Runtime | Configuration files + engines field | Regex extraction |
+| Package Manager | Lock file | File existence |
+| Deployment Target | Configuration files + CI config | Keyword matching |
 
-## 框架检测规则
+## Framework Detection Rules
 
-### Node.js / TypeScript 框架
+### Node.js / TypeScript Frameworks
 
-| 框架 | 检测关键词 | 来源文件 |
+| Framework | Detection Keyword | Source File |
 |---|---|---|
 | Next.js | `"next"` | `package.json` dependencies |
 | Nuxt | `"nuxt"` | `package.json` dependencies |
@@ -33,9 +33,9 @@
 | Remix | `"@remix-run/react"` | `package.json` dependencies |
 | SvelteKit | `"@sveltejs/kit"` | `package.json` dependencies |
 
-### Python 框架
+### Python Frameworks
 
-| 框架 | 检测关键词 | 来源文件 |
+| Framework | Detection Keyword | Source File |
 |---|---|---|
 | Django | `django` | `pyproject.toml` / `requirements.txt` |
 | FastAPI | `fastapi` | `pyproject.toml` / `requirements.txt` |
@@ -45,9 +45,9 @@
 | Tornado | `tornado` | `pyproject.toml` / `requirements.txt` |
 | Starlette | `starlette` | `pyproject.toml` / `requirements.txt` |
 
-### Go 框架
+### Go Frameworks
 
-| 框架 | 检测关键词 | 来源文件 |
+| Framework | Detection Keyword | Source File |
 |---|---|---|
 | Gin | `github.com/gin-gonic/gin` | `go.mod` |
 | Echo | `github.com/labstack/echo` | `go.mod` |
@@ -57,9 +57,9 @@
 | GORM | `gorm.io/gorm` | `go.mod` |
 | Ent | `entgo.io/ent` | `go.mod` |
 
-### Rust 框架
+### Rust Frameworks
 
-| 框架 | 检测关键词 | 来源文件 |
+| Framework | Detection Keyword | Source File |
 |---|---|---|
 | Actix | `actix-web` | `Cargo.toml` |
 | Axum | `axum` | `Cargo.toml` |
@@ -69,9 +69,9 @@
 | Serde | `serde` | `Cargo.toml` |
 | Clap | `clap` | `Cargo.toml` |
 
-### Java 框架
+### Java Frameworks
 
-| 框架 | 检测关键词 | 来源文件 |
+| Framework | Detection Keyword | Source File |
 |---|---|---|
 | Spring Boot | `org.springframework.boot` | `pom.xml` / `build.gradle` |
 | Quarkus | `io.quarkus` | `pom.xml` / `build.gradle` |
@@ -79,89 +79,89 @@
 | MyBatis | `org.mybatis` | `pom.xml` / `build.gradle` |
 | Hibernate | `org.hibernate` | `pom.xml` / `build.gradle` |
 
-### PHP 框架
+### PHP Frameworks
 
-| 框架 | 检测关键词 | 来源文件 |
+| Framework | Detection Keyword | Source File |
 |---|---|---|
 | Laravel | `laravel/framework` | `composer.json` |
 | Symfony | `symfony/framework-bundle` | `composer.json` |
 | Slim | `slim/slim` | `composer.json` |
 | Lumen | `laravel/lumen` | `composer.json` |
 
-### Ruby 框架
+### Ruby Frameworks
 
-| 框架 | 检测关键词 | 来源文件 |
+| Framework | Detection Keyword | Source File |
 |---|---|---|
 | Rails | `rails` | `Gemfile` |
 | Sinatra | `sinatra` | `Gemfile` |
 | Hanami | `hanami` | `Gemfile` |
 
-## 运行时检测
+## Runtime Detection
 
-| 运行时 | 检测方式 | 说明 |
+| Runtime | Detection Method | Description |
 |---|---|---|
-| Node.js | `package.json` 中 `engines.node` | 服务端/全栈 |
-| Bun | `package.json` 中 `engines.bun` 或 `bun.lockb` 存在 | 替代运行时 |
-| Deno | `deno.json` 存在 | 替代运行时 |
-| 浏览器 | `package.json` 中 `browserslist` | 前端 |
-| Python | `pyproject.toml` 中 `requires-python` | 服务端 |
-| JVM | `pom.xml` 中 `java.version` | Java/Kotlin |
-| Go runtime | `go.mod` 中 `go` 指令 | 编译型 |
-| Rust native | `Cargo.toml` 中 `edition` | 编译型 |
+| Node.js | `engines.node` in `package.json` | Server-side / full-stack |
+| Bun | `engines.bun` in `package.json` or `bun.lockb` exists | Alternative runtime |
+| Deno | `deno.json` exists | Alternative runtime |
+| Browser | `browserslist` in `package.json` | Frontend |
+| Python | `requires-python` in `pyproject.toml` | Server-side |
+| JVM | `java.version` in `pom.xml` | Java/Kotlin |
+| Go runtime | `go` directive in `go.mod` | Compiled |
+| Rust native | `edition` in `Cargo.toml` | Compiled |
 
-## 部署目标检测
+## Deployment Target Detection
 
-| 部署目标 | 检测关键词 | 来源文件 |
+| Deployment Target | Detection Keyword | Source File |
 |---|---|---|
-| Docker | `Dockerfile` / `docker-compose.yml` 存在 | 根目录 |
-| Vercel | `vercel.json` 或 `next.config.js` | 根目录 |
-| Netlify | `netlify.toml` | 根目录 |
-| Cloudflare Workers | `wrangler.toml` | 根目录 |
-| AWS Lambda | `serverless.yml` / `sam` 配置 | 根目录 |
-| Kubernetes | `k8s/` / `kubernetes/` 目录或 Helm chart | 根目录 |
-| Fly.io | `fly.toml` | 根目录 |
-| Railway | `railway.toml` | 根目录 |
-| Render | `render.yaml` | 根目录 |
-| Heroku | `Procfile` | 根目录 |
-| GitHub Pages | `.github/workflows/` 中 `pages` 关键词 | CI 配置 |
-| Static | `static/` / `build/` 输出 | 构建配置 |
+| Docker | `Dockerfile` / `docker-compose.yml` exists | Root directory |
+| Vercel | `vercel.json` or `next.config.js` | Root directory |
+| Netlify | `netlify.toml` | Root directory |
+| Cloudflare Workers | `wrangler.toml` | Root directory |
+| AWS Lambda | `serverless.yml` / `sam` configuration | Root directory |
+| Kubernetes | `k8s/` / `kubernetes/` directory or Helm chart | Root directory |
+| Fly.io | `fly.toml` | Root directory |
+| Railway | `railway.toml` | Root directory |
+| Render | `render.yaml` | Root directory |
+| Heroku | `Procfile` | Root directory |
+| GitHub Pages | `pages` keyword in `.github/workflows/` | CI configuration |
+| Static | `static/` / `build/` output | Build configuration |
 
-## CI/CD 检测
+## CI/CD Detection
 
-| CI/CD | 检测关键词 | 来源文件 |
+| CI/CD | Detection Keyword | Source File |
 |---|---|---|
-| GitHub Actions | `.github/workflows/` 目录 | 根目录 |
-| GitLab CI | `.gitlab-ci.yml` | 根目录 |
-| CircleCI | `.circleci/config.yml` | 根目录 |
-| Travis CI | `.travis.yml` | 根目录 |
-| Jenkins | `Jenkinsfile` | 根目录 |
-| Azure Pipelines | `azure-pipelines.yml` | 根目录 |
+| GitHub Actions | `.github/workflows/` directory | Root directory |
+| GitLab CI | `.gitlab-ci.yml` | Root directory |
+| CircleCI | `.circleci/config.yml` | Root directory |
+| Travis CI | `.travis.yml` | Root directory |
+| Jenkins | `Jenkinsfile` | Root directory |
+| Azure Pipelines | `azure-pipelines.yml` | Root directory |
 
-## 数据库检测
+## Database Detection
 
-| 数据库 | 检测关键词 | 来源文件 |
+| Database | Detection Keyword | Source File |
 |---|---|---|
-| PostgreSQL | `postgresql` / `postgres` | 配置文件 / docker-compose |
-| MySQL | `mysql` | 配置文件 / docker-compose |
-| SQLite | `sqlite` / `.db` 文件 | 配置文件 |
-| MongoDB | `mongodb` / `mongo` | 配置文件 / docker-compose |
-| Redis | `redis` | 配置文件 / docker-compose |
-| Elasticsearch | `elasticsearch` | 配置文件 / docker-compose |
+| PostgreSQL | `postgresql` / `postgres` | Configuration files / docker-compose |
+| MySQL | `mysql` | Configuration files / docker-compose |
+| SQLite | `sqlite` / `.db` file | Configuration files |
+| MongoDB | `mongodb` / `mongo` | Configuration files / docker-compose |
+| Redis | `redis` | Configuration files / docker-compose |
+| Elasticsearch | `elasticsearch` | Configuration files / docker-compose |
 
-## 输出格式
+## Output Format
 
-技术栈信息按以下格式输出到项目卡片：
+Tech stack information is output to the project card in the following format:
 
 ```markdown
-### 技术栈
+### Tech Stack
 
-| 维度 | 值 |
+| Dimension | Value |
 |---|---|
-| 语言 | TypeScript 5.3 |
-| 框架 | Next.js 14 (React 18) |
-| 运行时 | Node.js 20 |
-| 包管理 | pnpm |
-| 部署目标 | Vercel |
-| 数据库 | PostgreSQL 16 |
+| Language | TypeScript 5.3 |
+| Framework | Next.js 14 (React 18) |
+| Runtime | Node.js 20 |
+| Package Manager | pnpm |
+| Deployment Target | Vercel |
+| Database | PostgreSQL 16 |
 | CI/CD | GitHub Actions |
 ```

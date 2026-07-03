@@ -1,65 +1,65 @@
-<!-- 各技术栈 docs/ 骨架模板 — 由 harness-bootstrapper agent 使用 -->
-<!-- 根据项目技术栈选用对应的 docs/ 补充文件 -->
+<!-- Docs/ skeleton templates by tech stack — used by harness-bootstrapper agent -->
+<!-- Select the corresponding docs/ addition files based on the project's tech stack -->
 
-## 通用骨架（所有项目必须包含）
+## Common Skeleton (Required for All Projects)
 
-参见 `references/docs-skeleton-template.md`。
+See `references/docs-skeleton-template.md`.
 
-以下为各技术栈**额外推荐**的 docs/ 文件。
+The following are **additional recommended** docs/ files per tech stack.
 
-## Node.js / TypeScript 项目
+## Node.js / TypeScript Project
 
 ```
 docs/
-├── ARCHITECTURE.md          # 项目架构
-├── QUALITY_SCORE.md         # 质量评分
-├── API_REFERENCE.md         # API 接口文档（如项目对外暴露 API）
-├── DEPLOYMENT.md            # 部署指南
-├── MIGRATION_GUIDE.md       # 数据库迁移指南（如有 ORM）
+├── ARCHITECTURE.md          # Project architecture
+├── QUALITY_SCORE.md         # Quality score
+├── API_REFERENCE.md         # API documentation (if the project exposes external APIs)
+├── DEPLOYMENT.md            # Deployment guide
+├── MIGRATION_GUIDE.md       # Database migration guide (if using ORM)
 ├── design-docs/
-│   └── index.md             # 设计决策索引
+│   └── index.md             # Design decision index
 └── exec-plans/
     ├── active/
     └── completed/
 ```
 
-**ARCHITECTURE.md 骨架示例**：
+**ARCHITECTURE.md Skeleton Example**:
 
 ```markdown
-# 架构
+# Architecture
 
-## 概览
+## Overview
 
-项目基于 [Express/Fastify/NestJS] 构建，[一句话描述整体架构]。
+Project built on [Express/Fastify/NestJS], [one sentence describing the overall architecture].
 
-## 领域划分
+## Domain Breakdown
 
-| 领域 | 职责 | 入口文件 |
+| Domain | Responsibility | Entry File |
 |---|---|---|
-| <领域1> | <职责> | `<路径>` |
-| <领域2> | <职责> | `<路径>` |
+| <domain1> | <responsibility> | `<path>` |
+| <domain2> | <responsibility> | `<path>` |
 
-## 依赖方向
+## Dependency Direction
 
-[描述模块间的依赖关系和约束]
+[Describe module dependency relationships and constraints]
 
-## 数据流
+## Data Flow
 
-[描述请求处理流程]
+[Describe request processing flow]
 
 ---
-最后更新: <YYYY-MM-DD>
+Last updated: <YYYY-MM-DD>
 ```
 
-## Python 项目
+## Python Project
 
 ```
 docs/
 ├── ARCHITECTURE.md
 ├── QUALITY_SCORE.md
-├── API_REFERENCE.md         # FastAPI/Flask API 文档
+├── API_REFERENCE.md         # FastAPI/Flask API documentation
 ├── DEPLOYMENT.md
-├── ENVIRONMENT_SETUP.md     # Python 环境配置指南
+├── ENVIRONMENT_SETUP.md     # Python environment setup guide
 ├── design-docs/
 │   └── index.md
 └── exec-plans/
@@ -67,43 +67,43 @@ docs/
     └── completed/
 ```
 
-**ARCHITECTURE.md 骨架示例**：
+**ARCHITECTURE.md Skeleton Example**:
 
 ```markdown
-# 架构
+# Architecture
 
-## 概览
+## Overview
 
-项目基于 [Django/FastAPI/Flask] 构建，[一句话描述]。
+Project built on [Django/FastAPI/Flask], [one sentence description].
 
-## 领域划分
+## Domain Breakdown
 
-| 领域 | 职责 | 包/模块 |
+| Domain | Responsibility | Package/Module |
 |---|---|---|
-| <领域1> | <职责> | `<包路径>` |
-| <领域2> | <职责> | `<包路径>` |
+| <domain1> | <responsibility> | `<package_path>` |
+| <domain2> | <responsibility> | `<package_path>` |
 
-## 依赖方向
+## Dependency Direction
 
-[描述包之间的依赖关系]
+[Describe package dependency relationships]
 
-## 数据库设计
+## Database Design
 
-[描述 ORM 模型关系，如有]
+[Describe ORM model relationships, if any]
 
 ---
-最后更新: <YYYY-MM-DD>
+Last updated: <YYYY-MM-DD>
 ```
 
-## Go 项目
+## Go Project
 
 ```
 docs/
 ├── ARCHITECTURE.md
 ├── QUALITY_SCORE.md
-├── API_REFERENCE.md         # HTTP/gRPC 接口文档
+├── API_REFERENCE.md         # HTTP/gRPC interface documentation
 ├── DEPLOYMENT.md
-├── PROTOBUF_GUIDE.md        # Proto 文件管理（如使用 gRPC）
+├── PROTOBUF_GUIDE.md        # Proto file management (if using gRPC)
 ├── design-docs/
 │   └── index.md
 └── exec-plans/
@@ -111,36 +111,36 @@ docs/
     └── completed/
 ```
 
-**ARCHITECTURE.md 骨架示例**：
+**ARCHITECTURE.md Skeleton Example**:
 
 ```markdown
-# 架构
+# Architecture
 
-## 概览
+## Overview
 
-项目基于 [Gin/Echo/标准库] 构建，[一句话描述]。
+Project built on [Gin/Echo/Standard library], [one sentence description].
 
-## 包结构
+## Package Structure
 
-| 包 | 职责 | 依赖 |
+| Package | Responsibility | Dependencies |
 |---|---|---|
-| `cmd/` | 入口 | 内部包 |
-| `internal/` | 业务逻辑 | `pkg/` |
-| `pkg/` | 公共工具 | 无外部依赖 |
+| `cmd/` | Entry point | Internal packages |
+| `internal/` | Business logic | `pkg/` |
+| `pkg/` | Shared utilities | No external dependencies |
 
-## 依赖方向
+## Dependency Direction
 
 `cmd/` → `internal/` → `pkg/`
 
-## 并发模型
+## Concurrency Model
 
-[描述 goroutine/channel 使用模式]
+[Describe goroutine/channel usage patterns]
 
 ---
-最后更新: <YYYY-MM-DD>
+Last updated: <YYYY-MM-DD>
 ```
 
-## Rust 项目
+## Rust Project
 
 ```
 docs/
@@ -148,7 +148,7 @@ docs/
 ├── QUALITY_SCORE.md
 ├── API_REFERENCE.md
 ├── DEPLOYMENT.md
-├── SAFETY_NOTES.md          # unsafe 使用记录
+├── SAFETY_NOTES.md          # unsafe usage records
 ├── design-docs/
 │   └── index.md
 └── exec-plans/
@@ -156,36 +156,36 @@ docs/
     └── completed/
 ```
 
-**ARCHITECTURE.md 骨架示例**：
+**ARCHITECTURE.md Skeleton Example**:
 
 ```markdown
-# 架构
+# Architecture
 
-## 概览
+## Overview
 
-项目基于 [Actix/Axum/Tokio] 构建，[一句话描述]。
+Project built on [Actix/Axum/Tokio], [one sentence description].
 
-## Crate 结构
+## Crate Structure
 
-| Crate | 职责 | 可见性 |
+| Crate | Responsibility | Visibility |
 |---|---|---|
-| `src/main.rs` | 入口 | binary |
-| `src/lib.rs` | 核心库 | public |
-| `src/models/` | 数据模型 | pub(crate) |
+| `src/main.rs` | Entry point | binary |
+| `src/lib.rs` | Core library | public |
+| `src/models/` | Data models | pub(crate) |
 
-## 依赖方向
+## Dependency Direction
 
-[描述 crate 间的依赖]
+[Describe crate dependencies]
 
-## 内存安全
+## Memory Safety
 
-[描述 unsafe 代码使用约束]
+[Describe unsafe code usage constraints]
 
 ---
-最后更新: <YYYY-MM-DD>
+Last updated: <YYYY-MM-DD>
 ```
 
-## Java / Kotlin 项目
+## Java / Kotlin Project
 
 ```
 docs/
@@ -193,7 +193,7 @@ docs/
 ├── QUALITY_SCORE.md
 ├── API_REFERENCE.md
 ├── DEPLOYMENT.md
-├── DATABASE_MIGRATION.md     # Flyway/Liquibase 迁移指南
+├── DATABASE_MIGRATION.md     # Flyway/Liquibase migration guide
 ├── design-docs/
 │   └── index.md
 └── exec-plans/
@@ -201,52 +201,36 @@ docs/
     └── completed/
 ```
 
-**ARCHITECTURE.md 骨架示例**：
+**ARCHITECTURE.md Skeleton Example**:
 
 ```markdown
-# 架构
+# Architecture
 
-## 概览
+## Overview
 
-项目基于 [Spring Boot/Quarkus/Ktor] 构建，[一句话描述]。
+Project built on [Spring Boot/Quarkus/Ktor], [one sentence description].
 
-## 模块划分
+## Module Breakdown
 
-| 模块 | 职责 | 技术 |
+| Module | Responsibility | Technology |
 |---|---|---|
-| `api/` | 接口层 | REST/gRPC |
-| `service/` | 业务层 | Spring Service |
-| `repository/` | 数据层 | JPA/MyBatis |
+| `api/` | Interface layer | REST/gRPC |
+| `service/` | Business layer | Spring Service |
+| `repository/` | Data layer | JPA/MyBatis |
 
-## 依赖方向
+## Dependency Direction
 
 `api/` → `service/` → `repository/`
 
-## 分层约束
+## Layering Constraints
 
-[描述层间通信规则]
+[Describe inter-layer communication rules]
 
 ---
-最后更新: <YYYY-MM-DD>
+Last updated: <YYYY-MM-DD>
 ```
 
-## PHP 项目
-
-```
-docs/
-├── ARCHITECTURE.md
-├── QUALITY_SCORE.md
-├── API_REFERENCE.md
-├── DEPLOYMENT.md
-├── ARTISAN_COMMANDS.md       # Artisan 命令参考（Laravel）
-├── design-docs/
-│   └── index.md
-└── exec-plans/
-    ├── active/
-    └── completed/
-```
-
-## Ruby 项目
+## PHP Project
 
 ```
 docs/
@@ -254,7 +238,7 @@ docs/
 ├── QUALITY_SCORE.md
 ├── API_REFERENCE.md
 ├── DEPLOYMENT.md
-├── RAKE_TASKS.md             # Rake 任务参考
+├── ARTISAN_COMMANDS.md       # Artisan command reference (Laravel)
 ├── design-docs/
 │   └── index.md
 └── exec-plans/
@@ -262,9 +246,25 @@ docs/
     └── completed/
 ```
 
-## 选择指南
+## Ruby Project
 
-1. **先用通用骨架**：所有项目必须包含 ARCHITECTURE.md 和 QUALITY_SCORE.md
-2. **按技术栈追加**：根据项目实际使用的技术栈追加对应文件
-3. **不确定就跳过**：如果某个文件不确定是否需要，先不创建，在 AGENTS.md 路由表留占位条目
-4. **骨架要精简**：每个文件只写骨架和"最后更新"日期，不要写大量空内容
+```
+docs/
+├── ARCHITECTURE.md
+├── QUALITY_SCORE.md
+├── API_REFERENCE.md
+├── DEPLOYMENT.md
+├── RAKE_TASKS.md             # Rake task reference
+├── design-docs/
+│   └── index.md
+└── exec-plans/
+    ├── active/
+    └── completed/
+```
+
+## Selection Guide
+
+1. **Start with the common skeleton**: All projects must include ARCHITECTURE.md and QUALITY_SCORE.md
+2. **Append by tech stack**: Add corresponding files based on the project's actual tech stack
+3. **Skip if unsure**: If unsure whether a file is needed, don't create it yet, leave a placeholder entry in the CLAUDE.md routing table
+4. **Keep skeletons lean**: Write only the skeleton and "Last updated" date per file, don't fill in large amounts of empty content

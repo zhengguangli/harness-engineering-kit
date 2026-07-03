@@ -1,22 +1,22 @@
-# CI 集成指南
+# CI Integration Guide
 
-## 目的
+## Purpose
 
-将 commit-gate 的检查逻辑集成到项目的 CI 管道中，在 GitHub Actions / GitLab CI 等平台上自动运行质量门。
+Integrate commit-gate check logic into the project's CI pipeline, running quality gates automatically on GitHub Actions / GitLab CI and similar platforms.
 
-## 与本地 commit-gate 的分工
+## Division of Labor with Local Commit Gate
 
-| 检查层次 | 本地 (commit-gate) | CI (推送后) |
+| Check Level | Local (commit-gate) | CI (After Push) |
 |---------|------------------|-------------|
-| diff 审查（调试代码/敏感信息） | ✅ 必须 | ✅ 复检 |
-| 测试运行 | ✅ 必须 | ✅ 完整套件 |
-| 类型检查 | ✅ 必须 | ✅ 必须 |
-| Lint | ✅ 推荐 | ✅ 必须 |
-| 构建 | ✅ 必须 | ✅ 必须 |
-| 架构边界检查 | ❌ 非本 skill 职责 | ❌ 由 boundary-auditor 处理 |
-| 集成测试 | ❌ 非本 skill 职责 | ✅ 完整集成 |
+| Diff review (debug code / sensitive info) | ✅ Required | ✅ Re-check |
+| Test execution | ✅ Required | ✅ Full suite |
+| Type check | ✅ Required | ✅ Required |
+| Lint | ✅ Recommended | ✅ Required |
+| Build | ✅ Required | ✅ Required |
+| Architecture boundary check | ❌ Not this skill's responsibility | ❌ Handled by boundary-auditor |
+| Integration tests | ❌ Not this skill's responsibility | ✅ Full integration |
 
-## GitHub Actions 示例
+## GitHub Actions Example
 
 ```yaml
 # .github/workflows/commit-gate.yml
@@ -34,58 +34,58 @@ jobs:
 
       - run: npm ci
 
-      # 步骤 1: 敏感信息扫描
+      # Step 1: Sensitive information scan
       - name: Secret scan
         run: |
           ! grep -rE '(API_KEY|PASSWORD|SECRET|TOKEN|PRIVATE_KEY)' --include='*.{ts,js,py,go,rs}' . \
             | grep -v 'node_modules' | grep -v '.env.example'
 
-      # 步骤 2: 测试
+      # Step 2: Tests
       - name: Tests
         run: npm test
 
-      # 步骤 3: 类型检查
+      # Step 3: Type check
       - name: Type check
         run: npx tsc --noEmit
 
-      # 步骤 4: Lint
+      # Step 4: Lint
       - name: Lint
         run: npm run lint
 
-      # 步骤 5: 构建
+      # Step 5: Build
       - name: Build
         run: npm run build
 ```
 
-## 工具链配置指引
+## Toolchain Configuration Guide
 
 ### Node.js/TypeScript
 ```
-npm test        # 测试
-npx tsc --noEmit  # 类型检查
+npm test        # Tests
+npx tsc --noEmit  # Type check
 npm run lint    # Lint
-npm run build   # 构建
+npm run build   # Build
 ```
 
 ### Rust
 ```
-cargo test      # 测试
-cargo check     # 类型/借用检查
-cargo fmt --check  # 格式检查
-cargo build     # 构建
+cargo test      # Tests
+cargo check     # Type/borrow check
+cargo fmt --check  # Format check
+cargo build     # Build
 ```
 
 ### Go
 ```
-go test ./...       # 测试
-go vet ./...        # 静态分析
+go test ./...       # Tests
+go vet ./...        # Static analysis
 golangci-lint run   # Lint
-go build            # 构建
+go build            # Build
 ```
 
 ### Python
 ```
-pytest              # 测试
-mypy .              # 类型检查
+pytest              # Tests
+mypy .              # Type check
 ruff check .        # Lint
 ```

@@ -1,67 +1,67 @@
-# Commit Message 指南
+# Commit Message Guide
 
-## 格式选择
+## Format Selection
 
-先检查项目的 git log 风格:
+First, check the project's git log style:
 
 ```bash
 git log --oneline -10
 ```
 
-如果项目使用 Conventional Commits:
+If the project uses Conventional Commits:
 
 ```
-type(scope): 用祈使句描述变更
+type(scope): Describe the change in imperative mood
 
-可选的详细说明（为什么做这个变更）
+Optional detailed explanation (why this change was made)
 
-可选的 BREAKING CHANGE 或 issue 引用
+Optional BREAKING CHANGE or issue reference
 ```
 
-type 类型:
-- `feat`: 新功能
-- `fix`: 修复 bug
-- `refactor`: 重构（不改变外部行为）
-- `docs`: 仅文档变更
-- `chore`: 构建/工具/依赖变更
-- `test`: 添加或修改测试
-- `style`: 代码格式调整（不影响逻辑）
-- `perf`: 性能优化
+type types:
+- `feat`: New feature
+- `fix`: Bug fix
+- `refactor`: Refactor (no external behavior change)
+- `docs`: Documentation only
+- `chore`: Build/tool/dependency changes
+- `test`: Add or modify tests
+- `style`: Code style adjustments (no logic change)
+- `perf`: Performance optimization
 
-如果项目不使用 Conventional Commits,用简洁的祈使句:
+If the project does not use Conventional Commits, use a concise imperative sentence:
 
 ```
-用一句话描述变更的核心内容
+Describe the core change in one sentence
 ```
 
-## 好的 Commit Message 示例
+## Good Commit Message Examples
 
 - `feat(auth): add API key validation with minimum length check`
 - `fix(stream): handle empty delta in SSE translation`
 - `refactor: split monolithic logger into modular structure`
 - `docs: update README with new endpoint documentation`
 
-## 差的 Commit Message 示例
+## Bad Commit Message Examples
 
-- `fix bug` （修了什么 bug？）
-- `update` （更新了什么？）
-- `changes` （什么 changes？）
-- `WIP` （不要提交 WIP 到主分支）
+- `fix bug` (What bug was fixed?)
+- `update` (What was updated?)
+- `changes` (What changes?)
+- `WIP` (Don't commit WIP to main branch)
 
-## 原则
+## Principles
 
-- 说"做了什么",不要列文件名
-- 用祈使语气（"add" 不是 "added"）
-- 第一行不超过 72 个字符
-- 如果需要更多上下文,在空行后写详细说明
-- Commit message 必须使用**英文**,禁止中英文混用
-- 单个提交保持**原子性**:一个提交只做一件事,按职责拆分（不要把多个不相关改动塞进同一个提交）
+- State "what was done", not file names
+- Use imperative mood ("add" not "added")
+- First line no more than 72 characters
+- If more context is needed, write details after a blank line
+- Commit messages must use **English**, no mixing of Chinese and English
+- Keep each commit **atomic**: one commit does one thing, split by responsibility (don't bundle unrelated changes into one commit)
 
-最后更新: 2026-06-30
+Last updated: 2026-06-30
 
-## 可机器校验规则（建议）
+## Machine-Verifiable Rules (Recommended)
 
-- 首行长度校验：`subject <= 72`。
-- 祈使语气提示词（建议）：以动词开头，如 `add/fix/refactor/docs/chore/test/style/perf`。
-- 禁止无信息量词汇（建议）：`fix bug` / `update` / `changes` / `WIP`。
-- 语言：英文。
+- First line length: `subject <= 72`.
+- Imperative mood hint (recommended): Start with a verb, e.g. `add/fix/refactor/docs/chore/test/style/perf`.
+- Prohibit uninformative words (recommended): `fix bug` / `update` / `changes` / `WIP`.
+- Language: English.

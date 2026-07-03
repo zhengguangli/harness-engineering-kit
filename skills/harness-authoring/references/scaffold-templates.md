@@ -1,102 +1,102 @@
-# Skill & Agent 脚手架模板
+# Skill & Agent Scaffold Templates
 
-本文件合并了新 skill 的 SKILL.md 模板和新 agent 的 Claude Code 模板——两者总是一起使用。
+This document merges the SKILL.md template for new skills and the Claude Code template for new agents — they are always used together.
 
 ---
 
-## SKILL.md 模板
+## SKILL.md Template
 
 ```
 ---
 name: <skill-name>
-description: <做什么,一句话>。<什么时候用,2-3 个触发短语,不要展开详细场景>。
+description: <what it does in one sentence>.<when to use, 2-3 trigger phrases, do not expand with detailed scenarios>.
 ---
 
-# <Skill 名称>(<中文名>)
+# <Skill Name>
 
-## 核心原则
+## Core Principles
 
-<一句话概括这个 skill 要解决的核心问题,以及最重要的反直觉结论或设计决策。>
+<A one-sentence summary of the core problem this skill solves, and the most important counter-intuitive conclusion or design decision.>
 
-## 何时使用
+## When to Use
 
-- <触发场景 1: 具体到能和其他 skill 区分开>
-- <触发场景 2>
-- <触发场景 3>
+- <Trigger scenario 1: specific enough to distinguish from other skills>
+- <Trigger scenario 2>
+- <Trigger scenario 3>
 
-## 方法论
+## Methodology
 
-<skill 的核心知识内容。如果有多个子主题,用 ### 子标题组织:>
+<Core knowledge content of the skill. If there are multiple sub-topics, organize with ### sub-headings:>
 
-### <子主题 1>
+### <Sub-topic 1>
 
-<内容>
+<Content>
 
-### <子主题 2>
+### <Sub-topic 2>
 
-<内容>
+<Content>
 
-## 初始化步骤(首次为项目搭建时)
+## Initialization Steps (when setting up for a project for the first time)
 
-1. <步骤>
-2. <步骤>
+1. <Step>
+2. <Step>
 
-## 操作步骤(当你被要求执行此技能时)
+## Operation Steps (when you are asked to execute this skill)
 
-1. <步骤>
-2. <步骤>
-3. <步骤>
+1. <Step>
+2. <Step>
+3. <Step>
 
-## 配合的 agent
+## Paired Agents
 
-- `<agent-name>`: <agent 的职责,一句话>
+- `<agent-name>`: <agent's responsibility, one sentence>
 
-## 相关模板
+## Related Templates
 
-- `references/<template>.md`: <用途>
+- `references/<template>.md`: <purpose>
 
 ---
-预算提醒:
-- description 控制在 ~100 词以内(常驻上下文);详细触发场景放到 `## 何时使用` 段。
-- 正文控制在 ~500 行以内;超出部分放入 `references/` 子目录。
-- description 同时写清"做什么"和"什么时候用"(短语级,不要展开)。
+Budget reminder:
+- description should be ~100 words (resident context); detailed trigger scenarios go in the `## When to Use` section.
+- Body text should be ~500 lines max; content beyond that goes into `references/` subdirectory.
+- description should clearly state both "what it does" and "when to use" (phrase level, no expansion).
 ```
 
 ---
 
-## Agent .md 模板 (Claude Code)
+## Agent .md Template (Claude Code)
 
 ```
-<!-- 将此文件放置在 skills/<paired-skill>/agents/<agent-name>.md -->
+<!-- Place this file in skills/<paired-skill>/agents/<agent-name>.md -->
 
 ---
 name: <agent-name>
-description: <做什么>。<什么时候用，具体场景>。
+description: <what it does>.<when to use, specific scenarios>.
 type: <read-only | executor>
 tools: Bash, Glob, Grep, Read
 model: sonnet
-skills: <相关 skill 名称>
+skills: <related skill names>
 ---
 
-你是「<角色名>」。你的唯一职责是 <一句话职责描述>。
+You are "<Role Name>". Your sole responsibility is <one-sentence responsibility description>.
 
-## 工具风险声明
+## Tool Risk Statement
 
-<说明 tools 中每个工具的使用边界和禁止操作。只读 agent 强调"禁止任何写操作";执行型 agent 限定 Edit/Write 的作用范围。>
+<Explain the usage boundaries and prohibited operations for each tool in tools. Read-only agents emphasize "no write operations"; executor agents limit the scope of Edit/Write.>
 
-## 工作流程
+## Workflow
 
-1. 步骤一
-2. 步骤二
-3. 步骤三
+1. Step 1
+2. Step 2
+3. Step 3
 
-## 原则
+## Principles
 
-- 原则一
-- 原则二
-- 原则三
+- Principle 1
+- Principle 2
+- Principle 3
 
-## 配合的 skill
+## Paired Skills
 
-- `<skill-name>`: <skill 的用途>
+- `<skill-name>`: <skill's purpose>
 ```

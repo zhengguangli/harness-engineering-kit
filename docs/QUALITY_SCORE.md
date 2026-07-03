@@ -15,13 +15,13 @@
 
 | 领域 | frontmatter 合规 | 触发回归 | 关键词一致性 | 文档新鲜度 | 最近评估日期 |
 |---|---|---|---|---|---|
-| skills (13个) | 13/13 (100%) ✅ | 48/48 (100%) ✅ | 13/13 (100%) ✅ | ✅ 7日内更新 | 2026-07-03 (十三次) |
+| skills (13个) | 13/13 (100%) ✅ | 48/48 (100%) ✅ | 13/13 (100%) ✅ | ✅ 7日内更新 | 2026-07-03 (十四次) |
 | scripts | — | — | — | ✅ 7日内更新 | 2026-07-03 |
 | tests | — | — | — | ✅ 7日内更新 | 2026-07-03 |
 
 ## 趋势备注
 
-2026-07-03: 初始评分填充。全部 13 个 skill 完成 A+ 级优化（平均分 9.57），`make triggers-all` 全绿通过（PASS=48 WARN=0 FAIL=0）。详见 `AGENTS.md` 和 `docs/quality-reports/skills-quality-improvement-2026-07-02.md`。
+2026-07-03: 初始评分填充。全部 13 个 skill 完成 A+ 级优化（平均分 9.57），`make triggers-all` 全绿通过（PASS=48 WARN=0 FAIL=0）。详见 `CLAUDE.md` 和 `docs/quality-reports/skills-quality-improvement-2026-07-02.md`。
 
 2026-07-03 (二次): 使用 skill-quality-assessor 的 8 维度标准化体系重新评估全部 13 个 skill。平均分 8.99 (A 级)，8 个 A 级 + 5 个 B+ 级。核心发现：frontmatter 合规率 100%，章节覆盖完整，但存在 12/13 技能 automation-check-script.sh 文件缺失、3 个技能 common-edge-cases.md 缺失、多数技能缺少 allowed-tools 显式声明等问题。详见 `docs/quality-reports/skills-quality-assessment.md`。
 
@@ -46,6 +46,8 @@
 2026-07-03 (十二次): 第十二次 8 维度子维度体系批量评估。平均分 9.46 (A 级，+0.07)，3 A+ / 10 A。历次第三大单轮增幅。核心驱动：Best Practices 全域场景化重写（12/13 skill）+ 5+ skill 新增关键章节（bootstrap 项目类型裁减指南+检查清单、commit-gate 工具链探测流程图、exec-plans 质量检查清单、golden-principles 4 阶段清扫节奏、observability 浏览器配置参考、architecture-boundaries 严重程度分类表、project-intake Monorepo 场景、skill-quality-assessor 模式对比表格）。architecture-boundaries 以严重程度分类表+Agent 提示词增强+Best Practices 场景化加入 A+ 列 (9.51)。内容质量维度从 9.43 升至 9.52（+0.09），为历次最大增幅。skill-quality-assessor 保持最高分 (9.58)，orchestration 等 5 个 skill 并列最低分 (9.35)。所有维度均正增长。自动化友好度 (+0.02) 增幅最小（脚本重构上轮已完成）。make triggers-all 保持全绿（48/48）。参考文件总数保持 80 不变（本轮改善集中在 SKILL.md 正文内容）。无 CRITICAL/HIGH/MEDIUM 级别问题。详见 `docs/quality-reports/skills-quality-assessment.md`。
 
 2026-07-03 (十三次): 第十三次 8 维度子维度体系批量评估。平均分 9.47 (A 级，+0.01)，3 A+ / 10 A。历次最小增幅。SKILL.md 内容层无变化，改善全部来自基础设施层：自动化检查脚本从 16 行共享包装器升级为带 2-10 项特有检查的完整脚本（13/13 特有化），CI/CD 管道新增自动化检查步骤。自动化友好度从 9.34 升至 9.44（+0.10），为第 8 次以来第三大单轮自动化友好度增幅。其余 7 个维度全部持平。最高分 skill-quality-assessor (9.59)，最低分 repo-map 和 orchestration (9.36)。make triggers-all 保持全绿（48/48）。无 CRITICAL/HIGH/MEDIUM 级别问题。加权评分脚本的 context trim bug 自第 12 次评估未修。详见 `docs/quality-reports/skills-quality-assessment.md`。
+
+2026-07-03 (十四次): 第十四次 8 维度子维度体系批量评估。平均分 9.47 (A 级，持平)，3 A+ / 10 A。本轮最大事件：全 13 个 SKILL.md 完成中译英全文翻译，内容逻辑和结构不变。评分持平（9.47），等级分布不变（3A+/10A）。自动化检查脚本发现 3 个自身 bug 并已修复：① `check_common_edge_cases()` 的 `dirname` 多一层目录上移（`dirname "$(dirname "$1")"` 改为 `dirname "$1"`）；② agent-prompt 搜索 `## Agent Prompt` 改为同时匹配 `## Agent 提示词`；③ context 值未 trim 尾部空格（sed 增加 trailing whitespace trim）。同步修复共享脚本 `scripts/skill-automated-check.sh` 中的中文 section 名（核心原则→Core Principles，何时使用→When to Use，方法论→Methodology，关键要点→Key Points，最后更新→Last updated，边界情况→Edge Case）。无 CRITICAL/HIGH/MEDIUM 级别问题——第五次达成"零未解决 MEDIUM+ 问题"状态。详见 `docs/quality-reports/skills-quality-assessment.md`。
 
 ---
 最后更新: 2026-07-03

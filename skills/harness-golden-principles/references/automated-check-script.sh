@@ -25,32 +25,32 @@ for ref_file in "quality-score-template.md" "pr-guidelines.md" "principle-priori
   fi
 done
 
-# Check SKILL.md contains "偏差存活时间" in 核心原则 section
+# Check SKILL.md Core Principles section contains "Deviation lifetime"
 ((++TOTAL_EXTRA))
-if grep -qE "^##\s+核心原则" "$SKILL_DIR/SKILL.md"; then
-  if sed -n '/^## 核心原则/,/^## /p' "$SKILL_DIR/SKILL.md" | grep -q "偏差存活时间"; then
+if grep -qE "^##\s+Core Principles" "$SKILL_DIR/SKILL.md"; then
+  if sed -n '/^## Core Principles/,/^## /p' "$SKILL_DIR/SKILL.md" | grep -q "Deviation lifetime"; then
     ((++PASSED_EXTRA))
   else
-    echo "  [FAIL] 核心原则 section missing '偏差存活时间'"
+    echo "  [FAIL] Core Principles section missing 'Deviation lifetime'"
   fi
 else
-  echo "  [FAIL] Missing 核心原则 section"
+  echo "  [FAIL] Missing Core Principles section"
 fi
 
-# Check 清扫节奏 section
+# Check Sweep Rhythm section in SKILL.md
 ((++TOTAL_EXTRA))
-if grep -qE "清扫节奏" "$SKILL_DIR/SKILL.md"; then
+if grep -qE "Sweep Rhythm" "$SKILL_DIR/SKILL.md"; then
   ((++PASSED_EXTRA))
 else
-  echo "  [FAIL] Missing 清扫节奏 section"
+  echo "  [FAIL] Missing Sweep Rhythm section"
 fi
 
 # Check Golden Principles vs Architecture Boundaries comparison table
 ((++TOTAL_EXTRA))
-if grep -qE "黄金原则 vs 架构边界" "$SKILL_DIR/SKILL.md"; then
+if grep -qE "Golden Principles vs Architecture Boundaries" "$SKILL_DIR/SKILL.md"; then
   ((++PASSED_EXTRA))
 else
-  echo "  [FAIL] Missing 黄金原则 vs 架构边界 comparison table"
+  echo "  [FAIL] Missing Golden Principles vs Architecture Boundaries comparison table"
 fi
 
 echo "---"

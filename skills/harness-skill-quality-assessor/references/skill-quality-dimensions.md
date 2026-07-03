@@ -1,421 +1,421 @@
-# Skills质量评估维度详细说明
+# Skills Quality Assessment Dimensions Detailed Description
 
-更新时间: 2026-07-02
-更新者: claude-code
+Update time: 2026-07-02
+Updated by: claude-code
 
-## 评估维度体系（8个维度）
+## Evaluation Dimension System (8 Dimensions)
 
-### 1. 结构完整性（权重：15%）
+### 1. Structure Completeness (Weight: 15%)
 
-**评估标准**：
-- frontmatter完整性：包含name, description, when_to_use, compatibility等必需字段
-- 章节结构：包含核心原则、何时使用、何时不该用、方法论、关键要点、常见陷阱等标准章节
-- 格式规范性：Markdown格式正确，层级结构清晰
+**Evaluation Criteria**:
+- Frontmatter completeness: includes required fields such as name, description, when_to_use, compatibility
+- Section structure: includes standard sections such as core principles, when to use, when not to use, methodology, key takeaways, common pitfalls
+- Format standardization: correct Markdown format, clear hierarchical structure
 
-**评分规则（0-10分）**：
-- 9.5-10分：完全符合harness体系规范，结构完美，格式规范
-- 9.0-9.4分：完全符合规范，结构优秀
-- 8.5-8.9分：基本符合规范，缺少1-2个非必需字段或章节
-- 8.0-8.4分：部分符合规范，缺少必需字段或章节
-- 7.0-7.9分：结构混乱，缺少多个必需部分
-- 6.0-6.9分：几乎无结构，不符合规范
-- 0-5.9分：完全无结构，需要重写
+**Scoring Rules (0-10)**:
+- 9.5-10: Fully conforms to harness system standards, perfect structure, standard format
+- 9.0-9.4: Fully conforms to standards, excellent structure
+- 8.5-8.9: Basically conforms to standards, missing 1-2 non-required fields or sections
+- 8.0-8.4: Partially conforms to standards, missing required fields or sections
+- 7.0-7.9: Confusing structure, missing multiple required parts
+- 6.0-6.9: Almost no structure, does not conform to standards
+- 0-5.9: No structure at all, needs rewrite
 
-**检查点**：
-- [ ] frontmatter包含name字段
-- [ ] frontmatter包含description字段（≥20字符）
-- [ ] frontmatter包含when_to_use字段
-- [ ] frontmatter包含compatibility字段
-- [ ] 包含"核心原则"章节
-- [ ] 包含"何时使用"章节
-- [ ] 包含"何时不该用"章节
-- [ ] 包含"方法论"章节
-- [ ] 包含"关键要点"章节
-- [ ] 包含"常见陷阱"章节
-- [ ] 包含"Agent 提示词"章节（如适用）
+**Checkpoints**:
+- [ ] Frontmatter includes name field
+- [ ] Frontmatter includes description field (>= 20 characters)
+- [ ] Frontmatter includes when_to_use field
+- [ ] Frontmatter includes compatibility field
+- [ ] Includes "Core Principles" section
+- [ ] Includes "When to Use" section
+- [ ] Includes "When Not to Use" section
+- [ ] Includes "Methodology" section
+- [ ] Includes "Key Takeaways" section
+- [ ] Includes "Common Pitfalls" section
+- [ ] Includes "Agent Prompt" section (if applicable)
 
-### 2. 内容质量（权重：20%）
+### 2. Content Quality (Weight: 20%)
 
-**评估标准**：
-- 清晰度：内容表达清晰，无歧义
-- 完整性：覆盖skill所需的所有关键信息
-- 可执行性：提供的指导可直接执行
+**Evaluation Criteria**:
+- Clarity: Content is clearly expressed, no ambiguity
+- Completeness: Covers all key information needed for the skill
+- Executability: Provided guidance can be directly executed
 
-**评分规则（0-10分）**：
-- 9.5-10分：内容完美清晰、完整、可直接执行，无冗余
-- 9.0-9.4分：内容优秀，清晰、完整、可执行
-- 8.5-8.9分：内容基本清晰完整，个别地方可改进
-- 8.0-8.4分：内容部分清晰，但存在歧义或缺失
-- 7.0-7.9分：内容模糊，难以执行
-- 6.0-6.9分：内容混乱，几乎无法使用
-- 0-5.9分：内容完全不可用，需要重写
+**Scoring Rules (0-10)**:
+- 9.5-10: Content is perfectly clear, complete, directly executable, no redundancy
+- 9.0-9.4: Content is excellent, clear, complete, executable
+- 8.5-8.9: Content is basically clear and complete, minor improvements possible
+- 8.0-8.4: Content is partially clear, but has ambiguity or omissions
+- 7.0-7.9: Content is vague, difficult to execute
+- 6.0-6.9: Content is confusing, almost unusable
+- 0-5.9: Content is completely unusable, needs rewrite
 
-**检查点**：
-- [ ] 核心原则清晰明确
-- [ ] 方法论步骤详细可执行
-- [ ] 示例和用例具体实用
-- [ ] 无歧义表述
-- [ ] 无冗余信息
+**Checkpoints**:
+- [ ] Core principles are clear and specific
+- [ ] Methodology steps are detailed and actionable
+- [ ] Examples and use cases are specific and practical
+- [ ] No ambiguous expressions
+- [ ] No redundant information
 
-### 3. 可用性（权重：15%）
+### 3. Usability (Weight: 15%)
 
-**评估标准**：
-- 触发条件清晰：用户知道何时使用该skill
-- 执行流程明确：agent知道如何执行
-- 输出格式规范：输出结果易于理解和使用
+**Evaluation Criteria**:
+- Trigger conditions are clear: users know when to use the skill
+- Execution process is clear: agent knows how to execute
+- Output format is standard: results are easy to understand and use
 
-**评分规则（0-10分）**：
-- 9.5-10分：触发条件完美清晰，执行流程明确，输出格式规范
-- 9.0-9.4分：触发条件清晰，执行流程明确，输出格式规范
-- 8.5-8.9分：基本可用，个别环节可优化
-- 8.0-8.4分：可用但存在困惑点
-- 7.0-7.9分：难以使用，需要大量猜测
-- 6.0-6.9分：几乎无法使用
-- 0-5.9分：完全不可用，需要重写
+**Scoring Rules (0-10)**:
+- 9.5-10: Trigger conditions are perfectly clear, execution process is clear, output format is standard
+- 9.0-9.4: Trigger conditions are clear, execution process is clear, output format is standard
+- 8.5-8.9: Basically usable, some aspects could be optimized
+- 8.0-8.4: Usable but has confusing points
+- 7.0-7.9: Difficult to use, requires a lot of guessing
+- 6.0-6.9: Almost unusable
+- 0-5.9: Completely unusable, needs rewrite
 
-**检查点**：
-- [ ] "何时使用"场景具体明确
-- [ ] "何时不该用"场景清晰
-- [ ] 执行流程步骤清晰
-- [ ] 输出格式有明确规范
-- [ ] 有具体的使用示例
+**Checkpoints**:
+- [ ] "When to Use" scenarios are specific and clear
+- [ ] "When Not to Use" scenarios are clear
+- [ ] Execution process steps are clear
+- [ ] Output format has clear specification
+- [ ] Has specific usage examples
 
-### 4. 设计模式（权重：10%）
+### 4. Design Patterns (Weight: 10%)
 
-**评估标准**：
-- 模块化：skill结构模块化，易于理解和维护
-- 可扩展性：设计允许未来扩展和修改
-- 一致性：与其他skills保持设计一致性
+**Evaluation Criteria**:
+- Modularity: Skill structure is modular, easy to understand and maintain
+- Extensibility: Design allows for future extension and modification
+- Consistency: Maintains design consistency with other skills
 
-**评分规则（0-10分）**：
-- 9.5-10分：设计完美，模块化清晰，可扩展，高度一致
-- 9.0-9.4分：设计优秀，模块化清晰，可扩展，高度一致
-- 8.5-8.9分：设计良好，基本符合体系设计模式
-- 8.0-8.4分：设计一般，部分符合体系设计模式
-- 7.0-7.9分：设计较差，与体系设计模式不一致
-- 6.0-6.9分：设计混乱，无模块化
-- 0-5.9分：设计完全不可用，需要重写
+**Scoring Rules (0-10)**:
+- 9.5-10: Perfect design, clear modularity, extensible, highly consistent
+- 9.0-9.4: Excellent design, clear modularity, extensible, highly consistent
+- 8.5-8.9: Good design, basically follows system design patterns
+- 8.0-8.4: Average design, partially follows system design patterns
+- 7.0-7.9: Poor design, inconsistent with system design patterns
+- 6.0-6.9: Confusing design, no modularity
+- 0-5.9: Design completely unusable, needs rewrite
 
-**检查点**：
-- [ ] 遵循harness体系设计模式
-- [ ] 结构模块化清晰
-- [ ] 允许未来扩展
-- [ ] 与其他skills风格一致
+**Checkpoints**:
+- [ ] Follows harness system design patterns
+- [ ] Structure is clearly modular
+- [ ] Allows for future extension
+- [ ] Consistent with other skills' style
 
-### 5. 文档质量（权重：10%）
+### 5. Documentation Quality (Weight: 10%)
 
-**评估标准**：
-- 示例丰富度：提供足够的示例和用例
-- 说明清晰度：文档说明清晰易懂
-- 错误处理：包含错误处理和故障排除指导
+**Evaluation Criteria**:
+- Example richness: Provides sufficient examples and use cases
+- Explanation clarity: Documentation explanations are clear and understandable
+- Error handling: Includes error handling and troubleshooting guidance
 
-**评分规则（0-10分）**：
-- 9.5-10分：文档完美，示例丰富，说明清晰，包含错误处理
-- 9.0-9.4分：文档优秀，示例丰富，说明清晰，包含错误处理
-- 8.5-8.9分：文档良好，基本够用
-- 8.0-8.4分：文档一般，缺少部分示例或说明
-- 7.0-7.9分：文档较差，难以理解
-- 6.0-6.9分：几乎无文档
-- 0-5.9分：完全无文档，需要重写
+**Scoring Rules (0-10)**:
+- 9.5-10: Perfect documentation, rich examples, clear explanations, includes error handling
+- 9.0-9.4: Excellent documentation, rich examples, clear explanations, includes error handling
+- 8.5-8.9: Good documentation, basically sufficient
+- 8.0-8.4: Average documentation, missing some examples or explanations
+- 7.0-7.9: Poor documentation, difficult to understand
+- 6.0-6.9: Barely any documentation
+- 0-5.9: No documentation at all, needs rewrite
 
-**检查点**：
-- [ ] 包含使用示例
-- [ ] 包含错误处理指导
-- [ ] 包含故障排除建议
-- [ ] 说明清晰易懂
+**Checkpoints**:
+- [ ] Includes usage examples
+- [ ] Includes error handling guidance
+- [ ] Includes troubleshooting suggestions
+- [ ] Explanations are clear and understandable
 
-### 6. Agent提示词质量（权重：10%）
+### 6. Agent Prompt Quality (Weight: 10%)
 
-**评估标准**：
-- 角色定义清晰：agent知道自己的角色和职责
-- 执行流程明确：agent知道如何执行
-- 约束合理：约束条件合理且可执行
+**Evaluation Criteria**:
+- Role definition is clear: agent knows its role and responsibilities
+- Execution process is clear: agent knows how to execute
+- Constraints are reasonable: constraints are reasonable and actionable
 
-**评分规则（0-10分）**：
-- 9.5-10分：Agent提示词完美，角色清晰，流程明确，约束合理
-- 9.0-9.4分：Agent提示词优秀，角色清晰，流程明确，约束合理
-- 8.5-8.9分：Agent提示词良好，基本可用
-- 8.0-8.4分：Agent提示词一般，存在困惑点
-- 7.0-7.9分：Agent提示词较差，难以执行
-- 6.0-6.9分：几乎无Agent提示词
-- 0-5.9分：完全无Agent提示词，需要重写
+**Scoring Rules (0-10)**:
+- 9.5-10: Perfect agent prompt, clear role, clear process, reasonable constraints
+- 9.0-9.4: Excellent agent prompt, clear role, clear process, reasonable constraints
+- 8.5-8.9: Good agent prompt, basically usable
+- 8.0-8.4: Average agent prompt, has confusing points
+- 7.0-7.9: Poor agent prompt, difficult to execute
+- 6.0-6.9: Barely any agent prompt
+- 0-5.9: No agent prompt at all, needs rewrite
 
-**检查点**：
-- [ ] 角色定义清晰
-- [ ] 核心能力明确
-- [ ] 执行流程详细
-- [ ] 约束条件合理
-- [ ] 输出规范明确
+**Checkpoints**:
+- [ ] Role definition is clear
+- [ ] Core capabilities are clear
+- [ ] Execution process is detailed
+- [ ] Constraints are reasonable
+- [ ] Output specification is clear
 
-### 7. 自动化友好度（权重：10%）
+### 7. Automation Friendliness (Weight: 10%)
 
-**评估标准**：
-- 可自动化检查程度：有多少检查项可以自动化
-- 脚本支持：是否提供自动化检查脚本
-- CI/CD集成：是否支持CI/CD集成
+**Evaluation Criteria**:
+- Degree of automated checkability: how many check items can be automated
+- Script support: whether automated check scripts are provided
+- CI/CD integration: whether CI/CD integration is supported
 
-**评分规则（0-10分）**：
-- 9.5-10分：完全自动化，提供完整脚本，支持CI/CD集成
-- 9.0-9.4分：高度自动化，提供完整脚本，支持CI/CD集成
-- 8.5-8.9分：大部分可自动化，提供基本脚本
-- 8.0-8.4分：部分可自动化，脚本不完整
-- 7.0-7.9分：自动化程度低，缺少脚本
-- 6.0-6.9分：几乎无法自动化
-- 0-5.9分：完全无法自动化，需要重写
+**Scoring Rules (0-10)**:
+- 9.5-10: Fully automated, complete scripts provided, CI/CD integration supported
+- 9.0-9.4: Highly automated, complete scripts provided, CI/CD integration supported
+- 8.5-8.9: Mostly automatable, basic scripts provided
+- 8.0-8.4: Partially automatable, scripts incomplete
+- 7.0-7.9: Low automation, missing scripts
+- 6.0-6.9: Almost impossible to automate
+- 0-5.9: Completely impossible to automate, needs rewrite
 
-**检查点**：
-- [ ] 提供自动化检查脚本
-- [ ] 支持CI/CD集成
-- [ ] 可自动化检查项占比高
-- [ ] 自动化检查结果可量化
+**Checkpoints**:
+- [ ] Provides automated check script
+- [ ] Supports CI/CD integration
+- [ ] High proportion of check items can be automated
+- [ ] Automated check results are quantifiable
 
-### 8. 用户体验（权重：10%）
+### 8. User Experience (Weight: 10%)
 
-**评估标准**：
-- 学习曲线：用户学习使用该skill的难度
-- 使用便捷性：使用该skill的便捷程度
-- 错误恢复能力：遇到错误时的恢复能力
+**Evaluation Criteria**:
+- Learning curve: difficulty for users to learn the skill
+- Ease of use: convenience of using the skill
+- Error recovery capability: ability to recover when errors occur
 
-**评分规则（0-10分）**：
-- 9.5-10分：学习曲线平缓，使用便捷，错误恢复能力强
-- 9.0-9.4分：学习曲线平缓，使用便捷，错误恢复能力强
-- 8.5-8.9分：学习曲线适中，使用较便捷，错误恢复能力较强
-- 8.0-8.4分：学习曲线较陡，使用一般，错误恢复能力一般
-- 7.0-7.9分：学习曲线陡峭，使用不便，错误恢复能力弱
-- 6.0-6.9分：学习曲线极陡，使用极不便，几乎无错误恢复能力
-- 0-5.9分：完全不可用，需要重写
+**Scoring Rules (0-10)**:
+- 9.5-10: Gentle learning curve, easy to use, strong error recovery
+- 9.0-9.4: Gentle learning curve, easy to use, strong error recovery
+- 8.5-8.9: Moderate learning curve, fairly easy to use, fairly strong error recovery
+- 8.0-8.4: Steeper learning curve, average ease of use, average error recovery
+- 7.0-7.9: Steep learning curve, inconvenient to use, weak error recovery
+- 6.0-6.9: Very steep learning curve, very inconvenient, almost no error recovery
+- 0-5.9: Completely unusable, needs rewrite
 
-**检查点**：
-- [ ] 学习曲线平缓
-- [ ] 使用便捷
-- [ ] 错误恢复能力强
-- [ ] 提供足够的帮助信息
+**Checkpoints**:
+- [ ] Gentle learning curve
+- [ ] Easy to use
+- [ ] Strong error recovery capability
+- [ ] Provides sufficient help information
 
-### 检查点补充：allowed-tools 声明检查
+### Supplementary Check: allowed-tools Declaration Check
 
-| 检查项 | 通过条件 | 失败条件 | 严重程度 |
+| Check Item | Pass Condition | Fail Condition | Severity |
 |--------|----------|----------|----------|
-| allowed-tools存在性 | frontmatter包含 `allowed-tools:` 字段 | 缺失 | WARN |
-| allowed-tools语法 | 格式为 `Tool(命令1 命令2)` 的形式 | 格式错误或无效工具名 | WARN |
-| allowed-tools最小权限 | 只读型skill不包含Edit/Write | 包含不该有的工具 | WARN |
-| context字段存在性 | frontmatter包含 `context:` 字段 | 缺失 | WARN |
-| metadata.category存在性 | frontmatter包含 `metadata.category:` 字段 | 缺失 | WARN |
+| allowed-tools exists | Frontmatter includes `allowed-tools:` field | Missing | WARN |
+| allowed-tools syntax | Format is `Tool(cmd1 cmd2)` | Wrong format or invalid tool name | WARN |
+| allowed-tools least privilege | Read-only skill does not include Edit/Write | Includes tools it shouldn't have | WARN |
+| context field exists | Frontmatter includes `context:` field | Missing | WARN |
+| metadata.category exists | Frontmatter includes `metadata.category:` field | Missing | WARN |
 
-### 检查点补充：跨skill交接点检查
+### Supplementary Check: Cross-Skill Handoff Check
 
-| 检查项 | 通过条件 | 失败条件 | 严重程度 |
+| Check Item | Pass Condition | Fail Condition | Severity |
 |--------|----------|----------|----------|
-| 上游skill说明 | 明确列出上游skill和接收的产出物 | 未提及 | WARN |
-| 下游skill说明 | 明确列出下游skill和传递的产出物 | 未提及 | WARN |
-| 交接时机 | 说明何时触发交接 | 未说明 | WARN |
-| 错误处理 | 交接失败的恢复方式 | 未说明 | WARN |
+| Upstream skill description | Clearly lists upstream skills and received outputs | Not mentioned | WARN |
+| Downstream skill description | Clearly lists downstream skills and transmitted outputs | Not mentioned | WARN |
+| Handoff timing | Explains when handoff is triggered | Not explained | WARN |
+| Error handling | Recovery method for failed handoff | Not explained | WARN |
 
-### 检查点补充：最后更新新鲜度检查
+### Supplementary Check: Last Update Freshness Check
 
-| 检查项 | 通过条件 | 失败条件 | 严重程度 |
+| Check Item | Pass Condition | Fail Condition | Severity |
 |--------|----------|----------|----------|
-| 最后更新存在 | 包含"最后更新"日期标记 | 缺失 | WARN |
-| 新鲜度 | 更新日期在90天内 | 超过90天 | LOW |
+| Last update exists | Includes "Last updated" date marker | Missing | WARN |
+| Freshness | Update date within 90 days | Over 90 days | LOW |
 
-## 综合评分计算
+## Composite Score Calculation
 
-**总分计算公式**：
+**Total Score Formula**:
 ```
-总分 = (结构完整性得分 × 0.15) + (内容质量得分 × 0.20) + (可用性得分 × 0.15) + 
-       (设计模式得分 × 0.10) + (文档质量得分 × 0.10) + (Agent提示词质量得分 × 0.10) +
-       (自动化友好度得分 × 0.10) + (用户体验得分 × 0.10)
+Total = (Structure Completeness x 0.15) + (Content Quality x 0.20) + (Usability x 0.15) +
+        (Design Patterns x 0.10) + (Documentation Quality x 0.10) + (Agent Prompt Quality x 0.10) +
+        (Automation Friendliness x 0.10) + (User Experience x 0.10)
 ```
 
-各维度得分 = 子维度得分的算术平均（每个子维度 0-10 分）。
+Each dimension score = arithmetic mean of sub-dimension scores (each sub-dimension 0-10).
 
-**等级划分**：
-- A+级（9.5-10分）：卓越，可作为行业标杆
-- A级（9.0-9.4分）：优秀，可作为参考范例
-- B+级（8.5-8.9分）：良好，符合高标准
-- B级（8.0-8.4分）：合格，符合基本标准
-- C级（7.0-7.9分）：一般，需要改进
-- D级（6.0-6.9分）：较差，需要重大改进
-- F级（0-5.9分）：不合格，需要重写
+**Grade Classification**:
+- A+ (9.5-10): Excellent, can serve as an industry benchmark
+- A (9.0-9.4): Great, can serve as a reference example
+- B+ (8.5-8.9): Good, meets high standards
+- B (8.0-8.4): Adequate, meets basic standards
+- C (7.0-7.9): Fair, needs improvement
+- D (6.0-6.9): Poor, needs significant improvement
+- F (0-5.9): Failing, needs rewrite
 
-## 评估流程
+## Evaluation Process
 
-### 自动化检查（权重：40%）
+### Automated Checks (Weight: 40%)
 
-1. frontmatter字段完整性检查
-2. 章节结构检查
-3. Markdown格式验证
-4. 关键词一致性检查
-5. 自动化脚本支持检查
-6. CI/CD集成检查
+1. Frontmatter field completeness check
+2. Section structure check
+3. Markdown format validation
+4. Keyword consistency check
+5. Automation script support check
+6. CI/CD integration check
 
-### 人工评审（权重：60%）
+### Manual Review (Weight: 60%)
 
-1. 内容质量评审
-2. 可用性评审
-3. 设计模式评审
-4. 文档质量评审
-5. Agent提示词质量评审
-6. 自动化友好度评审
-7. 用户体验评审
+1. Content quality review
+2. Usability review
+3. Design pattern review
+4. Documentation quality review
+5. Agent prompt quality review
+6. Automation friendliness review
+7. User experience review
 
-## 评估报告格式
+## Evaluation Report Format
 
 ```json
 {
-  "skill_name": "skill名称",
-  "evaluation_date": "评估日期",
+  "skill_name": "skill name",
+  "evaluation_date": "evaluation date",
   "total_score": 9.2,
   "grade": "A",
   "dimensions": {
     "structure_completeness": {
       "score": 9.5,
       "weight": 0.15,
-      "comments": "结构完整，符合规范"
+      "comments": "Complete structure, conforms to standards"
     },
     "content_quality": {
       "score": 9.0,
       "weight": 0.20,
-      "comments": "内容清晰，可执行性强"
+      "comments": "Clear content, strong executability"
     },
     "usability": {
       "score": 9.0,
       "weight": 0.15,
-      "comments": "可用性良好，触发条件清晰"
+      "comments": "Good usability, clear trigger conditions"
     },
     "design_patterns": {
       "score": 9.5,
       "weight": 0.10,
-      "comments": "设计优秀，模块化清晰"
+      "comments": "Excellent design, clear modularity"
     },
     "documentation_quality": {
       "score": 9.0,
       "weight": 0.10,
-      "comments": "文档良好，示例足够"
+      "comments": "Good documentation, sufficient examples"
     },
     "agent_prompt_quality": {
       "score": 9.0,
       "weight": 0.10,
-      "comments": "Agent提示词质量良好"
+      "comments": "Good agent prompt quality"
     },
     "automation_friendliness": {
       "score": 9.0,
       "weight": 0.10,
-      "comments": "自动化友好度高"
+      "comments": "High automation friendliness"
     },
     "user_experience": {
       "score": 9.0,
       "weight": 0.10,
-      "comments": "用户体验良好"
+      "comments": "Good user experience"
     }
   },
   "issues": [
     {
-      "dimension": "内容质量",
+      "dimension": "Content Quality",
       "severity": "LOW",
-      "description": "个别表述可更清晰",
-      "suggestion": "建议优化措辞"
+      "description": "Some expressions could be clearer",
+      "suggestion": "Recommend optimizing wording"
     }
   ],
   "recommendations": [
-    "建议增加更多使用示例",
-    "建议优化触发条件描述"
+    "Recommend adding more usage examples",
+    "Recommend optimizing trigger condition descriptions"
   ]
 }
 ```
 
-## 评估者指南：常见误判场景
+## Evaluator Guide: Common Misjudgment Scenarios
 
-### 1. 自动化友好度评分陷阱
+### 1. Automation Friendliness Scoring Pitfalls
 
-| 误判模式 | 错误做法 | 正确做法 |
+| Misjudgment Pattern | Wrong Approach | Correct Approach |
 |----------|----------|----------|
-| 有脚本就给高分 | 只要有 automated-check-script.sh 就给 9.0+ | 还要检查脚本覆盖的检查项数量和验证准确性 |
-| 无脚本就给零分 | 无 automated-check-script.sh 就给 0 分 | 检查是否有其他自动化手段（如项目级 scripts/ 下的共享脚本），合理给 6.0-7.0 |
-| 忽略CI/CD集成 | 只看脚本不看 CI 配置 | 检查 .github/workflows 是否集成该脚本 |
+| Give high score if script exists | Give 9.0+ just for having automated-check-script.sh | Also check the number of check items covered and verification accuracy |
+| Give zero score if no script | Give 0 for no automated-check-script.sh | Check if there are other automation methods (e.g., shared scripts under project-level scripts/), reasonably score 6.0-7.0 |
+| Ignore CI/CD integration | Only look at scripts, not CI configuration | Check if .github/workflows integrates the script |
 
-### 2. 文档质量评分陷阱
+### 2. Documentation Quality Scoring Pitfalls
 
-| 误判模式 | 错误做法 | 正确做法 |
+| Misjudgment Pattern | Wrong Approach | Correct Approach |
 |----------|----------|----------|
-| 只看 refs 数量不看质量 | refs 多就给高分 | 还要检查 refs 文件的实际内容质量和使用示例完整度 |
-| 漏算 common-edge-cases | 没注意到这个文件的存在 | 必须检查 `references/common-edge-cases.md` 是否存在 |
-| 忽略最后更新日期 | 有即可，不看新旧 | 超过 90 天的在文档质量维度扣分（-0.5 到 -1.0） |
+| Only count refs quantity, not quality | Give high score for many refs | Also check the actual content quality of refs files and example completeness |
+| Miss common-edge-cases | Fail to notice the file exists | Must check whether `references/common-edge-cases.md` exists |
+| Ignore last update date | Just check existence, not recency | Deduct points ( -0.5 to -1.0 ) in documentation quality dimension if over 90 days |
 
-### 3. 设计模式评分陷阱
+### 3. Design Pattern Scoring Pitfalls
 
-| 误判模式 | 错误做法 | 正确做法 |
+| Misjudgment Pattern | Wrong Approach | Correct Approach |
 |----------|----------|----------|
-| 忽略跨skill交接 | 只评估 skill 内部结构 | 必须检查是否说明上下游skill交接关系 |
-| 与参考skill对比过度 | 参考skill 9.5 就给其他 9.5 | 按实际质量评分，不因参考skill高分而自动给高分 |
-| 一致性检查过宽 | 大类结构一致即可 | 要细到章节命名风格、硬约束格式、标题层级 |
+| Ignore cross-skill handoff | Only evaluate internal skill structure | Must check whether upstream/downstream skill handoff relationships are described |
+| Over-reliance on reference skill comparison | Reference skill is 9.5 so give others 9.5 | Score based on actual quality, do not automatically give high scores because of high reference skill score |
+| Consistency check too broad | Broad structure consistency is enough | Need to check down to section naming style, hard constraint format, heading hierarchy |
 
-### 4. 低分触发模式
+### 4. Low Score Trigger Patterns
 
-以下情况应自动触发低分（≤7.0）：
+The following conditions should automatically trigger a low score (<=7.0):
 
-| 条件 | 受影响维度 | 建议得分 |
+| Condition | Affected Dimension | Suggested Score |
 |------|-----------|---------|
-| 缺少 `## Agent 提示词` 章节 | Agent提示词质量 | 0 |
-| 缺少 `## 方法论` 章节 | 内容质量 | ≤5.0 |
-| frontmatter 缺失 2 个以上必需字段 | 结构完整性 | ≤6.0 |
-| 无 `references/` 目录下的参考文件 | 文档质量 | ≤6.5 |
-| 无 allowed-tools 声明 | 自动化友好度 | ≤7.0 |
-| 无 common-edge-cases.md | 文档质量 | ≤8.0 |
+| Missing `## Agent Prompt` section | Agent Prompt Quality | 0 |
+| Missing `## Methodology` section | Content Quality | <=5.0 |
+| Frontmatter missing 2+ required fields | Structure Completeness | <=6.0 |
+| No reference files under `references/` directory | Documentation Quality | <=6.5 |
+| No allowed-tools declaration | Automation Friendliness | <=7.0 |
+| No common-edge-cases.md | Documentation Quality | <=8.0 |
 
-### 5. 维度间交互说明
+### 5. Cross-Dimension Interaction Notes
 
-| 交互关系 | 说明 |
+| Relationship | Description |
 |----------|------|
-| allowed-tools 影响 2 个维度 | 缺失既影响结构完整性（frontmatter不完整），也影响自动化友好度（不符合最小权限原则） |
-| common-edge-cases 影响 2 个维度 | 缺失既影响文档质量（示例不足），也影响用户体验（边界情况处理缺失） |
-| 硬约束丰富度影响 2 个维度 | 硬约束丰富（≥3 条）有利于内容质量，缺失则影响结构完整性 |
-| 评估报告路径规范化影响 2 个维度 | 有标准化落盘路径有利于可用性（输出明确），也影响用户体验（结果可预期） |
+| allowed-tools affects 2 dimensions | Missing affects both structure completeness (incomplete frontmatter) and automation friendliness (violates least privilege principle) |
+| common-edge-cases affects 2 dimensions | Missing affects both documentation quality (insufficient examples) and user experience (missing edge case handling) |
+| Hard constraint richness affects 2 dimensions | Rich hard constraints (>= 3) benefit content quality; missing affects structure completeness |
+| Standardized report output path affects 2 dimensions | Standardized output path benefits usability (clear output) and user experience (predictable results) |
 
-## 子维度与检查点映射
+## Sub-Dimension and Checkpoint Mapping
 
-| 维度 | 子维度 | 对应检查点 |
+| Dimension | Sub-Dimension | Corresponding Checkpoints |
 |------|--------|-----------|
-| 结构完整性(15%) | frontmatter完整性 | name/description/when_to_use/compatibility/context/agent/metadata/category/allowed-tools/version(不应含) |
-| 结构完整性(15%) | 章节结构完整 | 核心原则/何时使用/何时不该用/方法论/关键要点/常见陷阱/边界情况处理/硬约束/Agent提示词 |
-| 结构完整性(15%) | 格式规范性 | 标题层级/列表格式/代码块配对/链接格式 |
-| 内容质量(20%) | 清晰度 | 核心原则精准、无歧义表述 |
-| 内容质量(20%) | 完整性 | 覆盖skill关键信息、方法论完整 |
-| 内容质量(20%) | 可执行性 | 步骤可复现、示例可复制 |
-| 可用性(15%) | 触发条件明确性 | 何时使用/何时不该用场景具体 |
-| 可用性(15%) | 执行流程清晰度 | 流程步骤明确可执行 |
-| 可用性(15%) | 输出格式规范 | 输出路径/格式有明确约定 |
-| 设计模式(10%) | 模块化 | 结构模块化可理解 |
-| 设计模式(10%) | 可扩展性 | 设计允许扩展 |
-| 设计模式(10%) | 一致性 | 与其他skill风格一致 |
-| 设计模式(10%) | 跨skill交接 | 上下游/交接时机/产出物 |
-| 文档质量(10%) | 示例丰富度 | 示例数量≥2 |
-| 文档质量(10%) | 说明清晰度 | common-edge-cases存在 |
-| 文档质量(10%) | 错误处理 | 边界情况/故障排除 |
-| 文档质量(10%) | 最后更新新鲜度 | 更新日期≤90天 |
-| Agent提示词质量(10%) | 6子节完备性 | 跳过条件/角色定义/核心能力/执行流程/约束/输出规范 |
-| Agent提示词质量(10%) | 约束质量 | 约束含违规后果 |
-| Agent提示词质量(10%) | 输出路径 | 输出路径规范化 |
-| 自动化友好度(10%) | 脚本支持 | automated-check-script.sh |
-| 自动化友好度(10%) | 检查覆盖率 | 检查项数量与质量 |
-| 自动化友好度(10%) | CI/CD集成 | .github/workflows配置 |
-| 用户体验(10%) | 学习曲线 | 触发场景直观 |
-| 用户体验(10%) | 使用便捷性 | 边界情况覆盖 |
-| 用户体验(10%) | 错误恢复 | 常见陷阱覆盖 |
+| Structure Completeness(15%) | frontmatter completeness | name/description/when_to_use/compatibility/context/agent/metadata/category/allowed-tools/version(should not contain) |
+| Structure Completeness(15%) | section structure complete | Core Principles/When to Use/When Not to Use/Methodology/Key Takeaways/Common Pitfalls/Edge Case Handling/Hard Constraints/Agent Prompt |
+| Structure Completeness(15%) | format standardization | heading hierarchy/list format/code block pairing/link format |
+| Content Quality(20%) | clarity | precise core principles, no ambiguous expressions |
+| Content Quality(20%) | completeness | covers skill key information, complete methodology |
+| Content Quality(20%) | executability | steps reproducible, examples copyable |
+| Usability(15%) | trigger condition clarity | When to Use/When Not to Use scenarios specific |
+| Usability(15%) | execution process clarity | process steps clear and executable |
+| Usability(15%) | output format standardization | output path/format has clear convention |
+| Design Patterns(10%) | modularity | structure modular and understandable |
+| Design Patterns(10%) | extensibility | design allows extension |
+| Design Patterns(10%) | consistency | consistent style with other skills |
+| Design Patterns(10%) | cross-skill handoff | upstream/downstream/handoff timing/outputs |
+| Documentation Quality(10%) | example richness | example count >= 2 |
+| Documentation Quality(10%) | explanation clarity | common-edge-cases exists |
+| Documentation Quality(10%) | error handling | edge cases/troubleshooting |
+| Documentation Quality(10%) | last update freshness | update date <= 90 days |
+| Agent Prompt Quality(10%) | 6 sub-section completeness | skip conditions/role definition/core capabilities/execution process/constraints/output specifications |
+| Agent Prompt Quality(10%) | constraint quality | constraints include violation consequences |
+| Agent Prompt Quality(10%) | output path | standardized output path |
+| Automation Friendliness(10%) | script support | automated-check-script.sh |
+| Automation Friendliness(10%) | check coverage | number and quality of check items |
+| Automation Friendliness(10%) | CI/CD integration | .github/workflows configuration |
+| User Experience(10%) | learning curve | trigger scenarios intuitive |
+| User Experience(10%) | ease of use | edge case coverage |
+| User Experience(10%) | error recovery | common pitfalls coverage |
 
-## 自动化检查加权评分模型
+## Automated Check Weighted Scoring Model
 
-自动化检查评分从简单的通过率模型升级为加权模型：
+The automated check scoring has been upgraded from a simple pass-rate model to a weighted model:
 
-| 级别 | 权重分 | 含义 |
+| Level | Weight Score | Meaning |
 |------|--------|------|
-| PASS | +1 | 检查通过 |
-| WARN | 0 | 警告，不扣分 |
-| LOW | -1 | 低严重度问题 |
-| MEDIUM | -2 | 中严重度问题 |
-| HIGH | -3 | 高严重度问题 |
-| CRITICAL | -5 | 阻塞级问题 |
+| PASS | +1 | Check passed |
+| WARN | 0 | Warning, no deduction |
+| LOW | -1 | Low severity issue |
+| MEDIUM | -2 | Medium severity issue |
+| HIGH | -3 | High severity issue |
+| CRITICAL | -5 | Blocking-level issue |
 
-**最终自动化得分** = max(0, min(10, (通过检查数 × 1 + 惩罚分) × 10 / 总检查数))
+**Final Automated Score** = max(0, min(10, (pass_count x 1 + penalty_score) x 10 / total_check_count))
 
 ---
-最后更新: 2026-07-03（变更：增加检查点补充、评估者指南、子维度映射、加权评分模型）
+Last updated: 2026-07-03 (Change: Added supplementary checkpoints, evaluator guide, sub-dimension mapping, weighted scoring model)

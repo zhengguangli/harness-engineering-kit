@@ -1,75 +1,75 @@
-# 通用边界情况参考文档
+# Common Edge Cases Reference
 
-## 概述
+## Overview
 
-本文档汇总了 Prompt Optimizer 处理中的通用边界情况。引用本文档以避免在 SKILL.md 中重复定义。
+This document summarizes common edge cases handled by Prompt Optimizer. Reference this document to avoid redefining them in SKILL.md.
 
-## 通用边界情况
+## Common Edge Cases
 
-### 1. 用户需求极为含糊
+### 1. Extremely Vague User Requirements
 
-**场景**：用户描述只有几个词（如"优化这个"、"帮我改一下"），没有提供原始 prompt 或上下文
+**Scenario**: User describes with only a few words (e.g., "optimize this", "help me fix it"), without providing the original prompt or context
 
-**处理原则**：
-- 先请求用户提供要优化的原始 prompt 或更详细的描述
-- 如果用户仍不提供，用最小角色+任务结构生成一个基础模板
-- 标注"基于有限信息，建议补充具体场景以获得更优结果"
+**Handling Principles**:
+- First ask the user to provide the original prompt to be optimized or a more detailed description
+- If the user still doesn't provide it, generate a basic template with minimal role + task structure
+- Note: "Based on limited information, it is recommended to add specific scenarios for better results"
 
-### 2. 原始 prompt 极短（< 10 个字）
+### 2. Very Short Original Prompt (< 10 words)
 
-**场景**：用户提供的 prompt 只有一句话或一个短语
+**Scenario**: The user's prompt is only one sentence or a short phrase
 
-**处理原则**：
-- 接受简短输入，不做强制要求
-- 自动推断缺失的模块（角色定义、约束、输出格式）
-- 输出时标注"以下模块为空，建议补充：X、Y、Z"
-- 不允许因为 prompt 短而拒绝工作
+**Handling Principles**:
+- Accept short input without making it mandatory
+- Automatically infer missing modules (role definition, constraints, output format)
+- When outputting, note: "The following modules are empty. It is recommended to supplement: X, Y, Z"
+- Do not refuse to work just because the prompt is short
 
-### 3. 原始 prompt 已高度结构化
+### 3. Already Highly Structured Original Prompt
 
-**场景**：用户提供的 prompt 已经有角色、执行链、输出 schema 等完整结构
+**Scenario**: The user's prompt already has a complete structure such as role, execution chain, output schema, etc.
 
-**处理原则**：
-- 识别已存在的结构和缺失的模块
-- 缺失率 < 20%：做微调和优化，不重构整体
-- 缺失率 20-50%：补充缺失模块，保持既有结构
-- 仅当缺失率 > 50% 时做整体重构
+**Handling Principles**:
+- Identify existing structure and missing modules
+- Gap rate < 20%: Make fine-tuning and optimizations without restructuring the whole thing
+- Gap rate 20-50%: Supplement missing modules while preserving existing structure
+- Only restructure the whole thing when gap rate > 50%
 
-**判断方法**：按六区块模板逐块检查（角色定义、变量字典、执行链、约束、输出 schema、示例）
+**Judgment Method**: Check block by block according to the six-block template (Role, Variables Dictionary, Execution Chain, Constraints, Output Schema, Examples)
 
-### 4. 重复优化同一 prompt
+### 4. Repeatedly Optimizing the Same Prompt
 
-**场景**：用户反复提交同一个 prompt 要求优化
+**Scenario**: The user repeatedly submits the same prompt for optimization
 
-**处理原则**：
-- 检查是否有之前的优化历史（复用会话上下文）
-- 第二版以后改为"增量优化"模式：只调整上一版中被指出问题的部分
-- 三版以后询问用户"是否已满足需求"，避免无限循环
+**Handling Principles**:
+- Check for previous optimization history (reuse session context)
+- From the second version onward, switch to "incremental optimization" mode: only adjust parts flagged in the previous version
+- After the third version, ask the user "Is this satisfactory?" to avoid infinite loops
 
-### 5. 需要优化多语言 prompt
+### 5. Multi-language Prompt Optimization
 
-**场景**：用户提供的 prompt 包含非中文内容，或要求产出多语言版本
+**Scenario**: The user provides a prompt containing non-English content, or requests multi-language output
 
-**处理原则**：
-- 保持原始 prompt 的语言不变，除非用户要求翻译
-- 变量字典中的中文注释保持中文
-- 输出 schema 保持与原始 prompt 同语言
-- 如果要产出多语言版本，为每个语言单独生成一套完整 prompt
+**Handling Principles**:
+- Keep the original prompt's language unchanged, unless the user requests translation
+- Keep Chinese comments in the variables dictionary as Chinese
+- Keep the output schema in the same language as the original prompt
+- To produce multi-language versions, generate a complete set of prompts for each language separately
 
-### 6. 非 LLM prompt 的内容
+### 6. Non-LLM Prompt Content
 
-**场景**：用户提供了一段代码、配置文件或自然语言指令，要求优化为 LLM prompt
+**Scenario**: The user provides code, configuration files, or natural language instructions and asks to optimize them into an LLM prompt
 
-**处理原则**：
-- 先确认用户意图：是想把这段内容转化为 LLM prompt，还是想优化这段内容本身
-- 转化为 prompt 时，保持原始语义不丢失
-- 标注"原始内容已完整编码到 prompt 中"
+**Handling Principles**:
+- First confirm the user's intent: whether to convert this content into an LLM prompt, or to optimize the content itself
+- When converting to a prompt, preserve the original semantics completely
+- Note: "Original content has been fully encoded into the prompt"
 
-## 使用指南
+## Usage Guide
 
-Prompt Optimizer 特有的边界情况直接写在本文件中。处理边界情况时：
-1. 如果属于通用类型，引用本文档对应章节
-2. 按格式：场景 → 处理原则（1-2行）
+Prompt Optimizer-specific edge cases are written directly in this file. When handling edge cases:
+1. If it is a common type, reference the corresponding section of this document
+2. Follow the format: Scenario → Handling Principles (1-2 lines)
 
 ---
-最后更新: 2026-07-03
+Last updated: 2026-07-03

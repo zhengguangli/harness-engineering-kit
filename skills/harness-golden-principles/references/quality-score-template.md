@@ -2,25 +2,25 @@
 
 <!-- Canonical owner: harness-golden-principles -->
 
-按领域/分层追踪代码质量与架构一致性的评分,随时间观察差距是否在收敛还是扩大。由 `entropy-collector` agent 在周期性清扫时更新。
+Tracks code quality and architectural consistency scores by domain/layer, observing whether gaps are converging or widening over time. Updated by the `entropy-collector` agent during periodic sweeps.
 
-## 评分维度(示例,按项目调整)
+## Scoring Dimensions (examples, adjust per project)
 
-- **结构一致性**:是否遵守 `ARCHITECTURE.md` 里定义的依赖方向
-- **黄金原则遵循度**:`harness-golden-principles` 里编码的品味/惯用法规则的违反密度
-- **测试覆盖**:关键路径的测试覆盖情况
-- **文档新鲜度**:对应 `docs/design-docs/` 条目是否最近被校验过
+- **Structural Consistency**: Whether dependency directions defined in `ARCHITECTURE.md` are followed.
+- **Golden Principle Compliance**: Violation density of taste/idiom rules encoded in `harness-golden-principles`.
+- **Test Coverage**: Test coverage for critical paths.
+- **Document Freshness**: Whether corresponding `docs/design-docs/` entries have been recently validated.
 
-## 当前评分
+## Current Scores
 
-| 领域 | 结构一致性 | 黄金原则遵循度 | 测试覆盖 | 文档新鲜度 | 最近评估日期 |
-|---|---|---|---|---|---|
-| <领域 A> | <分数/等级> | <分数/等级> | <分数/等级> | <分数/等级> | <YYYY-MM-DD> |
-| <领域 B> | | | | | |
+| Domain | Structural Consistency | Golden Principle Compliance | Test Coverage | Document Freshness | Last Assessment Date |
+|--------|------------------------|----------------------------|---------------|--------------------|----------------------|
+| <Domain A> | <score/grade> | <score/grade> | <score/grade> | <score/grade> | <YYYY-MM-DD> |
+| <Domain B> | | | | | |
 
-## 趋势备注
+## Trend Notes
 
-记录这一轮和上一轮相比,哪些维度在改善、哪些在恶化,以及怀疑的原因(例如"某类违规集中出现在某个新接入的领域,可能是该领域还没有补齐对应的 lint 规则")。
+Records which dimensions are improving or deteriorating compared to the previous cycle, along with suspected causes (e.g., "a concentrated spike of a certain violation type in a newly onboarded domain suggests that domain has not yet added the corresponding lint rules").
 
 ---
-最后更新: <YYYY-MM-DD>
+Last updated: <YYYY-MM-DD>

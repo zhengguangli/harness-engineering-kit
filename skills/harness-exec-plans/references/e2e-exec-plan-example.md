@@ -1,109 +1,109 @@
-# 端到端示例：微服务重构执行计划
+# End-to-End Example: Microservice Refactoring Execution Plan
 
-## 场景背景
+## Scenario Background
 
-一个电商平台从单体架构迁移到微服务架构，需要将订单模块拆分为独立服务。任务复杂度高，预计需要 3-5 天，跨多个会话完成。
-
----
-
-## 步骤 1：判断任务类型
-
-**输入**：用户需求"把订单模块拆成独立微服务"
-
-**判断**：
-- 任务复杂度：高
-- 预计完成时间：3-5 天
-- 是否需要多轮接力：是
-- 是否需要多人协作：是
-
-**结论**：需要创建 exec-plan，不能用临时计划。
+An e-commerce platform migrating from a monolith to microservices needs to extract the order module into an independent service. High task complexity, estimated 3-5 days, spanning multiple sessions.
 
 ---
 
-## 步骤 2：创建执行计划
+## Step 1: Determine Task Type
 
-**操作**：plan-architect agent 创建 `docs/exec-plans/active/order-service-extraction.md`
+**Input**: User requirement "Extract the order module into an independent microservice"
 
-**输出**：
+**Assessment**:
+- Task complexity: High
+- Estimated completion: 3-5 days
+- Multi-round handoffs needed: Yes
+- Multi-person collaboration needed: Yes
+
+**Conclusion**: Need to create an exec-plan, cannot use a light plan.
+
+---
+
+## Step 2: Create Execution Plan
+
+**Action**: plan-architect agent creates `docs/exec-plans/active/order-service-extraction.md`
+
+**Output**:
 
 ```markdown
 ---
 id: order-service-extraction
-title: 订单模块微服务拆分
+title: Order Module Microservice Extraction
 status: active
 owner: agent-1
 created: 2026-07-02
 ---
 
-# 订单模块微服务拆分
+# Order Module Microservice Extraction
 
-## 目标
-将订单模块从单体中拆分为独立的 `order-service`，通过 REST API 与其他模块通信，保持现有功能不变。
+## Goal
+Extract the order module from the monolith into an independent `order-service`, communicating with other modules via REST API, while maintaining existing functionality.
 
-## 范围
-- 拆分订单创建、查询、状态管理功能
-- 定义订单服务 API 接口
-- 实现服务间通信（HTTP）
-- 数据库独立迁移
+## Scope
+- Extract order creation, query, and status management functionality
+- Define order service API interfaces
+- Implement inter-service communication (HTTP)
+- Independent database migration
 
-## 非目标
-- 不重构支付模块（后续单独处理）
-- 不引入消息队列（保持简单 HTTP 通信）
-- 不修改前端代码（通过 API 网关保持兼容）
+## Non-Goals
+- Do not refactor the payment module (will be handled separately)
+- Do not introduce message queues (keep simple HTTP communication)
+- Do not modify frontend code (maintain compatibility through API gateway)
 
-## 步骤
-- [ ] 1.1 分析现有订单模块依赖关系
-- [ ] 1.2 定义订单服务 API 规范（OpenAPI）
-- [ ] 2.1 创建 order-service 项目骨架
-- [ ] 2.2 实现订单 CRUD 接口
-- [ ] 2.3 实现订单状态机
-- [ ] 3.1 数据库迁移脚本
-- [ ] 3.2 验证数据一致性
-- [ ] 4.1 更新网关路由配置
-- [ ] 4.2 集成测试
+## Steps
+- [ ] 1.1 Analyze existing order module dependencies
+- [ ] 1.2 Define order service API specification (OpenAPI)
+- [ ] 2.1 Create order-service project skeleton
+- [ ] 2.2 Implement order CRUD interfaces
+- [ ] 2.3 Implement order state machine
+- [ ] 3.1 Database migration script
+- [ ] 3.2 Verify data consistency
+- [ ] 4.1 Update gateway routing configuration
+- [ ] 4.2 Integration tests
 
-## 验收标准
-- [ ] order-service 独立启动，监听 3001 端口
-- [ ] 所有订单 API 返回与单体版本一致
-- [ ] 数据库表结构与单体版本兼容
-- [ ] 端到端测试通过率 ≥ 95%
-- [ ] 性能指标：P99 延迟 < 200ms
+## Acceptance Criteria
+- [ ] order-service starts independently, listening on port 3001
+- [ ] All order APIs return results consistent with the monolith version
+- [ ] Database table structure compatible with the monolith version
+- [ ] End-to-end test pass rate >= 95%
+- [ ] Performance: P99 latency < 200ms
 
-## 决策日志
-| 日期 | 决策 | 理由 |
-|------|------|------|
-| 2026-07-02 | 选择 REST 而非 gRPC | 团队更熟悉 REST，无需额外学习成本 |
-| 2026-07-02 | 数据库独立而非共享 | 避免服务间数据库耦合，便于独立部署 |
+## Decision Log
+| Date | Decision | Rationale |
+|------|----------|----------|
+| 2026-07-02 | Choose REST over gRPC | Team is more familiar with REST, no additional learning cost |
+| 2026-07-02 | Independent database instead of shared | Avoid inter-service database coupling, facilitate independent deployment |
 
-## 风险
-- 数据迁移可能导致短暂数据不一致
-- 服务间网络延迟可能影响性能
+## Risks
+- Data migration may cause brief data inconsistency
+- Inter-service network latency may impact performance
 
-## 待澄清问题
-- 订单与用户服务的边界如何划分？（用户信息查询走哪个服务？）
+## Questions to Clarify
+- How to define the boundary between order and user services? (Which service handles user info queries?)
 ```
 
 ---
 
-## 步骤 3：执行计划
+## Step 3: Execute Plan
 
-**操作**：verification-loop-runner agent 按步骤执行
+**Action**: verification-loop-runner agent executes step by step
 
-### 步骤 1.1：分析现有订单模块依赖关系
+### Step 1.1: Analyze Existing Order Module Dependencies
 
 ```bash
-# 查找订单相关文件
+# Find order-related files
 find src -name "*order*" -o -name "*Order*" | head -20
 
-# 检查依赖
+# Check dependencies
 rg "require.*order|from.*order" src/ --no-filename
 ```
 
-**输出**：记录到 exec-plan 的决策日志
+**Output**: Record in the exec-plan decision log
 
-### 步骤 1.2：定义 API 规范
+### Step 1.2: Define API Specification
 
-创建 `docs/api/order-service.yaml`：
+Create `docs/api/order-service.yaml`:
 
 ```yaml
 openapi: 3.0.0
@@ -113,7 +113,7 @@ info:
 paths:
   /orders:
     post:
-      summary: 创建订单
+      summary: Create Order
       requestBody:
         content:
           application/json:
@@ -121,7 +121,7 @@ paths:
               $ref: '#/components/schemas/CreateOrderRequest'
       responses:
         '201':
-          description: 订单创建成功
+          description: Order created successfully
 components:
   schemas:
     CreateOrderRequest:
@@ -135,7 +135,7 @@ components:
             $ref: '#/components/schemas/OrderItem'
 ```
 
-### 步骤 2.1：创建项目骨架
+### Step 2.1: Create Project Skeleton
 
 ```bash
 mkdir -p order-service/src/{routes,services,repositories,types}
@@ -144,7 +144,7 @@ npm init -y
 npm install express typescript @types/express
 ```
 
-### 步骤 2.2-2.3：实现接口和状态机
+### Step 2.2-2.3: Implement API and State Machine
 
 ```typescript
 // src/services/OrderService.ts
@@ -165,7 +165,7 @@ export class OrderService {
     const order = await this.orderRepository.findById(orderId);
     if (!order) throw new NotFoundError('Order not found');
     
-    // 状态机验证
+    // State machine validation
     if (!this.isValidTransition(order.status, status)) {
       throw new InvalidTransitionError(order.status, status);
     }
@@ -177,7 +177,7 @@ export class OrderService {
 }
 ```
 
-### 步骤 3.1：数据库迁移
+### Step 3.1: Database Migration
 
 ```sql
 -- migrations/001_create_orders_table.sql
@@ -201,70 +201,70 @@ CREATE TABLE order_items (
 
 ---
 
-## 步骤 4：更新执行计划状态
+## Step 4: Update Execution Plan Status
 
-**操作**：每完成一步，勾选 `- [x]`
+**Action**: Check off each step with `- [x]`
 
 ```markdown
-## 步骤
-- [x] 1.1 分析现有订单模块依赖关系
-- [x] 1.2 定义订单服务 API 规范（OpenAPI）
-- [x] 2.1 创建 order-service 项目骨架
-- [x] 2.2 实现订单 CRUD 接口
-- [x] 2.3 实现订单状态机
-- [ ] 3.1 数据库迁移脚本
-- [ ] 3.2 验证数据一致性
-- [ ] 4.1 更新网关路由配置
-- [ ] 4.2 集成测试
+## Steps
+- [x] 1.1 Analyze existing order module dependencies
+- [x] 1.2 Define order service API specification (OpenAPI)
+- [x] 2.1 Create order-service project skeleton
+- [x] 2.2 Implement order CRUD interfaces
+- [x] 2.3 Implement order state machine
+- [ ] 3.1 Database migration script
+- [ ] 3.2 Verify data consistency
+- [ ] 4.1 Update gateway routing configuration
+- [ ] 4.2 Integration tests
 ```
 
 ---
 
-## 步骤 5：验收关闭
+## Step 5: Acceptance Close
 
-**操作**：逐项核对验收标准
+**Action**: Check acceptance criteria item by item
 
 ```bash
-# 验收 1：order-service 独立启动
+# Acceptance 1: order-service starts independently
 cd order-service && npm start
 curl http://localhost:3001/health
-# 期望：{"status":"ok"}
+# Expected: {"status":"ok"}
 
-# 验收 2：API 返回一致
+# Acceptance 2: API returns consistent results
 curl -X POST http://localhost:3001/orders \
   -H "Content-Type: application/json" \
   -d '{"userId":"u123","items":[{"productId":"p456","quantity":2}]}'
-# 期望：201 Created
+# Expected: 201 Created
 
-# 验收 3：数据库表结构
+# Acceptance 3: Database table structure
 psql -d order_db -c "\dt orders"
-# 期望：表存在
+# Expected: Table exists
 
-# 验收 4：端到端测试
+# Acceptance 4: End-to-end tests
 npm run test:e2e
-# 期望：通过率 ≥ 95%
+# Expected: Pass rate >= 95%
 
-# 验收 5：性能测试
+# Acceptance 5: Performance tests
 npm run test:performance
-# 期望：P99 < 200ms
+# Expected: P99 < 200ms
 ```
 
-**输出**：
+**Output**:
 
 ```markdown
-## 验收结果
-- [x] order-service 独立启动，监听 3001 端口
-- [x] 所有订单 API 返回与单体版本一致
-- [x] 数据库表结构与单体版本兼容
-- [x] 端到端测试通过率 98%
-- [x] 性能指标：P99 延迟 150ms
+## Acceptance Results
+- [x] order-service starts independently, listening on port 3001
+- [x] All order APIs return results consistent with the monolith version
+- [x] Database table structure compatible with the monolith version
+- [x] End-to-end test pass rate: 98%
+- [x] Performance: P99 latency 150ms
 ```
 
 ---
 
-## 步骤 6：归档计划
+## Step 6: Archive Plan
 
-**操作**：移动文件到 `completed/`
+**Action**: Move file to `completed/`
 
 ```bash
 mv docs/exec-plans/active/order-service-extraction.md \
@@ -273,33 +273,36 @@ mv docs/exec-plans/active/order-service-extraction.md \
 
 ---
 
-## 错误处理
+## Error Handling
 
-### 场景 1：步骤 2.2 实现失败
-**处理**：
-1. 在 exec-plan 中标注该步骤为 `blocked`
-2. 记录失败原因："依赖的 `generateId` 函数未实现"
-3. 添加到 `tech-debt-tracker.md`
-4. 后续 agent 可以从这里接手
+### Scenario 1: Step 2.2 Implementation Failed
 
-### 场景 2：验收标准不通过
-**处理**：
-1. 记录具体失败信息
-2. 回溯到对应步骤重新执行
-3. 更新决策日志："发现 XXX 问题，需要调整方案"
+**Handling**:
+1. Mark the step as `blocked` in the exec-plan
+2. Record the failure reason: "The `generateId` function it depends on is not implemented"
+3. Add to `tech-debt-tracker.md`
+4. Subsequent agents can pick up from here
 
-### 场景 3：任务被中断
-**处理**：
-1. 提交当前进度到文件
-2. 下一个 agent 读取 exec-plan 继续执行
-3. active/ 目录作为协调台账
+### Scenario 2: Acceptance Criteria Not Met
+
+**Handling**:
+1. Record specific failure details
+2. Roll back to the corresponding step and re-execute
+3. Update decision log: "Found issue XXX, need to adjust approach"
+
+### Scenario 3: Task Interrupted
+
+**Handling**:
+1. Commit current progress to file
+2. Next agent reads the exec-plan and continues execution
+3. The `active/` directory serves as the coordination ledger
 
 ---
 
-## 验收标准
+## Acceptance Criteria
 
-- [ ] exec-plan 文件存在于 `docs/exec-plans/active/` 或 `completed/`
-- [ ] 每个步骤可独立验证
-- [ ] 验收标准可机械检查（非"看起来不错"）
-- [ ] 决策日志记录了关键选择
-- [ ] 风险已识别并有应对措施
+- [ ] exec-plan file exists in `docs/exec-plans/active/` or `completed/`
+- [ ] Each step can be independently verified
+- [ ] Acceptance criteria are mechanically checkable (not "looks good")
+- [ ] Decision log records key choices
+- [ ] Risks identified with mitigation measures

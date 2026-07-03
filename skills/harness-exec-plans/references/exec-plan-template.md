@@ -1,45 +1,45 @@
-# <计划标题>
+# <Plan Title>
 
-- 状态: draft
-- 创建日期: <YYYY-MM-DD>
-- 最近更新: <YYYY-MM-DD>
-- 关联 PR / issue: <链接或"暂无">
-- 负责 agent / 人: <名称>
+- Status: draft
+- Created: <YYYY-MM-DD>
+- Last updated: <YYYY-MM-DD>
+- Related PR / issue: <link or "none">
+- Responsible agent / person: <name>
 
-## 目标
+## Goal
 
-一句话说清楚"完成后世界会变成什么样"。必须是可验证的状态描述,不要写过程("实现 X 功能"太模糊,改成"用户在 Y 页面执行 Z 操作后能看到正确的 W 结果")。
+One sentence describing "what the world looks like after completion." Must be a verifiable state description, not a process ("implement X feature" is too vague, change to "after user performs Z operation on page Y, they see the correct W result").
 
-## 范围 / 非目标
+## Scope / Non-goals
 
-**范围内:**
+**In scope:**
 - ...
 
-**明确不做(非目标):**
+**Explicitly out of scope (non-goals):**
 - ...
 
-## 步骤
+## Steps
 
-- [ ] 步骤 1 — <可独立验证的最小单元,写清楚"怎么知道这步做完了">
-- [ ] 步骤 2 — ...
-- [ ] 步骤 3 — ...
+- [ ] Step 1 — <smallest independently verifiable unit, clearly state "how to know this step is done">
+- [ ] Step 2 — ...
+- [ ] Step 3 — ...
 
-## 决策日志
+## Decision Log
 
-| 日期 | 决策 | 理由 | 被否决的备选方案 |
+| Date | Decision | Rationale | Rejected Alternatives |
 |---|---|---|---|
 | <YYYY-MM-DD> | ... | ... | ... |
 
-## 验收标准
+## Acceptance Criteria
 
-- [ ] <具体的、机械可检查的条件,例如"全部测试通过且覆盖率 ≥ X%">
-- [ ] <例如"关键用户旅程在浏览器验证下截图前后对比无异常">
-- [ ] <例如"P99 延迟 < 800ms,来自可观测性查询结果">
+- [ ] <Specific, mechanically checkable condition, e.g., "all tests pass with coverage ≥ X%">
+- [ ] <e.g., "screenshot comparison of critical user journeys shows no anomalies under browser verification">
+- [ ] <e.g., "P99 latency < 800ms, confirmed by observability query results">
 
-## 风险 / 已知未知
+## Risks / Known Unknowns
 
 - ...
 
-## 变更记录
+## Change History
 
-- <YYYY-MM-DD>: 创建计划
+- <YYYY-MM-DD>: Plan created

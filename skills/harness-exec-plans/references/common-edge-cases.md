@@ -1,91 +1,91 @@
-# 通用边界情况参考文档
+# Common Boundary Cases Reference
 
-## 概述
+## Overview
 
-本文档汇总了 Harness 体系中各 skill 共享的通用边界情况处理方案。各 skill 在处理这些边界情况时，应引用本文档而非重复定义。
+This document summarizes shared common boundary case handling approaches across all skills in the Harness system. When handling these boundary cases, each skill should reference this document rather than redefining them.
 
-## 通用边界情况
+## Common Boundary Cases
 
-### 1. 项目规模极小
+### 1. Very Small Project Size
 
-**场景**：项目只有几个文件，模块间无明显分层需求
+**Scenario**: Project has only a few files with no clear layering requirements between modules
 
-**处理原则**：
-- 简化初始化，只创建必要的文件
-- 跳过重量级 skill（如 architecture-boundaries）
-- 使用简单的目录结构，不需要复杂架构约束
+**Handling Principles**:
+- Simplify initialization, only create necessary files
+- Skip heavyweight skills (e.g., architecture-boundaries)
+- Use simple directory structure, no complex architecture constraints needed
 
-**判断标准**：
-- 文件数量 < 10
-- 代码行数 < 1000
-- 开发团队 < 3人
+**Criteria**:
+- File count < 10
+- Lines of code < 1000
+- Development team < 3 people
 
-### 2. 遗留项目改造
+### 2. Legacy Project Migration
 
-**场景**：遗留项目存在大量架构违规或代码异味，需要逐步改造
+**Scenario**: Legacy project has extensive architecture violations or code smells, requiring incremental migration
 
-**处理原则**：
-- 采用渐进式改造策略，优先修复严重违规
-- 不破坏现有结构，增量更新
-- 保留现有有价值的内容
+**Handling Principles**:
+- Adopt incremental migration strategy, fix critical violations first
+- Don't break existing structure, make additive changes
+- Preserve existing valuable content
 
-**改造步骤**：
-1. 识别所有违规/异味
-2. 按严重程度分类（CRITICAL/HIGH/MEDIUM/LOW）
-3. 优先修复CRITICAL和HIGH级别问题
-4. 建立新规则，防止新增违规
-5. 逐步清理MEDIUM和LOW级别问题
+**Migration Steps**:
+1. Identify all violations/smells
+2. Classify by severity (CRITICAL/HIGH/MEDIUM/LOW)
+3. Fix CRITICAL and HIGH priority issues first
+4. Establish new rules to prevent new violations
+5. Gradually clean up MEDIUM and LOW priority issues
 
-### 3. 多团队协作
+### 3. Multi-team Collaboration
 
-**场景**：多个团队协作开发，需要统一规范
+**Scenario**: Multiple teams collaborating on development, need unified standards
 
-**处理原则**：
-- 建立统一的规范，各团队在规范内自由实现
-- 定期审计规范执行情况
-- 建立规范 review 流程
+**Handling Principles**:
+- Establish unified standards, each team implements freely within those standards
+- Regularly audit compliance with standards
+- Establish a standards review process
 
-**协作方案**：
-1. 建立统一的规范模板
-2. 为每个团队提供定制化配置
-3. 定期审计规范执行情况
-4. 建立规范 review 流程
+**Collaboration Plan**:
+1. Create unified standard templates
+2. Provide customized configuration for each team
+3. Regularly audit compliance with standards
+4. Establish a standards review process
 
-### 4. 基础设施缺失
+### 4. Missing Infrastructure
 
-**场景**：项目缺少必要的测试/构建/lint 配置
+**Scenario**: Project lacks necessary test/build/lint configuration
 
-**处理原则**：
-- 先补齐基础设施，再启动相关流程
-- 报告能力缺口，不退回读代码猜测
-- 使用备用验证方式（如静态分析）
+**Handling Principles**:
+- Fill in infrastructure gaps first, then start related processes
+- Report capability gaps, don't fall back to reading code and guessing
+- Use fallback verification methods (e.g., static analysis)
 
-**补全步骤**：
-1. 识别缺失的基础设施
-2. 报告能力缺口
-3. 建议先运行 harness-bootstrap
-4. 补齐配置后再启动相关流程
+**Remediation Steps**:
+1. Identify missing infrastructure
+2. Report capability gaps
+3. Suggest running harness-bootstrap first
+4. Fill in configuration before starting related processes
 
-### 5. 目标澄清
+### 5. Goal Clarification
 
-**场景**：用户描述的需求模糊，无法确定具体范围
+**Scenario**: User's requirements are vague, specific scope cannot be determined
 
-**处理原则**：
-- 先澄清用户目标，再进行路由
-- 用"待澄清问题"列出，不替用户做决定
-- 澄清后再创建执行计划
+**Handling Principles**:
+- Clarify user goals first, then route
+- List as "Questions to clarify", don't make decisions for the user
+- Create execution plan after clarification
 
-**澄清方法**：
-1. 列出待澄清问题
-2. 等待用户澄清
-3. 澄清后再执行
+**Clarification Method**:
+1. List questions to clarify
+2. Wait for user clarification
+3. Execute after clarification
 
-## 使用指南
+## Usage Guide
 
-各 skill 在处理边界情况时：
-1. 如果边界情况属于上述通用类型，直接引用本文档对应章节
-2. 如果边界情况是 skill 特有的，在 skill 的 SKILL.md 中保留并详细说明
-3. 保持 skill 特有边界情况的格式：场景 → 处理原则（1-2行）
+When each skill handles boundary cases:
+1. If the boundary case falls under the above common types, directly reference the corresponding section of this document
+2. If the boundary case is skill-specific, keep it in the skill's SKILL.md with detailed explanation
+3. Keep skill-specific boundary case format: Scenario → Handling Principles (1-2 lines)
 
 ---
-最后更新: 2026-07-02
+Last updated: 2026-07-02

@@ -2,100 +2,100 @@
 
 <!-- Canonical owner: harness-architecture-boundaries -->
 
-这个文件定义 harness-engineering-kit 的领域划分与依赖方向规则。
+This document defines the domain division and dependency direction rules for the harness-engineering-kit.
 
-## 领域划分
+## Domain Division
 
-| 领域 | 简述 | 对应路径 |
+| Domain | Description | Path |
 |---|---|---|
-| skills | 13 个 skill（方法论 + agent 提示词 + 模板） | `skills/harness-*/` |
-| scripts | 校验脚本（frontmatter、关键词一致性、回归） | `scripts/` |
-| tests | 触发回归用例与报告 | `tests/` |
-| ci | GitHub Actions 工作流与 PR 模板 | `.github/` |
+| skills | 13 skills (methodology + agent prompts + templates) | `skills/harness-*/` |
+| scripts | Validation scripts (frontmatter, keyword consistency, regression) | `scripts/` |
+| tests | Trigger regression test cases and reports | `tests/` |
+| ci | GitHub Actions workflows and PR templates | `.github/` |
 
-## Skill 分层与依赖方向
+## Skill Layering & Dependency Direction
 
 ```
-Layer 0 信息采集    harness-project-intake
+Layer 0 Information Collection    harness-project-intake
        ↓
-Layer 1 骨架搭建    harness-bootstrap
+Layer 1 Scaffolding Setup        harness-bootstrap
        ↓
-Layer 2 知识与约束  harness-repo-map, harness-architecture-boundaries,
-                    harness-golden-principles, harness-prompt-optimizer
+Layer 2 Knowledge & Constraints  harness-repo-map, harness-architecture-boundaries,
+                                 harness-golden-principles, harness-prompt-optimizer
        ↓
-Layer 3 计划驱动    harness-exec-plans
+Layer 3 Plan-Driven              harness-exec-plans
        ↓
-Layer 4 执行验证    harness-verification-loop, harness-observability-and-browser
+Layer 4 Execution & Verification harness-verification-loop, harness-observability-and-browser
        ↓
-Layer 5 提交门      harness-commit-gate
+Layer 5 Commit Gate              harness-commit-gate
 
-元层                harness-orchestration, harness-authoring
+Meta-layer                       harness-orchestration, harness-authoring
 ```
 
-- 依赖只能向下流动：Layer N 的 skill 可引用 Layer <N 的产出，不可反向。
-- 同层 skill 之间可以并行，不互相依赖。
-- 元层 skill 可被任意层调用（orchestration 负责路由，authoring 负责扩展体系本身）。
+- Dependencies flow downward only: Layer N skills may reference outputs from Layer < N, but not the reverse.
+- Skills within the same layer can run in parallel and do not depend on each other.
+- Meta-layer skills can be called from any layer (orchestration handles routing, authoring extends the system itself).
 
-## 每个 Skill 的内部结构
+## Internal Structure of Each Skill
 
 ```
 skills/<name>/
-├── SKILL.md          # 方法论正文 + agent 提示词（含 frontmatter）
-└── references/       # 模板文件
+├── SKILL.md          # Methodology body + agent prompt (including frontmatter)
+└── references/       # Template files
 ```
 
-Agent 提示词已内联到 SKILL.md 的 `## Agent 提示词` section。
+Agent prompts have been inlined into the `## Agent 提示词` section of SKILL.md.
 
-## 支撑基础设施的依赖方向
+## Supporting Infrastructure Dependency Direction
 
 ```
-scripts/ → skills/    （脚本校验 skill 的 frontmatter 和关键词）
-tests/   → skills/    （回归用例验证 skill 的触发逻辑）
-.github/ → scripts/   （CI 调用校验脚本）
+scripts/ → skills/    (Scripts validate skill frontmatter and keywords)
+tests/   → skills/    (Regression test cases verify skill trigger logic)
+.github/ → scripts/   (CI invokes validation scripts)
 ```
 
-- scripts/ 只读取 skills/ 的内容，不修改。
-- tests/ 的回归用例依赖 scripts/ 中定义的关键词映射。
-- .github/workflows/ 调用 `make triggers-all` 触发完整校验链。
+- scripts/ only reads from skills/, never modifies it.
+- Regression test cases in tests/ depend on keyword mappings defined in scripts/.
+- .github/workflows/ invokes `make triggers-all` to trigger the full validation chain.
 
-## 数据边界规则
+## Data Boundary Rules
 
-- 每个 `SKILL.md` 的 frontmatter 是 skill 与平台之间的契约——平台只读自己认识的字段，忽略未知字段。
-- Agent 提示词的 canonical 版本在 `SKILL.md` 的 `## Agent 提示词` section。
+- Each `SKILL.md`'s frontmatter is a contract between the skill and the platform -- the platform only reads fields it recognizes and ignores unknown fields.
+- The canonical version of agent prompts lives in the `## Agent 提示词` section of `SKILL.md`.
 
-## 机械强制现状
+## Current Enforcement Status
 
-| 规则 | 强制方式 | 状态 |
+| Rule | Enforcement Method | Status |
 |---|---|---|
-| frontmatter 必填字段 | `scripts/validate-skill-triggers.sh` | ✅ 已强制 |
-| 关键词一致性 | 回归测试中覆盖 | ⚠️ 已合并入回归检查 |
-| 触发回归 | `scripts/run-trigger-regression.sh` | ✅ 已强制 |
-| agent 提示词存在性 | `scripts/validate-agent-prompt-sync.sh` | ✅ 已强制 |
-| skill 间无循环依赖 | 人工 review | ⚠️ 仅文档，未强制 |
+| Required frontmatter fields | `scripts/validate-skill-triggers.sh` | ✅ Enforced |
+| Keyword consistency | Covered in regression tests | ⚠️ Merged into regression checks |
+| Trigger regression | `scripts/run-trigger-regression.sh` | ✅ Enforced |
+| Agent prompt existence | `scripts/validate-agent-prompt-sync.sh` | ✅ Enforced |
+| No circular dependencies between skills | Manual review | ⚠️ Documented only, not enforced |
 
-## 经验教训
+## Lessons Learned
 
-Skills质量三轮评估优化的关键经验教训：
+Key lessons from the three-round skill quality evaluation and optimization:
 
-1. **三轮迭代优化方法有效**：通过三轮迭代优化，skills质量得到了持续改进
-2. **触发条件描述很重要**：用户需要清晰的触发条件来理解何时使用skill
-3. **使用示例很关键**：具体的使用示例帮助用户理解如何使用skill
-4. **错误处理指导需要完善**：用户需要知道如何处理使用过程中遇到的问题
-5. **自动化检查提高效率**：自动化检查脚本可以快速识别基本问题
-6. **人工评审确保质量**：人工评审可以识别自动化检查无法发现的问题
-7. **质量基准线很重要**：建立明确的质量基准线有助于持续改进
-8. **文档风格需要统一**：统一的文档风格有助于用户理解和使用skills
+1. **Three-round iterative optimization works**: Continuous improvement in skill quality was achieved through three rounds of iteration
+2. **Trigger condition descriptions matter**: Users need clear trigger conditions to understand when to use a skill
+3. **Usage examples are critical**: Concrete usage examples help users understand how to use a skill
+4. **Error handling guidance needs improvement**: Users need to know how to handle issues encountered during use
+5. **Automated checks improve efficiency**: Automated validation scripts quickly identify basic issues
+6. **Manual review ensures quality**: Manual review catches issues that automation cannot
+7. **Quality baselines are important**: Establishing clear quality baselines supports continuous improvement
+8. **Documentation style needs consistency**: Unified documentation style helps users understand and use skills
 
-全量A+级优化的关键经验教训：
+Key lessons from the full A+-grade optimization:
 
-1. **全量优化需要系统化方法**：建立统一的优化标准，按优先级批量执行
-2. **边界情况处理是A+级的关键**：每个skill必须处理各种边界情况
-3. **最佳实践提升内容质量**：提供最佳实践帮助用户更好地使用skill
-4. **Agent提示词需要精心设计**：确保角色清晰、流程明确、约束合理
-5. **自动化支持提升效率**：提供自动化检查脚本和CI/CD集成
-6. **用户体验需要持续优化**：确保学习曲线平缓、使用便捷、错误恢复能力强
+1. **Full optimization requires a systematic approach**: Establish unified optimization standards and execute in priority batches
+2. **Edge case handling is key to A+ grade**: Every skill must handle a variety of edge cases
+3. **Best practices improve content quality**: Provide best practices to help users get the most from skills
+4. **Agent prompts need careful design**: Ensure clear roles, explicit flows, and reasonable constraints
+5. **Automation support boosts efficiency**: Provide automated validation scripts and CI/CD integration
+6. **User experience requires continuous optimization**: Ensure a gentle learning curve, convenient usage, and strong error recovery
 
-详细经验教训见 `docs/lessons-learned/skills-quality-optimization-2026-07-02.md`。
+See `docs/lessons-learned/skills-quality-optimization-2026-07-02.md` for detailed lessons.
 
 ---
-最后更新: 2026-07-02（变更：添加全量A+级优化经验）
+Last updated: 2026-07-02 (Change: added full A+-grade optimization lessons)

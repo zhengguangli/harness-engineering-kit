@@ -10,7 +10,7 @@
 
 | 维度 | 状态 | 说明 |
 |---|---|---|
-| AGENTS.md 健康度 | 🟢 PASS | 39 行，地图声明完整 |
+| CLAUDE.md 健康度 | 🟢 PASS | 39 行，地图声明完整 |
 | docs/ 元数据完整性 | 🟢 PASS | 28/28 有 `最后更新:` |
 | docs/ 断链 | 🟢 PASS | 0 断链 |
 | 死链到 agents/<name>.md | 🟢 PASS | skills/ 中 0 处，仅历史计划中有预期引用 |

@@ -1,70 +1,70 @@
-# Subagent 设计模式参考
+# Subagent Design Patterns Reference
 
-## Subagent 与 Skill 的配对关系
+## Subagent and Skill Pairing Relationship
 
-Subagent 不是独立存在的——它通常与一个同名 skill 配对：
-- **Skill**：定义方法论（主对话参考）
-- **Subagent**：执行具体操作（独立上下文窗口）
+Subagents do not exist independently — they are typically paired with a skill of the same name:
+- **Skill**: Defines methodology (main conversation reference)
+- **Subagent**: Executes specific operations (independent context window)
 
 ```
-用户请求 → 主对话加载 skill → 判断需要执行 → 委派 subagent → 返回摘要
+User request → Main conversation loads skill → Decides execution needed → Delegates to subagent → Returns summary
 ```
 
-## 设计模式总览
+## Design Pattern Overview
 
-| 模式 | 用途 | 工具权限 | 典型 model |
+| Pattern | Use Case | Tool Permissions | Typical Model |
 |---|---|---|---|
-| 只读分析型 | 审计、检查、扫描 | Read, Grep, Glob | 轻量 |
-| 执行修改型 | 代码修改、文件生成 | Read, Write, Edit, Bash | 中等 |
-| 复合判断型 | 需要判断+执行混合 | 按需组合 | 较强 |
-| 批处理型 | 对多个文件/项目重复操作 | Read, Write, Bash | 轻量 |
+| Read-Only Analysis | Audit, inspection, scanning | Read, Grep, Glob | Lightweight |
+| Execution-Only | Code modification, file generation | Read, Write, Edit, Bash | Medium |
+| Composite Judgment | Needs judgment + execution mix | On-demand combination | Stronger |
+| Batch Processing | Repeated operations on multiple files/projects | Read, Write, Bash | Lightweight |
 
-## 模式一：只读分析型
+## Pattern 1: Read-Only Analysis
 
-**适用场景**：代码审计、质量检查、架构边界检查、扫描报告
+**Use Case**: Code audit, quality check, architecture boundary check, scan reports
 
-**工具配置**：
+**Tool Configuration**:
 ```yaml
 tools:
   - Read
   - Grep
   - Glob
-  - Bash  # 仅用于运行只读命令（如 git log、find）
+  - Bash  # For read-only commands only (e.g., git log, find)
 ```
 
-**system prompt 结构**：
+**System Prompt Structure**:
 ```markdown
-## 角色定义
-你是 [角色名]，职责是 [只读分析职责]。你不修改代码，只产出分析报告。
+## Role Definition
+You are [role name], responsible for [read-only analysis responsibility]. You do not modify code, only produce analysis reports.
 
-## 核心能力
-- 能力1（只读操作）
-- 能力2（只读操作）
+## Core Capabilities
+- Capability 1 (read-only operation)
+- Capability 2 (read-only operation)
 
-## 执行流程
-1. 收集信息（Read/Grep/Glob）
-2. 分析信息
-3. 产出报告
+## Execution Flow
+1. Collect information (Read/Grep/Glob)
+2. Analyze information
+3. Produce report
 
-## 约束
-- 只读不改：不使用 Edit/Write 修改任何文件
-- 无证据不下结论：每个结论附带代码位置
+## Constraints
+- Read-only, no modifications: Do not use Edit/Write to modify any files
+- No conclusions without evidence: Each conclusion accompanied by code location
 ```
 
-**设计要点**：
-- 在角色定义中明确声明"不修改代码"
-- 约束中第一条就是"只读不改"
-- 执行流程只包含收集→分析→产出，没有修改步骤
+**Design Points**:
+- Clearly state "do not modify code" in the role definition
+- First constraint is "read-only, no modifications"
+- Execution flow only includes collect → analyze → produce; no modification steps
 
-**反模式**：
-- ❌ 给只读 agent 配了 Edit/Write——最小权限原则要求不给
-- ❌ 在约束里写"尽量不修改"——应该是"绝不修改"
+**Anti-patterns**:
+- ❌ Giving a read-only agent Edit/Write — the least-privilege principle requires not giving them
+- ❌ Saying "try not to modify" in constraints — should be "never modify"
 
-## 模式二：执行修改型
+## Pattern 2: Execution-Only
 
-**适用场景**：代码重构、文件生成、批量修改
+**Use Case**: Code refactoring, file generation, batch modification
 
-**工具配置**：
+**Tool Configuration**:
 ```yaml
 tools:
   - Read
@@ -75,37 +75,37 @@ tools:
   - Grep
 ```
 
-**system prompt 结构**：
+**System Prompt Structure**:
 ```markdown
-## 角色定义
-你是 [角色名]，职责是 [执行职责]。你根据明确的指令修改代码/文件。
+## Role Definition
+You are [role name], responsible for [execution responsibility]. You modify code/files according to clear instructions.
 
-## 核心能力
-- 能力1（读+写操作）
-- 能力2（读+写操作）
+## Core Capabilities
+- Capability 1 (read + write operations)
+- Capability 2 (read + write operations)
 
-## 执行流程
-1. 理解需求
-2. 读取现有代码
-3. 修改代码
-4. 验证修改
+## Execution Flow
+1. Understand requirements
+2. Read existing code
+3. Modify code
+4. Verify modifications
 
-## 约束
-- 最小修改：只改必要部分，不做无关重构
-- 保持风格：遵循项目现有代码风格
-- 验证结果：修改后必须验证（lint/测试）
+## Constraints
+- Minimal modification: Only change necessary parts, no unrelated refactoring
+- Maintain style: Follow the project's existing code style
+- Verify results: Must verify after modification (lint/test)
 ```
 
-**设计要点**：
-- 约束强调"最小修改"和"保持风格"
-- 执行流程包含验证步骤
-- 仍然需要最小权限——不需要的工具不给
+**Design Points**:
+- Constraints emphasize "minimal modification" and "maintain style"
+- Execution flow includes a verification step
+- Still needs least privilege — don't give tools that aren't needed
 
-## 模式三：复合判断型
+## Pattern 3: Composite Judgment
 
-**适用场景**：需要先分析再执行的复杂任务（如"检查并修复"）
+**Use Case**: Complex tasks that require analysis before execution (e.g., "inspect and fix")
 
-**工具配置**：
+**Tool Configuration**:
 ```yaml
 tools:
   - Read
@@ -116,39 +116,39 @@ tools:
   - Bash
 ```
 
-**system prompt 结构**：
+**System Prompt Structure**:
 ```markdown
-## 角色定义
-你是 [角色名]，职责是 [复合职责]。你先分析问题，再决定是否/如何修改。
+## Role Definition
+You are [role name], responsible for [composite responsibility]. You first analyze problems, then decide whether/how to modify.
 
-## 核心能力
-- 分析能力（只读）
-- 修改能力（读+写）
-- 判断能力（是否需要修改）
+## Core Capabilities
+- Analysis capability (read-only)
+- Modification capability (read + write)
+- Judgment capability (whether modification is needed)
 
-## 执行流程
-1. 分析现状（Read/Grep/Glob）
-2. 判断问题（基于规则）
-3. 决定行动：修复 / 报告 / 跳过
-4. 如需修复：最小修改 + 验证
-5. 产出报告
+## Execution Flow
+1. Analyze current state (Read/Grep/Glob)
+2. Judge problem (based on rules)
+3. Decide action: fix / report / skip
+4. If fixing needed: minimal modification + verification
+5. Produce report
 
-## 约束
-- 先分析后修改：不跳过分析步骤
-- 能不改就不改：只在明确需要时修改
-- 修改后验证：每次修改必须验证
+## Constraints
+- Analyze before modify: do not skip the analysis step
+- Don't modify unless necessary: only modify when clearly needed
+- Verify after modification: must verify every modification
 ```
 
-**设计要点**：
-- 执行流程明确"先分析后修改"的顺序
-- 约束强调"能不改就不改"
-- 产出物包含分析报告 + 修改记录
+**Design Points**:
+- Execution flow clearly states "analyze before modify" order
+- Constraints emphasize "don't modify unless necessary"
+- Output includes analysis report + modification record
 
-## 模式四：批处理型
+## Pattern 4: Batch Processing
 
-**适用场景**：对多个文件/项目重复相同操作
+**Use Case**: Repeated operations on multiple files/projects
 
-**工具配置**：
+**Tool Configuration**:
 ```yaml
 tools:
   - Read
@@ -157,93 +157,93 @@ tools:
   - Glob
 ```
 
-**system prompt 结构**：
+**System Prompt Structure**:
 ```markdown
-## 角色定义
-你是 [角色名]，职责是对多个目标批量执行 [操作]。
+## Role Definition
+You are [role name], responsible for batch executing [operation] on multiple targets.
 
-## 核心能力
-- 批量扫描目标
-- 对每个目标执行标准化操作
-- 汇总结果
+## Core Capabilities
+- Batch scan targets
+- Execute standardized operations on each target
+- Aggregate results
 
-## 执行流程
-1. 扫描所有目标（Glob）
-2. 对每个目标执行操作
-3. 记录每个目标的结果
-4. 汇总报告
+## Execution Flow
+1. Scan all targets (Glob)
+2. Execute operation on each target
+3. Record result for each target
+4. Aggregate report
 
-## 约束
-- 标准化：对每个目标执行相同操作，不因目标不同而改变逻辑
-- 容错：单个目标失败不中断整个批处理
-- 汇总：必须产出汇总报告
+## Constraints
+- Standardization: Execute the same operation on each target; do not change logic per target
+- Fault tolerance: Failure on a single target does not interrupt the entire batch
+- Aggregation: Must produce an aggregate report
 ```
 
-**设计要点**：
-- 强调标准化和容错
-- 单个失败不中断整体
-- 必须有汇总报告
+**Design Points**:
+- Emphasize standardization and fault tolerance
+- Single failure does not interrupt the batch
+- Must have an aggregate report
 
-## Model 选择指南
+## Model Selection Guide
 
-| 任务特征 | 推荐 model | 理由 |
+| Task Characteristics | Recommended Model | Rationale |
 |---|---|---|
-| 机械扫描、模式匹配 | 轻量模型 | 任务明确，不需要高阶判断 |
-| 代码审计、架构判断 | 较强模型 | 需要理解上下文和权衡 |
-| 批量修改、模板化生成 | 轻量模型 | 任务重复，模式明确 |
-| 复杂重构、多文件协调 | 较强模型 | 需要理解全局依赖 |
-| 文档生成、格式转换 | 轻量模型 | 任务机械，规则明确 |
+| Mechanical scanning, pattern matching | Lightweight model | Task is clear, no high-level judgment needed |
+| Code audit, architecture assessment | Stronger model | Needs context understanding and trade-offs |
+| Batch modification, template-based generation | Lightweight model | Task is repetitive, clear pattern |
+| Complex refactoring, multi-file coordination | Stronger model | Needs understanding of global dependencies |
+| Documentation generation, format conversion | Lightweight model | Task is mechanical, clear rules |
 
-**选择原则**：按"判断复杂度"而不是"任务大小"选择。大但机械的任务用轻量模型，小但需要判断的任务用较强模型。
+**Selection Principle**: Choose by "judgment complexity" rather than "task size". Large but mechanical tasks use lightweight models; small but judgment-intensive tasks use stronger models.
 
-## Subagent 的错误处理
+## Subagent Error Handling
 
-### 容错策略
+### Fault Tolerance Strategy
 
-| 错误类型 | 处理方式 |
+| Error Type | Handling Method |
 |---|---|
-| 文件不存在 | 记录并跳过，继续处理其他目标 |
-| 权限不足 | 记录并跳过，报告权限缺口 |
-| 工具调用失败 | 重试1次，仍失败则记录并跳过 |
-| 输出格式异常 | 尝试修复格式，无法修复则记录原始输出 |
+| File does not exist | Record and skip; continue processing other targets |
+| Insufficient permissions | Record and skip; report capability gaps |
+| Tool call failure | Retry once; if still failing, record and skip |
+| Output format anomaly | Attempt to fix format; if unfixable, record raw output |
 
-### 超时处理
+### Timeout Handling
 
-- 设置合理的超时时间（根据任务规模）
-- 超时后产出部分结果 + 超时说明
-- 不静默失败——必须有明确的超时报告
+- Set reasonable timeout (based on task size)
+- On timeout, produce partial results + timeout explanation
+- No silent failures — must have a clear timeout report
 
-## Subagent 的输出规范
+## Subagent Output Specification
 
-### 摘要格式
+### Summary Format
 
 ```markdown
-## 执行摘要
-- 目标：[任务目标]
-- 结果：成功/部分成功/失败
-- 耗时：[时间]
+## Execution Summary
+- Objective: [Task objective]
+- Result: Success / Partial Success / Failure
+- Duration: [Time]
 
-## 详细结果
-- [结果1]
-- [结果2]
+## Detailed Results
+- [Result 1]
+- [Result 2]
 
-## 问题记录
-- [问题1]：[处理方式]
-- [问题2]：[处理方式]
+## Issues Record
+- [Issue 1]: [Handling method]
+- [Issue 2]: [Handling method]
 ```
 
-### 证据格式
+### Evidence Format
 
 ```markdown
-## 证据
-| 文件/位置 | 操作 | 结果 |
+## Evidence
+| File/Location | Operation | Result |
 |---|---|---|
-| path/to/file.ts:42 | 修改 | ✅ 成功 |
-| path/to/other.ts:18 | 跳过 | ⚠️ 不存在 |
+| path/to/file.ts:42 | Modified | ✅ Success |
+| path/to/other.ts:18 | Skipped | ⚠️ Does not exist |
 ```
 
-## 与 Skill 的同步纪律
+## Sync Discipline with Skills
 
-1. **Skill 定义方法论，Subagent 执行**：不要在 Subagent 的 system prompt 里重复 Skill 的方法论内容
-2. **用 skills 字段预加载**：在 Subagent 配置中用 `skills` 字段引用同名 skill，而不是复制内容
-3. **保持一致性**：Skill 更新时，Subagent 的执行流程应同步更新（但不是复制粘贴）
+1. **Skill defines methodology, Subagent executes**: Do not duplicate Skill methodology content in Subagent's system prompt
+2. **Use skills field for preloading**: Reference the paired skill via the `skills` field in Subagent configuration, rather than copying content
+3. **Maintain consistency**: When a Skill is updated, the Subagent's execution flow should be updated in sync (but not copy-pasted)

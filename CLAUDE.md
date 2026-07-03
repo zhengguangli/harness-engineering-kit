@@ -2,7 +2,7 @@
 
 这个文件是地图，不是百科全书。如果你在这里没找到答案，去下面对应的 `docs/` 文件里找——不要假设这个文件之外的信息不存在，只是它被放在了别处。DO NOT send optional commentary.
 
-> 本仓库是 **Harness Engineering Kit** 自身，不是被初始化的目标项目。目标项目在你执行 `harness-bootstrap` 后各自生成自己的 **AGENTS.md**。
+> 本仓库是 **Harness Engineering Kit** 自身，不是被初始化的目标项目。目标项目在你执行 `harness-bootstrap` 后各自生成自己的 **CLAUDE.md**。
 >
 > Harness Engineering Kit：一套通用、与具体项目无关的 skills 套件，完美适配 Claude Code CLI。把 OpenAI 和 LangChain 两篇 harness engineering 文章的核心方法论，落地为可直接放进任意仓库的可执行工件。
 
@@ -114,4 +114,4 @@ PR → main:        确保 source 为 developer 分支 + make triggers-all
 
 ---
 
-最后更新: 2026-07-03（AGENTS.md 已合并至此文件，不再单独维护）
+最后更新: 2026-07-03（CLAUDE.md 已合并至此文件，不再单独维护）

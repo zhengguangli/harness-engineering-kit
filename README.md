@@ -4,36 +4,36 @@
 
 > Agent = Model + Harness。模型提供智能,harness 提供让这份智能变成可靠产出所需要的一切:状态、工具、反馈回路、可机械强制的约束。这套工具集就是 harness 的一部分。
 
-## 来源与核心论点
+## Sources and Core Arguments
 
-- **OpenAI**(`harness-engineering`,2026-02):用三位工程师、五个月时间,以"0 行人工手写代码"的约束,生成了百万行代码的产品。核心经验:AGENTS.md 应该是地图不是百科全书,docs/ 才是知识系统记录;架构边界要被机械强制而不是靠人工 review 维持品味;熵增需要持续的小颗粒度清扫而不是定期大扫除;agent 看不见的知识等于不存在。
-- **LangChain**(`The Anatomy of an Agent Harness`,2026-03):把 harness 拆解为文件系统、bash/代码执行、沙箱、记忆与搜索、对抗 context rot 的机制(压缩、工具输出卸载、skills 渐进式披露)、长时程自主执行(规划 + 自验证 + Ralph Loop)。核心论点:这些都是"模型出厂时不具备、必须靠 harness 补上"的能力。
+- **OpenAI** (`harness-engineering`, 2026-02): Three engineers, five months, zero hand-written lines of code as a constraint, produced a million-line product. Core takeaways: CLAUDE.md should be a map not an encyclopedia — docs/ is where the knowledge lives; architecture boundaries must be mechanically enforced, not left to human code review taste; entropy needs continuous small cleanups, not periodic big overhauls; knowledge the agent cannot see does not exist.
+- **LangChain** (`The Anatomy of an Agent Harness`, 2026-03): Decomposes a harness into the filesystem, bash/code execution, sandbox, memory and search, mechanisms to fight context rot (compression, tool output offloading, progressive disclosure of skills), and long-horizon autonomous execution (planning + self-verification + Ralph Loop). Core thesis: these are capabilities the model does not ship with — the harness must supply them.
 
-两篇文章的方法论高度互补——OpenAI 提供了"在真实大规模工程里怎么落地"的具体经验,LangChain 提供了"为什么每一个 harness 组件存在"的第一性原理推导。这套工具集按两者共同强调的几个支点组织。
+The two papers are highly complementary — OpenAI provides concrete experience from real large-scale engineering, while LangChain provides first-principles reasoning for why each harness component exists. This toolset is organized around the pillars both emphasize.
 
-## 目录结构
+## Directory Structure
 
 ```
 harness-engineering-kit/
-├── .gitignore                           # 忽略 docs/generated/、AGENTS.md、CLAUDE.md（均由 agent 按项目生成）
+├── .gitignore                           # 忽略 docs/generated/、CLAUDE.md、CLAUDE.md（均由 agent 按项目生成）
 └── skills/                              # 13 个 skill（方法论 + agent 提示词 + 模板）
-    ├── harness-architecture-boundaries/ # 分层架构与依赖方向的机械强制
-    ├── harness-authoring/               # 元技能:如何给这套体系本身加新能力
-    ├── harness-bootstrap/               # 一键初始化 harness 结构
-    ├── harness-commit-gate/             # 提交质量门
-    ├── harness-exec-plans/              # 执行计划作为一等公民工件
-    ├── harness-golden-principles/       # 黄金原则与持续垃圾回收
-    ├── harness-observability-and-browser/ # 浏览器 + 可观测性反馈传感器
-    ├── harness-orchestration/           # 技能编排与工作流路由
-    ├── harness-project-intake/          # 项目接入分析与项目卡片
-    ├── harness-prompt-optimizer/        # 提示词优化与结构化 Prompt 工程
-    ├── harness-repo-map/                # 入口文件地图 + docs/ 系统记录
-    ├── harness-skill-quality-assessor/  # Skills质量评估与改进建议
-    └── harness-verification-loop/       # Ralph Wiggum 自验证循环
+    ├── harness-architecture-boundaries/ # Layered architecture and dependency direction with mechanical enforcement
+    ├── harness-authoring/               # Meta-skill: how to author new skills for this harness system
+    ├── harness-bootstrap/               # One-click harness initialization
+    ├── harness-commit-gate/             # Commit quality gate
+    ├── harness-exec-plans/              # Execution plans as first-class artifacts for complex tasks
+    ├── harness-golden-principles/       # Golden principles and continuous entropy cleanup
+    ├── harness-observability-and-browser/ # Browser automation + observability feedback sensors
+    ├── harness-orchestration/           # Skill orchestration and workflow routing
+    ├── harness-project-intake/          # Project intake analysis and structured project cards
+    ├── harness-prompt-optimizer/        # Prompt optimization and structured prompt engineering
+    ├── harness-repo-map/                # Entry file map + docs/ system records
+    ├── harness-skill-quality-assessor/  # Skills quality assessment with improvement recommendations
+    └── harness-verification-loop/       # Ralph Wiggum self-verification loop
 ```
 
 安装后由 agent 按项目生成的文件(不在仓库中):
-- `AGENTS.md` — 入口地图
+- `CLAUDE.md` — 入口地图
 - `CLAUDE.md` — Claude Code 入口地图
 - `docs/` — 架构文档、执行计划、质量评分等
 
@@ -268,13 +268,13 @@ make prompts-sync-check
 
 ### Layer 1 · 骨架搭建
 
-2. **`harness-bootstrap`**:根据项目卡片生成 AGENTS.md 地图、`docs/` 目录骨架、.gitignore 规则和 CI 模板。这是整个 harness 的物理地基。
+2. **`harness-bootstrap`**:根据项目卡片生成 CLAUDE.md 地图、`docs/` 目录骨架、.gitignore 规则和 CI 模板。这是整个 harness 的物理地基。
 
 ### Layer 2 · 知识体系与约束规则
 
 以下四项依赖 Layer 1 的产出(`docs/` 结构已存在),但彼此之间可以并行推进:
 
-3. **`harness-repo-map`** + `doc-gardener`:校验 AGENTS.md 是否只是"地图"而非"百科全书",确保 `docs/` 里的指针准确、无断链。这是知识的可发现性保障。
+3. **`harness-repo-map`** + `doc-gardener`:校验 CLAUDE.md 是否只是"地图"而非"百科全书",确保 `docs/` 里的指针准确、无断链。这是知识的可发现性保障。
 4. **`harness-architecture-boundaries`** + `boundary-auditor`:在 `docs/ARCHITECTURE.md` 里写入分层模型与依赖方向规则,建立结构性红线。哪怕一开始只能靠文档约束,也先确立规则再逐步补上 lint。
 5. **`harness-golden-principles`** + `entropy-collector`:把人类品味编码为可机械检查的规则,建立周期性清扫节奏(可与上一步并行)。
 6. **`harness-prompt-optimizer`**:优化和创建结构化 Prompt,提升 agent 与 LLM 交互的确定性和输出质量。可与上述三项并行推进。
@@ -327,7 +327,7 @@ make prompts-sync-check
 |---|---|
 | harness-project-intake | "分析当前项目"、"这个项目是做什么的" |
 | harness-bootstrap | "为这个项目初始化 harness"、"init harness" |
-| harness-repo-map | "AGENTS.md 太大需要瘦身"、"审计文档断链" |
+| harness-repo-map | "CLAUDE.md 太大需要瘦身"、"审计文档断链" |
 | harness-architecture-boundaries | "建立分层架构"、"出现了循环依赖" |
 | harness-golden-principles | "治理 AI 生成代码的重复模式"、"建立周期性代码扫描机制" |
 | harness-prompt-optimizer | "优化这个 prompt"、"帮我写一个 system prompt" |

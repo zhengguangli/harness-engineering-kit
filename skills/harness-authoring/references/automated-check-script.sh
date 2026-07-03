@@ -25,15 +25,15 @@ for ref_file in "scaffold-templates.md" "skill-design-patterns.md" "subagent-des
   fi
 done
 
-# Check context budget discipline mentioned in 方法论
+# Check context budget discipline mentioned in methodology
 ((++TOTAL_EXTRA))
-if grep -qE "上下文预算" "$SKILL_DIR/SKILL.md"; then
+if grep -qE "Context Budget Discipline" "$SKILL_DIR/SKILL.md"; then
   ((++PASSED_EXTRA))
 else
-  echo "  [FAIL] 方法论 missing 上下文预算 discipline"
+  echo "  [FAIL] Missing Context Budget Discipline in methodology"
 fi
 
-# Check canonical 版本约定 section
+# Check canonical version convention section
 ((++TOTAL_EXTRA))
 if grep -qE "canonical" "$SKILL_DIR/SKILL.md"; then
   ((++PASSED_EXTRA))
@@ -43,7 +43,7 @@ fi
 
 # Check Skill vs Subagent comparison table present
 ((++TOTAL_EXTRA))
-if grep -qE "^##\s+方法论" "$SKILL_DIR/SKILL.md" && grep -qE "Skill.*Subagent" "$SKILL_DIR/SKILL.md"; then
+if grep -qE "^## Methodology" "$SKILL_DIR/SKILL.md" && grep -qE "Skill.*Subagent" "$SKILL_DIR/SKILL.md"; then
   ((++PASSED_EXTRA))
 else
   echo "  [FAIL] Missing Skill vs Subagent comparison table"
@@ -51,10 +51,10 @@ fi
 
 # Check minimal-tools-principle mentioned
 ((++TOTAL_EXTRA))
-if grep -qE "最小权限" "$SKILL_DIR/SKILL.md"; then
+if grep -qE "Permission Discipline" "$SKILL_DIR/SKILL.md"; then
   ((++PASSED_EXTRA))
 else
-  echo "  [FAIL] Missing 最小权限 principle"
+  echo "  [FAIL] Missing Permission Discipline principle"
 fi
 
 echo "---"

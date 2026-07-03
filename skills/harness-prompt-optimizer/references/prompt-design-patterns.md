@@ -1,210 +1,210 @@
-# Prompt 设计模式参考
+# Prompt Design Patterns Reference
 
-## 设计模式总览
+## Pattern Overview
 
-| 模式 | 适用场景 | 复杂度 |
+| Pattern | Applicable Scenarios | Complexity |
 |---|---|---|
-| 角色锚定型 | 需要特定专业视角的任务 | 低 |
-| 执行链驱动型 | 多步骤流程任务 | 中 |
-| 约束优先型 | 高风险/高精度任务 | 中 |
-| 示例驱动型 | 输出格式敏感的任务 | 中 |
-| 混合型 | 复杂综合任务 | 高 |
+| Role-Anchor | Tasks requiring a specific professional perspective | Low |
+| Execution-Chain-Driven | Multi-step workflow tasks | Medium |
+| Constraint-First | High-risk / High-precision tasks | Medium |
+| Example-Driven | Output-format-sensitive tasks | Medium |
+| Hybrid | Complex comprehensive tasks | High |
 
-## 模式一：角色锚定型
+## Pattern 1: Role-Anchor
 
-通过精确定义角色来锚定 LLM 的行为边界。
+Anchor the LLM's behavior boundaries through precise role definition.
 
-**适用场景**：代码审查、技术写作、专业咨询
+**Applicable Scenarios**: Code review, technical writing, professional consulting
 
-**结构**：
+**Structure**:
 ```markdown
 # Role
-你是 [具体角色名]，拥有 [专业领域] 的 [年数] 年经验。
-你的专长是 [具体技能1]、[具体技能2]、[具体技能3]。
+You are a [specific role] with [X] years of experience in [domain].
+Your specialties are [skill 1], [skill 2], [skill 3].
 
 # Background
-[任务背景和上下文]
+[Task background and context]
 
 # Rules
-1. [规则1]
-2. [规则2]
+1. [Rule 1]
+2. [Rule 2]
 
 # Output
-[输出格式要求]
+[Output format requirements]
 ```
 
-**设计要点**：
-- 角色定义要具体到可区分（不是"helpful assistant"）
-- 包含专业领域和经验年限，增加锚定效果
-- 专长列表 ≤ 5 个，聚焦核心能力
+**Design Points**:
+- Role definition should be specific enough to be distinguishable (not "helpful assistant")
+- Include domain of expertise and years of experience to increase anchoring effect
+- Specialty list ≤ 5 items, focus on core capabilities
 
-**示例对比**：
+**Example Comparison**:
 ```markdown
-# ❌ 差：太泛
+# ❌ Bad: Too generic
 You are a helpful assistant.
 
-# ✅ 好：具体可区分
+# ✅ Good: Specific and distinguishable
 You are a senior TypeScript engineer with 8 years of experience in distributed systems.
 Your specialties include: performance optimization, error handling patterns, and API design.
 You prioritize type safety and always consider edge cases.
 ```
 
-## 模式二：执行链驱动型
+## Pattern 2: Execution-Chain-Driven
 
-用编号步骤强制 LLM 按特定顺序执行。
+Use numbered steps to force the LLM to execute in a specific order.
 
-**适用场景**：数据处理、分析流程、多步决策
+**Applicable Scenarios**: Data processing, analysis workflows, multi-step decisions
 
-**结构**：
+**Structure**:
 ```markdown
 # Execution Chain
-1. [步骤1]：[具体操作] → 输出：[中间结果]
-2. [步骤2]：基于 [中间结果] 执行 [操作] → 输出：[中间结果]
-3. [步骤3]：验证 [中间结果] 是否满足 [条件]
-4. [步骤4]：如满足，执行 [操作]；如不满足，执行 [备选操作]
+1. [Step 1]: [Specific operation] → Output: [Intermediate result]
+2. [Step 2]: Based on [Intermediate result], perform [Operation] → Output: [Intermediate result]
+3. [Step 3]: Verify if [Intermediate result] meets [Condition]
+4. [Step 4]: If met, perform [Operation]; if not, perform [Fallback operation]
 ```
 
-**设计要点**：
-- 每步有明确的输入和输出
-- 步骤数 ≤ 7（超过则拆分）
-- 包含判断和分支逻辑
-- 每步的输出是下一步的输入
+**Design Points**:
+- Each step has clear input and output
+- Step count ≤ 7 (split if exceeded)
+- Include judgment and branching logic
+- Each step's output is the next step's input
 
-**反模式**：
-- ❌ 步骤描述模糊——"分析数据"不如"统计每个类别的出现次数"
-- ❌ 缺少终止条件——每条路径都必须有明确的终点
-- ❌ 步骤间无数据流——上一步的输出未被下一步使用
+**Anti-Patterns**:
+- ❌ Vague step descriptions — "Analyze data" is less effective than "Count occurrences per category"
+- ❌ Missing termination conditions — every path must have a clear endpoint
+- ❌ No data flow between steps — previous step's output not used by the next step
 
-## 模式三：约束优先型
+## Pattern 3: Constraint-First
 
-通过严格约束消除 LLM 的幻觉空间。
+Eliminate the LLM's hallucination space through strict constraints.
 
-**适用场景**：金融计算、医疗建议、法律文档、安全相关
+**Applicable Scenarios**: Financial calculations, medical advice, legal documents, safety-related
 
-**结构**：
+**Structure**:
 ```markdown
 # Constraints
-- [约束1]：[规则]。违反时：[处理方式]
-- [约束2]：[规则]。违反时：[处理方式]
-- [约束3]：[规则]。违反时：[处理方式]
+- [Constraint 1]: [Rule]. Violation: [Handling method]
+- [Constraint 2]: [Rule]. Violation: [Handling method]
+- [Constraint 3]: [Rule]. Violation: [Handling method]
 
 # Safety Rules
-- 绝不 [高风险操作]
-- 如不确定，[安全降级行为]
+- Never [high-risk operation]
+- If uncertain, [safe degradation behavior]
 ```
 
-**设计要点**：
-- 每条约束包含"违反时怎么办"
-- 约束数量 ≤ 8 条（超过 LLM 反而违反更多）
-- 安全规则单独列出，优先级最高
-- 包含"不确定时"的降级行为
+**Design Points**:
+- Each constraint includes "what to do when violated"
+- Constraint count ≤ 8 (LLM violates more with too many constraints)
+- Safety rules listed separately, highest priority
+- Include degradation behavior for "when uncertain"
 
-**示例**：
+**Example**:
 ```markdown
 # Constraints
-- 只使用提供的数据，不编造数字。违反时：输出"数据不足，无法计算"
-- 所有计算结果保留2位小数。违反时：重新计算并修正
-- 不给出医疗建议，只提供信息参考。违反时：删除建议内容，标注"仅供参考"
+- Only use provided data, do not fabricate numbers. Violation: Output "Insufficient data, unable to calculate"
+- All calculation results rounded to 2 decimal places. Violation: Recalculate and correct
+- Do not give medical advice, only provide information reference. Violation: Remove advice content, note "For reference only"
 
 # Safety Rules
-- 绝不编造药品剂量或治疗方案
-- 如不确定，输出"请咨询专业医生"
+- Never fabricate drug dosages or treatment plans
+- If uncertain, output "Please consult a professional doctor"
 ```
 
-## 模式四：示例驱动型
+## Pattern 4: Example-Driven
 
-用 few-shot 示例锚定 LLM 的输出格式和行为。
+Use few-shot examples to anchor the LLM's output format and behavior.
 
-**适用场景**：格式转换、内容生成、分类任务
+**Applicable Scenarios**: Format conversion, content generation, classification tasks
 
-**结构**：
+**Structure**:
 ```markdown
 # Examples
 
 ## Example 1: Standard Case
-Input: [输入1]
-Output: [输出1]
+Input: [Input 1]
+Output: [Output 1]
 
 ## Example 2: Edge Case
-Input: [输入2]
-Output: [输出2]
+Input: [Input 2]
+Output: [Output 2]
 
 ## Example 3: Error Case
-Input: [输入3]
-Output: [输出3]
+Input: [Input 3]
+Output: [Output 3]
 ```
 
-**设计要点**：
-- 至少 3 个示例：standard + edge case + error case
-- 示例和规则不能矛盾（矛盾时 LLM 跟随示例）
-- 示例覆盖最重要的 80% 场景
-- 每个示例包含完整的输入→输出
+**Design Points**:
+- At least 3 examples: standard + edge case + error case
+- Examples and rules must not conflict (when conflicting, LLM follows examples)
+- Examples should cover the most important 80% of scenarios
+- Each example includes complete input → output
 
-**反模式**：
-- ❌ 只放 happy path——LLM 遇到边界情况时行为不可预测
-- ❌ 示例和规则矛盾——LLM 通常跟随示例而非规则
-- ❌ 示例太多——3-5 个最佳，太多会稀释关键示例的影响力
+**Anti-Patterns**:
+- ❌ Only happy path — LLM behavior becomes unpredictable at boundary conditions
+- ❌ Examples and rules conflict — LLM typically follows examples over rules
+- ❌ Too many examples — 3-5 is optimal; too many dilute the impact of key examples
 
-## 模式五：混合型
+## Pattern 5: Hybrid
 
-组合多种模式应对复杂任务。
+Combine multiple patterns for complex tasks.
 
-**结构**：
+**Structure**:
 ```markdown
 # Role
-[角色定义]
+[Role definition]
 
 # Background
-[上下文]
+[Context]
 
 # Variables Dictionary
-[变量声明]
+[Variable declarations]
 
 # Execution Chain
-[执行步骤]
+[Execution steps]
 
 # Constraints
-[约束规则]
+[Constraint rules]
 
 # Output Schema
-[输出格式]
+[Output format]
 
 # Examples
-[示例]
+[Examples]
 ```
 
-**这就是六区块模板**——当任务复杂到需要多种模式时，使用完整的六区块结构。
+**This is the six-block template** — when the task is complex enough to require multiple patterns, use the full six-block structure.
 
-## 模式选择决策树
+## Pattern Selection Decision Tree
 
 ```
-任务需要特定专业视角？
-├── 是 → 角色锚定型
-└── 否 → 任务是多步骤流程？
-    ├── 是 → 执行链驱动型
-    └── 否 → 任务有高风险/高精度要求？
-        ├── 是 → 约束优先型
-        └── 否 → 任务输出格式敏感？
-            ├── 是 → 示例驱动型
-            └── 否 → 任务简单，不需要完整模式
+Does the task require a specific professional perspective?
+├── Yes → Role-Anchor
+└── No → Is the task a multi-step process?
+    ├── Yes → Execution-Chain-Driven
+    └── No → Does the task have high risk/precision requirements?
+        ├── Yes → Constraint-First
+        └── No → Is the task output-format-sensitive?
+            ├── Yes → Example-Driven
+            └── No → Task is simple, no complete pattern needed
 ```
 
-## 模式组合指南
+## Pattern Combination Guide
 
-| 组合 | 适用场景 | 示例 |
+| Combination | Applicable Scenarios | Example |
 |---|---|---|
-| 角色锚定 + 约束优先 | 专业领域高风险任务 | 医疗咨询、法律审查 |
-| 执行链 + 示例驱动 | 多步流程+格式敏感 | 数据处理管道 |
-| 角色锚定 + 执行链 | 专业领域多步任务 | 代码审查流程 |
-| 约束优先 + 示例驱动 | 高精度格式任务 | 金融报告生成 |
+| Role-Anchor + Constraint-First | Professional domain, high-risk tasks | Medical consultation, legal review |
+| Execution-Chain + Example-Driven | Multi-step process + format sensitive | Data processing pipeline |
+| Role-Anchor + Execution-Chain | Professional domain, multi-step tasks | Code review process |
+| Constraint-First + Example-Driven | High-precision format tasks | Financial report generation |
 
-## 常见设计错误
+## Common Design Mistakes
 
-| 错误 | 后果 | 修正 |
+| Mistake | Consequence | Fix |
 |---|---|---|
-| 角色定义太泛 | LLM 行为无锚定 | 具体化角色和专长 |
-| 约束太多 | LLM 反而违反更多 | 精选 ≤ 8 条关键约束 |
-| 示例只放 happy path | 边界情况行为不可预测 | 添加 edge case 和 error case |
-| 示例和规则矛盾 | LLM 跟随示例而非规则 | 修正矛盾，保持一致 |
-| 执行链步骤太多 | LLM 丢失上下文 | 控制在 ≤ 7 步 |
-| 缺少违反后果 | 约束形同虚设 | 每条约束加"违反时怎么办" |
+| Role definition too generic | LLM behavior has no anchor | Specify role and expertise |
+| Too many constraints | LLM violates more | Select ≤ 8 key constraints |
+| Only happy path examples | Unpredictable behavior at boundaries | Add edge case and error case |
+| Examples and rules conflict | LLM follows examples over rules | Fix conflicts, maintain consistency |
+| Execution chain too many steps | LLM loses context | Keep ≤ 7 steps |
+| Missing violation consequences | Constraints are ineffective | Add "what to do when violated" per constraint |

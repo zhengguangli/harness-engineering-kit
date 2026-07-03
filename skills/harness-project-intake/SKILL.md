@@ -1,6 +1,6 @@
 ---
 name: harness-project-intake
-description: 一键分析项目并产出结构化项目卡片——身份、技术栈、架构骨架、配置与约束、活跃度。用于"分析当前项目"、"项目概览"、"这个项目是做什么的"、"这项目用什么技术栈"场景。
+description: One-click project analysis producing structured project cards — identity, tech stack, architecture skeleton, configuration, constraints, and activity level. Used for analyzing projects, getting project overviews, and understanding tech stacks.
 when_to_use: |
   显式触发：用户说"分析当前项目"、"分析一下 README"、"项目概览"、"这个项目是做什么的"、"这项目用什么技术栈"。
   隐式触发：用户进入新项目目录后第一次对话说 hello 或简单问候、要求读 README.md 但期望得到摘要而非原文、问"这项目用什么技术栈"。
@@ -13,205 +13,206 @@ metadata:
   category: analysis
 ---
 
-# Project Intake（项目接入分析）
+# Project Intake
 
-## 核心原则
+## Core Principles
 
-- **结论优先**：用户要的是结构化卡片，不是 `cat README.md` 的原始输出。读完文件后沉默地综合，只输出结论。
-- **成本递增采集**：按 `ls → 包管理文件 → README → 目录骨架 → git log → rg 扫描` 的顺序采集，每一步都可能已足够产出卡片，避免过度探索。
-- **不编造**：某维度信息缺失时写"未发现"或"未配置"，绝不猜测。
+- **Conclusion first**: The user wants a structured card, not the raw output of `cat README.md`. Silently synthesize after reading files; output only the conclusion.
+- **Cost-progressive collection**: Collect in the order `ls → package manifest → README → directory skeleton → git log → rg scan`. Each step may already suffice to produce the card — avoid over-exploration.
+- **No fabrication**: When information for a dimension is missing, write "Not found" or "Not configured". Never guess.
 
-## 何时使用
+## When to Use
 
 - 用户说"分析当前项目"、"分析下项目"、"项目概览"、"这个项目是做什么的"。
-- 用户说"分析一下 README.md"、"读取 README.md"并期望得到摘要。
-- 用户进入一个新项目目录，第一次对话时说 hello 或简单问候。
-- 用户想了解项目的技术栈和架构。
-- 用户想了解项目的构建和运行方式。
+- 用户说"分析一下 README.md"、"读取 README.md" and expects a summary.
+- User enters a new project directory and says hello or a simple greeting in their first message.
+- User wants to understand the project's tech stack and architecture.
+- User wants to understand how the project is built and run.
 
-## 何时不该用
+## When NOT to Use
 
-- 用户明确只需要某个文件的内容（如 `cat package.json`），直接输出即可，无需生成卡片。
-- 用户已经在该项目中工作过，不需要重新分析。
+- The user explicitly wants only the content of a specific file (e.g., `cat package.json`) — just output it directly without generating a card.
+- The user has already worked in this project and does not need a re-analysis.
 
-## 方法论
+## Methodology
 
-### 信息采集（6 步，按成本递增）
+### Information Collection (6 Steps, Cost-Progressive)
 
-| 步骤 | 命令 | 采集维度 | 示例场景 |
+| Step | Command | Collection Dimension | Example Scenario |
 |---|---|---|---|
-| 1 | `ls -la` 项目根目录 | 文件类型、目录结构 | 查看项目根目录有哪些文件和目录 |
-| 2 | `cat package.json` / `Cargo.toml` / `go.mod` / `pyproject.toml`（均不存在时 fallback：`ls` 推断语言，标注"推断（无包管理文件）"） | 语言、框架、运行时、依赖 | 查看Node.js项目的依赖和脚本 |
-| 3 | `cat README.md`（只提取关键信息） | 项目自述、约束、构建命令 | 提取README中的项目描述和使用说明 |
-| 4 | `find . -maxdepth 2 -type f \| head -50` | 目录骨架 | 查看项目目录结构 |
-| 5 | `git log --oneline -10` | 近期活跃度、版本号 | 查看最近10次提交记录 |
-| 6 | `rg` 扫描入口文件和关键模块 | 架构理解 | 搜索main、index、app等入口文件 |
+| 1 | `ls -la` at project root | File types, directory structure | Check which files and directories exist at the project root |
+| 2 | `cat package.json` / `Cargo.toml` / `go.mod` / `pyproject.toml` (fallback when none exist: `ls` to infer language, annotate "Inferred (no package manifest)") | Language, framework, runtime, dependencies | View dependencies and scripts of a Node.js project |
+| 3 | `cat README.md` (extract only key info) | Project description, constraints, build commands | Extract project description and usage from README |
+| 4 | `find . -maxdepth 2 -type f \| head -50` | Directory skeleton | View project directory structure |
+| 5 | `git log --oneline -10` | Recent activity, version | View the last 10 commits |
+| 6 | `rg` scan entry files and key modules | Architecture understanding | Search for entry files like main, index, app |
 
-### 输出格式
+### Output Format
 
-始终输出以下结构化卡片，不输出原始文件内容：
+Always output the structured card below — never output raw file content:
 
 ```markdown
-## 项目卡片
+## Project Card
 
-**一句话概述**: <一句话说清楚这个项目是什么、做什么>
+**One-line summary**: <One line describing what this project is and does>
 
-### 技术栈
-| 维度 | 值 |
+### Tech Stack
+| Dimension | Value |
 |---|---|
-| 语言 | <语言及版本> |
-| 框架 | <框架> |
-| 运行时 | <Node/Bun/Deno/...> |
-| 包管理 | <npm/bun/pnpm/cargo/...> |
-| 部署目标 | <Cloudflare Workers/Vercel/Docker/...> |
+| Language | <Language and version> |
+| Framework | <Framework> |
+| Runtime | <Node/Bun/Deno/...> |
+| Package Manager | <npm/bun/pnpm/cargo/...> |
+| Deployment Target | <Cloudflare Workers/Vercel/Docker/...> |
 
-### 目录骨架
-<tree 风格展示关键目录和文件，标注每个顶层目录的职责>
+### Directory Skeleton
+<Tree-style display of key directories and files, annotating each top-level directory's responsibility>
 
-### 关键模块
-- **<模块名>**: <一句话职责>（`<文件路径>`）
+### Key Modules
+- **<Module name>**: <One-line responsibility> (`<file path>`)
 
-### 构建与运行
-- 安装: `<命令>`
-- 开发: `<命令>`
-- 测试: `<命令>`
-- 构建/部署: `<命令>`
+### Build & Run
+- Install: `<command>`
+- Dev: `<command>`
+- Test: `<command>`
+- Build/Deploy: `<command>`
 
-### 近期活跃
-- 最近 commit: `<日期> — <摘要>`
-- 版本: `<版本号>`（如可获取）
+### Recent Activity
+- Latest commit: `<date> — <summary>`
+- Version: `<version>` (if available)
 
-### 已知约束 / 注意事项
-<从 README、配置文件或代码注释中提取的约束条件，如端口限制、API key 要求等>
+### Known Constraints / Notes
+<Constraints extracted from README, config files, or code comments, such as port restrictions, API key requirements, etc.>
 ```
 
-## 硬约束
+## Hard Constraints
 
-- **不编造信息**：卡片中不得出现任何编造内容（如猜测的版本号、臆断的框架）。若 verification-loop 发现编造信息，应打回并要求重新采集；若某维度确实无法获取，写"未发现"或"未配置"。
-- **信息采集必须覆盖 package.json / README / 入口文件**：三者中任一缺失，必须在卡片对应维度标注"信息不完整"，不得跳过或用猜测填充。
-- **无包管理文件时必须 fallback**：当 `package.json` / `Cargo.toml` / `go.mod` / `pyproject.toml` 均不存在时，执行 `ls` 观察文件后缀推断语言，并在卡片中标注"推断（无包管理文件）"。
+- **Do NOT fabricate information**: The card must not contain any fabricated content (e.g., guessed versions or assumed frameworks). If the verification-loop finds fabricated information, reject it and require re-collection. If a dimension truly cannot be obtained, write "Not found" or "Not configured".
+- **Information collection MUST cover package.json / README / entry files**: If any of these three is missing, annotate "Incomplete information" in the corresponding card dimension. Do not skip or fill with guesses.
+- **Fallback when no package manifest exists**: When none of `package.json` / `Cargo.toml` / `go.mod` / `pyproject.toml` exist, run `ls` to observe file extensions and infer the language, annotating "Inferred (no package manifest)" in the card.
 
-## 示例
+## Examples
 
-**示例 1**：用户进入新项目说 hello
-**处理**：读 README → 读 package.json → 目录骨架 → git log → 输出项目卡片
+**Example 1**: User enters a new project and says hello
+**Handling**: Read README → Read package.json → Directory skeleton → git log → Output project card
 
-**示例 2**：用户说"分析一下这个项目的架构"
-**处理**：按 6 步采集流程执行，输出包含技术栈、目录骨架、关键模块的结构化卡片
+**Example 2**: User says "分析一下这个项目的架构"
+**Handling**: Execute the 6-step collection process, output a structured card with tech stack, directory skeleton, and key modules
 
-## 关键要点
+## Key Points
 
-- 所有信息采集过程对用户不可见，只输出最终卡片。
-- 5 维度信息应在 6-8 个工具调用内完成采集，不要反复探索。
-- 发现 README 过时、配置缺失或明显问题时，在"已知约束"里注明。
-- 定期审计项目分析结果，确保分析的有效性和适用性。
-- 文档化分析决策，便于团队理解和遵循。
-- 标注不确定性：信息不完整或推断时在对应维度标注依据
-- 结构化输出：按项目卡片模板输出，包含5个维度，格式清晰易读
+- All information collection is invisible to the user; only the final card is output.
+- Complete 5-dimension collection within 6-8 tool calls — do not explore repeatedly.
+- When README is outdated, configuration is missing, or obvious issues arise, note them in "Known Constraints".
+- Periodically audit project analysis results to ensure effectiveness and applicability.
+- Document analysis decisions for team understanding and compliance.
+- Annotate uncertainty: when information is incomplete or inferred, annotate the basis.
+- Structured output: Output in the project card template covering 5 dimensions; format must be clear and readable.
 
-## 边界情况处理
+## Edge Case Handling
 
-> 通用边界情况（项目规模极小等）参见 `references/common-edge-cases.md`，以下仅列出本 skill 特有的边界情况。
+> General edge cases (very small projects, etc.) are covered in `references/common-edge-cases.md`. Only skill-specific edge cases are listed below.
 
-### 项目无包管理文件
+### No Package Manifest
 
-**场景**：项目没有package.json、Cargo.toml、go.mod、pyproject.toml等包管理文件
-**处理**：执行ls观察文件后缀推断语言，标注"推断（无包管理文件）"
+**Scenario**: The project has no package.json, Cargo.toml, go.mod, pyproject.toml, or similar package manifest.
+**Handling**: Run `ls` to observe file extensions and infer the language; annotate "Inferred (no package manifest)".
 
-### 信息缺失或过时
+### Missing or Outdated Information
 
-**场景**：package.json、README、入口文件三者中任一缺失，或README信息已过时
-**处理**：在卡片对应维度标注"信息不完整"；README过时则在"已知约束"里注明差异
+**Scenario**: Any of package.json, README, or entry files is missing, or the README information is outdated.
+**Handling**: Annotate "Incomplete information" in the corresponding card dimension; if README is outdated, note discrepancies in "Known Constraints".
 
-### 多语言项目
+### Multi-Language Project
 
-**场景**：项目使用多种编程语言
-**处理**：识别所有语言，分别说明每种语言的用途和依赖关系
+**Scenario**: The project uses multiple programming languages.
+**Handling**: Identify all languages and explain each language's purpose and dependencies separately.
 
 ### Monorepo
 
-**场景**：项目采用 monorepo 结构，有多个子包/应用
-**处理**：通过 `ls` 识别根目录下的 `packages/`、`apps/`、`services/` 等子包目录。对每个子包独立执行包管理文件检测（步骤 2），汇总多份技术栈卡片。在项目卡片中标注"monorepo"，列出各子包的语言/框架/包管理器差异
+**Scenario**: The project uses a monorepo structure with multiple sub-packages/apps.
+**Handling**: Use `ls` to identify sub-package directories under the root like `packages/`, `apps/`, `services/`. Independently run package manifest detection (step 2) for each sub-package, aggregating multiple tech stack cards. Annotate "monorepo" in the project card and list language/framework/package manager variations per sub-package.
 
-## 常见陷阱
+## Common Pitfalls
 
-- **甩原始数据**：把 `cat README.md` 的全文输出给用户——用户要的是结论，不是过程。
-  - 解决方案：读取文件后沉默地综合，只输出结构化卡片
-- **过度探索**：反复扫描目录和文件，浪费工具调用——按成本递增顺序，够用即停。
-  - 解决方案：严格按6步采集顺序，每一步都可能已足够产出卡片
-- **编造信息**：某维度无法获取时写"未发现"，不要猜测版本号、框架等。
-  - 解决方案：信息缺失时写"未发现"或"未配置"，绝不猜测
-- **忽略README过时**：README中的信息可能已过时。
-  - 解决方案：发现README过时、配置缺失或明显问题时，在"已知约束"里注明
-- **没有fallback机制**：没有包管理文件时不知道如何处理。
-  - 解决方案：当package.json/Cargo.toml/go.mod/pyproject.toml均不存在时，执行ls观察文件后缀推断语言
-- **信息采集不完整**：没有覆盖package.json/README/入口文件。
-  - 解决方案：信息采集必须覆盖package.json/README/入口文件，三者中任一缺失必须在卡片对应维度标注"信息不完整"
+- **Dumping raw data**: Outputting the full text of `cat README.md` to the user — the user wants conclusions, not process.
+  - Solution: Silently synthesize after reading files; output only the structured card.
+- **Over-exploration**: Repeatedly scanning directories and files, wasting tool calls — follow cost-progressive order and stop when sufficient.
+  - Solution: Strictly follow the 6-step collection order; each step may already suffice.
+- **Fabricating information**: When a dimension cannot be obtained, write "Not found"; do not guess versions, frameworks, etc.
+  - Solution: Write "Not found" or "Not configured" when information is missing; never guess.
+- **Ignoring outdated README**: Information in the README may have become outdated.
+  - Solution: When README is outdated, configuration is missing, or obvious issues arise, note them in "Known Constraints".
+- **No fallback mechanism**: Not knowing how to handle projects without a package manifest.
+  - Solution: When none of package.json/Cargo.toml/go.mod/pyproject.toml exist, run `ls` to observe file extensions and infer the language.
+- **Incomplete information collection**: Not covering package.json/README/entry files.
+  - Solution: Collection MUST cover package.json/README/entry files; if any is missing, annotate "Incomplete information" in the corresponding dimension.
 
-## 相关 Skill
+## Related Skills
 
-- 上游 **无**: 本 skill 为 Layer 0 入口，不依赖其他 skill 的产出物
-- 下游 **harness-bootstrap**: 本 skill 产出（项目卡片）传递给下游进行骨架搭建
+- Upstream **None**: This skill is the Layer 0 entry point; it does not depend on output from other skills.
+- Downstream **harness-bootstrap**: This skill's output (project card) is passed downstream for skeleton setup.
 
-## 相关模板
+## Related Templates
 
-- `references/project-card-template.md`: 项目卡片 Markdown 模板
-- `references/package-manifests.md`: 各语言包管理文件识别规则（Node.js/Python/Go/Rust/Java/PHP/Ruby/Dart/Swift/C#/Haskell）
-- `references/project-structures.md`: 各语言项目结构分析与入口文件识别
-- `references/tech-stack-detection.md`: 各语言框架、运行时、部署目标检测规则
-- `references/activity-analysis.md`: 各语言活跃度分析命令与评级标准
-## 最佳实践
+- `references/project-card-template.md`: Project card Markdown template
+- `references/package-manifests.md`: Package manifest identification rules per language (Node.js/Python/Go/Rust/Java/PHP/Ruby/Dart/Swift/C#/Haskell)
+- `references/project-structures.md`: Project structure analysis and entry file identification per language
+- `references/tech-stack-detection.md`: Framework, runtime, and deployment target detection rules per language
+- `references/activity-analysis.md`: Activity analysis commands and rating criteria per language
 
-- 采集前先执行 `ls -la | head -20` 快速判断项目类型（单包/Monorepo/单文件脚本），再决定采集团度。
-- 步骤 2 检测包管理文件时使用 `ls` 通配符（`package.json`、`Cargo.toml`、`go.mod`），避免对每个文件单独 `cat`。
-- Monorepo 场景首次采集只列出子包语言矩阵，不递归分析每个子包的深层模块。
-- 输出卡片后在末尾留一句"分析基于当前工作区状态，依赖和配置可能后续变化"，管理预期。
+## Best Practices
+
+- Before collecting, run `ls -la | head -20` to quickly determine the project type (single package / Monorepo / single-file script), then decide collection depth.
+- When detecting package manifests in step 2, use `ls` wildcards (`package.json`, `Cargo.toml`, `go.mod`) to avoid `cat` on each file individually.
+- For Monorepo, only list the sub-package language matrix on first pass — do not recursively analyze each sub-package's deep modules.
+- After outputting the card, leave a closing note: "Analysis is based on current workspace state; dependencies and configuration may change subsequently" to manage expectations.
 
 ## Agent 提示词
 
 ## project-analyzer
 
-### 跳过条件
+### Skip Conditions
 
-- **用户明确只需要某个文件的内容**（如 `cat package.json`）：直接输出，无需生成卡片。
-- **用户已在本项目工作过，不需要重新分析**：不触发。
+- **User explicitly wants only the content of a specific file** (e.g., `cat package.json`): Output directly — no need to generate a card.
+- **User has already worked in this project and does not need re-analysis**: Do not trigger.
 
-### 角色定义
+### Role Definition
 
-你是「项目分析员」（project-analyzer）。快速、安静地采集项目信息，输出结构化项目卡片。用户要结论，不要过程。你擅长使用只读工具分析项目结构、技术栈、架构，能够识别包管理文件、README、入口文件等关键信息。
+You are the "Project Analyzer" (project-analyzer). Quickly and quietly collect project information and output a structured project card. The user wants conclusions, not process. You excel at using read-only tools to analyze project structure, tech stack, and architecture, and can identify key information such as package manifests, README files, and entry files.
 
-### 核心能力
+### Core Capabilities
 
-- 只读信息采集：`ls`、`cat`、`find`、`git log`、`rg` 等只读命令
-- 目录结构分析：`Glob` 枚举文件和目录
-- 关键词搜索：`Grep` 定位入口文件和核心模块
-- 文件阅读：`Read` 读取配置和文档文件
-- 处理各种边界情况，提供最佳实践
+- Read-only information collection: `ls`, `cat`, `find`, `git log`, `rg` and other read-only commands
+- Directory structure analysis: `Glob` to enumerate files and directories
+- Keyword search: `Grep` to locate entry files and core modules
+- File reading: `Read` to read configuration and documentation files
+- Handle various edge cases and provide best practices
 
-### 执行流程
+### Execution Flow
 
-1. **README 分析**：读取 `README.md` → 项目名称、一句话描述、关键约束、构建命令（不输出全文）
-2. **技术栈识别**：读取包管理文件 → 技术栈（语言、框架、运行时、包管理器、部署目标）；全部缺失时 `ls` 推断并标注
-3. **目录扫描**：`Glob` / `find . -maxdepth 2` → 目录骨架与模块划分
-4. **入口定位**：`Grep` 搜索入口文件（main/index/app）→ 关键模块识别
-5. **命令探测**：`package.json` scripts / `Makefile` / `Justfile` → 构建、测试、运行命令
-6. **活跃度检查**：`git log --oneline -10` → 近期 commit、版本号
-7. **输出卡片**：按项目卡片模板输出结构化卡片；发现 README 过时、配置缺失时在"已知约束"中注明
+1. **README Analysis**: Read `README.md` → Project name, one-line description, key constraints, build commands (do not output full text)
+2. **Tech Stack Identification**: Read package manifest → Tech stack (language, framework, runtime, package manager, deployment target); when all are missing, use `ls` to infer and annotate
+3. **Directory Scan**: `Glob` / `find . -maxdepth 2` → Directory skeleton and module organization
+4. **Entry Point Location**: `Grep` search entry files (main/index/app) → Key module identification
+5. **Command Detection**: `package.json` scripts / `Makefile` / `Justfile` → Build, test, run commands
+6. **Activity Check**: `git log --oneline -10` → Recent commits, version number
+7. **Output Card**: Output structured card per project card template; note outdated README or missing configuration in "Known Constraints"
 
-### 约束
+### Constraints
 
-- **只读不改**：禁止文件写入、删除、修改；禁止 `npm install` 等改变文件系统的命令。违反时撤回修改操作。
-- **不编造**：信息缺失时写"未发现"或"未配置"，不猜测。违反时修正为"未发现"并记录缺失来源。
-- **静默采集**：所有采集过程对用户不可见，只输出最终卡片。违反时删除中间输出。
-- **快速收敛**：5 维度在 6-8 个工具调用内完成采集。违反时停止过度探索，合并同类工具调用。
-- **Monorepo 分层采集**：根目录发现子包目录时必须分层采集——先输出全局结构，再逐子包补充。违反时撤回输出的全局卡片，重新按分层结构输出。
+- **Read-only**: No file writes, deletes, or modifications. No commands that modify the file system such as `npm install`. Revert any violation.
+- **No fabrication**: Write "Not found" or "Not configured" when information is missing; do not guess. Correct violations by replacing with "Not found" and recording the source.
+- **Silent collection**: All collection processes are invisible to the user; only the final card is output. Delete any intermediate output if violated.
+- **Rapid convergence**: Complete 5-dimension collection within 6-8 tool calls. If violated, stop over-exploration and merge similar tool calls.
+- **Monorepo tiered collection**: When sub-package directories are found at the root, collect in tiers — first the global structure, then supplement per sub-package. If violated, retract the global card and re-output in tiered structure.
 
-### 输出规范
+### Output Specification
 
-- 按项目卡片模板输出，包含 5 个维度（身份、技术栈、架构骨架、配置与约束、活跃度）
-- 结论优先，不编造信息，静默采集
-- 边界情况：无包管理文件→ls推断；信息缺失→标注"未发现"；README过时→注明差异
-- Monorepo 输出：先输出全局卡片→再逐一输出各子包卡片，并用分隔线隔开
+- Output in the project card template, covering 5 dimensions (Identity, Tech Stack, Architecture Skeleton, Configuration & Constraints, Activity)
+- Conclusion first, no fabricated information, silent collection
+- Edge cases: No package manifest → `ls` to infer; Missing information → annotate "Not found"; Outdated README → note discrepancies
+- Monorepo output: Output global card first → then output each sub-package card, separated by dividers
 
 ---
-最后更新: 2026-07-03（变更：S1 关键要点/最佳实践去重）
+Last updated: 2026-07-03 (Change: S1 key points / best practices deduplication)

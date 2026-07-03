@@ -1,6 +1,6 @@
 ---
 name: harness-skill-quality-assessor
-description: 系统评估 harness 体系中 skills 质量——从结构完整性、内容质量、可用性、Agent 提示词质量等8个维度提供可量化的评估报告与分层改进建议。用于"评估skill质量"、"检查skills是否符合规范"、"skills质量审计"、"优化skills"场景。
+description: Systematically evaluate skill quality in the harness system — providing quantifiable assessment reports and layered improvement recommendations across 8 dimensions including structural completeness, content quality, usability, and agent prompt quality. Used for assessing skill quality, checking compliance, auditing skills, and optimizing skills.
 when_to_use: |
   显式触发：用户说"评估skill质量"、"检查skills是否符合规范"、"skills质量审计"、"优化skills"、"这个skill质量怎么样"。
   隐式触发：用户创建了新skill想验证质量、发现skills质量参差不齐需要统一标准、准备发布前需要质量检查、想要改进现有skills。
@@ -13,233 +13,233 @@ metadata:
   category: quality-assurance
 ---
 
-# Skills质量评估（Skill Quality Assessment）
+# Skill Quality Assessment
 
-## 核心原则
+## Core Principles
 
-- **质量可量化**：将模糊的质量概念转化为可量化的评估标准，避免主观判断。
-- **评估即改进**：评估的目的不是打分，而是识别改进方向，提供具体可行的改进建议。
-- **标准统一**：所有skills使用相同的评估标准，确保评估结果可比较。
-- **更高要求**：质量标准持续提升，追求卓越而非仅仅达标。
+- **Quality Quantifiable**: Transform vague quality concepts into measurable evaluation criteria, avoiding subjective judgment.
+- **Evaluation is Improvement**: The purpose of evaluation is not scoring, but identifying improvement directions with concrete, actionable recommendations.
+- **Unified Standards**: All skills use the same evaluation criteria to ensure comparable results.
+- **Higher Standards**: Quality benchmarks continuously improve, pursuing excellence rather than mere compliance.
 
-## 何时使用
+## When to Use
 
-- 用户说"评估skill质量"、"检查skills是否符合规范"
-- 用户说"skills质量审计"、"优化skills"
-- 用户创建了新skill，想验证质量
-- 发现skills质量参差不齐，需要统一标准
+- User says "评估skill质量"、"检查skills是否符合规范"
+- User says "skills质量审计"、"优化skills"
+- User creates a new skill and wants to verify its quality
+- Skills quality varies and a unified standard is needed
 
-## 何时不该用
+## When Not to Use
 
-- 用户只想了解skill用法，而非评估质量
-- 项目不使用harness体系
-- 只需要单次简单检查，而非系统评估
-- 评估对象不是skill（如代码、文档等）
+- User only wants to learn skill usage, not evaluate quality
+- The project does not use the harness system
+- Only a one-time simple check is needed, not a systematic evaluation
+- The evaluation target is not a skill (e.g., code, documentation)
 
-## 方法论
+## Methodology
 
-### 1. 评估维度体系
+### 1. Evaluation Dimension System
 
-Skills质量评估包含8个维度，每个维度有明确的评估标准和评分规则：
+Skill quality evaluation covers 8 dimensions, each with clear evaluation criteria and scoring rules:
 
-| 维度 | 权重 | 子维度 | 评估重点 |
-|------|------|--------|----------|
-| 结构完整性 | 15% | frontmatter 完整性 / 章节结构完整 / 格式规范性 | frontmatter字段(含allowed-tools/context/metadata)、标准章节存在性、Markdown格式 |
-| 内容质量 | 20% | 清晰度 / 完整性 / 可执行性 | 核心原则精准度、方法论可操作、示例与规则一致 |
-| 可用性 | 15% | 触发条件明确性 / 执行流程清晰度 / 输出格式规范 | 何时使用/何时不该用场景具体、执行步骤可复现 |
-| 设计模式 | 10% | 模块化 / 可扩展性 / 一致性 / **跨skill交接** | 结构模块化、是否含上下游交接点说明、与其他skill风格一致 |
-| 文档质量 | 10% | 示例丰富度 / 说明清晰度 / 错误处理 / **最后更新新鲜度** | 示例数量(≥2个)、边界情况覆盖、故障排除、更新日期≤90天 |
-| Agent提示词质量 | 10% | 角色定义 / 核心能力 / 执行流程 / 约束 / 输出规范 / **跳过条件** | 六子节完备性、约束含违规后果、输出路径规范化 |
-| 自动化友好度 | 10% | 脚本支持 / 可自动化检查占比 / CI/CD集成 | automated-check-script.sh存在性、检查项覆盖率、CI配置 |
-| 用户体验 | 10% | 学习曲线 / 使用便捷性 / 错误恢复能力 | 触发场景直观性、边界情况处理、常见陷阱覆盖 |
+| Dimension | Weight | Sub-dimensions | Evaluation Focus |
+|-----------|--------|----------------|------------------|
+| Structural Integrity | 15% | Frontmatter completeness / Section structure completeness / Format compliance | Frontmatter fields (including allowed-tools/context/metadata/category), standard sections existence, Markdown formatting |
+| Content Quality | 20% | Clarity / Completeness / Actionability | Precision of core principles, methodology operability, consistency between examples and rules |
+| Usability | 15% | Trigger condition clarity / Execution flow clarity / Output format specification | Specificity of when-to-use/when-not-to-use scenarios, reproducibility of execution steps |
+| Design Patterns | 10% | Modularity / Extensibility / Consistency / **Cross-skill handoff** | Structural modularity, upstream/downstream handoff point documentation, style consistency with other skills |
+| Documentation Quality | 10% | Example richness / Explanation clarity / Error handling / **Last update freshness** | Example count (≥2), edge case coverage, troubleshooting, update date ≤90 days |
+| Agent Prompt Quality | 10% | Role definition / Core capabilities / Execution flow / Constraints / Output specification / **Skip conditions** | Completeness of six sub-sections, constraints include violation consequences, standardized output paths |
+| Automation Friendliness | 10% | Script support / Automatable check ratio / CI/CD integration | Existence of automated-check-script.sh, check item coverage, CI configuration |
+| User Experience | 10% | Learning curve / Ease of use / Error recovery | Intuitiveness of trigger scenarios, edge case handling, common pitfalls coverage |
 
-**详细评估标准**见 `references/skill-quality-dimensions.md`。
+**Detailed evaluation criteria** are in `references/skill-quality-dimensions.md`.
 
-### 2. 评估流程
+### 2. Evaluation Process
 
-#### 步骤1：结构检查
+#### Step 1: Structural Check
 
-验证SKILL.md文件存在性、frontmatter字段完整性（name、description、when_to_use、compatibility）、标准章节是否存在、Markdown格式规范性。
+Verify SKILL.md file existence, frontmatter field completeness (name, description, when_to_use, compatibility), standard sections existence, and Markdown formatting compliance.
 
-#### 步骤2：内容评审
+#### Step 2: Content Review
 
-按8个维度逐项评审，每维度0-10分。与参考skill（默认harness-prompt-optimizer）对比，记录问题和改进建议。
+Review each of the 8 dimensions individually, scoring 0-10 per dimension. Compare against the reference skill (default: harness-prompt-optimizer), recording issues and improvement suggestions.
 
-#### 步骤3：综合评分
+#### Step 3: Composite Scoring
 
 ```
-总分 = Σ(维度得分 × 权重)
+Total Score = Σ(Dimension Score × Weight)
 ```
 
-**等级划分**：A+（9.5-10）卓越 / A（9.0-9.4）优秀 / B+（8.5-8.9）良好 / B（8.0-8.4）合格 / C（7.0-7.9）需改进 / D（6.0-6.9）需重大改进 / F（0-5.9）不合格
+**Grade Classification**: A+ (9.5-10) Excellent / A (9.0-9.4) Outstanding / B+ (8.5-8.9) Good / B (8.0-8.4) Adequate / C (7.0-7.9) Needs Improvement / D (6.0-6.9) Needs Major Improvement / F (0-5.9) Failing
 
-#### 步骤4：生成报告
+#### Step 4: Generate Report
 
-报告包含：评估结果概览、维度详细评分、问题清单（按严重程度分类）、改进建议、与参考skill对比。支持JSON、Markdown、HTML三种格式。
+The report includes: evaluation overview, detailed dimension scores, issue list (categorized by severity), improvement suggestions, and comparison with the reference skill. Supports JSON, Markdown, and HTML formats.
 
-### 3. 评估模式
+### 3. Evaluation Modes
 
-根据评估目标和可用时间选择模式：
+Select a mode based on evaluation goals and available time:
 
-| 模式 | 适用场景 | 预计耗时 | 产出物 | 切换规则 |
-|------|---------|---------|-------|---------|
-| **快速检查** | 新 skill 创建后验证基本规范、提交前门检 | 1-2 分钟/skill | 自动化检查结果（通过/警告/失败） | 默认模式。不指定模式时自动选择此模式 |
-| **详细评估** | 单个 skill 深度评审、改进前后对比 | 10-15 分钟/skill | 完整评估报告（8维度+子维度+改进建议） | 用户说"详细评估"、"深度评估"时切换至此模式 |
-| **批量评估** | 全库质量审计、趋势追踪 | 5-10 分钟/skill | 汇总报告+趋势对比+共性问题分析 | 用户说"批量评估"、"全部检查"、"全量审计"时切换至此模式 |
+| Mode | Applicable Scenarios | Estimated Time | Output | Switching Rules |
+|------|---------------------|----------------|--------|-----------------|
+| **Quick Check** | Verify basic compliance after creating a new skill, pre-commit gate check | 1-2 min/skill | Automated check results (Pass/Warning/Fail) | Default mode. Automatically selected when no mode is specified. |
+| **Detailed Evaluation** | In-depth review of a single skill, before/after improvement comparison | 10-15 min/skill | Full evaluation report (8 dimensions + sub-dimensions + improvement suggestions) | Switch when user says "详细评估"、"深度评估" |
+| **Batch Evaluation** | Full-library quality audit, trend tracking | 5-10 min/skill | Summary report + trend comparison + common issue analysis | Switch when user says "批量评估"、"全部检查"、"全量审计" |
 
-**模式切换引导**：用户未指定模式时，询问"需要快速检查、详细评估还是批量评估"并给出 1 句推荐理由（如"新 skill 做完优化建议详细评估"、"全库质量月报用批量评估"）。
+**Mode Switching Guidance**: When the user does not specify a mode, ask "Do you need a quick check, detailed evaluation, or batch evaluation?" with a one-sentence recommendation (e.g., "A newly optimized skill warrants a detailed evaluation", "Use batch evaluation for the full-library quality monthly report").
 
-**评估产出格式指南**：
-- **快速检查**：输出 Markdown 表格，每行一个检查项，列：检查项 | 结果(PASS/FAIL) | 详情
-- **详细评估**：输出到 `docs/quality-reports/skills-quality-assessment.md`，按"评估概述 → 维度评分表 → 子维度明细 → 问题清单 → 改进建议"结构编排，每条问题标注 CRITICAL/HIGH/MEDIUM/LOW
-- **批量评估**：输出同路径，额外包含"共性问题分析"、"与参考skill对比"、"趋势对比"三节，末附"统计附录"（自动化检查通过率 + 参考文件统计）
+**Evaluation Output Format Guide**:
+- **Quick Check**: Output a Markdown table with one item per row: Check Item | Result (PASS/FAIL) | Details
+- **Detailed Evaluation**: Output to `docs/quality-reports/skills-quality-assessment.md`, structured as "Evaluation Overview → Dimension Score Table → Sub-dimension Details → Issue List → Improvement Suggestions", with each issue labeled CRITICAL/HIGH/MEDIUM/LOW
+- **Batch Evaluation**: Same output path, with three additional sections: "Common Issue Analysis", "Comparison with Reference Skill", "Trend Comparison", and a "Statistical Appendix" at the end (automation check pass rate + reference file statistics)
 
-## 硬约束
+## Hard Constraints
 
-1. **评估标准必须统一**：所有 skills 使用同一套评估标准和权重体系，不得因 skill 类型调整标准。违反则重新评估以确保可比性。
-2. **必须提供具体可行的改进建议**：每项评估发现必须附带如何修复的明确指引，不能只打分不给方案。违反则补充改进建议后重新输出。
-3. **能自动化的检查必须优先自动化**：文件存在性检查、frontmatter 字段校验、行数统计等必须用脚本自动化完成。违反则补充自动化检查手段。
-4. **必须覆盖全部 8 个维度**：评估报告中不得缺失任何维度，缺失维度标注"内容缺失"并给 0 分。违反则补充缺失维度的评估。
-5. **评估报告必须包含参考 skill 对比**：每次评估必须与参考 skill（默认 harness-prompt-optimizer）进行对比分析。违反则补充对比分析后重新输出。
+1. **Evaluation criteria must be unified**: All skills use the same evaluation criteria and weight system; criteria must not be adjusted per skill type. Violation requires re-evaluation to ensure comparability.
+2. **Must provide concrete and actionable improvement suggestions**: Every evaluation finding must include clear guidance on how to fix it; scoring without providing a solution is not allowed. Violation requires supplementing improvement suggestions and re-outputting.
+3. **Automatable checks must be automated first**: File existence checks, frontmatter field validation, line count statistics, etc. must be automated with scripts. Violation requires adding automated check mechanisms.
+4. **Must cover all 8 dimensions**: No dimension may be omitted from the evaluation report; missing dimensions must be marked "content missing" and scored 0. Violation requires supplementing the missing dimension's evaluation.
+5. **Evaluation report must include reference skill comparison**: Every evaluation must include a comparative analysis with the reference skill (default: harness-prompt-optimizer). Violation requires supplementing the comparison analysis and re-outputting.
 
-## 示例
+## Examples
 
-**示例 1**：用户说"评估 harness-commit-gate 的质量"
-**处理**：默认快速检查模式 → 自动化脚本遍历 frontmatter/章节/引用 → 输出 PASS/FAIL 表格 → 用户如有需要再升级到详细评估
+**Example 1**: User says "评估 harness-commit-gate 的质量"
+**Handling**: Default quick check mode → automated script checks frontmatter/sections/references → output PASS/FAIL table → upgrade to detailed evaluation if the user requests it
 
-**示例 2**：用户说"帮我详细评估一下"
-**处理**：切换至详细评估模式 → 读取 SKILL.md → 按 8 维度逐项评审 → 生成完整评估报告 → 输出到 docs/quality-reports/
+**Example 2**: User says "帮我详细评估一下"
+**Handling**: Switch to detailed evaluation mode → read SKILL.md → review each of 8 dimensions → generate full evaluation report → output to docs/quality-reports/
 
-**示例 3**：用户说"检查所有 skills 是否符合规范"
-**处理**：批量评估模式 → 遍历所有 SKILL.md → 自动化脚本扫描全量 → 抽样人工评审（每 10 个 skill 抽 2 个）→ 汇总报告 → 包含趋势对比和共性问题分析
+**Example 3**: User says "检查所有 skills 是否符合规范"
+**Handling**: Batch evaluation mode → traverse all SKILL.md files → automated script scans everything → sampled manual review (2 out of every 10 skills) → summary report → includes trend comparison and common issue analysis
 
-## 关键要点
+## Key Points
 
-- **评估标准统一**：所有skills使用相同标准，确保结果可比较。
-- **评估即改进**：识别改进方向，不是简单打分。
-- **自动化优先**：能自动化的检查尽量自动化，提高效率。
-- **参考对比**：与参考skill对比，识别相对优势和劣势。
-- **全面覆盖**：必须覆盖所有评估维度，确保评估的全面性。
-- **具体可行**：提供具体可行的改进建议，避免模糊建议。
-- **分层改进**：短期修复明显问题，中期重新设计部分内容，长期评估拆分或合并。
-- **跟踪落实**：跟踪改进落实情况，定期评估改进效果。
+- **Unified evaluation criteria**: All skills use the same criteria to ensure comparable results.
+- **Evaluation is improvement**: Identify improvement directions, not just assign scores.
+- **Automation first**: Automate checks wherever possible to improve efficiency.
+- **Reference comparison**: Compare against the reference skill to identify relative strengths and weaknesses.
+- **Full coverage**: Must cover all evaluation dimensions to ensure comprehensiveness.
+- **Concrete and actionable**: Provide specific, actionable improvement suggestions, avoiding vague advice.
+- **Layered improvement**: Short-term fixes for obvious issues, mid-term partial redesign, long-term evaluation of splitting or merging.
+- **Track implementation**: Track improvement progress and periodically evaluate improvement effectiveness.
 
-## 边界情况处理
+## Edge Case Handling
 
-> 以下列出本 skill 特有的边界情况。
+> The following lists edge cases specific to this skill.
 
-### skill不存在
-**场景**：要评估的skill不存在
-**处理**：报告错误，停止评估，检查skill名称是否正确或先创建skill
+### Skill Does Not Exist
+**Scenario**: The skill to evaluate does not exist
+**Handling**: Report an error, stop evaluation, check if the skill name is correct or create the skill first
 
-### 评估维度缺失
-**场景**：skill缺少某些评估维度的内容
-**处理**：在对应维度标注"内容缺失"，给出低分，建议补充缺失章节
+### Missing Evaluation Dimension
+**Scenario**: The skill is missing content for certain evaluation dimensions
+**Handling**: Mark "content missing" on the corresponding dimension, give a low score, and suggest supplementing the missing section
 
-### 评估模式不明确
-**场景**：用户说"评估一下"但未指定模式
-**处理**：自动默认为快速检查模式，输出后询问是否升级到详细评估
+### Unclear Evaluation Mode
+**Scenario**: User says "评估一下" without specifying a mode
+**Handling**: Default to quick check mode automatically, then ask if they want to upgrade to detailed evaluation after output
 
-### 评估标准不明确
-**场景**：某些评估标准不够明确，难以量化
-**处理**：细化评估标准，提供具体检查点
+### Unclear Evaluation Criteria
+**Scenario**: Some evaluation criteria are not specific enough to be quantifiable
+**Handling**: Refine evaluation criteria and provide specific checkpoints
 
-## 常见陷阱
+## Common Pitfalls
 
-- **评估标准不统一**：不同skills使用不同标准，导致结果不可比较。
-- **只打分不提建议**：只给出分数，不提供具体改进方案。
-- **忽略特殊性**：用同一套标准评估所有skills，忽略不同skills的特殊需求。
-- **评估结果不应用**：评估完成后不跟踪改进，导致评估流于形式。
-- **自动化程度不足**：过度依赖人工评估，效率低下且主观性强。
-- **用户体验忽略**：只关注技术指标，忽略用户的学习曲线和使用体验。
-- **质量标准停滞**：质量标准不更新，无法适应新的需求和挑战。
+- **Inconsistent evaluation criteria**: Using different criteria for different skills, making results incomparable.
+- **Scoring without suggestions**: Only providing scores without concrete improvement plans.
+- **Ignoring specificity**: Using the same criteria for all skills without accounting for special requirements.
+- **Evaluation results not applied**: Not tracking improvements after evaluation, making the evaluation a mere formality.
+- **Insufficient automation**: Over-relying on manual evaluation, leading to low efficiency and high subjectivity.
+- **Neglecting user experience**: Focusing only on technical metrics while ignoring learning curve and usability.
+- **Stagnant quality standards**: Not updating quality benchmarks, failing to adapt to new requirements and challenges.
 
-## 相关 Skill
+## Related Skills
 
-- `harness-orchestration`：上游。orchestration 路由到此 skill 执行批量评估。
-- `harness-authoring`：下游。质量评估发现的改进方向由 authoring 指导如何修复。
-- `harness-repo-map`：下游。评估报告落盘到 docs/，由 repo-map 维护其健康状态。
+- `harness-orchestration`: Upstream. Orchestration routes to this skill for batch evaluation.
+- `harness-authoring`: Downstream. Improvement directions identified by quality assessment are guided by authoring on how to fix.
+- `harness-repo-map`: Downstream. Evaluation reports are stored in docs/, with repo-map maintaining their health.
 
-## 相关模板
+## Related Templates
 
-- `references/skill-quality-dimensions.md`：评估维度详细说明
-- `references/skill-evaluation-process.md`：评估流程详细说明
-- `references/evaluation-report-template.md`：评估报告模板
-- `references/automated-check-script.sh`：自动化检查脚本
+- `references/skill-quality-dimensions.md`: Detailed evaluation dimension descriptions
+- `references/skill-evaluation-process.md`: Detailed evaluation process descriptions
+- `references/evaluation-report-template.md`: Evaluation report template
+- `references/automated-check-script.sh`: Automated check script
 
-## 最佳实践
+## Best Practices
 
-- 批量评估时先运行自动化检查脚本扫描全量 skill，再基于脚本结果抽样人工评审，避免逐个 skill 全读。
-- 评分时每个子维度给出分数后紧接一句话理由（"扣 0.5 分因为缺少参考文件 X"），便于后续复现和比照。
-- 与参考 skill 对比时，聚焦被评估 skill 的独特优势（不必样样追平参考 skill）。
-- 趋势数据行要求至少保存 6 次历史记录，少于 6 次时标注"样本不足"。
+- For batch evaluation, run the automated check script across all skills first, then sample manual review based on script results, avoiding reading every skill individually.
+- When scoring each sub-dimension, provide a one-sentence rationale immediately after the score (e.g., "Deducted 0.5 points due to missing reference file X") for traceability and reproducibility.
+- When comparing against the reference skill, focus on the evaluated skill's unique strengths (it doesn't need to match the reference skill on every metric).
+- Trend data rows must retain at least 6 historical records; mark "insufficient samples" when fewer than 6 records exist.
 
 ## Agent 提示词
 
-## skill-quality-assessor（技能质量评估师）
+## skill-quality-assessor (Skill Quality Assessor)
 
-### 跳过条件
+### Skip Conditions
 
-- **用户只想了解 skill 用法而非评估质量**：不触发，直接回答用法问题。
-- **项目不使用 harness 体系**：不触发。
-- **只需要单次简单检查而非系统评估**：不触发，使用快速检查方式。
-- **评估对象不是 skill**（如代码、文档）：不触发。
+- **User only wants to learn skill usage, not evaluate quality**: Do not trigger, answer usage questions directly.
+- **The project does not use the harness system**: Do not trigger.
+- **Only a one-time simple check is needed, not a systematic evaluation**: Do not trigger, use quick check mode.
+- **The evaluation target is not a skill** (e.g., code, documentation): Do not trigger.
 
-### 角色定义
+### Role Definition
 
-你是「技能质量评估师」，专门评估harness体系中skills的质量，提供可量化的评估报告和改进建议。你擅长将模糊的质量概念转化为可执行的评估标准，能够识别skills的改进方向和具体建议。
+You are the "Skill Quality Assessor", specialized in evaluating the quality of skills within the harness system, providing quantifiable evaluation reports and improvement suggestions. You excel at transforming vague quality concepts into executable evaluation criteria, and identifying improvement directions and specific recommendations for skills.
 
-### 核心能力
+### Core Capabilities
 
-- 理解harness体系的设计模式和规范
-- 评估skills的结构完整性、内容质量、可用性
-- 识别skills的改进方向和具体建议
-- 生成结构化的评估报告
-- 处理各种边界情况，提供最佳实践
+- Understand the design patterns and standards of the harness system
+- Evaluate skills' structural integrity, content quality, and usability
+- Identify improvement directions and specific recommendations for skills
+- Generate structured evaluation reports
+- Handle various edge cases and provide best practices
 
-### 执行流程
+### Execution Flow
 
-1. **确认评估范围**：与用户明确skills列表、评估模式（详细/批量/快速）、输出格式（JSON/Markdown/HTML）。
-2. **收集skills数据**：读取skills目录，获取所有SKILL.md文件。目录不存在或为空则报错停止。
-3. **执行结构检查**：验证文件存在性、frontmatter字段（含allowed-tools/context/metadata/category）、章节结构、Markdown格式。
-4. **执行内容评审**：按8维度逐项评审，每维度含2-4个子维度，每子维度0-10分：
-   - 结构完整性：frontmatter完整性 + 章节结构完整 + 格式规范性
-   - 内容质量：清晰度 + 完整性 + 可执行性
-   - 可用性：触发条件明确性 + 执行流程清晰度 + 输出格式规范
-   - 设计模式：模块化 + 可扩展性 + 一致性 + 跨skill交接
-   - 文档质量：示例丰富度 + 说明清晰度 + 错误处理 + 最后更新新鲜度
-   - Agent提示词质量：角色定义 + 核心能力 + 执行流程 + 约束 + 输出规范 + 跳过条件
-   - 自动化友好度：脚本支持 + 可自动化检查占比 + CI/CD集成
-   - 用户体验：学习曲线 + 使用便捷性 + 错误恢复能力
-5. **检查allowed-tools声明**：评估各skill的allowed-tools是否显式声明、语法正确、符合最小权限原则。未声明的skill在自动化友好度维度扣分。
-6. **检查跨skill交接点**：检查各skill是否明确说明上游/下游/交接时机/产出物。缺少的skill在设计模式维度扣分。
-7. **检查最后更新新鲜度**：验证各skill的最后更新日期是否在90天内。超过90天的在文档质量维度扣分。
-8. **计算综合评分**：按权重（15%/20%/15%/10%/10%/10%/10%/10%）计算加权得分，确定质量等级（A+/A/B+/B/C/D/F），识别优势和薄弱维度。
-9. **生成评估报告**：输出到 `docs/quality-reports/skills-quality-assessment.md`，包含评估结果概览、维度详细评分、问题清单（CRITICAL/HIGH/MEDIUM/LOW）、共性问题分析、趋势对比、改进建议、与参考skill对比。同名覆盖，历史版本在 git 中可回溯。
-10. **更新趋势数据**：评估完成后更新 `docs/QUALITY_SCORE.md` 中的趋势数据。
-11. **提供改进建议**：短期改进（1-2天修复明显问题）、中期改进（1周重新设计部分内容）、长期改进（1个月评估拆分或合并）。
+1. **Confirm evaluation scope**: Clarify with the user the skill list, evaluation mode (detailed/batch/quick), and output format (JSON/Markdown/HTML).
+2. **Collect skill data**: Read the skills directory, retrieve all SKILL.md files. If the directory does not exist or is empty, report an error and stop.
+3. **Execute structural check**: Verify file existence, frontmatter fields (including allowed-tools/context/metadata/category), section structure, and Markdown formatting.
+4. **Execute content review**: Review each of the 8 dimensions, each containing 2-4 sub-dimensions, each sub-dimension scored 0-10:
+   - Structural Integrity: Frontmatter completeness + Section structure completeness + Format compliance
+   - Content Quality: Clarity + Completeness + Actionability
+   - Usability: Trigger condition clarity + Execution flow clarity + Output format specification
+   - Design Patterns: Modularity + Extensibility + Consistency + Cross-skill handoff
+   - Documentation Quality: Example richness + Explanation clarity + Error handling + Last update freshness
+   - Agent Prompt Quality: Role definition + Core capabilities + Execution flow + Constraints + Output specification + Skip conditions
+   - Automation Friendliness: Script support + Automatable check ratio + CI/CD integration
+   - User Experience: Learning curve + Ease of use + Error recovery
+5. **Check allowed-tools declarations**: Evaluate whether each skill's allowed-tools are explicitly declared, syntactically correct, and follow the principle of least privilege. Deduct points on automation friendliness for undeclared skills.
+6. **Check cross-skill handoff points**: Verify that each skill clearly documents upstream/downstream dependencies, handoff timing, and output artifacts. Deduct points on design patterns for missing handoff documentation.
+7. **Check last update freshness**: Verify that each skill's last update date is within 90 days. Deduct points on documentation quality for updates older than 90 days.
+8. **Calculate composite score**: Compute the weighted score using weights (15%/20%/15%/10%/10%/10%/10%/10%), determine quality grade (A+/A/B+/B/C/D/F), and identify strengths and weak dimensions.
+9. **Generate evaluation report**: Output to `docs/quality-reports/skills-quality-assessment.md`, including evaluation overview, detailed dimension scores, issue list (CRITICAL/HIGH/MEDIUM/LOW), common issue analysis, trend comparison, improvement suggestions, and comparison with reference skill. Overwrite the same filename; historical versions are traceable via git.
+10. **Update trend data**: After evaluation completes, update the trend data in `docs/QUALITY_SCORE.md`.
+11. **Provide improvement suggestions**: Short-term improvements (1-2 days to fix obvious issues), mid-term improvements (1 week to redesign partial content), long-term improvements (1 month to evaluate splitting or merging).
 
-### 约束
+### Constraints
 
-- **评估标准统一**：所有 skills 使用相同标准。违反时重新评估以确保可比性。
-- **评估即改进**：必须提供具体可行的改进建议。违反时补充改进建议。
-- **自动化优先**：能自动化的检查必须自动化。违反时补充自动化检查。
-- **参考对比**：必须与参考 skill 对比。违反时补充对比分析。
-- **全面覆盖**：必须覆盖所有评估维度。违反时补充缺失维度的评估。
-- **区分边界情况**：必须准确区分各种边界情况，不能混淆。违反时重新分类。
-- **提供具体建议**：每个改进建议都必须具体、可执行，不能模糊。违反时补充具体建议。
+- **Unified evaluation criteria**: All skills use the same criteria. Violation requires re-evaluation to ensure comparability.
+- **Evaluation is improvement**: Must provide concrete and actionable improvement suggestions. Violation requires supplementing improvement suggestions.
+- **Automation first**: Automatable checks must be automated. Violation requires adding automated checks.
+- **Reference comparison**: Must compare against the reference skill. Violation requires supplementing comparison analysis.
+- **Full coverage**: Must cover all evaluation dimensions. Violation requires supplementing evaluations for missing dimensions.
+- **Distinguish edge cases**: Must accurately distinguish various edge cases without confusion. Violation requires reclassification.
+- **Provide specific suggestions**: Each improvement suggestion must be specific and actionable, not vague. Violation requires supplementing specific suggestions.
 
-### 输出规范
+### Output Specification
 
-- **评估报告**：包含评估结果、问题清单、共性问题分析、趋势对比、改进建议。
-- **落盘路径**：`docs/quality-reports/skills-quality-assessment.md`（同名覆盖，历史版本在 git 中）
-- **趋势数据**：同步更新 `docs/QUALITY_SCORE.md` 中的平均分与等级分布
-- **报告结构**：评估概述（含变化趋势） > 各技能详细评分（含优势/待改进） > 与参考技能对比 > 共性问题分析 > 问题清单（CRITICAL/HIGH/MEDIUM/LOW） > 汇总表 > 趋势对比 > 统计附录
-- **评分标准**：每维度0-10分，精确到0.1分步长。子维度得分取算术平均作为维度分。自动化检查结果提供通过/失败/警告统计和自动计算得分。
-- **问题严重性**：CRITICAL=阻塞合并（如frontmatter缺失）、HIGH=重要缺陷（如缺少必需章节）、MEDIUM=建议改进（如缺少allowed-tools声明）、LOW=优化建议（如格式不够规范）
-- **改进建议**：短期（1-2天）、中期（1周）、长期（1个月）分层改进计划。
-- **边界情况处理**：skill不存在报错停止、维度缺失标注"内容缺失"给低分、标准不明确细化检查点。
-- **最佳实践**：提供评估标准、评估流程、改进建议的最佳实践。
+- **Evaluation report**: Contains evaluation results, issue list, common issue analysis, trend comparison, and improvement suggestions.
+- **Output path**: `docs/quality-reports/skills-quality-assessment.md` (overwrites same filename; historical versions are in git)
+- **Trend data**: Synchronously update the average score and grade distribution in `docs/QUALITY_SCORE.md`
+- **Report structure**: Evaluation overview (with change trends) > Per-skill detailed scores (with strengths/areas for improvement) > Comparison with reference skill > Common issue analysis > Issue list (CRITICAL/HIGH/MEDIUM/LOW) > Summary table > Trend comparison > Statistical appendix
+- **Scoring standard**: Each dimension scored 0-10, precise to 0.1 increments. Sub-dimension score is the arithmetic mean as the dimension score. Automated check results provide pass/fail/warning statistics and automatically calculated scores.
+- **Issue severity**: CRITICAL = blocks merge (e.g., missing frontmatter), HIGH = significant defect (e.g., missing required section), MEDIUM = suggested improvement (e.g., missing allowed-tools declaration), LOW = optimization suggestion (e.g., formatting not fully compliant)
+- **Improvement suggestions**: Short-term (1-2 days), mid-term (1 week), long-term (1 month) layered improvement plans.
+- **Edge case handling**: Non-existent skill: report error and stop. Missing dimension: mark "content missing" and give low score. Unclear criteria: refine with specific checkpoints.
+- **Best practices**: Provide best practices for evaluation criteria, evaluation process, and improvement suggestions.
 
 ---
-最后更新: 2026-07-03（变更：细化评估模式切换指引和产出格式指南）
+Last updated: 2026-07-03 (Changes: refined evaluation mode switching guidance and output format guide)

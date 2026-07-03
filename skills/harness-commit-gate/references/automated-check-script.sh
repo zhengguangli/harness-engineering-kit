@@ -33,28 +33,28 @@ else
   echo "  [FAIL] Frontmatter missing allowed-tools field"
 fi
 
-# Check methodology mentions 三道检查
+# Check methodology mentions "three-layer check" section
 ((++TOTAL_EXTRA))
-if grep -qE "三道检查" "$SKILL_DIR/SKILL.md"; then
+if grep -qE "Three Checks of the Quality Gate" "$SKILL_DIR/SKILL.md"; then
   ((++PASSED_EXTRA))
 else
-  echo "  [FAIL] Missing 三道检查 section in methodology"
+  echo "  [FAIL] Missing Three Checks of the Quality Gate section in methodology"
 fi
 
 # Check toolchain probe process
 ((++TOTAL_EXTRA))
-if grep -qE "工具链探测流程|检查策略.*按项目" "$SKILL_DIR/SKILL.md"; then
+if grep -qE "Toolchain Detection Flow|Check Strategy.*Based on Project Configuration" "$SKILL_DIR/SKILL.md"; then
   ((++PASSED_EXTRA))
 else
-  echo "  [FAIL] Missing toolchain probe strategy"
+  echo "  [FAIL] Missing Toolchain Detection Flow / Check Strategy section"
 fi
 
-# Check that diff review items mentioned
+# Check that "Diff Review" check is documented
 ((++TOTAL_EXTRA))
-if grep -qE "Diff.*审查|diff.*review" "$SKILL_DIR/SKILL.md"; then
+if grep -qE "Diff.*Review|diff.*review" "$SKILL_DIR/SKILL.md"; then
   ((++PASSED_EXTRA))
 else
-  echo "  [FAIL] Missing diff review guidance"
+  echo "  [FAIL] Missing Diff Review check documentation"
 fi
 
 echo "---"

@@ -1,43 +1,43 @@
 # Verification Checklist
 
-由 `qa-verifier` agent 在每次验证循环中填充。作为验收证据附在 PR 或 exec-plan 中。
+Populated by the `qa-verifier` agent on each verification cycle. Attached as acceptance evidence to the PR or exec-plan.
 
-## 验证概览
+## Verification Overview
 
-| 字段 | 内容 |
+| Field | Content |
 |------|------|
-| 验证目标 | <!-- 这次验证要确认什么 --> |
-| 验证类型 | UI / 性能 / 可靠性 / 日志 |
-| 环境 | <!-- 浏览器版本、设备、网络条件等 --> |
-| 验证日期 | <YYYY-MM-DD> |
+| Verification Goal | <!-- What this verification should confirm --> |
+| Verification Type | UI / Performance / Reliability / Log |
+| Environment | <!-- Browser version, device, network conditions, etc. --> |
+| Verification Date | <YYYY-MM-DD> |
 
-## UI 验证结果
+## UI Verification Results
 
-| 检查项 | 截图/证据 | 结果 |
+| Check Item | Screenshot/Evidence | Result |
 |--------|-----------|------|
-| <!-- 预期行为 A --> | <!-- 截图或 DOM 快照路径 --> | ✅ 通过 / ❌ 失败 |
-| <!-- 预期行为 B --> | | |
+| <!-- Expected behavior A --> | <!-- Screenshot or DOM snapshot path --> | ✅ Pass / ❌ Fail |
+| <!-- Expected behavior B --> | | |
 
-## 性能/可靠性验证
+## Performance/Reliability Verification
 
-| 指标 | 约束阈值 | 实际值 | 结果 |
+| Metric | Constraint Threshold | Actual Value | Result |
 |------|----------|--------|------|
-| <!-- P99 延迟 --> | < 2s | <value> | ✅ 通过 / ❌ 失败 |
-| <!-- 内存占用 --> | < 200MB | <value> | |
+| <!-- P99 latency --> | < 2s | <value> | ✅ Pass / ❌ Fail |
+| <!-- Memory usage --> | < 200MB | <value> | |
 
-## 日志/错误检查
+## Log/Error Check
 
-| 检查项 | 结果 | 备注 |
+| Check Item | Result | Notes |
 |--------|------|------|
-| 控制台错误 | 有 / 无 | <!-- 如有，列出 --> |
-| 网络请求失败 | 有 / 无 | |
-| 预期日志出现 | 是 / 否 | |
+| Console errors | Yes / No | <!-- List if any --> |
+| Network request failures | Yes / No | |
+| Expected log appears | Yes / No | |
 
-## 结论
+## Conclusion
 
-- **通过**: 所有检查项均符合预期
-- **部分通过**: <!-- 列出未通过的检查项 -->
-- **失败**: <!-- 描述关键失败，需要修复后重新验证 -->
+- **Pass**: All check items meet expectations
+- **Partial Pass**: <!-- List check items that did not pass -->
+- **Fail**: <!-- Describe key failures that require re-verification after fix -->
 
 ---
-最后更新: <YYYY-MM-DD>
+Last updated: <YYYY-MM-DD>

@@ -5,7 +5,7 @@
 | 规格 | 一句话描述 | 状态 |
 |---|---|---|
 | README.md | 完整的安装方式、触发速查表、回归用例维护规范、接入顺序 | shipped |
-| skills/harness-bootstrap | 一键初始化 harness 结构（AGENTS.md + docs/ + .gitignore + CI） | shipped |
+| skills/harness-bootstrap | 一键初始化 harness 结构（CLAUDE.md + docs/ + .gitignore + CI） | shipped |
 | skills/harness-repo-map | 入口文件地图 + docs/ 系统记录 | shipped |
 | skills/harness-architecture-boundaries | 分层架构与依赖方向的机械强制 | shipped |
 | skills/harness-exec-plans | 执行计划作为一等公民工件 | shipped |

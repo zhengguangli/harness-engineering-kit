@@ -27,18 +27,18 @@ done
 
 # Check browser automation config section
 ((++TOTAL_EXTRA))
-if grep -qE "浏览器自动化配置参考" "$SKILL_DIR/SKILL.md"; then
+if grep -qE "Browser Automation Configuration Reference" "$SKILL_DIR/SKILL.md"; then
   ((++PASSED_EXTRA))
 else
-  echo "  [FAIL] Missing 浏览器自动化配置参考 section"
+  echo "  [FAIL] Missing Browser Automation Configuration Reference section"
 fi
 
 # Check that two types of feedback sensors are mentioned
 ((++TOTAL_EXTRA))
-if grep -qE "两类反馈传感器" "$SKILL_DIR/SKILL.md"; then
+if grep -qE "Two Types of Feedback Sensors" "$SKILL_DIR/SKILL.md"; then
   ((++PASSED_EXTRA))
 else
-  echo "  [FAIL] Missing 两类反馈传感器 section"
+  echo "  [FAIL] Missing Two Types of Feedback Sensors section"
 fi
 
 # Check for Playwright/Puppeteer mentions
@@ -51,10 +51,10 @@ fi
 
 # Check verification example criteria present
 ((++TOTAL_EXTRA))
-if grep -qE "验收标准示例" "$SKILL_DIR/SKILL.md"; then
+if grep -qE "Acceptance Criteria Examples" "$SKILL_DIR/SKILL.md"; then
   ((++PASSED_EXTRA))
 else
-  echo "  [FAIL] Missing 验收标准示例 section"
+  echo "  [FAIL] Missing Acceptance Criteria Examples section"
 fi
 
 echo "---"

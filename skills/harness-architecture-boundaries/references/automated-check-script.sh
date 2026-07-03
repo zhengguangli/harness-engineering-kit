@@ -25,12 +25,12 @@ for ref_file in "architecture-template.md" "check-pattern-template.md" "e2e-arch
   fi
 done
 
-# Check 严重程度分类参考 table exists
+# Check that Severity Classification Reference section exists
 ((++TOTAL_EXTRA))
-if grep -qE "严重程度分类参考" "$SKILL_DIR/SKILL.md"; then
+if grep -qE "Severity Classification Reference" "$SKILL_DIR/SKILL.md"; then
   ((++PASSED_EXTRA))
 else
-  echo "  [FAIL] Missing 严重程度分类参考 section"
+  echo "  [FAIL] Missing Severity Classification Reference section"
 fi
 
 # Check hard constraints mention severity levels
@@ -41,28 +41,28 @@ else
   echo "  [FAIL] Hard constraints missing severity level references"
 fi
 
-# Check that 最佳实践 section exists and is not empty
+# Check that Best Practices section exists and is not empty
 ((++TOTAL_EXTRA))
-if grep -qE "^##\s+最佳实践" "$SKILL_DIR/SKILL.md"; then
+if grep -qE "^##\s+Best Practices" "$SKILL_DIR/SKILL.md"; then
   ((++PASSED_EXTRA))
 else
-  echo "  [FAIL] Missing 最佳实践 section"
+  echo "  [FAIL] Missing Best Practices section"
 fi
 
-# Check 发现项编排规范 section
+# Check Finding Organization Specification section
 ((++TOTAL_EXTRA))
-if grep -qE "发现项编排规范" "$SKILL_DIR/SKILL.md"; then
+if grep -qE "Finding organization specification" "$SKILL_DIR/SKILL.md"; then
   ((++PASSED_EXTRA))
 else
-  echo "  [FAIL] Missing 发现项编排规范 section"
+  echo "  [FAIL] Missing Finding Organization Specification section"
 fi
 
-# Check 典型分层模型参考 section
+# Check Reference Layering Model section
 ((++TOTAL_EXTRA))
-if grep -qE "典型分层模型参考" "$SKILL_DIR/SKILL.md"; then
+if grep -qE "Reference Layering Model" "$SKILL_DIR/SKILL.md"; then
   ((++PASSED_EXTRA))
 else
-  echo "  [FAIL] Missing 典型分层模型参考 section"
+  echo "  [FAIL] Missing Reference Layering Model section"
 fi
 
 echo "---"

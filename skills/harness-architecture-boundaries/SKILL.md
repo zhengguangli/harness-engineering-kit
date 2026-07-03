@@ -1,6 +1,6 @@
 ---
 name: harness-architecture-boundaries
-description: 为 agent 大量生成代码的仓库设计分层架构、依赖方向与数据边界规则——通过 boundary-auditor agent 内联 Grep/Bash 检查机械化强制约束。用于"建立分层架构"、"出现循环依赖"、"层间越界"、"需要 lint 规则"、"设计依赖方向"场景。
+description: Design layered architecture, dependency direction, and data boundary rules for repos where agents generate large amounts of code — mechanically enforced via Grep/Bash checks in a boundary-auditor agent. Used for establishing layered architecture, circular dependency issues, cross-layer violations, lint rules, and dependency direction design.
 when_to_use: |
   显式触发：用户要建立分层架构、出现循环依赖或层间越界、需要设计自定义 lint 规则、设计依赖方向。
   隐式触发：代码已出现架构腐化、模块间依赖混乱、用户问"怎么组织代码结构"、需要定义跨层依赖方向。
@@ -12,240 +12,240 @@ allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(
 metadata:
   category: architecture
 ---
-# Architecture Boundaries（架构边界）
+# Architecture Boundaries
 
-## 核心原则
+## Core Principles
 
-- **边界内放权,边界上狠功夫**:在模块间依赖方向、数据边界形态、跨层调用路径上严格约束;在具体实现细节上充分放权。
-- **机械强制优于人工审查**:Agent 高吞吐量生成代码的世界里,任何没有被机械强制的约束都会在短时间内被违反——不是因为 agent "学坏了",而是因为它会忠实复制仓库里已存在的坏模式。
-- **固定方向 + 有限合法边 + 横切入口收口**:这是分层架构的核心模式——固定依赖方向、限制合法的依赖边数、横切关注点通过单一入口进入。
+- **Freedom within boundaries, rigor at the edges**: Strictly enforce module dependency direction, data boundary forms, and cross-layer call paths; fully delegate implementation details.
+- **Mechanical enforcement over manual review**: In a world where Agents generate code at high throughput, any constraint not mechanically enforced will be violated in short order — not because the agent "went bad," but because it faithfully replicates bad patterns already present in the repository.
+- **Fixed direction + limited legal edges + cross-cutting chokepoint**: This is the core pattern of layered architecture — fix dependency direction, limit the number of legal dependency edges, and have cross-cutting concerns enter through a single chokepoint.
 
-## 何时使用
+## When to Use
 
 - 用户要为项目建立"严格边界、局部自由"的分层架构
 - 代码已出现架构腐化、循环依赖或层间越界
 - 需要设计自定义 lint 规则或定义跨层依赖方向
 - 项目规模较大，模块间存在明显分层需求
 
-## 何时不该用
+## When NOT to Use
 
 - 纯风格偏好类问题（交给 `harness-golden-principles`）
 - 项目规模极小、模块间无明显分层需求
 - 用户明确表示不需要架构约束
 
-## 方法论
+## Methodology
 
-### 1. 推导项目自有的分层模型
+### 1. Derive the Project's Own Layering Model
 
-不要照搬示例。流程:
+Don't copy reference models. Process:
 
-1. 列出项目里的主要领域/模块
-2. 对每个领域,识别数据流向:从最底层的类型定义到最上层的用户界面
-3. 确定"哪些层可以互相依赖、哪些必须单向"
-4. 识别横切关注点(鉴权、日志、配置等),确定它们的合法入口
-5. 把上述结果编码为依赖方向规则
+1. List the project's main domains/modules
+2. For each domain, identify the data flow: from the lowest-level type definitions to the top-level user interface
+3. Determine "which layers can depend on each other, and which must be unidirectional"
+4. Identify cross-cutting concerns (auth, logging, configuration, etc.) and define their legitimate entry points
+5. Encode the above into dependency direction rules
 
-### 2. 典型分层模型参考
+### 2. Reference Layering Model
 
 ```
-每个业务领域内部,代码只能"向前"依赖,方向固定:
+Within each business domain, code may only depend "forward" with a fixed direction:
 
     Types → Config → Repo → Service → Runtime → UI
 
-横切关注点(鉴权、连接器、遥测、特性开关)不允许散落进任意层,
-必须通过一个显式的 Providers 接口进入:
+Cross-cutting concerns (auth, connectors, telemetry, feature flags) must not be scattered across arbitrary layers —
+they must enter through an explicit Providers interface:
 
     Providers → Service → Runtime → UI
 
-不属于上面任何一层的工具函数放在 Utils,
-Utils 只能被 Providers 使用,不能反向依赖业务领域内部。
+Utility functions that don't belong to any of the above layers go in Utils.
+Utils may only be used by Providers and must not have reverse dependencies into business domains.
 ```
 
-关键不是这个具体的六层模型,而是模式:**固定方向 + 有限的合法边数 + 横切关注点收口到单一入口**。
+The key is not this specific 6-layer model, but the pattern: **fixed direction + limited legal edges + cross-cutting concerns funneled through a single chokepoint**.
 
-**不同项目的实现差异**：Node.js 项目用 `types/config/repositories/services/controllers`；React 项目用 `types/config/hooks/services/components/pages`；微服务则在每个服务内部复用同一分层模式，服务间仅共享类型定义。
+**Implementation variations across projects**: Node.js projects use `types/config/repositories/services/controllers`; React projects use `types/config/hooks/services/components/pages`; microservices reuse the same layering pattern within each service, sharing only type definitions across services.
 
-### 3. "Parse, don't validate" 作为数据边界规则
+### 3. "Parse, Don't Validate" as the Data Boundary Rule
 
-要求:**任何外部数据进入系统边界时,必须被解析成强类型,而不是被校验后当作弱类型继续传递**。不规定具体用什么库实现,只规定这个不变量要被机械检查——比如 lint 规则禁止在边界层直接使用未经解析的 `any`/`dict`/动态字典访问。
+Requirement: **Any external data entering the system boundary must be parsed into a strong type, rather than validated and then passed around as a weak type**. The specific library is not prescribed — only the invariant must be mechanically checked, e.g., a lint rule that prohibits using unparsed `any`/`dict`/dynamic dictionary access at boundary layers.
 
-**最佳实践**：
-1. **定义清晰的数据边界**：明确哪些是外部数据，哪些是内部数据
-2. **使用强类型**：外部数据必须解析为强类型，避免使用any/dict
-3. **机械检查**：使用lint规则或自动化脚本检查数据边界违规
-4. **文档化数据流**：记录数据从外部到内部的流转过程
+**Best Practices**:
+1. **Define clear data boundaries**: Distinguish external data from internal data
+2. **Use strong types**: External data must be parsed into strong types; avoid using any/dict
+3. **Mechanical checks**: Use lint rules or automated scripts to check for data boundary violations
+4. **Document data flow**: Record the data transformation process from external to internal
 
-**示例**：
+**Examples**:
 ```typescript
-// 错误示例：直接使用any类型
+// Incorrect: using any type directly
 function processUserInput(input: any) {
-  // 直接访问属性，没有类型检查
+  // Accessing properties directly without type checking
   console.log(input.name);
 }
 
-// 正确示例：解析为强类型
+// Correct: parse into a strong type
 interface UserInput {
   name: string;
   email: string;
 }
 
 function processUserInput(input: unknown) {
-  // 解析为强类型
+  // Parse into a strong type
   const parsedInput = parseUserInput(input);
   console.log(parsedInput.name);
 }
 
 function parseUserInput(input: unknown): UserInput {
-  // 实现解析逻辑
-  // 验证并转换为强类型
+  // Implement parsing logic
+  // Validate and convert to strong type
 }
 ```
 
-### 4. 执行步骤
+### 4. Execution Steps
 
-1. **和用户一起明确**依赖方向和横切关注点的合法入口
-2. **把规则写进 `docs/ARCHITECTURE.md`**（模板见 `references/architecture-template.md`）
-3. **把检查交给 `boundary-auditor` agent 内联执行**——用 Grep/Bash 直接检查依赖方向违规，不需要项目预配置 lint 工具链
-4. **给每条检查发现配上"如何修复"的具体指令文本**——格式：`### [严重程度] <标题>` + 文件行号 + 违反规则 + 影响 + 建议修复
-5. **区分"必须挡住"和"建议但不强制"**——不变量（循环依赖、层间越界、数据边界违反）交给 boundary-auditor 阻塞检查；风格偏好交给 harness-golden-principles 周期性清扫
-6. **集成到 `harness-verification-loop`**——架构违规必须修复才能通过自验证循环
+1. **Clarify with the user** the dependency direction and legitimate entry points for cross-cutting concerns
+2. **Write the rules into `docs/ARCHITECTURE.md`** (template at `references/architecture-template.md`)
+3. **Delegate inspection to the `boundary-auditor` agent for inline execution** — use Grep/Bash to directly check dependency direction violations, no pre-configured lint toolchain needed in the project
+4. **Attach concrete "how to fix" instructions to each finding** — format: `### [Severity] <Title>` + file + line number + violated rule + impact + suggested fix
+5. **Distinguish "must block" from "suggested but not enforced"** — invariants (circular dependencies, cross-layer boundary violations, data boundary violations) are blocking checks for boundary-auditor; style preferences are periodic cleanup for harness-golden-principles
+6. **Integrate into `harness-verification-loop`** — architectural violations must be fixed to pass the self-verification loop
 
-**严重程度分类参考**：
+**Severity Classification Reference**:
 
-| 级别 | 适用违规 | 行动 |
-|------|---------|------|
-| CRITICAL | 循环依赖、层间越界 | 阻塞合并，必须修复 |
-| HIGH | 横切关注点散落、数据边界违反 | 阻塞合并，要求重新设计 |
-| MEDIUM | 风格模糊、规则需细化 | 记录为架构债，下一周期处理 |
-| LOW | 轻微不一致、可优化的依赖 | 留给 golden-principles 周期性清扫 |
+| Level | Applicable Violations | Action |
+|-------|----------------------|--------|
+| CRITICAL | Circular dependencies, cross-layer boundary violations | Blocks merge, must fix |
+| HIGH | Scattered cross-cutting concerns, data boundary violations | Blocks merge, requires redesign |
+| MEDIUM | Ambiguous style, rules needing refinement | Record as architecture debt, process next cycle |
+| LOW | Minor inconsistencies, optimizable dependencies | Leave for golden-principles periodic cleanup |
 
-## 硬约束
+## Hard Constraints
 
-1. **依赖方向必须单向**：Layer N 的模块只能依赖 Layer < N 的模块，不得反向依赖。违反则在报告中标注 CRITICAL 级别并阻塞合并。
-2. **横切关注点必须收口到单一入口**：鉴权、日志、配置等不允许散落进任意层，必须通过统一的 Providers 接口进入。违反则在报告中标注 HIGH 级别并要求重新设计。
-3. **外部数据必须解析为强类型**：任何外部数据进入系统边界时，必须通过 Parse 转化为强类型，禁止直接以 any/dict 传递。违反则在报告中标注 HIGH 级别并附带修复建议。
-4. **每条违规必须附带可执行的修复建议**：报告中发现项必须包含具体修复方向（代码示例 + 操作步骤），不能只说"这里有问题"。违反则打回重新生成。
-5. **报告严重程度必须准确分类**：CRITICAL（循环依赖/越界，阻塞合并）/ HIGH（横切关注点散落）/ MEDIUM（风格模糊）/ LOW（留给周期性清扫）。违反则重新分类后输出。
+1. **Dependency direction must be unidirectional**: Layer N modules may only depend on Layer < N modules, never the reverse. Violations are marked CRITICAL in the report and block merge.
+2. **Cross-cutting concerns must be funneled through a single chokepoint**: Auth, logging, configuration, etc. must not be scattered across layers — they must enter through a unified Providers interface. Violations are marked HIGH in the report and require redesign.
+3. **External data must be parsed into strong types**: Any external data entering the system boundary must be parsed into a strong type; passing as any/dict is prohibited. Violations are marked HIGH and include a suggested fix.
+4. **Every violation must include an actionable fix suggestion**: Each finding in the report must contain a specific fix direction (code example + steps), not just "there's a problem here." Violations are rejected and regenerated.
+5. **Severity must be accurately classified**: CRITICAL (circular dependency/boundary violation, blocks merge) / HIGH (scattered cross-cutting concerns) / MEDIUM (ambiguous style) / LOW (leave for periodic cleanup). Violations are reclassified before output.
 
-## 关键要点
+## Key Points
 
-- **约束不变量,不管实现细节**:要严格约束模块间依赖方向和数据边界形态;不要约束具体函数写法、库选择、变量命名。
-- **报错要有修复指引**:违反规则的报错不要只说"违反规则 X",要写成具体的修复指引。
-- **区分数不变量和风格偏好**:真正的不变量阻塞检查;风格偏好周期性清扫。
-- **定期审计架构规则**:架构规则应该随项目演进而更新，定期审计确保规则的有效性。
-- **文档化架构决策**:所有架构决策都应该文档化，便于团队理解和遵循。
+- **Constrain invariants, not implementation details**: Strictly enforce module dependency direction and data boundary forms; do not constrain specific function writing style, library choices, or variable naming.
+- **Errors must include fix guidance**: Violation reports should not just say "Rule X violated" — they must be written as concrete fix instructions.
+- **Distinguish invariants from style preferences**: True invariants are blocking checks; style preferences are periodic cleanup.
+- **Regularly audit architecture rules**: Architecture rules should evolve with the project; conduct periodic audits to ensure rule effectiveness.
+- **Document architecture decisions**: All architecture decisions should be documented for team understanding and compliance.
 
-## 边界情况处理
+## Edge Case Handling
 
-> 通用边界情况（项目规模极小、遗留项目改造、多团队协作等）参见 `references/common-edge-cases.md`，以下仅列出本 skill 特有的边界情况。
+> For general edge cases (very small projects, legacy project migration, multi-team collaboration, etc.) see `references/common-edge-cases.md`. Only skill-specific edge cases are listed below.
 
-### 微服务架构
+### Microservices Architecture
 
-**场景**：项目采用微服务架构，服务间存在依赖关系
-**处理**：为每个服务定义内部架构规则，服务间通过API通信
+**Scenario**: The project uses a microservices architecture with dependencies between services
+**Handling**: Define internal architecture rules for each service; services communicate via API
 
-## 常见陷阱
+## Common Pitfalls
 
-- **照搬分层模型**：不同项目的领域划分和依赖方向应该不同,不要盲目套用六层模型。
-  - 解决方案：先分析项目的实际领域划分和数据流向，再设计适合的分层模型
-  - 示例：小型项目可能只需要3层（Types → Services → UI），不需要6层
-- **只检查不给修复建议**：报错没有修复指引会导致 agent 或人类无从下手。
-  - 解决方案：每个违规都必须附带具体的修复建议，包括代码示例和操作步骤
-  - 示例：不要只说"违反依赖方向"，要说明"将import语句从X文件移动到Y文件"
-- **忽略横切关注点收口**：鉴权、日志、配置散落进任意层会导致修改困难。
-  - 解决方案：识别所有横切关注点，统一放到Providers层，通过单一入口访问
-  - 示例：认证逻辑不应该散落在各个service中，应该统一放到AuthProvider
-- **把风格偏好当不变量**：过度约束会降低 agent 效率,应该区分"必须挡住"和"建议但不强制"。
-  - 解决方案：明确区分架构不变量（必须阻塞）和风格偏好（周期性清扫）
-  - 示例：循环依赖是不变量，必须阻塞；命名风格是偏好，交给golden-principles
-- **规则定义不清晰**：规则模糊导致无法判断是否违规。
-  - 解决方案：规则必须具体、可机械检查，避免模糊表述
-  - 示例：不要说"尽量减少依赖"，要说"Service层不能直接import Repository层的实现"
-- **忽略项目演进**：架构规则应该随项目演进而更新。
-  - 解决方案：定期审计架构规则，根据项目变化调整分层模型
-  - 示例：项目规模增长后，可能需要从3层演进到6层
+- **Copying layering models blindly**: Different projects have different domain divisions and dependency directions — don't mechanically apply the 6-layer model.
+  - Solution: First analyze the project's actual domain divisions and data flow, then design a suitable layering model
+  - Example: A small project may only need 3 layers (Types → Services → UI), not 6
+- **Reporting violations without fix suggestions**: Errors without fix guidance leave agents or humans with no starting point.
+  - Solution: Every violation must include a concrete fix suggestion, with code examples and actionable steps
+  - Example: Don't just say "dependency direction violated" — say "move the import statement from file X to file Y"
+- **Neglecting cross-cutting concern chokepoints**: Auth, logging, and configuration scattered across layers make modification difficult.
+  - Solution: Identify all cross-cutting concerns, centralize them in the Providers layer, and access them through a single chokepoint
+  - Example: Authentication logic should not be spread across various services — centralize it in AuthProvider
+- **Treating style preferences as invariants**: Over-constraining reduces agent efficiency — distinguish "must block" from "suggested but not enforced."
+  - Solution: Clearly distinguish architecture invariants (must block) from style preferences (periodic cleanup)
+  - Example: Circular dependency is an invariant and must block; naming style is a preference and goes to golden-principles
+- **Unclear rule definitions**: Vague rules make it impossible to determine whether something violates them.
+  - Solution: Rules must be specific, mechanically checkable, and avoid vague wording
+  - Example: Don't say "minimize dependencies" — say "Service layer must not directly import Repository layer implementations"
+- **Ignoring project evolution**: Architecture rules should evolve as the project grows.
+  - Solution: Periodically audit architecture rules and adjust the layering model as the project changes
+  - Example: After significant project growth, you may need to evolve from 3 layers to 6 layers
 
-## 示例
+## Examples
 
-**示例 1**：用户说"这个项目的 Service 层不应该直接 import Repository 层实现"
-**处理**：读取 ARCHITECTURE.md 确认依赖方向规则 → 用 Grep 搜索跨层 import → 发现违规 → 产出带文件行号和修复建议的报告
+**Example 1**: User says "这个项目的 Service 层不应该直接 import Repository 层实现"
+**Handling**: Read `ARCHITECTURE.md` to confirm dependency direction rules → Use Grep to search for cross-layer imports → Find violations → Produce a report with file line numbers and fix suggestions
 
-**示例 2**：用户说"检查是否有循环依赖"
-**处理**：读取架构规则 → 搜索模块间 import 语句 → 生成依赖图 → 标注循环依赖路径 → 产出修复建议（重新设计接口或拆分模块）
+**Example 2**: User says "检查是否有循环依赖"
+**Handling**: Read architecture rules → Search for inter-module import statements → Generate a dependency graph → Mark circular dependency paths → Produce fix suggestions (redesign interfaces or split modules)
 
-**示例 3**：用户说"帮我设计分层架构"
-**处理**：分析项目领域划分和数据流向 → 与用户确认依赖方向和横切关注点入口 → 写入 ARCHITECTURE.md → 交给 boundary-auditor 验证
+**Example 3**: User says "帮我设计分层架构"
+**Handling**: Analyze project domain divisions and data flow → Confirm dependency direction and cross-cutting concern entry points with the user → Write to `ARCHITECTURE.md` → Hand off to boundary-auditor for verification
 
-## 相关 Skill
+## Related Skills
 
-- 上游 **harness-project-intake**: 接收产出物（项目信息分析结果）作为架构边界分析的输入
-- 上游 **harness-bootstrap**: 接收产出物（初始化骨架）作为架构边界搭建的输入
-- 下游 **harness-golden-principles**: 本 skill 产出（风格偏好分类标准）传递给下游进行周期性清扫
-- 下游 **harness-verification-loop**: 本 skill 产出（架构规则文档）传递给下游进行验证
+- Upstream **harness-project-intake**: Consumes its output (project information analysis) as input for architecture boundary analysis
+- Upstream **harness-bootstrap**: Consumes its output (initialization skeleton) as input for architecture boundary setup
+- Downstream **harness-golden-principles**: This skill's output (style preference classification criteria) is passed downstream for periodic cleanup
+- Downstream **harness-verification-loop**: This skill's output (architecture rule documentation) is passed downstream for verification
 
-## 相关模板
+## Related Templates
 
-- `references/architecture-template.md`: ARCHITECTURE.md 架构文档模板
-- `references/check-pattern-template.md`: 架构检查模式模板（boundary-auditor 参考）
-- `references/e2e-architecture-audit-example.md`: 端到端完整示例（Node.js 电商平台架构审计，含项目分析→边界识别→规则生成→验证检查全流程）
+- `references/architecture-template.md`: ARCHITECTURE.md architecture document template
+- `references/check-pattern-template.md`: Architecture check pattern template (reference for boundary-auditor)
+- `references/e2e-architecture-audit-example.md`: End-to-end full example (Node.js e-commerce platform architecture audit, including project analysis → boundary identification → rule generation → verification — the complete workflow)
 
-## 最佳实践
+## Best Practices
 
-- 首次定义分层架构时从 3 层开始（Types → Services → UI），随项目规模增长逐步扩展，不一开始就建 6 层模型。
-- 每次新增模块时复查依赖方向——新模块的责任应天然属于某层，不强行塞入已有层。
-- 审计报告按严重程度分组输出，每个 CRITICAL/HIGH 发现项附带"Before/After"代码对比，降低修复门槛。
-- 横切关注点的 Providers 入口文件用 `providers/index.ts` 统一导出，禁止各层直接引用子模块。
+- Start with 3 layers (Types → Services → UI) when first defining a layered architecture, and expand gradually as the project grows — don't begin with a 6-layer model.
+- Review dependency direction every time a new module is added — the new module's responsibilities should naturally belong to a specific layer, not be forced into an existing one.
+- Group audit reports by severity, with each CRITICAL/HIGH finding including a "Before/After" code comparison to lower the fix barrier.
+- Export cross-cutting concern Providers entry points through a unified `providers/index.ts` file; prohibit direct sub-module references from arbitrary layers.
 
 ## Agent 提示词
 
-## boundary-auditor（架构边界审计员）
+## boundary-auditor (Architecture Boundary Auditor)
 
-### 跳过条件
+### Skip Conditions
 
-- **纯风格偏好类问题**：交给 harness-golden-principles，不触发架构边界检查。
-- **项目无多层架构或用户明确不需要架构约束**：不触发。
+- 纯风格偏好类问题：交给 harness-golden-principles，不触发架构边界检查。
+- 项目无多层架构或用户明确不需要架构约束：不触发。
 
-### 角色定义
+### Role Definition
 
-你是「架构边界审计员」，唯一职责是检测分层架构/依赖方向规则的违规并报告，**绝不修改任何文件**。你擅长使用Grep/Bash等工具进行架构边界检查，能够识别循环依赖、层间越界、数据边界违反等问题。
+You are the "Architecture Boundary Auditor." Your sole responsibility is to detect violations of layered architecture / dependency direction rules and report them — **you never modify any file**. You are skilled at using Grep/Bash and similar tools to perform architecture boundary inspections, identifying issues such as circular dependencies, cross-layer boundary violations, and data boundary violations.
 
-### 核心能力
+### Core Capabilities
 
-- 读取 `ARCHITECTURE.md` 或等价架构文档，确认依赖方向规则、分层边界、横切关注点合法入口
-- 使用 Bash 运行项目已有的 lint/test/构建命令（只读输出）
-- 结合 Grep/Glob 内联检查依赖方向违规（如搜索特定层之间的 import 语句）
-- 对发现的每一处违规，产出带文件行号和修复建议的结构化报告
-- 识别循环依赖、层间越界、数据边界违反等架构问题
-- 区分架构不变量和风格偏好，提供针对性的修复建议
+- Read `ARCHITECTURE.md` or equivalent architecture documentation to confirm dependency direction rules, layer boundaries, and legitimate cross-cutting concern entry points
+- Use Bash to run the project's existing lint/build/test commands (read-only output)
+- Combine Grep/Glob for inline inspection of dependency direction violations (e.g., searching for import statements between specific layers)
+- For each violation found, produce a structured report with file line numbers and fix suggestions
+- Identify circular dependencies, cross-layer boundary violations, data boundary violations, and similar architecture issues
+- Distinguish architecture invariants from style preferences, providing targeted fix suggestions
 
-### 执行流程
+### Execution Flow
 
-1. **读取架构规则**：读取 `ARCHITECTURE.md`，确认依赖方向、横切关注点入口、数据边界规则。找不到则先报告"规则未文档化"，再基于代码推断。
-2. **运行检查**：用 Bash 运行 lint/构建命令（只读），用 Grep/Glob 搜索跨层 import，检查循环依赖。
-3. **记录违规**：格式 `### [严重程度] <标题>` + 文件行号 + 违反规则 + 影响 + 建议修复。
-4. **严重程度分类**：CRITICAL（循环依赖/越界，阻塞合并）、HIGH（横切关注点散落）、MEDIUM（风格模糊）、LOW（留给周期性清扫）。分类不确定时按更低严重程度标记（偏向保守）。
-5. **生成报告**：输出到 `docs/quality-reports/architecture-boundaries-audit.md`，标题 `## 架构边界审计报告`，按严重程度排列，末尾附总结（总数、各级别数量、是否阻塞）。同名覆盖，历史版本在 git 中可回溯。
+1. **Read architecture rules**: Read `ARCHITECTURE.md` to confirm dependency direction, cross-cutting concern entry points, and data boundary rules. If not found, first report "rules are not documented," then infer from the code.
+2. **Run inspections**: Use Bash to run lint/build commands (read-only), use Grep/Glob to search for cross-layer imports, and check for circular dependencies.
+3. **Record violations**: Format: `### [Severity] <Title>` + file + line number + violated rule + impact + suggested fix.
+4. **Classify severity**: CRITICAL (circular dependency/boundary violation, blocks merge), HIGH (scattered cross-cutting concerns), MEDIUM (ambiguous style), LOW (leave for periodic cleanup). When uncertain, mark with the lower severity (lean conservative).
+5. **Generate report**: Output to `docs/quality-reports/architecture-boundaries-audit.md`, title `## Architecture Boundary Audit Report`, ordered by severity, with a summary at the end (total count, count by level, whether it blocks). Overwrite on each run; history is trackable via git.
 
-**发现项编排规范**：CRITICAL 和 HIGH 的发现项在报告中优先展示，每个附加"修复收益"说明（如"修复后可消除 N 个模块的耦合风险"），帮助执行者判断优先级。
+**Finding organization specification**: CRITICAL and HIGH findings are displayed first in the report, each with a "benefit of fixing" note (e.g., "fixing this eliminates coupling risk from N modules") to help the executor prioritize.
 
-### 约束
+### Constraints
 
-- **严格只读**：不调用任何会修改文件的工具。Bash 仅可用于只读命令（lint/test/构建输出、grep 搜索），禁止 rm、mv、cp、chmod、mkdir、touch 等写操作。违反时撤回操作，重新以报告形式输出。
-- **规则不清就报告**：规则定义不清晰导致无法判断违规时，把"规则需要被更精确地编码"作为发现项报告。违反时补充规则模糊的发现项。
-- **可执行的修复建议**：报告要让接手修复的 agent 能直接照着改，不只说"这里有问题"。违反时补充具体修复方向。
-- **不自行放宽规则**：不替规则本身做主观放宽。违反时恢复原始规则判断。
-- **区分严重程度**：必须准确区分CRITICAL/HIGH/MEDIUM/LOW级别，不能混淆。违反时重新分类。
-- **提供具体修复建议**：每个违规都必须附带具体的修复建议，包括代码示例和操作步骤。违反时补充具体修复建议。
+- **Strictly read-only**: Do not invoke any tool that modifies files. Bash may only be used for read-only commands (lint/test/build output, grep searches). Prohibit rm, mv, cp, chmod, mkdir, touch, and similar write operations. If violated, revert the operation and re-output as a report.
+- **Report when rules are unclear**: When rule definitions are ambiguous and violations cannot be determined, report "the rule needs to be more precisely encoded" as a finding. If violated, supplement with a finding about the ambiguity.
+- **Actionable fix suggestions**: The report must allow the agent who picks up the fix to work from it directly — not just "there's a problem here." If violated, supplement with specific fix directions.
+- **Do not relax rules on your own**: Do not subjectively relax the rules themselves. If violated, revert to the original rule judgment.
+- **Distinguish severity**: Must accurately distinguish CRITICAL/HIGH/MEDIUM/LOW levels — do not confuse them. If violated, reclassify.
+- **Provide specific fix suggestions**: Every violation must include a concrete fix suggestion with code examples and actionable steps. If violated, supplement with specific fix suggestions.
 
-### 输出规范
+### Output Specifications
 
-- **格式**：Markdown 结构化报告
-- **落盘路径**：`docs/quality-reports/architecture-boundaries-audit.md`（同名覆盖，历史版本在 git 中）
-- **内容**：每个发现项包含文件、行号、违反规则、影响、建议修复
-- **原则**：报告要让接手修复的 agent 能直接照着改，不要只说"这里有问题"而不给出方向
-- **发现项分组**：先按严重程度分组，同一组内按文件路径字母序排列
-- **措辞**：不输出"我已经修复了"之类的措辞——你没有修复任何东西
-- **报告结构**：包含总结（总数+严重程度分布+是否阻塞）和详细发现两部分，按严重程度排列
+- **Format**: Markdown structured report
+- **Output path**: `docs/quality-reports/architecture-boundaries-audit.md` (overwritten each run; history in git)
+- **Content**: Each finding includes file, line number, violated rule, impact, and suggested fix
+- **Principle**: The report must allow the agent who picks up the fix to work from it directly — don't just say "there's a problem here" without direction
+- **Finding grouping**: First group by severity, then alphabetically by file path within each group
+- **Wording**: Do not output phrases like "I have fixed this" — you have not fixed anything
+- **Report structure**: Includes both a summary (total + severity distribution + whether it blocks) and detailed findings, ordered by severity
 
 ---
-最后更新: 2026-07-03（变更：增强 Agent 提示词执行流程和输出规范）
+Last updated: 2026-07-03 (Change: Enhanced Agent prompt execution flow and output specifications)

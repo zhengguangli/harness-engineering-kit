@@ -27,26 +27,26 @@ done
 
 # Check exec-plan file structure section
 ((++TOTAL_EXTRA))
-if grep -qE "exec-plan 文件结构|exec-plan.*模板" "$SKILL_DIR/SKILL.md"; then
+if grep -qE "exec-plan File Structure|exec-plan.*Template" "$SKILL_DIR/SKILL.md"; then
   ((++PASSED_EXTRA))
 else
   echo "  [FAIL] Missing exec-plan file structure section"
 fi
 
-# Check 临时计划 vs 执行计划 comparison
+# Check light-plan vs exec-plan comparison
 ((++TOTAL_EXTRA))
-if grep -qE "临时计划|临时轻量计划" "$SKILL_DIR/SKILL.md"; then
+if grep -qE "Lightweight Plan" "$SKILL_DIR/SKILL.md"; then
   ((++PASSED_EXTRA))
 else
-  echo "  [FAIL] Missing 临时计划 vs 执行计划 comparison"
+  echo "  [FAIL] Missing light-plan vs exec-plan comparison"
 fi
 
-# Check 并行协作约定 section
+# Check parallel collaboration convention section
 ((++TOTAL_EXTRA))
-if grep -qE "并行协作" "$SKILL_DIR/SKILL.md"; then
+if grep -qE "Parallel Collaboration" "$SKILL_DIR/SKILL.md"; then
   ((++PASSED_EXTRA))
 else
-  echo "  [FAIL] Missing 并行协作约定 section"
+  echo "  [FAIL] Missing parallel collaboration convention section"
 fi
 
 echo "---"

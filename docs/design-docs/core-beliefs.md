@@ -1,28 +1,28 @@
-# 核心信念
+# Core Beliefs
 
-定义 harness-engineering-kit 里 agent-first 的运作原则。这些是被反复确认过、值得长期保留的判断，不是临时的偏好。
+Defines the agent-first operating principles of the harness-engineering-kit. These are judgments that have been repeatedly confirmed and are worth long-term preservation, not temporary preferences.
 
-## 信念条目
+## Beliefs
 
-1. **看不见就不存在**: 任何只存在于聊天记录/口头共识里的知识，对 agent 等于不存在。新的架构共识、产品决策，必须落进对应的 docs/ 文件才算"生效"。
+1. **"看不见就不存在"**: Any knowledge that exists only in chat history or verbal consensus is effectively nonexistent for an agent. New architectural consensus and product decisions must be recorded in the corresponding `docs/` files to be considered "effective."
 
-2. **约束不变量，不管实现细节**: 架构边界要被机械强制，边界内部的具体写法允许自由。skill 的 frontmatter 格式是契约，内部的方法论写法可以灵活。
+2. **"约束不变量，不管实现细节"**: Architectural boundaries must be mechanically enforced, but the specific implementation details within those boundaries are free. A skill's frontmatter format is a contract; the methodology writing within can be flexible.
 
-3. **计划是工件，不是草稿**: 复杂任务的计划要落盘、版本化、可被后续 agent 接力读取。exec-plan 不是临时笔记，是跨上下文窗口的接力棒。
+3. **"计划是工件，不是草稿"**: Plans for complex tasks must be persisted, versioned, and readable by subsequent agents in relay. An exec-plan is not a scratch note — it is the baton passed across context windows.
 
-4. **失败时先问"缺了什么能力"**: 不要把"再试一次"当作默认的修复手段。Ralph Wiggum Loop 的核心：失败 → 识别缺失能力 → 补充 skill/工具 → 重试。
+4. **When failing, first ask "缺了什么能力"**: Do not default to "try again" as the fix. The core of the Ralph Wiggum Loop: failure → identify missing capability → add skill/tool → retry.
 
-5. **熵增需要持续清扫，不要攒成大扫除**: 技术债是利息很高的贷款，小额持续还款比集中处理划算。golden-principles 的周期性扫描就是为了这个目的。
+5. **"熵增需要持续清扫，不要攒成大扫除"**: Technical debt is a high-interest loan; small, continuous repayments are more economical than batch cleanups. The periodic scanning of golden-principles exists precisely for this purpose.
 
-6. **渐进式披露，不要一次性灌入**: agent 的上下文预算是稀缺资源。AGENTS.md 是地图只放指针，docs/ 才是详情。skill 用 when_to_use 控制加载时机。
+6. **"渐进式披露，不要一次性灌入"**: An agent's context budget is a scarce resource. CLAUDE.md is the map — it holds only pointers; `docs/` holds the details. Skills use `when_to_use` to control loading timing.
 
-7. **跨平台兼容是设计约束，不是事后补丁**: SKILL.md 的 frontmatter 设计为各平台只读自己认识的字段、忽略未知字段。新增字段时必须考虑三个平台的行为差异。
+7. **"跨平台兼容是设计约束，不是事后补丁"**: SKILL.md frontmatter is designed so that each platform reads only the fields it recognizes and ignores unknown fields. When adding a new field, the behavioral differences across three platforms must be considered.
 
-8. **并行度服从边际收益,不要为"全自动"堆数量**: 多 subagent 并行有协调、上下文污染、成本三重开销。3-4 个是 sweet spot（任务规模可承受、产出可聚合、超时风险低）；除非有明确独立模块（如 12 个 SKILL.md 各审一次），否则 1-2 个串行 + 必要时小并行更稳。subagent 数 > 任务单元数 = 浪费。
+8. **"并行度服从边际收益,不要为'全自动'堆数量"**: Running multiple subagents in parallel incurs triple overhead: coordination, context pollution, and cost. 3-4 is the sweet spot (task scale is manageable, output is aggregatable, timeout risk is low); unless there are clearly independent modules (e.g., reviewing each of 12 SKILL.md files once), 1-2 serial with occasional small-scale parallelism is more stable. subagent count > number of work units = waste.
 
-9. **已完成任务的详细清单应压缩为摘要**: exec-plan 归档后，详细步骤清单（尤其带行号的）会随代码变更迅速过期。保留"完成了什么 + 关键决策 + 验证结果"三段摘要，删除逐条明细。tech-debt-tracker 同理——已处理的条目压缩为一行完成记录，不保留 20 行过期表格。
+9. **"已完成任务的详细清单应压缩为摘要"**: After an exec-plan is archived, the detailed step-by-step list (especially with line numbers) quickly goes stale as code changes. Retain a three-paragraph summary of "what was accomplished + key decisions + verification results" and delete the line-by-line details. The same applies to tech-debt-tracker — processed items should be compressed into a one-line completion record, not preserved as a 20-row stale table.
 
-10. **Agent 提示词结构一致性需要机械强制**: 跨 skill 的 agent prompt 会出现 heading 层级漂移（h2/h3/h4 混用）、输出规范缺失、禁止规则重复等结构性问题。定义标准六段式（角色定义 / 核心能力 / 执行流程 / 约束 / 输出规范 / 跳过条件），由 doc-gardener 的"配对完整性"检查机械校验。
+10. **"Agent 提示词结构一致性需要机械强制"**: Across skills, agent prompts can suffer from structural issues such as heading-level drift (h2/h3/h4 mixed), missing output specifications, and duplicate prohibition rules. Define a standard six-section format (Role Definition / Core Capabilities / Execution Flow / Constraints / Output Specification / Skip Conditions), mechanically verified by doc-gardener's "pairing completeness" check.
 
 ---
-最后更新: 2026-07-02
+Last updated: 2026-07-02

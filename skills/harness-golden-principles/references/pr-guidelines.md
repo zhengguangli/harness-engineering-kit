@@ -1,36 +1,36 @@
-# 修复 PR 规格指南
+# Fix PR Specification Guide
 
-## 目的
+## Purpose
 
-指导 `entropy-collector` agent 如何构造每个修复 PR，确保审核者能在一分钟内完成 Review 并决定合入/拒绝。
+Guides the `entropy-collector` agent on how to structure each fix PR, ensuring reviewers can complete the review and decide to merge or reject within one minute.
 
-## PR 大小限制
+## PR Size Limits
 
-- **每个修复 PR 只处理一类偏差**：不要混入不相关的清理（如"重命名变量 + 改数据库 Schema"）。
-- **单 PR 文件数上限**：≤ 5 个文件。
-- **单 PR 改动行数上限**：≤ 50 行（新增 + 删除合计）。
-- **超出自动拆分**：超过上限时拆为多个顺序 PR，每个 PR 一条支链，不互相阻塞。
+- **Each fix PR handles only one type of deviation**: Do not mix in unrelated cleanups (e.g., "rename variable + change DB schema").
+- **Max files per PR**: ≤ 5 files.
+- **Max lines changed per PR**: ≤ 50 lines (additions + deletions combined).
+- **Automatic splitting on exceed**: When exceeding the limit, split into multiple sequential PRs, each on its own branch chain without blocking one another.
 
-## 自动合并规则
+## Auto-merge Rules
 
-以下修复类型标记 `[GC-auto]` 前缀，可配置自动合并：
+The following fix types are tagged with the `[GC-auto]` prefix and can be configured for auto-merge:
 
-| 类型 | 示例 | 自动合并条件 |
-|------|------|------------|
-| 重命名 | 变量/函数重命名以符合命名规范 | 仅涉及标识符变更，无逻辑变化 |
-| 抽公共方法 | 提取重复代码段 | 提取后所有原调用点引用一致 |
-| 替换为标准 SDK | 使用项目已有的工具函数替代手写 | 替换后语义等价，测试通过 |
-| 格式化 | 缩进/空行/import 顺序 | 使用项目配置的格式化工具 |
+| Type | Example | Auto-merge Conditions |
+|------|---------|-----------------------|
+| Rename | Rename variables/functions to comply with naming conventions | Identifier-only changes, no logic changes |
+| Extract common method | Extract duplicated code blocks | All original call sites reference the extraction consistently |
+| Replace with standard SDK | Replace hand-written code with project's existing utility functions | Semantically equivalent after replacement, tests pass |
+| Formatting | Indentation / blank lines / import order | Uses the project's configured formatter |
 
-以下类型必须走人工评审：
+The following types require manual review:
 
-- 涉及公共 API 签名变更
-- 可能影响运行时行为的默认值修改
-- 删除字段/函数
+- Changes to public API signatures
+- Default value modifications that may affect runtime behavior
+- Field/function deletions
 
-## PR 标题与标签
+## PR Title and Labels
 
 ```
-[GC-auto] fix: 重命名 UserRepository 中的方法名为驼峰
-[GC-review] refactor: 抽取出公共的 validateEmail 函数
+[GC-auto] fix: Rename methods in UserRepository to camelCase
+[GC-review] refactor: Extract common validateEmail function
 ```

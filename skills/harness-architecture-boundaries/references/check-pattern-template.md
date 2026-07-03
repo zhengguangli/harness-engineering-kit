@@ -1,69 +1,69 @@
-# 架构检查模式(Check Pattern Template)
+# Architecture Check Pattern Template
 
-定义 `boundary-auditor` agent 如何内联检查每一条 `ARCHITECTURE.md` 中记录的架构规则。每条规则对应一个检查模式——描述"查什么、怎么查、违规长什么样"。
+Defines how the `boundary-auditor` agent inline-checks each architecture rule documented in `ARCHITECTURE.md`. Each rule maps to one check pattern — describing "what to check, how to check it, and what a violation looks like."
 
-> 这不是可执行脚本,而是给 agent 参考的检查方法论——agent 用 `Grep`/`Bash`/`list_dir` 等工具组合内联执行这些检查。
+> This is not an executable script, but a check methodology reference for the agent — the agent uses tool combinations like `Grep`/`Bash`/`list_dir` to inline-execute these checks.
 >
-> 语言可移植性提示：下面示例中的 import 检索模式以 TypeScript 为主。在不同语言栈中请使用对应语法（如 Python: `import ... from ...` / `import module`；Go: `"import"`；Java: `import ...;`；Rust: `use ...`）。
+> Language portability note: The import search patterns in the examples below are primarily TypeScript-based. In different language stacks, use the corresponding syntax (e.g., Python: `import ... from ...` / `import module`; Go: `"import"`; Java: `import ...;`; Rust: `use ...`).
 
-## 检查模式结构
+## Check Pattern Structure
 
-每条规则的检查模式包含以下字段:
-
-```
-## 规则: <规则名称>
-
-- **约束描述**: <一句话说清楚这条规则限制什么>
-- **检查方式**: <agent 用什么工具组合来查,例如:Grep 搜索 import 语句、Glob 枚举文件>
-- **违规特征**: <什么搜索命中/文件存在/结构缺失算违规>
-- **修复方向**: <发现违规后,最小修复路径是什么>
-```
-
-## 示例 1:分层依赖方向检查
+Each rule's check pattern includes the following fields:
 
 ```
-## 规则: Service 层不能直接 import Runtime 内部模块
+## Rule: <Rule Name>
 
-- **约束描述**: Service 层的代码只能向前依赖 Types/Config/Repo 层,不能反向 import Runtime 层的内部模块。
-- **检查方式**:
-  1. 用 Glob 枚举 `src/**/service/` 下的所有源文件。
-  2. 对每个文件,用 Grep 搜索 `import.*runtime` 和 `from.*runtime` 等模式。
-  3. 排除合法的公共接口引用(如果 Runtime 层有明确的公共 API 文件,检查是否只 import 了公共入口)。
-- **违规特征**: `src/<domain>/service/foo.ts` 中存在 `import { Bar } from '../../runtime/bar'`——指向 Runtime 内部模块的直接引用。
-- **修复方向**: 改为通过 Runtime 层暴露的公共接口访问,或将共享逻辑下沉到 Types/Config 层。
+- **Constraint Description**: <One sentence describing what this rule restricts>
+- **Inspection Method**: <What tool combination the agent uses to check, e.g., Grep searching import statements, Glob enumerating files>
+- **Violation Signature**: <What search hit / file existence / structural omission counts as a violation>
+- **Fix Direction**: <What is the minimal fix path once a violation is found>
 ```
 
-## 示例 2:数据边界检查
+## Example 1: Layering Dependency Direction Check
 
 ```
-## 规则: 外部数据进入系统边界时必须被解析为强类型
+## Rule: Service layer must not directly import Runtime internal modules
 
-- **约束描述**: 所有跨边界的外部数据(API 响应、用户输入)必须在边界处被解析(parse),不允许校验(validate)后继续传递弱类型。
-- **检查方式**:
-  1. 用 Glob 枚举边界层文件(如 `src/<domain>/api/`、`src/<domain>/routes/`)。
-  2. 对每个文件,用 Grep 搜索 `any` 类型标注、`as` 类型断言、直接访问 `response.data` 等模式。
-  3. 检查是否存在"校验了字段存在就继续往下传原始对象"的模式(如 `if (data.field) { return data; }`)。
-- **违规特征**: 边界层函数返回类型含 `any` 或 `unknown`;边界层直接传递未经解析的原始响应对象。
-- **修复方向**: 在边界处使用类型守卫或 schema 解析库,将外部数据解析为明确类型后再向下传递。
+- **Constraint Description**: Code in the Service layer can only depend forward on the Types/Config/Repo layers, and must not reverse-import internal modules of the Runtime layer.
+- **Inspection Method**:
+  1. Use Glob to enumerate all source files under `src/**/service/`.
+  2. For each file, use Grep to search for patterns like `import.*runtime` and `from.*runtime`.
+  3. Exclude legitimate public interface references (if the Runtime layer has a clear public API file, check whether only the public entry point is imported).
+- **Violation Signature**: `src/<domain>/service/foo.ts` contains `import { Bar } from '../../runtime/bar'` — a direct reference to a Runtime internal module.
+- **Fix Direction**: Change to access via the public interface exposed by the Runtime layer, or move shared logic down to the Types/Config layer.
 ```
 
-## 示例 3:横切关注点入口检查
+## Example 2: Data Boundary Check
 
 ```
-## 规则: 横切关注点(鉴权/日志/配置)必须通过 Providers 单入口进入各层
+## Rule: External data must be parsed into strongly-typed structures when entering the system boundary
 
-- **约束描述**: 鉴权、连接器、遥测、特性开关等横切关注点不能散落在任意业务层中,必须通过显式的 Providers 接口进入。
-- **检查方式**:
-  1. 用 Glob 枚举所有非 Providers 层的源文件。
-  2. 用 Grep 搜索横切关注点的 import 语句(如 `import.*auth`、`import.*logger`、`import.*config`)。
-  3. 排除合法的 Providers 层自身引用和工具函数引用。
-- **违规特征**: `src/<domain>/service/foo.ts` 中直接 `import { auth } from '@/infra/auth'`——绕过了 Providers 入口。
-- **修复方向**: 改为通过 Providers 注入,或确认该依赖确实不属于横切关注点后更新规则。
+- **Constraint Description**: All cross-boundary external data (API responses, user input) must be parsed at the boundary; weak types must not be passed through after mere validation.
+- **Inspection Method**:
+  1. Use Glob to enumerate boundary layer files (e.g., `src/<domain>/api/`, `src/<domain>/routes/`).
+  2. For each file, use Grep to search for patterns like `any` type annotations, `as` type assertions, and direct access to `response.data`.
+  3. Check for patterns that "validate field existence then pass the raw object downstream" (e.g., `if (data.field) { return data; }`).
+- **Violation Signature**: Boundary layer function return types contain `any` or `unknown`; boundary layer passes unparsed raw response objects directly downstream.
+- **Fix Direction**: Use type guards or schema parsing libraries at the boundary to parse external data into explicit types before passing it downstream.
 ```
 
-## 新增检查模式的流程
+## Example 3: Cross-Cutting Concern Entry Point Check
 
-1. 从 ARCHITECTURE.md 中取出一条规则。
-2. 按上面的模板结构定义检查模式——关键是把"怎么查"拆成 agent 可执行的 Grep/Glob/Bash 操作步骤。
-3. 如果检查需要项目特定的上下文(如具体层名、目录路径),在检查模式中明确标注为占位符,由 agent 在审计时从 ARCHITECTURE.md 读取实际值。
-4. 把修复方向写具体——不是"请遵守规则",而是"将 X 改为 Y,或移动到 Z 位置"。
+```
+## Rule: Cross-cutting concerns (authentication/logging/configuration) must enter each layer through a single Providers entry point
+
+- **Constraint Description**: Cross-cutting concerns such as authentication, connectors, telemetry, and feature flags must not be scattered across arbitrary business layers — they must enter through an explicit Providers interface.
+- **Inspection Method**:
+  1. Use Glob to enumerate all source files outside the Providers layer.
+  2. Use Grep to search for imports of cross-cutting concerns (e.g., `import.*auth`, `import.*logger`, `import.*config`).
+  3. Exclude legitimate references from the Providers layer itself and utility function references.
+- **Violation Signature**: `src/<domain>/service/foo.ts` directly contains `import { auth } from '@/infra/auth'` — bypassing the Providers entry point.
+- **Fix Direction**: Change to injection through Providers, or confirm the dependency is not a cross-cutting concern and update the rule.
+```
+
+## Process for Adding a New Check Pattern
+
+1. Extract one rule from ARCHITECTURE.md.
+2. Define the check pattern following the template above — key point is to break down "how to check" into Grep/Glob/Bash operation steps executable by the agent.
+3. If the check requires project-specific context (e.g., specific layer names, directory paths), explicitly mark them as placeholders in the check pattern — the agent will read actual values from ARCHITECTURE.md at audit time.
+4. Make the fix direction concrete — not "follow the rule," but "change X to Y, or move it to Z location."

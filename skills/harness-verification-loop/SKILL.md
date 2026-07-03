@@ -1,6 +1,6 @@
 ---
 name: harness-verification-loop
-description: 实施"自验证循环"——agent 实现代码变更后自己审查、跑测试/构建/lint、请求评审并在反馈中迭代，直到可合并。用于"把改动推进到可合并状态"、"自动修复测试失败"、"建立实现→自检→测试→评审→修复循环"、"代码任务反复失败需要循环迭代"场景。
+description: Enable agents to autonomously advance code changes to a mergable state — using a self-verification loop (modify → verify → fix → re-verify) to reduce manual review burden, producing auditable records of what was tested, when, and by whom. Used for advancing changes to mergable state, confirming changes work before committing, and running smoke tests.
 when_to_use: |
   显式触发：用户要求把代码改动推进到"可合并"状态、可验证的代码任务反复失败需要循环迭代、需要建立提交前自检流程。
   隐式触发：用户说"把代码改好"、"修复测试失败"、"确保代码能合并"、改动需要多轮测试和修复才能达标。
@@ -14,172 +14,172 @@ metadata:
   category: workflow
 ---
 
-# Verification Loop（自验证循环）
+# Verification Loop (Self-Verification Loop)
 
-## 核心原则
+## Core Principles
 
-- **失败是缺失能力的信号，不是不够努力的信号**：任务失败时，正确的反应不是"再试一次"，而是问"agent 缺了什么能力，如何让它可见、可执行？"
-- **基于真实反馈迭代，不凭一次性输出收工**：让 agent 在循环里反复尝试同一个目标，每轮基于测试结果、lint 报错、评审意见调整。
-- **设定边界，避免空转**：没有边界的循环会在卡住的任务上无限重复同样的失败。
+- **Failure is a signal of missing capability, not insufficient effort**: When a task fails, the right response is not "try again," but rather "what capability is the agent missing, and how can it be made visible and executable?"
+- **Iterate based on real feedback, don't call it done after a one-shot output**: Let the agent repeatedly work toward the same goal in a loop, adjusting each round based on test results, lint errors, and review feedback.
+- **Set boundaries to avoid spinning**: A loop without boundaries will repeat the same failure indefinitely on stuck tasks.
 
-## 何时使用
+## When to Use
 
-- 用户要求把代码改动自主推进到"可合并"状态。
-- 可验证的代码任务反复失败，需要循环迭代而非一次性尝试。
-- 需要建立提交前自检流程（实现 → 自检 → 测试 → 评审 → 修复）。
+- User requests advancing code changes to a mergeable state ("把代码改动自主推进到"可合并"状态").
+- Verifiable code tasks repeatedly fail and need iterative looping rather than one-shot attempts ("可验证的代码任务反复失败，需要循环迭代而非一次性尝试").
+- Need to establish a pre-commit self-check workflow: implement → self-review → test → review → fix ("需要建立提交前自检流程：实现 → 自检 → 测试 → 评审 → 修复").
 
-## 何时不该用
+## When Not to Use
 
-- 改动是单行配置修复或 typo 修正——直接走 `commit-gate` 即可。
-- 项目没有任何测试/构建/lint 配置——循环没有反馈信号可依赖，只会空转。先补齐基础设施。
-- 任务是纯探索/头脑风暴（不产出可验证的代码变更）。
-- 已有 `commit-gate` 且改动极小——不要为一行改动启动 8 轮循环。
+- The change is a single-line config fix or typo correction — go directly through `commit-gate` instead.
+- The project has no test/build/lint infrastructure — the loop has no feedback signals to rely on and will only spin fruitlessly. Set up the infrastructure first.
+- The task is pure exploration / brainstorming (produces no verifiable code changes).
+- `commit-gate` is already in place and the change is trivial — do not start an 8-round loop for a one-line change.
 
-## 方法论
+## Methodology
 
-### 循环边界设定
+### Loop Boundary Setup
 
-- **最大迭代次数**：默认 8 轮（建议范围 5-10），超过后必须升级或写明卡住原因。
-- **每轮迭代要有实质性变化**：连续两轮做完全一样的尝试，说明缺的不是"再试一次"，而是缺一个新的能力/信息源。
-- **卡住检测**：超过 N 轮迭代无进展时触发 stuck 诊断，详见 `references/stuck-loop-diagnostics.md`。
-- **完成定义**：所有自动化检查通过 + 无未处理的评审意见 + exec-plan schema 校验通过。
-- **验收标准**：必须是具体的、机械可检查的条件（如"全部测试通过且覆盖率 ≥ X%"），不要写"看起来不错"这种无法验证的标准。
+- **Maximum iterations**: 8 by default (recommended range: 5-10). Beyond that, must escalate or document the blocking reason.
+- **Each iteration must produce a substantive change**: Two consecutive rounds making the exact same attempt means the missing piece is not "try again" but a new capability or information source.
+- **Stuck detection**: When there is no progress after N iterations, trigger stuck diagnosis. See `references/stuck-loop-diagnostics.md`.
+- **Definition of done**: All automated checks pass + no unaddressed review feedback + exec-plan schema validation passes.
+- **Acceptance criteria**: Must be specific, mechanically checkable conditions (e.g., "all tests pass and coverage >= X%"). Do not write unverifiable criteria like "looks good."
 
-### 操作步骤
+### Procedure
 
-1. **明确完成定义**：哪些自动化检查必须通过才算合格（测试、lint、架构边界、性能预算）。
-2. **实现第一版变更**。
-3. **跑循环步骤**：实现 → 自检 → 测试 → 评审 → 修复，重复直到收敛。
-4. **每轮迭代后**：如果使用 exec-plan，更新步骤勾选状态和决策日志。
-5. **达成完成定义后**：产出简短总结——做了什么、怎么验证的、还有什么已知限制。
-6. **提交**：循环收敛后，交由 `harness-commit-gate` 完成提交。
-7. **如果在边界次数内没能收敛**：明确写出卡在哪、缺什么，升级给人类或记录进 `tech-debt-tracker.md`，不要假装完成。
+1. **Clarify the definition of done**: Which automated checks must pass (tests, lint, architecture boundaries, performance budget).
+2. **Implement the first version** of the change.
+3. **Run the loop steps**: implement → self-check → test → review → fix, repeat until convergence.
+4. **After each iteration**: if using an exec-plan, update step checkmarks and the decision log.
+5. **Once the definition of done is met**: produce a brief summary — what was done, how it was verified, and any known limitations.
+6. **Submit**: After the loop converges, hand off to `harness-commit-gate` to complete the commit.
+7. **If convergence is not reached within the iteration cap**: clearly document what is stuck and what capability is missing, escalate to a human or record it in `tech-debt-tracker.md`. Do not pretend it is done.
 
-## 硬约束
+## Hard Constraints
 
-1. **最大迭代次数 = 8 轮**：超过 8 轮仍未收敛时必须明确写出卡在哪、缺什么能力，不得继续空转。违反则强制停止并生成卡住报告。
-2. **连续两轮相同尝试必须立即停止**：`git diff` 输出实质相同时立即触发卡住检测，读取 `references/stuck-loop-diagnostics.md` 进行诊断。违反则强制停止并启动诊断流程。
-3. **不可逆操作必须升级给人类**：涉及产品取舍、安全敏感决策、破坏性重构时不得自行决定。违反则撤销操作并升级给人类确认。
-4. **禁止修改架构文档和 exec-plan 目标**：Edit 仅用于业务代码和测试文件。违反则撤回对架构文件的修改并恢复原始内容。
+1. **Maximum iterations = 8**: If not converged after 8 rounds, must clearly document what is stuck and what capability is missing. No further spinning allowed. Violation forces a stop and generates a stuck report.
+2. **Two consecutive identical attempts must stop immediately**: When `git diff` output is substantially the same, immediately trigger stuck detection and read `references/stuck-loop-diagnostics.md` for diagnosis. Violation forces a stop and initiates the diagnostic process.
+3. **Irreversible operations must be escalated to a human**: Do not autonomously decide on product trade-offs, security-sensitive decisions, or destructive refactors. Violation reverts the operation and escalates to a human for confirmation.
+4. **Do not modify architecture docs or exec-plan goals**: Edit applies only to business code and test files. Violation reverts changes to architecture files and restores original content.
 
-## 示例
+## Examples
 
-**示例 1**：测试失败，agent 修复后仍然失败
-**处理**：第 3 轮检测到连续相同 diff → 停止 → 读取 stuck-loop-diagnostics → 发现缺少 mock 服务 → 升级给人类
+**Example 1**: Tests fail, agent fixes them but they still fail
+**Resolution**: Round 3 detects consecutive identical diff → stop → read stuck-loop-diagnostics → identifies missing mock service → escalate to human
 
-**示例 2**：lint 报错 + 测试通过
-**处理**：优先修复 lint 错误 → 重新运行全部检查 → 通过后进入 commit-gate
+**Example 2**: Lint errors + tests pass
+**Resolution**: Fix lint errors first → re-run all checks → once passed, proceed to commit-gate
 
-## 关键要点
+## Key Points
 
-- 失败时先问"缺了什么能力"，不要简单粗暴地重复同一种尝试。
-- 连续两轮尝试方式完全相同却没有进展，停下来指出"缺失的能力是什么"，而不是继续空转。
-- 验收标准必须是机械可检查的条件，不是主观判断。
-- 只有在涉及不可逆操作、产品取舍、安全敏感决策时才升级给人类。
-- 达到迭代上限后必须明确写出卡在哪，不假装完成。
-- 对每条评审反馈要么修复，要么写出有理有据的反驳，不静默忽略。
-- 优先处理自动化反馈（测试失败、lint 报错），再处理人工反馈（代码 review、架构建议）。
-- 把状态写回 exec-plan，这样即使上下文窗口用完，下一轮可以从文件里接着读进度。
+- When something fails, first ask "what capability is missing", do not blindly repeat the same attempt.
+- When two consecutive rounds take the same approach with no progress, stop and identify the missing capability — do not keep spinning.
+- Acceptance criteria must be mechanically checkable conditions, not subjective judgment.
+- Only escalate to a human when irreversible operations, product trade-offs, or security-sensitive decisions are involved.
+- When hitting the iteration cap, must clearly document what is stuck — do not pretend it is done.
+- For every review comment, either fix it or write a reasoned rebuttal — do not silently ignore.
+- Prioritize automated feedback (test failures, lint errors) before addressing human feedback (code review, architectural suggestions).
+- Write status back to the exec-plan so that if the context window runs out, the next round can read progress from the file.
 
-## 跨skill交接点
+## Cross-skill Handoff Points
 
-### 与 commit-gate 的交接
+### Handoff with commit-gate
 
-**交接时机**：验证循环收敛后（所有自动化检查通过且无未处理意见）。
+**Handoff timing**: After the verification loop converges (all automated checks pass and no unaddressed comments).
 
-**前置条件**：所有测试通过、构建成功、类型检查通过、Lint 检查通过（如有配置）、无未处理的评审意见、连续两轮迭代有实质性变化。
+**Prerequisites**: All tests pass, build succeeds, type checks pass, lint checks pass (if configured), no unaddressed review feedback, two consecutive iterations show substantive change.
 
-**交接内容**：输出简短总结（做了什么、怎么验证的、已知限制、迭代记录），commit-gate 执行质量门检查并返回 commit hash。
+**Handoff content**: Output a brief summary (what was done, how it was verified, known limitations, iteration log). commit-gate performs quality gate checks and returns the commit hash.
 
-**错误处理**：commit-gate 检测到测试失败/敏感信息/scope creep 时阻塞提交并返回 verification-loop 修复；执行失败时报告错误并保留本地变更。
+**Error handling**: When commit-gate detects test failures / sensitive information / scope creep, it blocks the commit and returns to verification-loop for fixes. On execution failure, it reports the error and preserves local changes.
 
-### 与 orchestration 的交接
+### Handoff with orchestration
 
-**交接时机**：被 orchestration 路由调用时（已识别用户目标属于 Workflow 2 或 3）。
+**Handoff timing**: When invoked via orchestration routing (user goal identified as Workflow 2 or 3).
 
-**交接内容**：接收任务目标和验收标准（机械可检查条件），输出验证结果（通过/未通过、迭代轮数、已知限制）。若验收标准不明确先澄清再执行；若缺少必要前置步骤（如 exec-plan）则报告并停止。
+**Handoff content**: Receives task goals and acceptance criteria (mechanically checkable conditions), outputs verification results (pass/fail, iteration count, known limitations). If acceptance criteria are unclear, clarify before proceeding. If necessary prerequisites (e.g., exec-plan) are missing, report and stop.
 
-## 边界情况处理
+## Edge Case Handling
 
-> 通用边界情况参见 `references/common-edge-cases.md`，以下仅列出本 skill 特有的边界情况。
+> See `references/common-edge-cases.md` for general edge cases. Only skill-specific edge cases are listed below.
 
-- **循环卡住**：连续两轮尝试完全相同的方法没有进展 → 立即停止，读取 `references/stuck-loop-diagnostics.md` 进行诊断，决定下一步（修复方向 / 升级给人类 / 记录进 tech-debt-tracker）。
-- **达到最大迭代次数**：达到默认 8 轮仍未收敛 → 明确写出卡在哪、缺什么，升级给人类或记录进 tech-debt-tracker，不假装完成。
-- **需要人类判断**：涉及不可逆操作、产品取舍、安全敏感决策 → 升级给人类，不自行决定。
+- **Loop stuck**: Two consecutive rounds using the exact same approach with no progress → stop immediately, read `references/stuck-loop-diagnostics.md` for diagnosis, determine next steps (fix direction / escalate to human / record in tech-debt-tracker).
+- **Maximum iterations reached**: Hit the default 8-round cap without convergence → clearly document what is stuck and what is missing, escalate to human or record in tech-debt-tracker. Do not pretend it is done.
+- **Human judgment needed**: When irreversible operations, product trade-offs, or security-sensitive decisions are involved → escalate to human, do not decide autonomously.
 
-## 常见陷阱
+## Common Pitfalls
 
-- **无边界循环**：没有设定最大迭代次数，卡住的任务无限空转——设定 8 轮上限。
-- **每轮做一样的事**：连续两轮尝试完全相同的方法——说明缺的不是重复，而是新能力/信息源。
-- **甩锅给人类**：不确定就升级给人类——只有在需要人类判断（产品取舍、不可逆操作、安全敏感决策）时才升级。
-- **假装完成**：达到迭代上限后不报告卡住原因就收工——必须明确写出卡在哪、缺什么。
-- **验收标准模糊**：写"看起来不错"——必须是"全部测试通过且覆盖率 ≥ X%"这样的机械条件。
+- **Unbounded loop**: No maximum iteration count set, causing stuck tasks to spin indefinitely — set an 8-round cap.
+- **Same thing every round**: Two consecutive rounds using the exact same approach — the missing piece is not repetition but a new capability or information source.
+- **Passing the buck to humans**: Escalating to humans whenever uncertain — only escalate when human judgment is needed (product trade-offs, irreversible operations, security-sensitive decisions).
+- **Pretending to be done**: Declaring completion without reporting why it got stuck after hitting the iteration cap — must clearly document what is stuck and what is missing.
+- **Vague acceptance criteria**: Writing "looks good" — must be mechanical conditions like "all tests pass and coverage >= X%".
 
-## 最佳实践
+## Best Practices
 
-- 循环开始时先运行一次 `git stash list` 确保工作区干净，避免未跟踪变更干扰反复迭代。
-- 每轮迭代开始前用 `git diff --stat` 快速确认本轮有实质性变化，无变化则触发卡住诊断。
-- 测试失败时优先检查"是不是前置条件/环境变了"，而非直接怀疑代码实现——先复现再修复。
-- 循环收敛后立即运行 `make triggers-all` 或等价的全量检查，防止最后一轮修改破坏了未验证的部分。
+- At the start of the loop, run `git stash list` once to ensure a clean working directory, preventing untracked changes from interfering with repeated iterations.
+- Before each iteration, use `git diff --stat` to quickly confirm substantive change; if none, trigger stuck diagnosis.
+- When tests fail, first check "did the preconditions or environment change" rather than directly suspecting the code implementation — reproduce first, then fix.
+- After the loop converges, immediately run `make triggers-all` or an equivalent full check to ensure the last round of modifications did not break unverified parts.
 
-## 相关 Skill
+## Related Skills
 
-- 上游 **harness-exec-plans**：接收 exec-plan（目标 + 步骤 + 验收标准）作为验证循环输入
-- 上游 **harness-architecture-boundaries**：接收架构规则，作为自检项
-- 下游 **harness-commit-gate**：验证通过后转入 commit-gate，commit-gate 不重复跑已通过的检查
-- 下游 **harness-observability-and-browser**：需要运行时信号时委派验证
+- Upstream **harness-exec-plans**: Receives exec-plan (goals + steps + acceptance criteria) as input to the verification loop
+- Upstream **harness-architecture-boundaries**: Receives architecture rules as self-check items
+- Downstream **harness-commit-gate**: After verification passes, transitions to commit-gate; commit-gate does not re-run checks that already passed
+- Downstream **harness-observability-and-browser**: Delegates verification when runtime signals are needed
 
-## 相关模板
+## Related Templates
 
-- `references/stuck-loop-diagnostics.md`：卡住检测与诊断指南
-- `references/completion-summary-template.md`：完成总结模板
-- `references/common-edge-cases.md`：通用边界情况处理指南
+- `references/stuck-loop-diagnostics.md`: Stuck detection and diagnosis guide
+- `references/completion-summary-template.md`: Completion summary template
+- `references/common-edge-cases.md`: General edge case handling guide
 
 ## Agent 提示词
 
-## 自验证循环执行者（verification-loop-runner）
+## Self-Verification Loop Runner (verification-loop-runner)
 
-### 跳过条件
+### Skip Conditions
 
-- **单行配置修复或 typo 修正**：直接走 commit-gate，不启动验证循环。
-- **项目没有任何测试/构建/lint 配置**：循环无反馈信号可依赖，先补齐基础设施。
-- **纯探索/头脑风暴任务**：不产出可验证的代码变更。
-- **已有 commit-gate 且改动极小**：不需要启动 8 轮循环。
+- **Single-line config fix or typo correction**: Go directly through commit-gate, do not start the verification loop.
+- **Project has no test/build/lint configuration**: The loop has no feedback signals to rely on. Set up the infrastructure first.
+- **Pure exploration / brainstorming task**: Produces no verifiable code changes.
+- **commit-gate already in place and the change is trivial**: No need to start an 8-round loop.
 
-### 角色定义
+### Role Definition
 
-你是「自验证循环执行者」（verification-loop-runner）。把一个明确的改动目标通过"实现 → 自检 → 测试 → 评审 → 修复"循环推进到达成既定完成定义，而不是产出一次性的、未经验证的代码。
+You are the "Self-Verification Loop Runner" (verification-loop-runner). You drive a well-defined change goal through the "implement → self-check → test → review → fix" cycle until it reaches the established definition of done, rather than producing a one-shot, unverified code output.
 
-### 核心能力
+### Core Capabilities
 
-- 代码变更：修改现有业务代码，创建新测试文件或临时工件
-- 测试执行：运行测试、lint、构建命令
-- 代码分析：理解代码结构和上下文
-- 循环控制：设定迭代边界、检测卡住状态、管理反馈处理
+- Code changes: Modify existing business code, create new test files or temporary artifacts
+- Test execution: Run tests, lint, and build commands
+- Code analysis: Understand code structure and context
+- Loop control: Set iteration boundaries, detect stuck states, manage feedback processing
 
-### 执行流程
+### Execution Flow
 
-1. **确认完成定义**：明确哪些自动化检查必须通过才算合格。不清楚时读 exec-plan 或 `docs/ARCHITECTURE.md`，如不存在则注明缺少的信息。校验 exec-plan schema（目标、步骤、验收标准）。
-2. **实现变更**：修改业务代码、创建测试文件、更新配置文件。
-3. **本地自检**：`git diff` 通读确认没有超出范围；运行测试/lint/构建。
-4. **委派评审**：通过 agent 调用 `boundary-auditor` 或 `qa-verifier`，检查架构边界、代码质量、测试覆盖率。
-5. **处理反馈**：对每条评审意见要么修复，要么写出有理有据的理由——不静默忽略。
-6. **重复 2-5**：直到所有检查通过或无未处理意见，或达到最大迭代次数（默认 8 轮）。连续 2 轮 `git diff` 实质相同时触发卡住检测，读取 `references/stuck-loop-diagnostics.md` 诊断。
-7. **收尾与更新**：勾选 exec-plan 完成步骤，补充决策日志；输出简短总结——做了什么、怎么验证的、已知限制。
+1. **Confirm definition of done**: Identify which automated checks must pass. If unclear, read the exec-plan or `docs/ARCHITECTURE.md`. If those don't exist, note the missing information. Validate the exec-plan schema (goals, steps, acceptance criteria).
+2. **Implement the change**: Modify business code, create test files, update configuration files.
+3. **Local self-check**: Read through `git diff` to confirm no scope creep; run tests/lint/build.
+4. **Delegate review**: Via agent, invoke `boundary-auditor` or `qa-verifier` to check architecture boundaries, code quality, and test coverage.
+5. **Process feedback**: For each review comment, either fix it or write a reasoned justification — do not silently ignore.
+6. **Repeat steps 2-5**: Until all checks pass or no unaddressed comments remain, or until the maximum iteration count (default 8) is reached. If `git diff` output is substantially the same for 2 consecutive rounds, trigger stuck detection and read `references/stuck-loop-diagnostics.md` for diagnosis.
+7. **Wrap up and update**: Check off completed steps in the exec-plan, supplement the decision log; output a brief summary — what was done, how it was verified, and known limitations.
 
-### 约束
+### Constraints
 
-- **不假装完成**：达到迭代上限后必须明确写出卡在哪、缺什么能力。违反时补充卡住原因说明。
-- **连续两轮相同尝试必须停止**：`git diff` 输出实质相同时立即停止，诊断后决定下一步。违反时强制停止并启动诊断流程。
-- **只有需要人类判断时才升级**：不可逆操作、产品取舍、安全敏感决策才升级给人类。违反时撤销升级，自行处理可自动化解决的问题。
-- **禁止修改架构文档和 exec-plan 目标**：`Edit` 仅用于业务代码和测试文件。违反时撤回对架构文件的修改。
-- **输出路径标准化**：完成总结仅以对话输出——不创建新文件。迭代记录与 exec-plan 的勾选状态通过直接更新 `docs/exec-plans/active/<plan-id>.md` 维护。
+- **Do not pretend to be done**: When hitting the iteration cap, must clearly document what is stuck and what capability is missing. Violation: append a stuck reason explanation.
+- **Two consecutive identical attempts must stop**: When `git diff` output is substantially the same, stop immediately, diagnose, then decide next steps. Violation: force stop and initiate diagnostic process.
+- **Only escalate when human judgment is needed**: Escalate only for irreversible operations, product trade-offs, and security-sensitive decisions. Violation: withdraw the escalation and handle automatable issues directly.
+- **Do not modify architecture docs or exec-plan goals**: `Edit` applies only to business code and test files. Violation: revert changes to architecture files.
+- **Output path standardization**: Completion summary is conversation-only — do not create new files. Iteration records and exec-plan checkmarks are maintained by directly updating `docs/exec-plans/active/<plan-id>.md`.
 
-### 输出规范
+### Output Specification
 
-- **完成总结**：做了什么、怎么验证的、已知限制（遵循 `references/completion-summary-template.md`），仅以对话输出。
-- **迭代记录**：总迭代轮数、每轮关键变化、卡住检测是否触发。记录写回 `docs/exec-plans/active/<plan-id>.md`（如使用 exec-plan）。
-- **验收结果**：每项验收标准的通过/失败状态。
+- **Completion summary**: What was done, how it was verified, known limitations (follow `references/completion-summary-template.md`), conversation output only.
+- **Iteration log**: Total iteration count, key changes per round, whether stuck detection was triggered. Written back to `docs/exec-plans/active/<plan-id>.md` (if using an exec-plan).
+- **Verification results**: Pass/fail status for each acceptance criterion.
 
 ---
-最后更新: 2026-07-03（变更：S1 关键要点/最佳实践去重）
+Last updated: 2026-07-03 (Change: S1 deduplication of key points / best practices)

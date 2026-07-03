@@ -1,33 +1,33 @@
-<!-- docs/ 目录骨架模板 — 由 harness-bootstrapper agent 使用 -->
-<!-- 注意: ARCHITECTURE.md 和 QUALITY_SCORE.md 的 canonical 模板分别位于 harness-architecture-boundaries 和 harness-golden-principles。 -->
+<!-- Docs/ directory skeleton template — used by harness-bootstrapper agent -->
+<!-- Note: The canonical templates for ARCHITECTURE.md and QUALITY_SCORE.md are located in harness-architecture-boundaries and harness-golden-principles, respectively. -->
 
-## 需要创建的文件列表
+## Files to Create
 
 ### docs/ARCHITECTURE.md
 
-> 此文件的 canonical 模板位于 `harness-architecture-boundaries/references/architecture-template.md`。
-> 初始化时请使用该模板的结构，保持评分维度与 golden-principles 体系一致。
+> The canonical template for this file is at `harness-architecture-boundaries/references/architecture-template.md`.
+> When initializing, use that template's structure and keep the scoring dimensions aligned with the golden-principles system.
 
 ### docs/QUALITY_SCORE.md
 
-> 此文件的 canonical 模板位于 `harness-golden-principles/references/quality-score-template.md`。
-> 初始化时请使用该模板的结构（结构一致性 / 黄金原则遵循度 / 测试覆盖 / 文档新鲜度），不要使用自定义评分维度。
+> The canonical template for this file is at `harness-golden-principles/references/quality-score-template.md`.
+> When initializing, use that template's structure (structure consistency / golden principle compliance / test coverage / documentation freshness), do not use custom scoring dimensions.
 
 ### docs/design-docs/index.md
 
 ```markdown
 # Design Decisions
 
-## 索引
+## Index
 
-| 编号 | 标题 | 状态 | 日期 |
+| No. | Title | Status | Date |
 |---|---|---|---|
-| <待填写> | | | |
+| <to be filled> | | | |
 
 ---
-最后更新: <YYYY-MM-DD>
+Last updated: <YYYY-MM-DD>
 ```
 
-### docs/exec-plans/active/ 和 docs/exec-plans/completed/
+### docs/exec-plans/active/ and docs/exec-plans/completed/
 
-创建空目录。当有执行计划时,放入 `<日期>-<简述>.md` 文件。
+Create empty directories. When there is an execution plan, place it in a `<date>-<summary>.md` file.

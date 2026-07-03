@@ -16,7 +16,7 @@ TOTAL_EXTRA=0
 PASSED_EXTRA=0
 
 # Check mandatory reference files
-for ref_file in "agents-md-map-template.md" "e2e-repo-map-example.md"; do
+for ref_file in "claude-md-map-template.md" "e2e-repo-map-example.md"; do
   ((++TOTAL_EXTRA))
   if [ -f "$SKILL_DIR/references/$ref_file" ]; then
     ((++PASSED_EXTRA))

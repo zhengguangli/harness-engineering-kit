@@ -1,18 +1,18 @@
-# Prompt 优化前后对比示例集
+# Before-and-After Prompt Optimization Examples
 
-> 每个示例展示一个常见场景：左侧是用户的粗糙描述或低质量 prompt，右侧是优化后的结构化版本。重点标注每处改动的设计理由。
+> Each example demonstrates a common scenario: on the left is the user's rough description or low-quality prompt, on the right is the optimized structured version. Key changes and their design rationale are highlighted.
 
 ---
 
-## Example 1: 中文需求 → 英文 Prompt（客服场景）
+## Example 1: Chinese Requirement → English Prompt (Customer Service)
 
-### Before（用户原始描述）
+### Before (User's Original Description)
 
 ```
-帮我写一个 AI 客服的 prompt，要能处理用户的退款请求，语气要友好，不能答应不合理的退款。
+Help me write an AI customer service prompt that can handle user refund requests, with a friendly tone, and must not approve unreasonable refunds.
 ```
 
-### After（优化后）
+### After (Optimized)
 
 ```
 You are a **Customer Service Specialist** for an e-commerce platform, handling refund and return inquiries. You are empathetic but firm — you prioritize customer satisfaction while protecting the company from fraudulent claims.
@@ -67,26 +67,26 @@ Order: {"item": "Headphones", "price": 59.99, "purchase_date": "2024-01-20", "de
 Output: {"intent":"refund_request","eligibility":"edge_case","response":"I'm sorry to hear you're having trouble with your order. I can see that the headphones were marked as delivered on January 23rd. Sometimes packages are left in unexpected places — could you check around your front door, with neighbors, or in any mailroom? If you still can't find it, I'd like to open an investigation with our shipping team. This usually takes 2-3 business days, and we'll work to resolve this for you.","actions_taken":["opened_investigation"],"internal_notes":"Delivery confirmed by carrier. Flag for potential fraud investigation if pattern repeats."}
 ```
 
-### 设计理由
+### Design Rationale
 
-| 改动 | 理由 |
+| Change | Rationale |
 |---|---|
-| 中文需求 → 英文 prompt | 客服场景通常需要英文 prompt 以支持多语言用户，或集成到英文系统 |
-| 添加 Escalation Trigger 约束 | 明确何时转人工，避免 AI 处理超出能力范围的敏感场景 |
-| Example 3 展示欺诈场景 | 防止 AI 直接拒绝或直接退款，展示"调查优先"的正确行为 |
-| 添加 internal_notes 字段 | 为人机协作场景预留信息传递通道 |
+| Chinese requirement → English prompt | Customer service scenarios typically require English prompts to support multi-language users or integration with English systems |
+| Added Escalation Trigger constraint | Clearly defines when to escalate to humans, preventing AI from handling sensitive scenarios beyond its capability |
+| Example 3 shows fraud scenario | Prevents AI from flat-out refusing or immediately refunding; demonstrates the correct "investigate first" behavior |
+| Added internal_notes field | Reserves an information channel for human-machine collaboration scenarios |
 
 ---
 
-## Example 2: 代码审查 Agent
+## Example 2: Code Review Agent
 
-### Before（用户原始描述）
+### Before (User's Original Description)
 
 ```
-帮我写一个 prompt，让 AI 帮我 review 代码，找出 bug 和不好的写法。
+Help me write a prompt for AI to review code, find bugs and bad practices.
 ```
 
-### After（优化后）
+### After (Optimized)
 
 ```
 You are a **Senior Code Reviewer** with 10+ years of experience in [Language/Framework].
@@ -147,26 +147,26 @@ Context: "Helper for receipt calculation"
 Output: {"intent_summary":"Simple addition helper for receipt calculation","findings":[],"overall_verdict":"approve","summary":"No issues found. Code is simple and correct."}
 ```
 
-### 设计理由
+### Design Rationale
 
-| 改动 | 理由 |
+| Change | Rationale |
 |---|---|
-| 添加具体角色 "Senior... 10+ years" | 锚定审查标准——是 production-level 而非 tutorial-level |
-| 定义 Severity Anchoring 约束 | 消除"这算 HIGH 还是 CRITICAL"的歧义 |
-| 每个 finding 要求 `location` + `fix_suggestion` | 输出可直接在 PR 评论中使用 |
-| Example 2 展示 clean code 的正确输出 | 防止 LLM "为了找问题而找问题"的倾向 |
+| Added specific role "Senior... 10+ years" | Anchors the review standard — production-level rather than tutorial-level |
+| Defined Severity Anchoring constraint | Eliminates ambiguity over "Is this HIGH or CRITICAL?" |
+| Each finding requires `location` + `fix_suggestion` | Output can be directly used in PR comments |
+| Example 2 demonstrates correct clean code output | Prevents LLM's tendency "to find issues for the sake of finding issues" |
 
 ---
 
-## Example 3: 数据提取 Agent
+## Example 3: Data Extraction Agent
 
-### Before（用户原始描述）
+### Before (User's Original Description)
 
 ```
-写一个 prompt，从网页 HTML 里提取商品价格。
+Write a prompt to extract product prices from web page HTML.
 ```
 
-### After（优化后）
+### After (Optimized)
 
 ```
 You are a **Senior Data Extraction Specialist** with elite expertise in micro-parsing
@@ -224,26 +224,26 @@ Hint: "US"
 Output: {"price":8.0,"currency":"USD","tax_included":false,"availability":"in_stock","warnings":["Tiered bundle pricing detected. Extracted lowest unit price: $8.00 from $24/3."]}
 ```
 
-### 设计理由
+### Design Rationale
 
-| 改动 | 理由 |
+| Change | Rationale |
 |---|---|
-| 添加 Hierarchy Rule | 消除"原价 vs 折扣价"的选择歧义 |
-| 添加 Tie-Breaker Rule | 捆绑定价场景的确定性行为 |
-| 添加 Disambiguate Currency 步骤 | 货币符号歧义是价格提取的高频错误源 |
-| Example 3 展示 warnings 的正确使用 | 锚定"不确定时记录而非猜测"的行为 |
+| Added Hierarchy Rule | Eliminates ambiguity in choosing between "original price vs. discounted price" |
+| Added Tie-Breaker Rule | Deterministic behavior for bundle pricing scenarios |
+| Added Disambiguate Currency step | Currency symbol ambiguity is a high-frequency error source in price extraction |
+| Example 3 demonstrates proper warnings usage | Anchors the "record when uncertain, don't guess" behavior |
 
 ---
 
-## Example 4: 文案生成 Agent
+## Example 4: Copywriting Agent
 
-### Before（用户原始描述）
+### Before (User's Original Description)
 
 ```
-帮我写个 prompt 让 AI 帮我写营销文案，要吸引人，风格年轻化。
+Help me write a prompt for AI to create marketing copy that is engaging and youthful in style.
 ```
 
-### After（优化后）
+### After (Optimized)
 
 ```
 You are a **Creative Copywriter** specializing in DTC (direct-to-consumer) brands
@@ -311,11 +311,14 @@ Input: product_name="QuietPods", description="ANC earbuds, 30hr battery, IPX5 wa
 Output: {"core_benefit":"30 hours of your own world","variants":[{"angle":"benefit","text":"30 hours. No noise. No worries. QuietPods are the longest-lasting ANC buds under $100. 🎧\n\n#QuietPods #ANC #Earbuds #NoiseCancel #AudioLife","hook":"30 hours. No noise.","scores":{"hook_strength":5,"clarity":4,"platform_fit":5}},{"angle":"pain_point","text":"Your commute doesn't have to sound like a construction site. QuietPods: 30hr battery, blocks everything. 🚇→🧘\n\n#QuietPods #Commute #ANC #Peace #Earbuds","hook":"Your commute doesn't","scores":{"hook_strength":4,"clarity":5,"platform_fit":4}},{"angle":"social_proof","text":"12,000+ people switched to QuietPods last month. 30hr battery. IPX5 waterproof. Now you know why.\n\n#QuietPods #Trending #ANC #Earbuds #Audio","hook":"12,000+ people switched","scores":{"hook_strength":4,"clarity":4,"platform_fit":5}}],"recommended_index":0,"rationale":"Benefit-led variant leads with the strongest differentiator (30hr battery) and has the highest combined score."}
 ```
 
-### 设计理由
+### Design Rationale
 
-| 改动 | 理由 |
+| Change | Rationale |
 |---|---|
-| 角色限定到 DTC + Gen Z | "年轻化"太模糊，限定到具体的消费群体和品牌调性 |
-| Platform Calibration 步骤 | 不同平台的文案结构完全不同，不能用同一个模板 |
-| Ban List 约束 | "不要用企业黑话"比"写得自然"更有执行力——给 LLM 一个具体的排除列表 |
-| 要求 3 Variants + Self-Rate | 单一输出没有选择余地；自评分让推荐理由可追溯 |
+| Role narrowed to DTC + Gen Z | "Young" is too vague; constraining to a specific consumer group and brand tone |
+| Platform Calibration step | Copy structure varies completely by platform; cannot use the same template |
+| Ban List constraint | "Don't use corporate buzzwords" is more enforceable than "write naturally" — gives the LLM a concrete exclusion list |
+| Requires 3 Variants + Self-Rate | Single output leaves no room for choice; self-scoring makes the recommendation rationale traceable |
+
+---
+Last updated: 2026-07-03
