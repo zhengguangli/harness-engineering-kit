@@ -22,15 +22,15 @@ metadata:
 
 ## When to Use
 
-- 用户要给这套 harness 工具集本身添加新能力
-- 问"怎么写一个好的 SKILL.md"或"这应该做成 skill 还是 subagent"
-- 发现某个 agent/skill 越写越臃肿,需要瘦身
+- The user wants to add a new capability to the harness toolset itself.
+- The user asks "how to write a good SKILL.md" or "should this be a skill or subagent."
+- An existing agent/skill is becoming bloated and needs trimming.
 
 ## When Not to Use
 
-- 用户要创建与 harness 体系无关的独立工具
-- 项目不使用 harness 方法论
-- 只是想了解现有 skill 的用法,而非创建新 skill
+- The user wants to create an independent tool unrelated to the harness system.
+- The project does not use the harness methodology.
+- The user only wants to understand existing skill usage, not create a new skill.
 
 ## Methodology
 
@@ -115,8 +115,11 @@ When the body approaches 500 lines, split content into `references/` sub-files, 
 
 ## Related Templates
 
-- **Skill/Subagent Design Patterns**: → `references/skill-design-patterns.md`, `references/subagent-design-patterns.md`
-- **Context Budget Management**: → `references/context-budget-management-guide.md`
+- `references/scaffold-templates.md`: Scaffolding templates for new skills and agents
+- `references/skill-design-patterns.md`: Skill design patterns reference
+- `references/subagent-design-patterns.md`: Subagent design patterns reference
+- `references/context-budget-management-guide.md`: Context budget management guidelines
+- `references/common-edge-cases.md`: General edge case handling guide
 
 ## Edge Case Handling
 
@@ -165,6 +168,8 @@ When the body approaches 500 lines, split content into `references/` sub-files, 
 - **The user wants to create an independent tool unrelated to the harness system**: Do not trigger skill-scaffolder.
 - **The user only wants to understand existing skill usage, not extend the system**: Do not trigger, directly answer usage questions.
 - **The project does not use the harness methodology**: Do not trigger.
+- **The new capability can be merged into an existing skill**: Suggest merging instead of creating a new skill.
+- **The user only needs to update existing SKILL.md content** (e.g., fix a typo, update a reference): No scaffolding needed — directly suggest the edit.
 
 ### Role Definition
 
@@ -172,10 +177,12 @@ You are the "Skill Scaffolder", responsible for generating complete file skeleto
 
 ### Core Capabilities
 
-- Generate SKILL.md and references/ directory structure from templates
-- Check if new capabilities overlap with existing ones
-- Configure agent tools following the principle of least privilege
-- Update CLAUDE.md pointers
+- Generate SKILL.md and references/ directory structure from templates following context budget discipline
+- Check if new capabilities overlap with existing ones using Grep/Glob scanning (files + description verb phrases)
+- Configure agent tools following the principle of least privilege (read-only agents → no Edit/Write)
+- Update CLAUDE.md pointers and navigation table
+- Judge skill vs. subagent based on context impact and execution isolation needs
+- Self-check output against quality criteria: body ≤ 500 lines, description complete, agent prompt paired
 
 ### Execution Flow
 
@@ -208,6 +215,10 @@ You are the "Skill Scaffolder", responsible for generating complete file skeleto
 ## Related Templates
 
 - `references/scaffold-templates.md`: Scaffolding templates for new skills and agents
+- `references/skill-design-patterns.md`: Skill design patterns reference
+- `references/subagent-design-patterns.md`: Subagent design patterns reference
+- `references/context-budget-management-guide.md`: Context budget management guidelines
+- `references/common-edge-cases.md`: General edge case handling guide
 
 ---
-Last updated: 2026-07-06 (Change: Further Reading→Related Templates + Agent Prompt subsection level normalization)
+Last updated: 2026-07-06 (Change: Chinese→English for When to Use/When Not to Use, Agent Prompt enhanced — Skip Conditions 3→5, Core Capabilities 4→6, old Related Templates→new inline + formal section in Related Templates for all reference files)

@@ -88,11 +88,13 @@ class WeightedSkillChecker:
         self.penalty_score = 0  # weighted penalty sum
         self.issues = []
         self.warning_items = []
+        self.passed_items = []
 
     def check_pass(self, check_name=""):
         self.total += 1
         self.passed += 1
         self.penalty_score += 1
+        self.passed_items.append({"check": check_name})
 
     def check_fail(self, check_name, severity="HIGH", detail=""):
         self.total += 1
@@ -148,6 +150,7 @@ class WeightedSkillChecker:
             },
             "issues": self.issues,
             "warnings": self.warning_items,
+            "passes": self.passed_items,
         }
 
 

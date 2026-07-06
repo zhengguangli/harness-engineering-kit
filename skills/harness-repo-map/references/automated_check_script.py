@@ -101,4 +101,21 @@ checker.print_json()
 
 passed_extra, total_extra = check_reference_files(checker, SKILL_DIR,
     ["claude-md-map-template.md", "e2e-repo-map-example.md"])
+
+# Skill-specific content checks
+content = read_file(os.path.join(SKILL_DIR, "SKILL.md"))
+for pattern, label in [
+    (r"map, not an encyclopedia|progressive disclosure", "Core philosophy (map/encyclopedia)"),
+    (r"Target Directory Skeleton|docs/.*skeleton", "Target Directory Skeleton section"),
+    (r"Broken.link|broken.links|broken-link", "Broken-link detection mention"),
+    (r"[Ff]reshness [Cc]heck|last validated date", "Freshness check mention"),
+    (r"CLAUDE.md\s*≤\s*100|CLAUDE.md.*100 lines", "CLAUDE.md ≤ 100 line constraint"),
+    (r"Cross-Skill|[Hh]andoff|[Uu]pstream.*[Dd]ownstream", "Cross-skill handoff mention"),
+]:
+    total_extra += 1
+    if has_text(content, pattern, re.IGNORECASE | re.MULTILINE):
+        passed_extra += 1; checker.check_pass(label)
+    else:
+        print(f"  [FAIL] Missing {label}")
+
 print_extra_summary(checker, passed_extra, total_extra)

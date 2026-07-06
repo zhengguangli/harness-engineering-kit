@@ -20,15 +20,15 @@ metadata:
 - **Code once, enforce forever**: Human judgment only needs to be given once; thereafter, every line of code is checked against this rule without having to repeat the same feedback in every review.
 
 ## When to Use
-- Agent 生成的代码质量参差不齐，出现重复或不一致的实现模式。
-- 团队还在靠人工定期"打扫 AI 写的代码"。
-- 想把人类品味编码为机械化规则持续生效。
-- 扫描代码异味、清理AI代码风格不统一。
-- 给代码库建立自动化lint规则。
+- AI-generated code varies in quality with repeated or inconsistent implementation patterns.
+- The team still relies on manual periodic "cleanup of AI-written code."
+- You want to encode human taste as mechanized rules that remain effective over time.
+- You need to scan for code smells and unify inconsistent AI-generated code styles.
+- You want to establish automated lint rules for the codebase.
 
 ## When Not to Use
-- 需要的是结构性架构约束（依赖方向、数据边界）——用 `harness-architecture-boundaries`。
-- 项目规模极小、没有重复模式——不需要周期性扫描。
+- Structural architectural constraints (dependency direction, data boundaries) are needed — use `harness-architecture-boundaries`.
+- The project is extremely small with no repeated patterns — periodic scanning is not needed.
 
 ## Golden Principles vs Architecture Boundaries
 
@@ -93,12 +93,12 @@ Don't confuse them: taste preferences should not be CI hard blocks (they slow th
 > For general edge cases (very small projects, legacy project migration, multi-team collaboration, etc.) see `references/common-edge-cases.md`. The following lists only edge cases specific to this skill.
 
 ### Multi-language Projects
-**场景**：项目使用多种编程语言，需要统一代码风格
-**处理**：为每种语言建立独立的lint规则，使用统一的扫描工具
+**Scenario**: The project uses multiple programming languages and needs a unified code style
+**Handling**: Establish independent lint rules for each language, using a unified scanning tool
 
 ### AI-generated Code Governance
-**场景**：AI生成的代码质量参差不齐，需要特殊治理
-**处理**：建立AI代码生成规范，使用自动化工具检查，建立AI代码review流程
+**Scenario**: AI-generated code varies in quality and requires special governance
+**Handling**: Establish AI code generation standards, use automated tools for checking, establish AI code review processes
 
 ## Common Pitfalls
 - **Inventing principles out of thin air**: Not starting from real signals, rules detached from reality → every principle must be backed by specific review feedback, bug reports, or refactoring requirements.
@@ -133,9 +133,11 @@ Don't confuse them: taste preferences should not be CI hard blocks (they slow th
 
 ### Skip Conditions
 
-- **需要结构性架构约束**（依赖方向、数据边界）：交给 harness-architecture-boundaries，不触发 golden-principles。
-- **项目规模极小、无重复模式**：不需要周期性扫描。
-- **用户只想了解现有原则而非建立新原则**：不触发扫描，直接回答。
+- **Structural architecture constraints are needed** (dependency direction, data boundaries): Hand off to harness-architecture-boundaries, do not trigger golden-principles.
+- **Project is extremely small with no repeated patterns**: Periodic scanning is not needed.
+- **User only wants to understand existing principles, not establish new ones**: Do not trigger scanning, answer directly.
+- **User explicitly says "不需要扫描" or "不做规则":** Respect the user's intent, do not trigger the scan cycle.
+- **The project already has comprehensive lint coverage and no documented taste principles exist yet**: Only scan existing lint rules; do not invent taste principles.
 
 ### Role Definition
 
@@ -146,16 +148,19 @@ Scan the codebase on a fixed rhythm, comparing against encoded golden principles
 - Read and understand the project's encoded golden principles (lint rules + documented taste principles).
 - Scan the codebase using lint/grep/semantic search to locate deviations.
 - Judge the risk level of each deviation (purely mechanical vs. involving behavioral changes).
+- Scope fix recommendations to one deviation type per report — do not mix unrelated cleanups.
 - Produce structured reports with fix recommendations and impact scope.
+- Distinguish between golden principle deviations and structural architecture violations for correct routing.
 
 ### Execution Flow
 
-1. **Load principles**: Read the project's encoded golden principles. If there are neither lint rules nor documented principles, report in format and terminate.
-2. **Scan for deviations**: Prioritize existing lint/check scripts; for principles without automated coverage, use grep/semantic search for approximate inspection.
-3. **Risk classification**: Tag purely mechanical fixes as "suggest auto-merge", those involving behavioral changes as "requires manual review".
-4. **Scope limitation**: One independent fix recommendation per deviation type — do not mix unrelated cleanups.
-5. **Update scores and records**: Update quality scores, record unprocessed findings in `tech-debt-tracker.md`.
-6. **Signal annotation**: Highlight frequently triggered principles — they indicate the corresponding pattern has not been fundamentally resolved.
+1. **Load principles**: Read the project's encoded golden principles. If there are neither lint rules nor documented principles, report in format ("No principles found — need to establish at least one before scanning") and terminate.
+2. **Distinguish from architecture**: Check if the principle describes a structural invariant (dependency direction, data boundary). If so, route to harness-architecture-boundaries and skip.
+3. **Scan for deviations**: Prioritize existing lint/check scripts; for principles without automated coverage, use grep/semantic search for approximate inspection.
+4. **Risk classification**: Tag purely mechanical fixes as "suggest auto-merge", those involving behavioral changes as "requires manual review". If uncertain, default to "requires manual review".
+5. **Scope limitation**: One independent fix recommendation per deviation type — do not mix unrelated cleanups.
+6. **Update scores and records**: Update quality scores, record unprocessed findings in `tech-debt-tracker.md`.
+7. **Signal annotation**: Highlight frequently triggered principles — they indicate the corresponding pattern has not been fundamentally resolved.
 
 ### Constraints
 
@@ -174,4 +179,4 @@ Scan the codebase on a fixed rhythm, comparing against encoded golden principles
 - **Output path**: `docs/quality-reports/golden-principles-scan.md` (overwrite in place; history is in git).
 
 ---
-Last updated: 2026-07-06 (Change: Agent Prompt subsection name normalization — Output Specifications→Output Specification)
+Last updated: 2026-07-06 (Change: Chinese→English consistency for When to Use/When Not to Use/Edge Cases/Agent Skip Conditions; Agent Prompt expanded — Skip Conditions 3→5, Core Capabilities 4→6, Execution Flow enhanced)

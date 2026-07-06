@@ -107,7 +107,10 @@ content = read_file(os.path.join(SKILL_DIR, "SKILL.md"))
 for pattern, label in [
     (r"Five Standard Workflows", "Five Standard Workflows section"),
     (r"^##\s+Cross-Skill Handoff Points|^##\s+Related Skills", "Cross-Skill Handoff or Related Skills section"),
-    (r"Common Omission Scenarios", "Common Omission Scenarios section"),
+    (r"Omission Decision Guide", "Omission Decision Guide section"),
+    (r"FAQ / Troubleshooting", "FAQ / Troubleshooting section"),
+    (r"Intent Matching Table|User Intent Matching|Intent Matching", "Intent Matching Table section"),
+    (r"^###\s+\d+\.\s+Three-Layer Routing", "Three-Layer Routing Framework section"),
 ]:
     total_extra += 1
     if has_text(content, pattern, re.IGNORECASE | re.MULTILINE):

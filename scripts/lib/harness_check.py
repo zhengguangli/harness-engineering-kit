@@ -117,10 +117,12 @@ class SkillChecker:
         self.warning_count = 0
         self.issues = []      # {"check", "severity", "detail"}
         self.warnings = []    # {"check", "detail"}
+        self.passed_items = []  # {"check": name}
 
     def check_pass(self, check_name=""):
         self.total += 1
         self.passed += 1
+        self.passed_items.append({"check": check_name})
 
     def check_fail(self, check_name, severity="HIGH", detail=""):
         self.total += 1
@@ -151,6 +153,7 @@ class SkillChecker:
             },
             "issues": self.issues,
             "warnings": self.warnings,
+            "passes": self.passed_items,
         }
 
     def to_json(self):

@@ -108,6 +108,8 @@ for pattern, label in [
     (r"Three Checks of the Quality Gate", "Three Checks of the Quality Gate"),
     (r"Toolchain Detection Flow|Check Strategy.*Based on Project Configuration", "Toolchain Detection Flow / Check Strategy"),
     (r"Diff.*[Rr]eview", "Diff Review section"),
+    (r"When to Skip|Skip Automated", "When to Skip section"),
+    (r"[Ss]ensitive [Ii]nformation|API.*key|leak", "Sensitive information handling"),
 ]:
     total_extra += 1
     if has_text(content, pattern, re.IGNORECASE | re.MULTILINE):

@@ -15,7 +15,7 @@
 
 | 领域 | frontmatter 合规 | 触发回归 | 关键词一致性 | 文档新鲜度 | 最近评估日期 |
 |---|---|---|---|---|---|
-| skills (13个) | 13/13 (100%) ✅ | 48/48 (100%) ✅ | 13/13 (100%) ✅ | ✅ 7日内更新 | 2026-07-06 (十六次) |
+| skills (13个) | 13/13 (100%) ✅ | 48/48 (100%) ✅ | 13/13 (100%) ✅ | ✅ 7日内更新 | 2026-07-06 (二十二次) |
 | scripts | — | — | — | ✅ 7日内更新 | 2026-07-03 |
 | tests | — | — | — | ✅ 7日内更新 | 2026-07-03 |
 
@@ -53,8 +53,24 @@
 
 2026-07-06 (十六次): 第十六次 8 维度子维度体系批量评估。平均分 9.49 (A 级，+0.01)，3 A+ / 10 A。本轮为存量问题修复轮次：第 15 次评估指出的 2 个 LOW 遗留问题已全部修复——observability-and-browser Agent Prompt 子节顺序标准化（Skip Conditions 前置）、authoring agent 名称 heading 级别标准化（### → ##）。同步修复 observability 修复过程中发现的 duplicate bullet points 遗留。prompt-optimizer 新增 2 条 Skip Conditions。skill-quality-assessor "Last updated" 日期更新至 2026-07-06（第 15 次 LOW 问题）。唯一持续性遗留：skill-quality-assessor 加权评分脚本 context trim bug（连续 5 个周期未修复）。第七次达成"零未解决 MEDIUM+ 问题"状态。详见 `docs/quality-reports/skills-quality-assessment.md`。
 
+2026-07-06 (十七次): 第十七次 8 维度子维度体系批量评估。平均分 9.49 (A 级，持平)，3 A+ / 10 A。本轮为"确认评估轮次"——第 16 次评估后无内容变更（仅有 `.sh` → `.py` 引用名更新），全量验证链通过确认质量未退化。全部 8 维度评分与第 16 次持平。第八次达成"零未解决 MEDIUM+ 问题"状态。唯一持续性遗留：skill-quality-assessor 加权评分脚本 context trim bug（连续 6 个周期未修复）。详见 `docs/quality-reports/skills-quality-assessment.md`。
+
+2026-07-06 (十八次): 第十八次 8 维度子维度体系批量评估。平均分 9.45 (A 级，持平)，3 A+ / 10 A。本轮 repo-map 获得实质性内容增强——Examples 2→4、Key Points 8→10、Agent Prompt Skip Conditions 3→5、Core Capabilities 新增严重程度评级。repo-map 评分从 9.37 升至 9.41 (+0.04)，其余 12 个 skill 评分持平。最低分从 repo-map (9.37) 变为 orchestration (9.38)。第九次达成"零未解决 MEDIUM+ 问题"状态。唯一持续性遗留：skill-quality-assessor 加权评分脚本 context trim bug（连续 7 个周期未修复）。详见 `docs/quality-reports/skills-quality-assessment.md`。
+
+2026-07-06 (十九次): 第十九次 8 维度子维度体系批量评估。平均分 9.45 (A 级，持平)，3 A+ / 10 A。本轮为确认评估轮次（第 2 次确认）——自第 18 次评估后 SKILL.md 无任何内容变更。全量验证链通过确认质量未退化。全部 8 维度评分与第 18 次完全持平。第十次达成"零未解决 MEDIUM+ 问题"状态。唯一持续性遗留：skill-quality-assessor 加权评分脚本 context trim bug（连续 8 个周期未修复）。详见 `docs/quality-reports/skills-quality-assessment.md`。
+
+2026-07-06 (二十次): 第二十次单 skill 详细评估（harness-observability-and-browser）。平均分 9.45 (A 级，实际微升从 9.4523→9.4537)，**4 A+ / 9 A**（第 12 次以来首次等级分布变化）。observability-and-browser 因 Agent 提示词大幅增强（Skip Conditions 3→6, Core Capabilities 4→6, Execution Flow step 0, Constraints +1, 3 个 Acceptance Criteria 新示例, 2 个新 Key Points, 2 条新 Best Practices）评分从 9.48 升至 9.52 (+0.04)，晋升 A+ 列。其余 12 个 skill 评分完全持平。3 个新 LOW 问题（Observability Output Specification 未同步增强 + Related Templates 列表不完整 + 加权评分脚本 context trim bug 持续第 9 周期）。详见 `docs/quality-reports/skills-quality-assessment.md`。
+
+2026-07-06 (二十一次): 第二十一次单 skill 详细评估（harness-commit-gate）。平均分 9.45 (A 级，持平)。commit-gate 8 维度评分与第 20 次一致（9.46），内容无新增变更。detail 评估确认：3 个 LOW 问题（automated_check_script.py 缺少可执行权限、特有检查覆盖偏少、agent 命名一致性）。其余 12 个 skill 评分完全持平。第十一次达成"零未解决 MEDIUM+ 问题"状态。唯一持续性遗留：skill-quality-assessor 加权评分脚本 context trim bug（连续第 10 个周期未修复）。详见 `docs/quality-reports/skills-quality-assessment.md`。
+
+2026-07-06 (二十二次): 第二十二次单 skill 详细评估（harness-repo-map）。平均分 9.46 (A 级，+0.01)，4 A+ / 9 A。repo-map 经过全 8 维度深度评估，评分从 9.37 (第 18 次) 经两次确认评估稳定在 9.41 (第 19-21 次) 后，详细评估揭示其在 Agent 提示词质量和用户体验维度被低估，评分从 9.41 升至 9.46 (+0.05)，排名从第 9 升至第 6。8 项 LOW 优化建议，主要集中于 Methodology 流程入口优化、特有检查扩展、跨 skill 交接细化。第十二次达成"零未解决 MEDIUM+ 问题"状态。唯一持续性遗留：skill-quality-assessor 加权评分脚本 context trim bug（连续第 11 个周期未修复）。详见 `docs/quality-reports/skills-quality-assessment.md`。
+
+2026-07-06 (二十三次): 第二十三次单 skill 详细评估（harness-orchestration）。平均分 9.46 (A 级，持平)，4 A+ / 9 A。orchestration 经过全 8 维度深度评估，评分稳定在 9.37（与第 18-22 次保持的 9.38 差异在评分精度范围内）。6 项 LOW 优化建议：输出模板示例缺失、特有检查覆盖偏少（3 项 vs 平均 5.6 项）、Common Omission 与 Complexity Assessment 约 40% 重叠需要合并瘦身、Edge Case Handling 偏薄、Core Principles 可扩展至 4-5 条、缺少"路由建议被忽略"的 recovery 指引。第十三次达成"零未解决 MEDIUM+ 问题"状态。唯一持续性遗留：skill-quality-assessor 加权评分脚本 context trim bug（连续第 12 个周期未修复）。详见 `docs/quality-reports/skills-quality-assessment.md`。
+
+2026-07-06 (二十四次): 第二十四次维护修复轮次。context trim bug 经核实已被 bash→Python 迁移自然解决（所有 Python `read_frontmatter()` 使用 `.strip()`，SKILL.md 无尾部空格残留），标记为已解决。orchestration 4 项 LOW 优化已落地：Core Principles 3→5 条（新增"Clarify before routing"和"Intake before bootstrap"）、Output Specification 增加路由建议模板示例、Common Pitfalls 增加"路由建议被忽略"和"重复路由" recovery 指引、Edge Case Handling 扩展 2 个新场景（Wrong Skill 和 Multi-goal Ambiguity）。第十四次达成"零未解决 MEDIUM+ 问题"状态。无未解决持续性遗留。详见 `docs/quality-reports/skills-quality-assessment.md`。
+
 ---
-最后更新: 2026-07-06
+最后更新: 2026-07-06（第 24 次）
 
 ## 维护周期（自 2026-07-03 起生效）
 

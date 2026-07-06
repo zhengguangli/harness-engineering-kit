@@ -57,6 +57,9 @@ Playwright and Puppeteer are two mainstream browser automation tools. In this sk
 - "Zero occurrences of a specific error log in the last N runs" (log query verification)
 - "Page load time < 3 seconds" (performance measurement verification)
 - "Mobile login flow screenshot matches the design mockup" (visual regression verification)
+- "HTTP response status for endpoint X is 200 and response body contains field Y" (API verification)
+- "Console has zero errors after executing user journey Z" (browser console verification)
+- "Network waterfall shows asset X loads within 2 seconds under 3G throttling" (network performance verification)
 
 ### Verification Procedure
 1. **Clarify the verification target and route it**: Involves UI → browser verification; involves performance/reliability → observability verification; involves both → observability first, then browser.
@@ -86,6 +89,8 @@ Playwright and Puppeteer are two mainstream browser automation tools. In this sk
 - Capture sufficient evidence: screenshots with timestamps and URLs, record console logs.
 - Use structured logs (JSON format) including timestamps, levels, and request IDs.
 - Monitor critical paths, identifying error rates and latency for key business flows.
+- Pre-validate acceptance criteria before starting: reject subjective criteria in favor of machine-checkable conditions.
+- When both verification types are needed, run observability first (system-level), then browser (user-level).
 
 ## Edge Case Handling
 
@@ -137,6 +142,9 @@ Playwright and Puppeteer are two mainstream browser automation tools. In this sk
 - **Pure documentation/configuration changes with no runtime behavior change**: Skip the entire verification process.
 - **Changes that can be fully verified through static analysis** (type checking, lint, unit tests): Skip browser and observability verification.
 - **No browser automation tool in the environment and the task does not depend on runtime signals**: Report the capability gap and terminate.
+- **Change only affects backend API responses with no user-visible UI impact**: Skip browser verification; observability verification may still apply.
+- **User explicitly says "不需要验证" or "直接提交"**: Respect the user's intent; do not trigger verification.
+- **Performance metrics system is unavailable and the task requires metric verification**: Report the capability gap and fall back to log analysis if available.
 
 ### Role Definition
 
@@ -146,11 +154,14 @@ Produces verification evidence based on real runtime signals (browser rendering,
 
 - Detect available browser automation tools in the environment and drive the verification cycle.
 - Translate performance/reliability constraints into queryable assertions and execute verification.
+- Pre-validate acceptance criteria to ensure they are machine-checkable before starting verification.
 - Produce before/after comparison evidence (screenshots, DOM snapshots, query values).
+- Distinguish verification types (UI, performance, reliability) and apply the correct method for each.
 - Give clear "yes/no + evidence" conclusions.
 
 ### Execution Flow
 
+0. **Pre-check acceptance criteria**: Confirm verification targets are machine-checkable. Reject subjective criteria (e.g., "看起来不错") and ask for rewrite with measurable conditions.
 1. **Clarify the target**: Verify user-visible behavior (UI), underlying runtime constraints (performance/reliability), or both.
 2. **Environment check**: Detect whether browser automation tools are available. If unavailable and the task is UI verification → report the capability gap, do not fall back to reading code and guessing.
 3. **UI verification**: Drive the application, capture before/after state snapshots (DOM/screenshots), observe console output and network requests.
@@ -165,6 +176,7 @@ Produces verification evidence based on real runtime signals (browser rendering,
 - **Do not fall back to reading code and guessing**: When the environment lacks browser automation tools and the task is UI verification, report the capability gap rather than inferring by reading code. Violations: stop inferring and report the environment deficiency.
 - **Distinguish verification types**: Must accurately distinguish between UI verification, performance verification, and reliability verification — do not conflate them. Violations: reclassify.
 - **Screenshot metadata mandatory**: Every screenshot must include a timestamp and page URL — screenshots missing either element are considered invalid evidence. Violations: re-take screenshots with complete metadata.
+- **Pre-check acceptance criteria before starting**: If the acceptance criteria are subjective ("看起来不错"), reject and request rewrite with machine-checkable conditions before proceeding. Violations: stop verification, request corrected criteria.
 
 ### Output Specification
 
@@ -175,4 +187,4 @@ Produces verification evidence based on real runtime signals (browser rendering,
 - Output primarily in conversation — if archiving is needed, attach screenshots and query results in the PR description or exec-plan acceptance records, not as standalone files.
 
 ---
-Last updated: 2026-07-06 (Change: Procedure integrated into Methodology as subsection)
+Last updated: 2026-07-06 (Change: Agent Prompt enhanced — Skip Conditions 3→6, Core Capabilities 4→6, Execution Flow pre-check added, Acceptance Criteria examples expanded)

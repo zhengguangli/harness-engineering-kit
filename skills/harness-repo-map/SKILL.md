@@ -37,6 +37,12 @@ metadata:
 
 ## Methodology
 
+**Entry decision**: This skill has two entry paths depending on current state:
+- **No CLAUDE.md or docs/ yet** → Follow the *Initialization Steps* below to create the docs/ skeleton from scratch.
+- **Existing CLAUDE.md > 100 lines or docs/ chaotic** → Follow the *Procedure* below to restructure and slim down.
+
+If neither condition applies (small project, just need a quick document update), skip this skill entirely.
+
 ### Target Directory Skeleton
 
 ```
@@ -105,6 +111,12 @@ Failures are written as agent-friendly repair instructions so whoever finds them
 **Example 2**: Broken links exist in docs/
 **Handling**: doc-gardener scans and finds broken links → generates fix suggestions → re-validate after repair
 
+**Example 3**: Document is over 30 days stale
+**Handling**: Mark as pending validation, check if the corresponding code/architecture has changed, update content and "last validated date"
+
+**Example 4**: ARCHITECTURE.md references a module path that no longer exists
+**Handling**: HIGH severity — misleading content. Update the architecture map to reflect the current module structure, re-validate all cross-references
+
 ## Key Points
 
 - When CLAUDE.md exceeds 100 lines, slim it down by moving content to `docs/` — it's a map, not an encyclopedia.
@@ -114,6 +126,8 @@ Failures are written as agent-friendly repair instructions so whoever finds them
 - For each document, add "what this is about" and "when to read it."
 - Document validation is performed inline by doc-gardener; failure information is written as directly actionable repair instructions.
 - Each directory has a clear responsibility and naming convention; avoid excessive nesting.
+- After document restructuring, keep old CLAUDE.md entries for one collaboration cycle with soft-link comments, then remove them completely.
+- Run `find docs -name '*.md' -exec grep -l '\\](' {} \\;` once after fixing broken links to confirm no residual broken links remain.
 
 ## Edge Case Handling
 
@@ -148,8 +162,13 @@ Failures are written as agent-friendly repair instructions so whoever finds them
 
 ## Related Skills
 
-- Upstream **harness-bootstrap**: Receives deliverables (initialized docs/ skeleton) as the foundation for the documentation system.
-- Downstream **all skills**: This skill's output (knowledge base structure and docs/ documentation) is passed downstream for context retrieval.
+| Direction | Skill | Deliverable | Handoff mechanism | When to skip |
+|-----------|-------|-------------|-------------------|-------------|
+| Upstream | **harness-bootstrap** | Initialized CLAUDE.md + docs/ skeleton | Skeleton files passed directly to doc-gardener for validation | Already have a docs/ structure — skip bootstrap, go directly to doc-gardener audit |
+| Upstream | **harness-project-intake** | Structured project card (tech stack, architecture, entry points) | Card fields inform doc-gardener's ARCHITECTURE.md coverage check | Project already analyzed — use existing card |
+| Downstream | **all skills** | Knowledge base structure and docs/ documentation | Caller retrieves context from docs/ for task execution | — |
+| Downstream | **harness-architecture-boundaries** | ARCHITECTURE.md domain boundaries | Generate ARCHITECTURE.md during initialization; later the boundary-auditor reads it for layer validation | Small project with no layering |
+| Downstream | **harness-golden-principles** | QUALITY_SCORE.md quality matrix | Generate during initialization; golden-principles scanner reads it for deviation scoring | No quality rules yet |
 
 ## Related Templates
 
@@ -176,6 +195,8 @@ Failures are written as agent-friendly repair instructions so whoever finds them
 - **Project is small (single-file script) and doesn't need structured documentation**: Do not trigger.
 - **User only needs to update a specific document**: Do not trigger a full scan — directly suggest how to update.
 - **Project needs full from-scratch harness initialization**: Hand off to harness-bootstrap, do not trigger doc-gardener.
+- **User explicitly says "文档不需要审计" or "不用检查"**: Respect the user's intent, do not trigger.
+- **The project has no CLAUDE.md or docs/ yet**: Inform the user that the knowledge base structure doesn't exist — recommend harness-bootstrap first.
 
 ### Role Definition
 
@@ -183,10 +204,11 @@ You are the "document gardener" (doc-gardener). Your mission is to keep the repo
 
 ### Core Capabilities
 
-- CLAUDE.md health check: line count, navigation table integrity validation
-- docs/ structure scan: file enumeration, broken-link detection, orphan document identification
-- Code consistency validation: component existence, pairing completeness, reference integrity, freshness check
-- Execution plan audit: active plan existence, tech-debt-tracker maintenance status
+- CLAUDE.md health check: line count check (≤ 100 lines), navigation table integrity validation, map disclaimer presence
+- docs/ structure scan: file enumeration via `find docs -type f`, broken-link detection via extracting markdown links and verifying target existence, orphan document identification
+- Code consistency validation: component existence (ARCHITECTURE.md path references), pairing completeness (frontmatter agent field vs. Agent Prompt section match), reference integrity (navigation table paths), freshness check (last updated within 30 days)
+- Execution plan audit: active plan existence in `docs/exec-plans/active/`, tech-debt-tracker maintenance status
+- Independent severity rating per finding: HIGH (misleading content/broken links) / MEDIUM (missing but not functionally impacting) / LOW (suggested improvement)
 - Read-only operations: only use `Bash` (grep/cat/find), `Glob`, `Grep`, `Read`; **forbidden** from writing/deleting/modifying files
 
 ### Execution Flow
@@ -213,8 +235,10 @@ Execute the following steps strictly in order, using the minimum number of tool 
 
 ### Output Specification
 
-- **Report structure**: Each suggestion includes location, severity, and repair instructions — conversation output only, no repository file modifications.
+- **Report structure**: Each suggestion includes location (file path + line), severity (HIGH/MEDIUM/LOW), and specific repair instructions — conversation output only, no repository file modifications. On violation: retract file writes and output as conversation.
+- **Report ordering**: List findings by severity (HIGH first, then MEDIUM, then LOW). Within same severity, group by category (broken links, freshness, coverage, structure).
+- **Independent repair suggestions**: Each category of finding gets its own suggestion — do not mix unrelated changes. On violation: split into independent suggestions.
 - **Best practices**: Provide best practices for knowledge base management, document maintenance, and directory structure.
 
 ---
-Last updated: 2026-07-06 (Change: Section title standardization + Agent Prompt subsection name normalization)
+Last updated: 2026-07-06 (Change: P1 — Methodology entry flow decision added, Related Skills expanded to handoff table with deliverables/ When to skip, unique checks 0→6)

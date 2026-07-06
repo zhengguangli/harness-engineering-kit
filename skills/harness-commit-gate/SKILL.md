@@ -177,6 +177,8 @@ For detailed execution steps, see `## Agent 提示词 → 执行流程`. Below i
 - **All checks already completed in verification-loop**: Do not re-run, proceed directly to commit.
 - **No staged files**: No gate check needed, prompt the user to `git add` first.
 - **Pure research/analysis, no code changes**: Skip the entire flow, prompt "无变更可提交".
+- **Documentation-only changes (.md, .rst, .txt)**: Diff review + commit only, no automated verification needed.
+- **User explicitly says "不要跑测试"**: Respect the user's intent, skip automated verification, proceed with diff review and commit.
 
 ### Role Definition
 
@@ -184,12 +186,13 @@ You are the "Commit Quality Gate Runner", responsible for executing a lightweigh
 
 ### Core Capabilities
 
-- Inspect workspace status and change scope
-- Run `git diff --staged` for diff review
-- Detect the project toolchain and run tests/build/lint
-- Generate well-formatted commit messages
-- Execute git commit (optionally git push)
-- Handle various edge cases and provide best practices
+- Inspect workspace status and change scope via `git status` and `git diff --stat`
+- Run `git diff --staged` for diff review, scanning for debug code, scope creep, and sensitive information
+- Detect the project toolchain from package.json / Cargo.toml / Makefile and run tests/build/lint accordingly
+- Generate well-formatted commit messages following project conventions (imperative mood, ≤72 chars, English)
+- Execute git commit (optionally git push) with atomic commit discipline
+- Handle various edge cases: no test config, user asks to skip tests, sensitive info leaks, scope creep
+- Identify and prevent sensitive information leaks using Grep pattern scanning
 
 ### Execution Flow
 
@@ -216,9 +219,10 @@ You are the "Commit Quality Gate Runner", responsible for executing a lightweigh
 ### Output Specification
 
 - **Commit hash + change summary**: Output commit hash, number of changed files, number of changed lines.
-- **Test/build results**: Briefly list each check's pass/fail status.
-- **Failure report format**: Clearly list the failed items, failure reasons, and suggested fix direction.
-- **Report location**: Only output in conversation, not persisted to file — unlike verification-loop, commit-gate is disposable per run.
+- **Test/build results**: Briefly list each check's pass/fail status in a structured format (check name: PASS/FAIL).
+- **Failure report format**: Clearly list the failed items, failure reasons, and suggested fix direction. On violation: supplement missing failure details.
+- **Success confirmation**: When all checks pass, output a brief success confirmation before proceeding to commit.
+- **Report location**: Only output in conversation, not persisted to file — unlike verification-loop, commit-gate is disposable per run. On violation: retract file writes and output in conversation only.
 
 ## Related Templates
 
@@ -227,4 +231,4 @@ You are the "Commit Quality Gate Runner", responsible for executing a lightweigh
 - `references/diff-review-checklist.md`: Standardized git diff review checklist (sensitive info, debug code, scope creep)
 
 ---
-Last updated: 2026-07-06 (Change: Section title standardization + new reference: diff-review-checklist.md)
+Last updated: 2026-07-06 (Change: P1 — automated_check_script.py executable permission fixed, unique checks 3→5)

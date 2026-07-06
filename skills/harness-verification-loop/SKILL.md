@@ -45,11 +45,28 @@ metadata:
 - **Definition of done**: All automated checks pass + no unaddressed review feedback + exec-plan schema validation passes.
 - **Acceptance criteria**: Must be specific, mechanically checkable conditions (e.g., "all tests pass and coverage >= X%"). Do not write unverifiable criteria like "looks good."
 
+### Three Feedback Channels
+
+1. **Automated checks** (fast feedback): Tests, lint, build, type check — run every iteration, fail fast
+2. **Delegate review** (deep feedback): Invoke `boundary-auditor` or `qa-verifier` for architecture boundaries, code quality, and test coverage — run after automated checks pass
+3. **Self-check** (human-equivalent): Read through `git diff` to confirm no scope creep, no residual debug code, no unintended side effects — run after each implementation round
+
+Each feedback channel should be consumed in the same iteration it was generated. Don't batch channel-2 feedback from two iterations and fix them all at once — process per iteration.
+
+### Detecting Stuck States
+
+| Symptom | Likely Cause | Action |
+|---|---|---|
+| 2 consecutive rounds with identical `git diff` | Missing capability or information | Read `references/stuck-loop-diagnostics.md`, then try a new approach |
+| Tests consistently fail on a specific assertion | Fix approach is wrong | Re-read the test, understand what it expects, rewrite the implementation |
+| Review feedback repeats the same issue | Rule not understood or not internalized | Explicitly re-read the relevant rule before the next iteration |
+| Iteration count exhausted without convergence | Task too large or capability gap | Document what's stuck, escalate or record in tech-debt-tracker |
+
 ### Procedure
 
 1. **Clarify the definition of done**: Which automated checks must pass (tests, lint, architecture boundaries, performance budget).
 2. **Implement the first version** of the change.
-3. **Run the loop steps**: implement → self-check → test → review → fix, repeat until convergence.
+3. **Run the loop steps**: implement → self-check → test → review → fix, repeat until convergence. Consume feedback per iteration, not in batches.
 4. **After each iteration**: if using an exec-plan, update step checkmarks and the decision log.
 5. **Once the definition of done is met**: produce a brief summary — what was done, how it was verified, and any known limitations.
 6. **Submit**: After the loop converges, hand off to `harness-commit-gate` to complete the commit.
@@ -146,6 +163,8 @@ metadata:
 - **Project has no test/build/lint configuration**: The loop has no feedback signals to rely on. Set up the infrastructure first.
 - **Pure exploration / brainstorming task**: Produces no verifiable code changes.
 - **commit-gate already in place and the change is trivial**: No need to start an 8-round loop.
+- **Verification loop has already run and passed for the same change set**: Do not re-run; proceed to commit-gate directly.
+- **User explicitly says "不需要验证" or "直接提交"**: Respect the user's intent, skip the verification loop.
 
 ### Role Definition
 
@@ -154,9 +173,11 @@ You are the "Self-Verification Loop Runner" (verification-loop-runner). You driv
 ### Core Capabilities
 
 - Code changes: Modify existing business code, create new test files or temporary artifacts
-- Test execution: Run tests, lint, and build commands
-- Code analysis: Understand code structure and context
-- Loop control: Set iteration boundaries, detect stuck states, manage feedback processing
+- Test execution: Run tests, lint, and build commands according to project toolchain detection
+- Code analysis: Understand code structure and context for accurate modifications
+- Loop control: Set iteration boundaries (default 8), detect stuck states (2 consecutive identical attempts), manage feedback processing
+- Stuck detection and diagnosis: Recognize when `git diff` output is substantially unchanged and trigger diagnostic procedures
+- Escalation judgment: Determine when to escalate to humans (irreversible operations, product trade-offs, security-sensitive decisions) vs. handle autonomously
 
 ### Execution Flow
 
@@ -178,9 +199,11 @@ You are the "Self-Verification Loop Runner" (verification-loop-runner). You driv
 
 ### Output Specification
 
-- **Completion summary**: What was done, how it was verified, known limitations (follow `references/completion-summary-template.md`), conversation output only.
+- **Completion summary**: What was done, how it was verified, known limitations (follow `references/completion-summary-template.md`), conversation output only. On violation: retract file writes and output in conversation.
 - **Iteration log**: Total iteration count, key changes per round, whether stuck detection was triggered. Written back to `docs/exec-plans/active/<plan-id>.md` (if using an exec-plan).
-- **Verification results**: Pass/fail status for each acceptance criterion.
+- **Verification results**: Pass/fail status for each acceptance criterion, listed per criterion for traceability.
+- **Stuck report** (if applicable): What is stuck, what capability is missing, what has been tried, suggested next steps.
+- **Output structure**: Summary first (what was done + verification status), then iteration details (for traceability), then known limitations (for the next agent).
 
 ---
-Last updated: 2026-07-06 (Change: Cross-skill→Cross-Skill + new reference: loop-troubleshooting-guide.md)
+Last updated: 2026-07-06 (Change: Agent Prompt enhanced — Skip Conditions 4→6, Core Capabilities 4→6, stuck detection matrix added, Methodology enhanced with feedback channels, Output Specification enriched)
