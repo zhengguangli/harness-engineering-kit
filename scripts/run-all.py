@@ -18,7 +18,7 @@ import argparse
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SKILLS_DIR = os.path.join(ROOT_DIR, "skills")
-HOME_SKILLS = os.path.expanduser("~/.claude/skills")
+HOME_SKILLS = os.path.expanduser("~/.agents/skills")
 
 
 def run_script(name, args=None):
@@ -36,8 +36,8 @@ _verbose = sys.stdout.isatty()
 
 
 def sync():
-    """Sync skills/ to ~/.claude/skills/."""
-    print(">>> 部署 skills 到 ~/.claude/skills/")
+    """Sync skills/ to ~/.agents/skills/."""
+    print(">>> 部署 skills 到 ~/.agents/skills/")
     subprocess.run(["rsync", "-av", "--delete", SKILLS_DIR + "/", HOME_SKILLS + "/"],
                    cwd=ROOT_DIR, capture_output=not _verbose)
     print("✅ 同步完成")
