@@ -28,7 +28,7 @@ python3 scripts/run-all.py --run-type prompt        # 仅 agent prompt 检查
 | Agent Prompt 内联迁移设计 | `docs/design-docs/agent-prompt-inline-migration.md` |
 | 设计决策详情 | `docs/design-docs/` |
 | 当前执行计划 | `docs/exec-plans/active/` |
-| Skill Quality Assessor 精炼计划 | `docs/exec-plans/active/skill-quality-assessor-refinement.md` |
+| Skill Quality Assessor 精炼计划 | `docs/exec-plans/completed/skill-quality-assessor-refinement.md` |
 | 已知但暂不处理的技术债 | `docs/exec-plans/tech-debt-tracker.md` |
 | 产品功能规格 | `docs/product-specs/index.md` |
 | 各 skill 质量评分与趋势追踪 | `docs/QUALITY_SCORE.md` |
@@ -59,7 +59,7 @@ python3 scripts/run-all.py --run-type prompt        # 仅 agent prompt 检查
 
 ## Quality gates
 
-提交前必须运行全量验证脚本（`python3 scripts/run-all.py`）。当前全 13 个 skill 质量评分 9.48（A 级，第十五次评估）。详细维度评分见 `docs/QUALITY_SCORE.md`。
+提交前必须运行全量验证脚本（`python3 scripts/run-all.py`）。当前全 13 个 skill 质量评分 9.48（A 级，第二十五次评估）。详细维度评分见 `docs/QUALITY_SCORE.md`。
 
 ## Skill 文件结构
 
