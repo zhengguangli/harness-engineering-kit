@@ -198,8 +198,6 @@ nacos-cli skill-sync resolve <skill-name> --use-agent claude-code --non-interact
 ### 本地运行
 
 ```bash
-make triggers-check
-# 或
 python3 scripts/validate_skill_triggers.py
 ```
 
@@ -214,16 +212,17 @@ python3 scripts/validate_skill_triggers.py
 ### 本地全量检查（推荐）
 
 ```bash
-make triggers-all
-# 依次执行：结构校验 -> 关键词一致性校验 -> 回归测试 -> agent prompt 存在性校验
+python3 scripts/validate_skill_triggers.py && \
+python3 scripts/run_trigger_regression.py && \
+python3 scripts/validate_agent_prompt_sync.py
 ```
 
 ### Agent Prompt 存在性校验
 
-`make prompts-sync-check` 验证每个 SKILL.md 是否包含 `## Agent 提示词` section。
+`python3 scripts/validate_agent_prompt_sync.py` 验证每个 SKILL.md 是否包含 `## Agent 提示词` section。
 
 ```bash
-make prompts-sync-check
+python3 scripts/validate_agent_prompt_sync.py
 ```
 
 ### 回归用例维护规范（Case Guide）
@@ -255,7 +254,7 @@ make prompts-sync-check
 #### 报告与产物
 
 - 回归报告：`tests/triggers/report.json`
-- 推荐更新节奏：每次修改触发词/用例后都跑一次 `make triggers-all`
+- 推荐更新节奏：每次修改触发词/用例后都跑一次全量验证（`python3 scripts/validate_skill_triggers.py && python3 scripts/run_trigger_regression.py && python3 scripts/validate_agent_prompt_sync.py`）
 
 
 ## 推荐的接入顺序

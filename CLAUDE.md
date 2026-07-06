@@ -9,11 +9,14 @@
 ## Quick start
 
 ```bash
-make triggers-all     # 完整验证流水线（frontmatter 校验 + 关键词回归 + agent prompt 存在性检查）
-make triggers-check   # 仅 frontmatter 字段校验
-make triggers-regression  # 仅触发关键词回归测试（48 个测试用例）
-make triggers-report  # 触发关键词回归 JSON 报告（含详细判定信息）
-make prompts-sync-check   # 仅 agent prompt 存在性检查
+python3 scripts/validate_skill_triggers.py    # frontmatter 字段校验
+python3 scripts/run_trigger_regression.py     # 关键词回归测试（48 个测试用例）
+python3 scripts/run_trigger_regression.py --json  # 关键词回归 JSON 报告
+python3 scripts/validate_agent_prompt_sync.py # agent prompt 存在性检查
+# 全量验证流水线：
+python3 scripts/validate_skill_triggers.py && \
+python3 scripts/run_trigger_regression.py && \
+python3 scripts/validate_agent_prompt_sync.py
 ```
 
 ## Navigation
@@ -70,7 +73,7 @@ Layer 5 提交门      harness-commit-gate
 
 ## Quality gates
 
-提交前必须运行 `make triggers-all`。当前全 13 个 skill 质量评分 9.48（A 级，第十五次评估）。详细维度评分见 `docs/QUALITY_SCORE.md`。
+提交前必须运行全量验证脚本（`python3 scripts/validate_skill_triggers.py && python3 scripts/run_trigger_regression.py && python3 scripts/validate_agent_prompt_sync.py`）。当前全 13 个 skill 质量评分 9.48（A 级，第十五次评估）。详细维度评分见 `docs/QUALITY_SCORE.md`。
 
 ## Skill 文件结构
 
@@ -91,9 +94,9 @@ skills/<name>/
 修改 skill 后按此顺序操作：
 
 1. 修改 `skills/<name>/SKILL.md`
-2. 运行 `make triggers-all` 确保无断裂
+2. 运行全量验证脚本（`python3 scripts/validate_skill_triggers.py && python3 scripts/run_trigger_regression.py && python3 scripts/validate_agent_prompt_sync.py`） 确保无断裂
 3. 用 `harness-skill-quality-assessor` 评估修改质量
-4. 提交前运行 `make triggers-all` — **这是硬约束，提交前必须通过**
+4. 提交前运行全量验证脚本（`python3 scripts/validate_skill_triggers.py && python3 scripts/run_trigger_regression.py && python3 scripts/validate_agent_prompt_sync.py`） — **这是硬约束，提交前必须通过**
 5. 推送到 `developer` 分支（本仓库 PR 合并到 `main`）
 
 > 工作方式提示详见 `docs/design-docs/core-beliefs.md`

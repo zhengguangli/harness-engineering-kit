@@ -21,7 +21,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run full trigger validation
-        run: make triggers-all
+        run: |
+          python3 scripts/validate_skill_triggers.py
+          python3 scripts/run_trigger_regression.py
+          python3 scripts/validate_agent_prompt_sync.py
 
       - name: Run skill-level automated checks
         run: |
