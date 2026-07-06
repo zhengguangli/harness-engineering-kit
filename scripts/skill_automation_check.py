@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """
-通用 SKILL.md 自动化检查脚本（中文版）。
+[已废弃] 通用 SKILL.md 自动化检查脚本（中文版）。
 
-Usage: python3 scripts/skill_automation_check.py <skill-name>
-Example: python3 scripts/skill_automation_check.py harness-commit-gate
-
-生成 Markdown 报告到 docs/quality-reports/<skill-name>-check.md
+⚠️ 此脚本检查中文章节名（核心原则、何时使用等），但 SKILL.md 已全
+   部翻译为英文，运行结果全部显示缺失，不具备实际检查价值。
+   保留仅用于参考完整的逻辑结构，不再推荐调用。
 
 替代 scripts/skill-automation-check.sh
 """
