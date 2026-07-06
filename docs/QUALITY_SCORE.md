@@ -69,8 +69,10 @@
 
 2026-07-06 (二十四次): 第二十四次维护修复轮次。context trim bug 经核实已被 bash→Python 迁移自然解决（所有 Python `read_frontmatter()` 使用 `.strip()`，SKILL.md 无尾部空格残留），标记为已解决。orchestration 4 项 LOW 优化已落地：Core Principles 3→5 条（新增"Clarify before routing"和"Intake before bootstrap"）、Output Specification 增加路由建议模板示例、Common Pitfalls 增加"路由建议被忽略"和"重复路由" recovery 指引、Edge Case Handling 扩展 2 个新场景（Wrong Skill 和 Multi-goal Ambiguity）。第十四次达成"零未解决 MEDIUM+ 问题"状态。无未解决持续性遗留。详见 `docs/quality-reports/skills-quality-assessment.md`。
 
+2026-07-06 (二十五次): 第二十五次批量评估。平均分 **9.48** (A 级，+0.02)。全 9 个 A 级 skill 批量优化验证：全部 9 个 skill 正增长（+0.02 ~ +0.09），但 **A+ 阵营未扩张**（4 A+ / 9 A）。commit-gate (9.49) 最接近 A+ 门槛（差 0.01）。最大增幅：bootstrap (+0.09) due to Examples 2→4；orchestration UX (+0.15) 为单维度最大增幅。Agent 提示词质量 (均 9.39) 仍为 A+ 突破的最大瓶颈（距参考 skill 差 -0.26）。详见 `docs/quality-reports/skills-quality-assessment.md`。
+
 ---
-最后更新: 2026-07-06（第 24 次）
+最后更新: 2026-07-06（第 25 次）
 
 ## 维护周期（自 2026-07-03 起生效）
 

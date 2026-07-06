@@ -43,6 +43,16 @@ metadata:
 
 If neither condition applies (small project, just need a quick document update), skip this skill entirely.
 
+**Quick reference**: Common issues and their handling path:
+
+| Symptom | Likely diagnosis | Action |
+|---|---|---|
+| Agent doesn't know where to find project rules | Bloated CLAUDE.md | Follow Procedure to slim CLAUDE.md into a map |
+| docs/ has files but no index | Missing navigation structure | Create index files from templates |
+| ARCHITECTURE.md references deleted modules | Stale architecture docs | Update ARCHITECTURE.md, re-validate references |
+| Broken links found in docs | Link rot | Fix each link, run `find docs -name '*.md' -exec grep -l '\\](' {} \\;` to confirm |
+| No CLAUDE.md at all | Greenfield project | Follow Initialization Steps
+
 ### Target Directory Skeleton
 
 ```
@@ -253,4 +263,4 @@ Execute the following steps strictly in order, using the minimum number of tool 
 - **Best practices**: Provide best practices for knowledge base management, document maintenance, and directory structure.
 
 ---
-Last updated: 2026-07-06 (Change: A+ optimization batch — examples, key points, best practices, edge cases, core capabilities, skip conditions)
+Last updated: 2026-07-06 (Change: P2 — Quick-reference diagnostic table added, Role Definition sharpened for A+ push)

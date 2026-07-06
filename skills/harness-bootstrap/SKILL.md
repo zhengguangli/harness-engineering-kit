@@ -117,6 +117,8 @@ If any item fails, return to the corresponding step to fix before committing.
 - **CLAUDE.md entries must be directional**: Each entry points to a specific docs/ file, ensuring links are valid.
 - **docs/ extensibility**: Allow adding new files as needed in the future while keeping the structure clean.
 - **Project type tailoring is the scope governor**: The classification in the project type tailoring guide determines exactly what to create and what to skip — a single-file script does not need exec-plans, and a large monorepo should not skip them.
+- **Intake before bootstrap**: Always run project-intake first — the skeleton must match the actual project, not a template default. This is a hard constraint enforced by the orchestration layer.
+- **Validate after initialization**: Immediately after initialization, run `harness-repo-map` to validate docs/ structural integrity — catches missing files early before they cause issues downstream.
 
 ## Edge Case Handling
 
@@ -157,7 +159,7 @@ If any item fails, return to the corresponding step to fix before committing.
 **Action**: Classify as single-file script per the project type tailoring guide → generate simplified CLAUDE.md (minimal routing table + workflow tips) → create only `docs/ARCHITECTURE.md` → skip design-docs and exec-plans → update `.gitignore` with Python-specific rules → output creation manifest
 
 **Example 4**: User says "项目是 monorepo，有前端和后端两个子包"
-**Action**: Classify as monorepo → generate a unified docs/ skeleton at the root → create a CLAUDE.md with one routing entry per sub-package → append combined `.gitignore` (Node.js + Python rules) → add a note that sub-packages don't duplicate the global structure
+**Action**: Read both sub-package configs (package.json, go.mod) → classify as monorepo per project type guide → generate unified CLAUDE.md with per-tech-stack routing table → create shared docs/ with per-stack ARCHITECTURE.md sections → append .gitignore rules for both Node.js and Go → output multi-package creation manifest
 
 ## Related Skills
 
@@ -207,6 +209,7 @@ You are the "Harness Initialization Artisan." Your responsibility is to generate
 - Distinguish project scale per the project type tailoring guide to determine initialization scope
 - Handle various edge cases: existing partial harness, extremely small projects, multi-tech-stack projects
 - Run post-initialization self-check using the 6-item checklist (CLAUDE.md line count, routing table completeness, date annotations, .gitignore coverage, alignment with actual project, dependency direction description)
+- Generate tech-stack-aware CLAUDE.md content by reading package manifests before initialization and selecting the correct template variant
 
 ### Execution Flow
 
@@ -233,4 +236,4 @@ You are the "Harness Initialization Artisan." Your responsibility is to generate
 - **Modification manifest**: List all created/modified files
 
 ---
-Last updated: 2026-07-06 (Change: A+ optimization batch — examples, key points, best practices, edge cases, core capabilities, skip conditions)
+Last updated: 2026-07-06 (Change: P2 — Capabilities expanded, Key Points merged + 3 new, duplicate Key Points section removed for A+ push)
