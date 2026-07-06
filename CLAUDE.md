@@ -14,6 +14,7 @@ python3 scripts/run-all.py --run-type check         # 仅 frontmatter 校验
 python3 scripts/run-all.py --run-type regression    # 仅关键词回归测试
 python3 scripts/run-all.py --run-type regression --json  # 回归 JSON 报告
 python3 scripts/run-all.py --run-type prompt        # 仅 agent prompt 检查
+python3 scripts/run-all.py --sync                   # 验证 + 同步到 ~/.agents/skills/ (并维护软链接)
 ```
 
 ## Navigation
