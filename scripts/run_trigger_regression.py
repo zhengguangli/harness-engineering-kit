@@ -6,10 +6,8 @@ Reads tests/triggers/cases.json, matches each input against keyword mappings,
 and reports PASS/WARN/FAIL.
 
 Usage:
-    python3 scripts/run_trigger_regression.py
-    python3 scripts/run_trigger_regression.py --json
-
-替代 scripts/run-trigger-regression.sh
+    python3 scripts/run-all.py --run-type regression
+    python3 scripts/run-all.py --run-type regression --json
 """
 
 import json

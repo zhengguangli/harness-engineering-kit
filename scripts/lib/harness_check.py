@@ -4,7 +4,7 @@ Shared utility library for harness script checking.
 Provides:
 - Path constants (ROOT_DIR, SKILLS_DIR)
 - SkillChecker class: pass/fail/warn counters with JSON output
-- run_shared_checks(): replicating scripts/skill-automated-check.sh behavior
+- run_shared_checks(): replicating scripts/skill_automated_check.py behavior
 - Frontmatter parsing and section lookup helpers
 """
 
@@ -160,11 +160,11 @@ class SkillChecker:
         print(self.to_json())
 
 
-# --- Shared checks (replicating scripts/skill-automated-check.sh) ---
+# --- Shared checks (replicating scripts/skill_automated_check.py) ---
 
 def run_shared_checks(skills_dir, skill_name):
     """
-    Perform the shared checks that scripts/skill-automated-check.sh does.
+    Perform the shared checks that scripts/skill_automated_check.py does.
     Returns a SkillChecker instance with all shared checks recorded.
     """
     checker = SkillChecker(skill_name)

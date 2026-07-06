@@ -28,7 +28,7 @@
 
 4. **skill-quality-assessor "Last updated" 日期已更新**: 从 2026-07-03 更新至 2026-07-06（第 15 次指出的 LOW 问题）。
 
-5. **基础设施三件套维持 100% 全覆盖**（第 7 次评估自第 4 次起持续维持）：automated-check-script.sh 13/13、allowed-tools 13/13、跨 skill 交接 13/13。
+5. **基础设施三件套维持 100% 全覆盖**（第 7 次评估自第 4 次起持续维持）：automated_check_script.py 13/13、allowed-tools 13/13、跨 skill 交接 13/13。
 
 6. **make triggers-all 保持全绿**: 48/48 PASS，WARN=0, FAIL=0。
 
@@ -375,7 +375,7 @@
 
 | 检查项 | 当前 | 上轮 | 趋势 |
 |-------|------|------|------|
-| automated-check-script.sh | 13/13 (100%) | 13/13 (100%) | 维持 |
+| automated_check_script.py | 13/13 (100%) | 13/13 (100%) | 维持 |
 | common-edge-cases.md | 13/13 (100%) | 13/13 (100%) | 维持 |
 | allowed-tools 显式声明 | 13/13 (100%) | 13/13 (100%) | 维持 |
 | 跨 skill 交接文档化 | 13/13 (100%) | 13/13 (100%) | 维持 |
@@ -475,7 +475,7 @@
 | ## Best Practices 章节 | 13/13 (100%) | 全部存在 |
 | ## Related Skills (跨 skill 交接) | 13/13 (100%) | 全部存在 |
 | references/common-edge-cases.md | 13/13 (100%) | 全部存在 |
-| references/automated-check-script.sh | 13/13 (100%) | 全部存在 |
+| references/automated_check_script.py | 13/13 (100%) | 全部存在 |
 | 最后更新日期 <= 90 天 | 13/13 (100%) | 全部在 7 日内更新 |
 | 触发回归测试（make triggers-all） | 48/48 (100%) | PASS=48 WARN=0 FAIL=0 |
 | 技能级特有检查通过率 | 100% | 全部 skill 特有检查 100% 通过 |
@@ -543,7 +543,7 @@
 - **评估体系**: 8 维度加权评分（结构完整性 15% / 内容质量 20% / 可用性 15% / 设计模式 10% / 文档质量 10% / Agent 提示词质量 10% / 自动化友好度 10% / 用户体验 10%）
 - **评分粒度**: 子维度 0-10，精度 0.1，子维度均值为维度得分
 - **等级**: A+ (9.50+) / A (9.0-9.49) / B+ (8.5-8.9) / B (8.0-8.4) / C (7.0-7.9) / D (6.0-6.9) / F (0-5.9)
-- **自动化工具**: `scripts/skill-automated-check.sh` 共享脚本 + 各 skill 特有检查脚本
+- **自动化工具**: `scripts/skill_automated_check.py` 共享脚本 + 各 skill 特有检查脚本
 - **参考 skill**: `harness-prompt-optimizer`
 
 ---

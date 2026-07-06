@@ -5,8 +5,6 @@ Skills quality assessment — automated check script (v2.0 weighted scoring edit
 Usage: python3 automated_check_script.py [skill-name|all]
 
 Output: JSON-formatted check results with weighted scores.
-
-替代 automated-check-script.sh (536 lines → Python)
 """
 
 import json

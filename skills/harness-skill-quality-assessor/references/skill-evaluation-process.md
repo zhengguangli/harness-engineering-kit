@@ -142,10 +142,10 @@ grep -n "^```" skills/<skill-name>/SKILL.md | head -10
 **Check Commands**:
 ```bash
 # Check for automation script
-test -f scripts/quality-check.sh && echo "Automation script exists" || echo "Automation script does not exist"
+test -f scripts/quality_check.py && echo "Automation script exists" || echo "Automation script does not exist"
 
 # Check script executability
-test -x scripts/quality-check.sh && echo "Script is executable" || echo "Script is not executable"
+test -x scripts/quality_check.py && echo "Script is executable" || echo "Script is not executable"
 ```
 
 **Scoring Rules**:
@@ -537,7 +537,7 @@ test -f .github/workflows/quality-check.yml && echo "CI/CD configuration exists"
 **Check Script Example**:
 ```bash
 #!/bin/bash
-# skill-quality-check.sh
+# skill-quality-check.py
 
 SKILL_DIR=$1
 SKILL_NAME=$2
@@ -591,7 +591,7 @@ jobs:
           for skill_dir in skills/*/; do
             skill_name=$(basename "$skill_dir")
             echo "Checking $skill_name..."
-            bash scripts/skill-quality-check.sh skills "$skill_name"
+            python3 "$skill_dir/references/automated_check_script.py"
           done
 ```
 

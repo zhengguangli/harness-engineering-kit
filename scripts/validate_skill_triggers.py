@@ -7,8 +7,6 @@ Frontmatter 字段校验 + cross-reference 检查。
 - 无遗留的 version 字段
 - 无遗留的 ## 触发信号 section
 - Cross-reference: ## 配合的 agent 中引用的 skill 必须存在
-
-替代 scripts/validate-skill-triggers.sh
 """
 
 import os

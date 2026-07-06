@@ -157,7 +157,7 @@ Failures are written as agent-friendly repair instructions so whoever finds them
 - `references/docs-index-templates.md`: Design document index + product spec index templates
 - `../harness-architecture-boundaries/references/architecture-template.md`: ARCHITECTURE.md architecture document template (canonical version)
 - `../harness-golden-principles/references/quality-score-template.md`: QUALITY_SCORE.md quality score template (canonical version)
-- `references/automation-check-script.sh`: Automation check script
+- `references/automated_check_script.py`: Automation check script
 - `references/e2e-repo-map-example.md`: End-to-end complete example (React project knowledge base restructuring, covering the full workflow from current-state analysis → structure design → document generation → quality validation)
 
 ## Best Practices

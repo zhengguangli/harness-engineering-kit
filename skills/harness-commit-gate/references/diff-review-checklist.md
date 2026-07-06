@@ -72,6 +72,6 @@ Run as part of commit-gate's diff review step:
 
 ```bash
 # Full checklist (automated checks run first, then manual review items flagged)
-bash skills/harness-commit-gate/references/automated-check-script.sh
+python3 skills/harness-commit-gate/references/automated_check_script.py
 # If warnings detected, prompt the user before proceeding
 ```

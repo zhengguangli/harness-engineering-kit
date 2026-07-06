@@ -34,7 +34,7 @@ All 13 SKILL.md files use only recognized Claude Code frontmatter fields, with a
 ### Phase 2: Decide Fix Strategy (2 steps)
 
 - [x] Step 2.1 — For the `agent` field: Keep as-is. It is a recognized standard Claude Code frontmatter field. **Decision**: No action needed.
-- [x] Step 2.2 — For the `metadata.category` field: Keep as documented custom extension. It has script dependencies (`skills/harness-skill-quality-assessor/references/automated-check-script.sh` checks its existence) and provides useful categorization. **Decision**: Keep, document explicitly as harness extension.
+- [x] Step 2.2 — For the `metadata.category` field: Keep as documented custom extension. It has script dependencies (`skills/harness-skill-quality-assessor/references/automated_check_script.py` checks its existence) and provides useful categorization. **Decision**: Keep, document explicitly as harness extension.
 
 ### Phase 3: Execute Fixes (2 steps)
 

@@ -50,7 +50,7 @@ Skill quality evaluation covers 8 dimensions, each with clear evaluation criteri
 | Design Patterns | 10% | Modularity / Extensibility / Consistency / **Cross-skill handoff** | Structural modularity, upstream/downstream handoff point documentation, style consistency with other skills |
 | Documentation Quality | 10% | Example richness / Explanation clarity / Error handling / **Last update freshness** | Example count (≥2), edge case coverage, troubleshooting, update date ≤90 days |
 | Agent Prompt Quality | 10% | Role definition / Core capabilities / Execution flow / Constraints / Output specification / **Skip conditions** | Completeness of six sub-sections, constraints include violation consequences, standardized output paths |
-| Automation Friendliness | 10% | Script support / Automatable check ratio / CI/CD integration | Existence of automated-check-script.sh, check item coverage, CI configuration |
+| Automation Friendliness | 10% | Script support / Automatable check ratio / CI/CD integration | Existence of automated_check_script.py, check item coverage, CI configuration |
 | User Experience | 10% | Learning curve / Ease of use / Error recovery | Intuitiveness of trigger scenarios, edge case handling, common pitfalls coverage |
 
 **Detailed evaluation criteria** are in `references/skill-quality-dimensions.md`.
@@ -165,7 +165,7 @@ Select a mode based on evaluation goals and available time:
 - `references/skill-quality-dimensions.md`: Detailed evaluation dimension descriptions
 - `references/skill-evaluation-process.md`: Detailed evaluation process descriptions
 - `references/evaluation-report-template.md`: Evaluation report template
-- `references/automated-check-script.sh`: Automated check script
+- `references/automated_check_script.py`: Automated check script
 
 ## Best Practices
 

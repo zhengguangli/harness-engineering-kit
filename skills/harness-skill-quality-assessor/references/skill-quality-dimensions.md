@@ -178,7 +178,7 @@ Updated by: claude-code
 **Checkpoints**:
 | Check Item | Pass Example | Fail Example |
 |------------|-------------|-------------|
-| Provides automated check script | `references/automated-check-script.sh` exists and is executable | No script, all checks manual |
+| Provides automated check script | `references/automated_check_script.py` exists and is executable | No script, all checks manual |
 | Supports CI/CD integration | `.github/workflows/` invokes the script | Only standalone script with no CI config |
 | High proportion of check items can be automated | 70%+ checks automated (frontmatter/sections/markdown) | Only 1-2 basic file existence checks automated |
 | Automated check results are quantifiable | JSON output with scores and severity levels | Script prints PASS/FAIL to stdout only |
@@ -345,8 +345,8 @@ Each dimension score = arithmetic mean of sub-dimension scores (each sub-dimensi
 
 | Misjudgment Pattern | Wrong Approach | Correct Approach |
 |----------|----------|----------|
-| Give high score if script exists | Give 9.0+ just for having automated-check-script.sh | Also check the number of check items covered and verification accuracy |
-| Give zero score if no script | Give 0 for no automated-check-script.sh | Check if there are other automation methods (e.g., shared scripts under project-level scripts/), reasonably score 6.0-7.0 |
+| Give high score if script exists | Give 9.0+ just for having automated_check_script.py | Also check the number of check items covered and verification accuracy |
+| Give zero score if no script | Give 0 for no automated_check_script.py | Check if there are other automation methods (e.g., shared scripts under project-level scripts/), reasonably score 6.0-7.0 |
 | Ignore CI/CD integration | Only look at scripts, not CI configuration | Check if .github/workflows integrates the script |
 
 ### 2. Documentation Quality Scoring Pitfalls
@@ -411,7 +411,7 @@ The following conditions should automatically trigger a low score (<=7.0):
 | Agent Prompt Quality(10%) | 6 sub-section completeness | skip conditions/role definition/core capabilities/execution process/constraints/output specifications |
 | Agent Prompt Quality(10%) | constraint quality | constraints include violation consequences |
 | Agent Prompt Quality(10%) | output path | standardized output path |
-| Automation Friendliness(10%) | script support | automated-check-script.sh |
+| Automation Friendliness(10%) | script support | automated_check_script.py |
 | Automation Friendliness(10%) | check coverage | number and quality of check items |
 | Automation Friendliness(10%) | CI/CD integration | .github/workflows configuration |
 | User Experience(10%) | learning curve | trigger scenarios intuitive |

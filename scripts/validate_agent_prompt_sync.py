@@ -2,8 +2,6 @@
 """
 Agent 提示词存在性校验：检查每个 skill 的 SKILL.md 中
 是否包含 "## Agent 提示词" section。
-
-替代 scripts/validate-agent-prompt-sync.sh
 """
 
 import os
