@@ -19,3 +19,5 @@ build/
 
 # 测试产物
 tests/triggers/report.json
+__pycache__/
+*.pyc

@@ -84,7 +84,7 @@ skills/<name>/
 
 ## Testing
 
-测试文件在 `tests/triggers/cases.json`（48 个触发回归用例）。关键词映射在 `scripts/run-trigger-regression.sh` 的 `SKILL_KW` 数组。新增 skill 时必须同时更新关键词映射和测试用例。
+测试文件在 `tests/triggers/cases.json`（48 个触发回归用例）。关键词映射在 `scripts/run_trigger_regression.py` 的 `SKILL_KW` 字典。新增 skill 时必须同时更新关键词映射和测试用例。
 
 ## Development Workflow
 

@@ -200,7 +200,7 @@ nacos-cli skill-sync resolve <skill-name> --use-agent claude-code --non-interact
 ```bash
 make triggers-check
 # 或
-./scripts/validate-skill-triggers.sh
+python3 scripts/validate_skill_triggers.py
 ```
 
 ### 校验规则
@@ -246,7 +246,7 @@ make prompts-sync-check
 
 #### 关键词一致性要求
 
-回归脚本依赖静态关键词映射（`scripts/run-trigger-regression.sh` 中的 `SKILL_KW`）。  
+回归脚本依赖静态关键词映射（`scripts/run_trigger_regression.py` 中的 `SKILL_KW`）。  
 当你新增 case 时，务必保证：
 
 1. 所有用于匹配的关键词在对应 `SKILL.md` 中真实存在

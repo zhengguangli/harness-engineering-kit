@@ -68,10 +68,10 @@ tests/   → skills/    (Regression test cases verify skill trigger logic)
 
 | Rule | Enforcement Method | Status |
 |---|---|---|
-| Required frontmatter fields | `scripts/validate-skill-triggers.sh` | ✅ Enforced |
+| Required frontmatter fields | `scripts/validate_skill_triggers.py` | ✅ Enforced |
 | Keyword consistency | Covered in regression tests | ⚠️ Merged into regression checks |
-| Trigger regression | `scripts/run-trigger-regression.sh` | ✅ Enforced |
-| Agent prompt existence | `scripts/validate-agent-prompt-sync.sh` | ✅ Enforced |
+| Trigger regression | `scripts/run_trigger_regression.py` | ✅ Enforced |
+| Agent prompt existence | `scripts/validate_agent_prompt_sync.py` | ✅ Enforced |
 | No circular dependencies between skills | Manual review | ⚠️ Documented only, not enforced |
 
 ## Lessons Learned

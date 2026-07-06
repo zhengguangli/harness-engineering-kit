@@ -85,7 +85,7 @@ compatibility: claude-code
 
 ## 注意事项
 
-- 校验脚本 `validate-agent-prompt-sync.sh` 已改为检查 section 存在性
+- 校验脚本 `validate_agent_prompt_sync.py` 已改为检查 section 存在性
 
 ## 相关文件
 
