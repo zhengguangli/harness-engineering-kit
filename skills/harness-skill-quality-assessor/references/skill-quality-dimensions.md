@@ -1,6 +1,6 @@
 # Skills Quality Assessment Dimensions Detailed Description
 
-Update time: 2026-07-02
+Update time: 2026-07-06
 Updated by: claude-code
 
 ## Evaluation Dimension System (8 Dimensions)
@@ -22,17 +22,19 @@ Updated by: claude-code
 - 0-5.9: No structure at all, needs rewrite
 
 **Checkpoints**:
-- [ ] Frontmatter includes name field
-- [ ] Frontmatter includes description field (>= 20 characters)
-- [ ] Frontmatter includes when_to_use field
-- [ ] Frontmatter includes compatibility field
-- [ ] Includes "Core Principles" section
-- [ ] Includes "When to Use" section
-- [ ] Includes "When Not to Use" section
-- [ ] Includes "Methodology" section
-- [ ] Includes "Key Takeaways" section
-- [ ] Includes "Common Pitfalls" section
-- [ ] Includes "Agent Prompt" section (if applicable)
+| Check Item | Pass Example | Fail Example |
+|------------|-------------|-------------|
+| Frontmatter includes name field | `name: harness-commit-gate` | Missing name field entirely |
+| Frontmatter includes description field (>= 20 chars) | `description: Evaluates code quality and enforces pre-commit standards` | `description: Runs checks` (only 12 chars) |
+| Frontmatter includes when_to_use field | `when_to_use: \|` with 3+ trigger scenarios | Missing when_to_use or only one vague scenario |
+| Frontmatter includes compatibility field | `compatibility: claude-code` | Missing compatibility field |
+| Includes "Core Principles" section | `## Core Principles` with 4 bullet points | Missing section entirely |
+| Includes "When to Use" section | `## When to Use` with trigger scenarios | Missing section |
+| Includes "When Not to Use" section | `## When Not to Use` with skip scenarios | Missing section |
+| Includes "Methodology" section | `## Methodology` with step-by-step guidance | Missing section or blank |
+| Includes "Key Takeaways" section | `## Key Points` (or Key Takeaways) with 3+ items | Missing section |
+| Includes "Common Pitfalls" section | `## Common Pitfalls` with 3+ common mistakes | Missing section |
+| Includes "Agent Prompt" section (if applicable) | `## Agent 提示词` with 6 sub-sections | Missing when skill uses context:fork |
 
 ### 2. Content Quality (Weight: 20%)
 
@@ -51,11 +53,13 @@ Updated by: claude-code
 - 0-5.9: Content is completely unusable, needs rewrite
 
 **Checkpoints**:
-- [ ] Core principles are clear and specific
-- [ ] Methodology steps are detailed and actionable
-- [ ] Examples and use cases are specific and practical
-- [ ] No ambiguous expressions
-- [ ] No redundant information
+| Check Item | Pass Example | Fail Example |
+|------------|-------------|-------------|
+| Core principles are clear and specific | 4-5 concise bullet points, each describing a distinct principle | Vague statements like "Be good" or fewer than 2 principles |
+| Methodology steps are detailed and actionable | Step 1-3 with specific commands/criteria per step | "Run the skill" with no further breakdown |
+| Examples and use cases are specific and practical | Concrete input->output examples with file paths | "Example: use this skill when needed" |
+| No ambiguous expressions | Terms like "automation-first", "fork context" are clearly defined | "Do the right thing", "Handle appropriately" |
+| No redundant information | Each section adds unique value | Same content repeated in Core Principles and Key Points |
 
 ### 3. Usability (Weight: 15%)
 
@@ -74,11 +78,13 @@ Updated by: claude-code
 - 0-5.9: Completely unusable, needs rewrite
 
 **Checkpoints**:
-- [ ] "When to Use" scenarios are specific and clear
-- [ ] "When Not to Use" scenarios are clear
-- [ ] Execution process steps are clear
-- [ ] Output format has clear specification
-- [ ] Has specific usage examples
+| Check Item | Pass Example | Fail Example |
+|------------|-------------|-------------|
+| "When to Use" scenarios are specific and clear | "User says '评估skill质量'" with explicit/implicit/negative triggers | "Use when needed" |
+| "When Not to Use" scenarios are clear | "User only wants to learn usage, not evaluate quality" | Missing entirely or "Don't use for other things" |
+| Execution process steps are clear | Numbered steps with clear entry/exit criteria | "Follow the process" with no detail |
+| Output format has clear specification | JSON schema or markdown template with field descriptions | "Output the results" |
+| Has specific usage examples | 3 concrete user query->handling examples | "Example 1: a user asks something" |
 
 ### 4. Design Patterns (Weight: 10%)
 
@@ -97,10 +103,12 @@ Updated by: claude-code
 - 0-5.9: Design completely unusable, needs rewrite
 
 **Checkpoints**:
-- [ ] Follows harness system design patterns
-- [ ] Structure is clearly modular
-- [ ] Allows for future extension
-- [ ] Consistent with other skills' style
+| Check Item | Pass Example | Fail Example |
+|------------|-------------|-------------|
+| Follows harness system design patterns | Uses `context: fork`, `agent:` fields, standard section names | Custom non-standard structure, no frontmatter |
+| Structure is clearly modular | Separate sections for principles/when-to-use/methodology/key-points | Everything in one continuous block |
+| Allows for future extension | References directory (`references/`) for supporting files | All content crammed into SKILL.md >500 lines |
+| Consistent with other skills' style | Same section ordering, heading hierarchy as peer skills | Different heading levels, unique section names |
 
 ### 5. Documentation Quality (Weight: 10%)
 
@@ -119,10 +127,12 @@ Updated by: claude-code
 - 0-5.9: No documentation at all, needs rewrite
 
 **Checkpoints**:
-- [ ] Includes usage examples
-- [ ] Includes error handling guidance
-- [ ] Includes troubleshooting suggestions
-- [ ] Explanations are clear and understandable
+| Check Item | Pass Example | Fail Example |
+|------------|-------------|-------------|
+| Includes usage examples | 3+ concrete examples in `## Examples` section | No examples or only one trivial example |
+| Includes error handling guidance | `## Edge Case Handling` with 3+ scenarios and recovery steps | No error handling section |
+| Includes troubleshooting suggestions | FAQ or troubleshooting subsection with common issues | Only says "if it fails, try again" |
+| Explanations are clear and understandable | Terminology defined, rationale provided for each constraint | Jargon without explanation |
 
 ### 6. Agent Prompt Quality (Weight: 10%)
 
@@ -141,11 +151,13 @@ Updated by: claude-code
 - 0-5.9: No agent prompt at all, needs rewrite
 
 **Checkpoints**:
-- [ ] Role definition is clear
-- [ ] Core capabilities are clear
-- [ ] Execution process is detailed
-- [ ] Constraints are reasonable
-- [ ] Output specification is clear
+| Check Item | Pass Example | Fail Example |
+|------------|-------------|-------------|
+| Role definition is clear | "You are the Skill Quality Assessor, specialized in evaluating skill quality" | No role definition or "You are an AI assistant" |
+| Core capabilities are clear | 3-5 explicit bullet points of what the agent can do | Vague "can do many things" |
+| Execution process is detailed | Numbered 1-11 flow with entry points and exit criteria | "Execute the process step by step" |
+| Constraints are reasonable | Clear violation consequences: "Violation requires re-evaluation" | "Be careful" or no constraints at all |
+| Output specification is clear | Specific output path, format, severity classification | "Output results" without format details |
 
 ### 7. Automation Friendliness (Weight: 10%)
 
@@ -164,10 +176,12 @@ Updated by: claude-code
 - 0-5.9: Completely impossible to automate, needs rewrite
 
 **Checkpoints**:
-- [ ] Provides automated check script
-- [ ] Supports CI/CD integration
-- [ ] High proportion of check items can be automated
-- [ ] Automated check results are quantifiable
+| Check Item | Pass Example | Fail Example |
+|------------|-------------|-------------|
+| Provides automated check script | `references/automated-check-script.sh` exists and is executable | No script, all checks manual |
+| Supports CI/CD integration | `.github/workflows/` invokes the script | Only standalone script with no CI config |
+| High proportion of check items can be automated | 70%+ checks automated (frontmatter/sections/markdown) | Only 1-2 basic file existence checks automated |
+| Automated check results are quantifiable | JSON output with scores and severity levels | Script prints PASS/FAIL to stdout only |
 
 ### 8. User Experience (Weight: 10%)
 
@@ -186,10 +200,12 @@ Updated by: claude-code
 - 0-5.9: Completely unusable, needs rewrite
 
 **Checkpoints**:
-- [ ] Gentle learning curve
-- [ ] Easy to use
-- [ ] Strong error recovery capability
-- [ ] Provides sufficient help information
+| Check Item | Pass Example | Fail Example |
+|------------|-------------|-------------|
+| Gentle learning curve | Trigger scenarios self-evident from description, clear `when_to_use` | Requires reading entire skill to understand when to use it |
+| Easy to use | Mode selection table with switching rules, clear Examples section | Only one usage path, no mode guidance |
+| Strong error recovery capability | `## Edge Case Handling` with recovery steps for each scenario | No error recovery guidance |
+| Provides sufficient help information | Best practices section + error handling + FAQ | Missing all of the above |
 
 ### Supplementary Check: allowed-tools Declaration Check
 
@@ -418,4 +434,4 @@ The automated check scoring has been upgraded from a simple pass-rate model to a
 **Final Automated Score** = max(0, min(10, (pass_count x 1 + penalty_score) x 10 / total_check_count))
 
 ---
-Last updated: 2026-07-03 (Change: Added supplementary checkpoints, evaluator guide, sub-dimension mapping, weighted scoring model)
+Last updated: 2026-07-06 (Change: Added Pass/Fail Example columns to 8 dimensions' checkpoints)

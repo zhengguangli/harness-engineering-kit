@@ -163,6 +163,37 @@ check_fm_allowed_tools() {
     fi
 }
 
+check_fm_allowed_tools_syntax() {
+    local file="$1"
+    local line
+    line=$(grep -E "^allowed-tools:" "$file" | head -1 | sed 's/^allowed-tools:[[:space:]]*//')
+    [[ -z "$line" ]] && { check_warn "allowed-tools-syntax" "No allowed-tools content to validate"; return; }
+    # Validate format: Tool(cmd1 cmd2) Tool2(cmd3) ...
+    if echo "$line" | grep -qE '^[A-Za-z_]+\([^)]*\)([[:space:]]+[A-Za-z_]+\([^)]*\))*$'; then
+        check_pass
+    else
+        check_fail "allowed-tools-syntax" "MEDIUM" "allowed-tools format invalid (expected: Tool(cmd1 cmd2)): $line"
+    fi
+}
+
+check_fm_agent_prompt_consistency() {
+    local file="$1"
+    local agent_name
+    agent_name=$(grep -E "^agent:" "$file" | head -1 | sed 's/^agent:[[:space:]]*//')
+    local prompt_section
+    prompt_section=$(grep -E "^##\s+(Agent Prompt|Agent 提示词)" "$file" | head -1 | sed 's/^##\s*//')
+    if [[ -n "$agent_name" && -n "$prompt_section" ]]; then
+        # Check if agent name appears in the prompt section title or near it
+        if grep -qE "^\s*###\s+${agent_name}" "$file" || echo "$prompt_section" | grep -qi "$agent_name"; then
+            check_pass
+        else
+            check_warn "agent-prompt-consistency" "Agent field value '$agent_name' does not appear in/after Agent Prompt section"
+        fi
+    else
+        check_warn "agent-prompt-consistency" "Cannot verify consistency (missing agent field or Agent Prompt section)"
+    fi
+}
+
 check_fm_metadata_category() {
     grep -qE "category:" "$1" && check_pass || check_warn "frontmatter-category" "Missing metadata.category field"
 }
@@ -338,6 +369,8 @@ assess_skill() {
     check_fm_allowed_tools "$file"
     check_fm_metadata_category "$file"
     check_fm_description_length "$file"
+    check_fm_allowed_tools_syntax "$file"
+    check_fm_agent_prompt_consistency "$file"
 
     # Section structure check (including hard constraints)
     for s in "Core Principles" "When to Use" "When Not to Use" "Methodology" "Key Points" "Common Pitfalls" "Edge Case Handling"; do
@@ -435,16 +468,59 @@ with open('$tmp', 'w') as f: json.dump(data, f, ensure_ascii=False)
     local avg=0
     [[ $count -gt 0 ]] && avg=$(echo "scale=2; $total_score / $count" | bc 2>/dev/null || echo "0")
 
+    # Cross-skill checks — collect separately, not via check_ functions
+    local cross_skill_issues="[]"
+    local required_sections=("Core Principles" "When to Use" "Methodology" "Key Points")
+    local missing_map=""
+    for skill in "${skills[@]}"; do
+        local sf="$SKILLS_DIR/$skill/SKILL.md"
+        [[ -f "$sf" ]] || continue
+        for sec in "${required_sections[@]}"; do
+            grep -qE "^##\s+${sec}" "$sf" 2>/dev/null || missing_map="$missing_map [${skill}:${sec}]"
+        done
+    done
+    local uniform_issue=""
+    if [[ -n "$missing_map" ]]; then
+        uniform_issue="{\"check\":\"cross-skill-uniformity\",\"severity\":\"WARN\",\"detail\":\"Skills missing required sections:$missing_map\"}"
+    fi
+
+    local ref_issues=""
+    for skill in "${skills[@]}"; do
+        local sf="$SKILLS_DIR/$skill/SKILL.md"
+        [[ -f "$sf" ]] || continue
+        local refs
+        refs=$(grep -oE "harness-[a-z-]+" "$sf" 2>/dev/null | sort -u | grep -v "^harness-$skill$" || true)
+        while IFS= read -r ref; do
+            [[ -z "$ref" ]] && continue
+            local rf="$SKILLS_DIR/$ref/SKILL.md"
+            if [[ -f "$rf" ]]; then
+                grep -q "$skill" "$rf" 2>/dev/null || ref_issues="$ref_issues [${skill}→${ref}]"
+            fi
+        done <<< "$refs"
+    done
+    local bidir_issue=""
+    if [[ -n "$ref_issues" ]]; then
+        bidir_issue="{\"check\":\"bidirectional-refs\",\"severity\":\"WARN\",\"detail\":\"Missing back-references:$ref_issues\"}"
+    fi
+
     # Common issues analysis
     python3 -c "
 import json, sys
 results = json.load(open('$all_results'))
+cross_issues = []
+u = '''$uniform_issue'''
+b = '''$bidir_issue'''
+if u: cross_issues.append(json.loads(u))
+if b: cross_issues.append(json.loads(b))
+cross_stats = {'total_cross_skill_checks': 2, 'cross_skill_issues': len(cross_issues)}
 output = {
     'evaluation_date': '$(date -u +%Y-%m-%dT%H:%M:%SZ)',
     'total_skills': len(results),
     'average_score': float(sys.argv[1]),
     'scoring_model': 'weighted (CRITICAL=5, HIGH=3, MEDIUM=2, LOW=1, WARN=0)',
-    'results': results
+    'results': results,
+    'cross_skill_checks': cross_stats,
+    'cross_skill_issues': cross_issues
 }
 json.dump(output, sys.stdout, ensure_ascii=False, indent=2)
 " "$avg"
