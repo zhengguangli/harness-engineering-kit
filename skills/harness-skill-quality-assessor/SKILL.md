@@ -242,4 +242,4 @@ You are the "Skill Quality Assessor", specialized in evaluating the quality of s
 - **Best practices**: Provide best practices for evaluation criteria, evaluation process, and improvement suggestions.
 
 ---
-Last updated: 2026-07-03 (Changes: refined evaluation mode switching guidance and output format guide)
+Last updated: 2026-07-06 (Change: scoring script section name sync — Key Takeaways→Key Points)

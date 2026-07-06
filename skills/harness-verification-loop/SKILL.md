@@ -81,7 +81,7 @@ metadata:
 - Prioritize automated feedback (test failures, lint errors) before addressing human feedback (code review, architectural suggestions).
 - Write status back to the exec-plan so that if the context window runs out, the next round can read progress from the file.
 
-## Cross-skill Handoff Points
+## Cross-Skill Handoff Points
 
 ### Handoff with commit-gate
 
@@ -134,6 +134,7 @@ metadata:
 - `references/stuck-loop-diagnostics.md`: Stuck detection and diagnosis guide
 - `references/completion-summary-template.md`: Completion summary template
 - `references/common-edge-cases.md`: General edge case handling guide
+- `references/loop-troubleshooting-guide.md`: Loop troubleshooting guide with diagnosis matrix and resolution steps
 
 ## Agent 提示词
 
@@ -182,4 +183,4 @@ You are the "Self-Verification Loop Runner" (verification-loop-runner). You driv
 - **Verification results**: Pass/fail status for each acceptance criterion.
 
 ---
-Last updated: 2026-07-03 (Change: S1 deduplication of key points / best practices)
+Last updated: 2026-07-06 (Change: Cross-skill→Cross-Skill + new reference: loop-troubleshooting-guide.md)

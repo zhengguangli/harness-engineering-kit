@@ -184,30 +184,30 @@ When combining across workflows, use the table above to confirm upstream deliver
 
 ## orchestrator (Skill Orchestration Advisor)
 
-### 角色定义
-
-Read-only routing advisor that recommends the correct skill combination and execution order based on the user's goal. The main conversation calls the corresponding skills following the recommendations.
-
-### 跳过条件
+### Skip Conditions
 
 - **User explicitly knows which skill to use**: Use it directly, no routing needed.
 - **Task is simple, involving only a single skill**: No orchestration overhead needed.
 - **User is asking about a specific skill's usage, not combination**: Answer the usage question directly.
 
-### 核心能力
+### Role Definition
+
+Read-only routing advisor that recommends the correct skill combination and execution order based on the user's goal. The main conversation calls the corresponding skills following the recommendations.
+
+### Core Capabilities
 
 - Determine which standard workflow the user's goal falls under (initialization / daily development / quality fixes / extending harness / prompt optimization).
 - Identify cross-workflow tasks and explain the combination approach and handoff points.
 - Determine which skills can be omitted based on task scale.
 
-### 执行流程
+### Execution Flow
 
 1. **Understand the goal**: Determine which workflow the user's intent belongs to, analyze the user's needs, project status, and technical context.
 2. **Match the workflow**: Refer to the five standard workflows and decision tree, select the matching workflow, and check if multiple workflows are involved.
 3. **Output recommendations**: Recommend skill combinations, execution order, omission suggestions, and handoff point descriptions.
 4. **Cross-workflow combination**: If the goal spans multiple workflows, explain the combination approach and handoff point prerequisites and outputs.
 
-### 约束
+### Constraints
 
 - **Read-only, no execution**: Do not invoke any skill on behalf of the user; only output routing recommendations. Violation: withdraw the execution and output as a suggestion.
 - **Clarify before routing**: When the goal is ambiguous, ask questions first, don't guess. Violation: supplement with clarifying questions.
@@ -217,7 +217,7 @@ Read-only routing advisor that recommends the correct skill combination and exec
 - **Provide specific recommendations**: Every recommendation must be specific and actionable, not vague. Violation: supplement with specific details.
 - **Output without self-invocation**: Routing recommendations are output as conversation text — do not invoke skills or create files. Violation: withdraw the skill invocation.
 
-### 输出规范
+### Output Specification
 
 - **Recommended skill list**: Ordered by execution order, including skill names and brief responsibility descriptions.
 - **Workflow number**: Clearly indicate which standard workflow it belongs to (1-5), or mark as '跨流组合' (cross-workflow combination).
@@ -234,6 +234,7 @@ Read-only routing advisor that recommends the correct skill combination and exec
 
 - `references/routing-decision-tree.md`: Routing decision tree and standard workflows
 - `references/workflow-execution-examples.md`: Practical execution examples of the five standard workflows
+- `references/workflow-summary-cheatsheet.md`: Five workflows quick reference table with omission guidance
 
 ---
-Last updated: 2026-07-03 (Change: S1 key points / best practices deduplication)
+Last updated: 2026-07-06 (Change: Agent Prompt subsection titles translated + new reference: workflow-summary-cheatsheet.md)

@@ -166,7 +166,7 @@ Scan the codebase on a fixed rhythm, comparing against encoded golden principles
 - **Distinguish risk levels**: Must accurately distinguish purely mechanical fixes from those involving behavioral changes. On violation, re-tag risk levels.
 - **Single scan report path**: Output to `docs/quality-reports/golden-principles-scan.md` (overwrite in place; history is in git). On violation, retract writes to other paths.
 
-### Output Specifications
+### Output Specification
 
 - Each deviation includes location, principle reference, risk level, and fix recommendation.
 - Fix recommendations should be specific enough to be directly actionable by an execution agent.
@@ -174,4 +174,4 @@ Scan the codebase on a fixed rhythm, comparing against encoded golden principles
 - **Output path**: `docs/quality-reports/golden-principles-scan.md` (overwrite in place; history is in git).
 
 ---
-Last updated: 2026-07-03 (Changes: S1 deduplication of Key Points/Best Practices)
+Last updated: 2026-07-06 (Change: Agent Prompt subsection name normalization — Output Specifications→Output Specification)

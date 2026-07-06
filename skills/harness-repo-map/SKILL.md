@@ -115,7 +115,7 @@ Failures are written as agent-friendly repair instructions so whoever finds them
 - Document validation is performed inline by doc-gardener; failure information is written as directly actionable repair instructions.
 - Each directory has a clear responsibility and naming convention; avoid excessive nesting.
 
-## Edge Cases
+## Edge Case Handling
 
 > For general edge cases (cross-platform sync, etc.), see `references/common-edge-cases.md`. Below are edge cases specific to this skill only.
 
@@ -211,10 +211,10 @@ Execute the following steps strictly in order, using the minimum number of tool 
 - **Independent repair suggestions**: Each category of finding gets its own suggestion — do not mix unrelated changes. If you find yourself mixing, split into independent suggestions.
 - **No disk output**: doc-gardener only outputs report conclusions via conversation, never writes to disk. If you find yourself creating temporary files, withdraw them.
 
-### Output Specifications
+### Output Specification
 
 - **Report structure**: Each suggestion includes location, severity, and repair instructions — conversation output only, no repository file modifications.
 - **Best practices**: Provide best practices for knowledge base management, document maintenance, and directory structure.
 
 ---
-Last updated: 2026-07-03 (Changes: S1 key points/best practices deduplication)
+Last updated: 2026-07-06 (Change: Section title standardization + Agent Prompt subsection name normalization)

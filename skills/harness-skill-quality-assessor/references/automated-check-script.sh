@@ -340,7 +340,7 @@ assess_skill() {
     check_fm_description_length "$file"
 
     # Section structure check (including hard constraints)
-    for s in "Core Principles" "When to Use" "When Not to Use" "Methodology" "Key Takeaways" "Common Pitfalls" "Edge Case Handling"; do
+    for s in "Core Principles" "When to Use" "When Not to Use" "Methodology" "Key Points" "Common Pitfalls" "Edge Case Handling"; do
         check_section "$file" "$s"
     done
     check_hard_constraints_section "$file"

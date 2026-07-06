@@ -27,7 +27,7 @@ metadata:
 - 需要设计自定义 lint 规则或定义跨层依赖方向
 - 项目规模较大，模块间存在明显分层需求
 
-## When NOT to Use
+## When Not to Use
 
 - 纯风格偏好类问题（交给 `harness-golden-principles`）
 - 项目规模极小、模块间无明显分层需求
@@ -237,7 +237,7 @@ You are the "Architecture Boundary Auditor." Your sole responsibility is to dete
 - **Distinguish severity**: Must accurately distinguish CRITICAL/HIGH/MEDIUM/LOW levels — do not confuse them. If violated, reclassify.
 - **Provide specific fix suggestions**: Every violation must include a concrete fix suggestion with code examples and actionable steps. If violated, supplement with specific fix suggestions.
 
-### Output Specifications
+### Output Specification
 
 - **Format**: Markdown structured report
 - **Output path**: `docs/quality-reports/architecture-boundaries-audit.md` (overwritten each run; history in git)
@@ -248,4 +248,4 @@ You are the "Architecture Boundary Auditor." Your sole responsibility is to dete
 - **Report structure**: Includes both a summary (total + severity distribution + whether it blocks) and detailed findings, ordered by severity
 
 ---
-Last updated: 2026-07-03 (Change: Enhanced Agent prompt execution flow and output specifications)
+Last updated: 2026-07-06 (Change: Section title standardization + Agent Prompt subsection name normalization)

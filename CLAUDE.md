@@ -69,7 +69,7 @@ Layer 5 提交门      harness-commit-gate
 
 ## Quality gates
 
-提交前必须运行 `make triggers-all`。当前全 13 个 skill 质量评分 9.47（A 级，第十四次评估）。详细维度评分见 `docs/QUALITY_SCORE.md`。
+提交前必须运行 `make triggers-all`。当前全 13 个 skill 质量评分 9.48（A 级，第十五次评估）。详细维度评分见 `docs/QUALITY_SCORE.md`。
 
 ## Skill 文件结构
 

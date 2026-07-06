@@ -27,7 +27,7 @@ metadata:
 - The user says "为这个项目初始化 harness", "设计一套 harness 规范"
 - The user enters a new project and wants to use the harness methodology to manage agent collaboration
 
-## When NOT to Use
+## When Not to Use
 
 - The project already has a complete harness structure and the user hasn't asked to reinitialize
 - The user only wants to understand the harness methodology, not to actually initialize
@@ -117,7 +117,7 @@ If any item fails, return to the corresponding step to fix before committing.
 - **CLAUDE.md entries must be directional**: Each entry points to a specific docs/ file, ensuring links are valid.
 - **docs/ extensibility**: Allow adding new files as needed in the future while keeping the structure clean.
 
-## Edge Cases
+## Edge Case Handling
 
 > For general edge cases (extremely small projects, legacy project migration, multi-team collaboration, etc.) see `references/common-edge-cases.md`. Below are edge cases unique to this skill.
 
@@ -208,11 +208,11 @@ You are the "Harness Initialization Artisan." Your responsibility is to generate
 - **Handle edge cases**: Must handle various edge cases and provide best practices. Supplement edge case handling on violation.
 - **Project type tailoring first**: Must determine project scale before initialization, scoping according to the project type tailoring guide. Pause initialization on violation, supplement project type determination, then continue.
 
-### Output Specifications
+### Output Specification
 
 - **Format**: Markdown files
 - **Content**: CLAUDE.md (routing table + hard constraints + workflow tips); docs/ skeleton files (minimum content + "last updated" dates)
 - **Modification manifest**: List all created/modified files
 
 ---
-Last updated: 2026-07-03 (Changes: S1 Key Points/Best Practices deduplication, expanded content quality)
+Last updated: 2026-07-06 (Change: Section title standardization + Agent Prompt subsection name normalization)

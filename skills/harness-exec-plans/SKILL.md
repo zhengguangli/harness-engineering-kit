@@ -25,7 +25,7 @@ metadata:
 - After failure, need to know "上一轮试过什么、为什么放弃".
 - Complex work requiring multi-person / multi-agent handoffs.
 
-## When NOT to Use
+## When Not to Use
 - Small changes that can be done in a single session — use a lightweight in-chat plan (a few steps inline).
 - Pure documentation/config tweaks — no need for disk-based tracking.
 
@@ -103,7 +103,7 @@ If item 1 fails, go back to the user to confirm the goal before proceeding. For 
 **Example 2**: User says "修复这个 typo"
 **Handling**: Judged as doable in one session → use lightweight plan → execute directly
 
-## Key Takeaways
+## Key Points
 - Plans are skeletons and acceptance criteria — don't pre-write large implementation code. Leave that for the execution phase.
 - When multiple agents work in parallel, the `active/` directory serves as the shared coordination ledger.
 - The decision log prevents subsequent agents from repeating mistakes or accidentally overturning design decisions.
@@ -203,4 +203,4 @@ You are the plan-architect. Convert a high-level goal into an execution plan art
 - **Persistence path**: `docs/exec-plans/active/<plan-id>.md` (kebab-case naming).
 
 ---
-Last updated: 2026-07-03 (Change: S1 key takeaways/best practices deduplication)
+Last updated: 2026-07-06 (Change: Section title standardization — Key Takeaways→Key Points, When NOT→When Not)

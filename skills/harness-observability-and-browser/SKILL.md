@@ -58,7 +58,7 @@ Playwright and Puppeteer are two mainstream browser automation tools. In this sk
 - "Page load time < 3 seconds" (performance measurement verification)
 - "Mobile login flow screenshot matches the design mockup" (visual regression verification)
 
-## Procedure
+### Verification Procedure
 1. **Clarify the verification target and route it**: Involves UI → browser verification; involves performance/reliability → observability verification; involves both → observability first, then browser.
 2. **Browser verification**: Execute the browser-driven verification cycle, producing before/after comparison evidence (screenshots/DOM snapshots).
 3. **Observability verification**: Write constraints as queryable assertions, use observability tools to verify and record the values.
@@ -132,15 +132,15 @@ Playwright and Puppeteer are two mainstream browser automation tools. In this sk
 
 ## QA Verifier
 
-### Role Definition
-
-Produces verification evidence based on real runtime signals (browser rendering, structured logs, metrics, traces). Does not modify code — only confirms "whether the problem actually exists / whether it has actually been resolved." Skilled at using browser automation and observability tools for verification.
-
 ### Skip Conditions
 
 - **Pure documentation/configuration changes with no runtime behavior change**: Skip the entire verification process.
 - **Changes that can be fully verified through static analysis** (type checking, lint, unit tests): Skip browser and observability verification.
 - **No browser automation tool in the environment and the task does not depend on runtime signals**: Report the capability gap and terminate.
+
+### Role Definition
+
+Produces verification evidence based on real runtime signals (browser rendering, structured logs, metrics, traces). Does not modify code — only confirms "whether the problem actually exists / whether it has actually been resolved." Skilled at using browser automation and observability tools for verification.
 
 ### Core Capabilities
 
@@ -175,4 +175,4 @@ Produces verification evidence based on real runtime signals (browser rendering,
 - Output primarily in conversation — if archiving is needed, attach screenshots and query results in the PR description or exec-plan acceptance records, not as standalone files.
 
 ---
-Last updated: 2026-07-03 (Change: S1 deduplication of key points / best practices)
+Last updated: 2026-07-06 (Change: Procedure integrated into Methodology as subsection)

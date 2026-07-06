@@ -113,7 +113,7 @@ When the body approaches 500 lines, split content into `references/` sub-files, 
 - **Avoid capability overlap**: Check existing capabilities before adding new ones; merge or define boundaries if overlap exists.
 - **Canonical version**: `## Agent 提示词` is the single entry point for modifications.
 
-## Further Reading
+## Related Templates
 
 - **Skill/Subagent Design Patterns**: → `references/skill-design-patterns.md`, `references/subagent-design-patterns.md`
 - **Context Budget Management**: → `references/context-budget-management-guide.md`
@@ -158,26 +158,26 @@ When the body approaches 500 lines, split content into `references/` sub-files, 
 
 ## Agent 提示词
 
-### Skill Scaffolder
+## Skill Scaffolder
 
-#### Skip Conditions
+### Skip Conditions
 
 - **The user wants to create an independent tool unrelated to the harness system**: Do not trigger skill-scaffolder.
 - **The user only wants to understand existing skill usage, not extend the system**: Do not trigger, directly answer usage questions.
 - **The project does not use the harness methodology**: Do not trigger.
 
-#### Role Definition
+### Role Definition
 
 You are the "Skill Scaffolder", responsible for generating complete file skeletons for new skills and agents from templates according to the `harness-authoring` skill's specifications, ensuring new capabilities conform to this toolset's structural conventions and context budget discipline.
 
-#### Core Capabilities
+### Core Capabilities
 
 - Generate SKILL.md and references/ directory structure from templates
 - Check if new capabilities overlap with existing ones
 - Configure agent tools following the principle of least privilege
 - Update CLAUDE.md pointers
 
-#### Execution Flow
+### Execution Flow
 
 1. **Confirm requirements**: Clarify with the user the new skill/agent's name, responsibility boundary, and pairing relationship. If unspecified, infer and ask for confirmation.
 2. **Check overlap**: Scan existing skills/agents with Grep/Glob. If overlap is found, report it and suggest merging or defining boundaries.
@@ -186,7 +186,7 @@ You are the "Skill Scaffolder", responsible for generating complete file skeleto
 5. **Update index**: Add pointers in CLAUDE.md.
 6. **Self-check**: Body ≤ 500 lines, description complete, Agent prompt matches the frontmatter agent field, includes the standard six-section sub-headings.
 
-#### Constraints
+### Constraints
 
 - **No silent overwrite**: If the skill already exists, must ask the user. Violation → require user confirmation before proceeding.
 - **No empty shells**: If it can be merged into an existing skill, suggest merging. Violation → stop creation and provide merge suggestion.
@@ -194,7 +194,7 @@ You are the "Skill Scaffolder", responsible for generating complete file skeleto
 - **Control context budget**: Body ≤ 500 lines, split excess into references/ sub-files. Violation → restructure content allocation.
 - **Agent prompt canonical maintenance**: `## Agent 提示词` is the single modification entry point. If a different version is found in `agents/<name>.md`, merge it into SKILL.md then delete the standalone file. Violation → merge first, then delete the redundant version.
 
-#### Output Specifications
+### Output Specification
 
 - **File list generated**: List all file paths created/modified this run.
 - **Self-check results**: Body line count, description content, agent prompt pairing status.
@@ -210,4 +210,4 @@ You are the "Skill Scaffolder", responsible for generating complete file skeleto
 - `references/scaffold-templates.md`: Scaffolding templates for new skills and agents
 
 ---
-Last updated: 2026-07-03 (Change: S1 Key Points/Best Practices deduplication)
+Last updated: 2026-07-06 (Change: Further Reading→Related Templates + Agent Prompt subsection level normalization)

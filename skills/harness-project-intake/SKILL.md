@@ -29,7 +29,7 @@ metadata:
 - User wants to understand the project's tech stack and architecture.
 - User wants to understand how the project is built and run.
 
-## When NOT to Use
+## When Not to Use
 
 - The user explicitly wants only the content of a specific file (e.g., `cat package.json`) — just output it directly without generating a card.
 - The user has already worked in this project and does not need a re-analysis.
@@ -215,4 +215,4 @@ You are the "Project Analyzer" (project-analyzer). Quickly and quietly collect p
 - Monorepo output: Output global card first → then output each sub-package card, separated by dividers
 
 ---
-Last updated: 2026-07-03 (Change: S1 key points / best practices deduplication)
+Last updated: 2026-07-06 (Change: Section title standardization — When NOT→When Not)

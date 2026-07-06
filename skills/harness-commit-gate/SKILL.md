@@ -125,7 +125,7 @@ For detailed execution steps, see `## Agent 提示词 → 执行流程`. Below i
 - **Scan for sensitive information**: Use Grep to scan for API keys, passwords, tokens, private keys, etc. and block the commit.
 - **Prevent sensitive information leaks**: Use `.gitignore` to ignore sensitive files and environment variables to store sensitive information.
 
-## Edge Cases
+## Edge Case Handling
 
 ### No Test Configuration or User Requests Skip
 
@@ -224,6 +224,7 @@ You are the "Commit Quality Gate Runner", responsible for executing a lightweigh
 
 - `references/commit-message-guide.md`: Commit Message Format Guide
 - `references/ci-integration-guide.md`: CI Integration Guide (GitHub Actions / GitLab CI Configuration)
+- `references/diff-review-checklist.md`: Standardized git diff review checklist (sensitive info, debug code, scope creep)
 
 ---
-Last updated: 2026-07-03 (Change: S1 Key Points/Best Practices deduplication)
+Last updated: 2026-07-06 (Change: Section title standardization + new reference: diff-review-checklist.md)

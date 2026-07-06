@@ -15,7 +15,7 @@
 
 | 领域 | frontmatter 合规 | 触发回归 | 关键词一致性 | 文档新鲜度 | 最近评估日期 |
 |---|---|---|---|---|---|
-| skills (13个) | 13/13 (100%) ✅ | 48/48 (100%) ✅ | 13/13 (100%) ✅ | ✅ 7日内更新 | 2026-07-03 (十四次) |
+| skills (13个) | 13/13 (100%) ✅ | 48/48 (100%) ✅ | 13/13 (100%) ✅ | ✅ 7日内更新 | 2026-07-06 (十六次) |
 | scripts | — | — | — | ✅ 7日内更新 | 2026-07-03 |
 | tests | — | — | — | ✅ 7日内更新 | 2026-07-03 |
 
@@ -49,8 +49,12 @@
 
 2026-07-03 (十四次): 第十四次 8 维度子维度体系批量评估。平均分 9.47 (A 级，持平)，3 A+ / 10 A。本轮最大事件：全 13 个 SKILL.md 完成中译英全文翻译，内容逻辑和结构不变。评分持平（9.47），等级分布不变（3A+/10A）。自动化检查脚本发现 3 个自身 bug 并已修复：① `check_common_edge_cases()` 的 `dirname` 多一层目录上移（`dirname "$(dirname "$1")"` 改为 `dirname "$1"`）；② agent-prompt 搜索 `## Agent Prompt` 改为同时匹配 `## Agent 提示词`；③ context 值未 trim 尾部空格（sed 增加 trailing whitespace trim）。同步修复共享脚本 `scripts/skill-automated-check.sh` 中的中文 section 名（核心原则→Core Principles，何时使用→When to Use，方法论→Methodology，关键要点→Key Points，最后更新→Last updated，边界情况→Edge Case）。无 CRITICAL/HIGH/MEDIUM 级别问题——第五次达成"零未解决 MEDIUM+ 问题"状态。详见 `docs/quality-reports/skills-quality-assessment.md`。
 
+2026-07-06 (十五次): 第十五次 8 维度子维度体系批量评估。平均分 9.48 (A 级，+0.01)，3 A+ / 10 A。本轮三大变更：(1) F1-F7 章节标题统一——消除 Key Takeaways/When NOT/Further Reading 等 3 个非标准命名；(2) Agent Prompt 子节标准化——顺序、命名、层级统一（11/13 完全对齐，2 个 LOW 遗留问题）；(3) 3 个新参考文件（diff-review-checklist.md / workflow-summary-cheatsheet.md / loop-troubleshooting-guide.md），参考文件总数 80→83。基础设施三件套维持 100% 全覆盖（automated-check-script.sh 13/13、allowed-tools 13/13、跨 skill 交接 13/13）。结构完整性维度 +0.04 为最大增幅。2 个新的 LOW 问题（observability-and-browser Agent Prompt 子节顺序、authoring agent 名称 heading 级别）——第六次达成"零未解决 MEDIUM+ 问题"状态。详见 `docs/quality-reports/skills-quality-assessment.md`。
+
+2026-07-06 (十六次): 第十六次 8 维度子维度体系批量评估。平均分 9.49 (A 级，+0.01)，3 A+ / 10 A。本轮为存量问题修复轮次：第 15 次评估指出的 2 个 LOW 遗留问题已全部修复——observability-and-browser Agent Prompt 子节顺序标准化（Skip Conditions 前置）、authoring agent 名称 heading 级别标准化（### → ##）。同步修复 observability 修复过程中发现的 duplicate bullet points 遗留。prompt-optimizer 新增 2 条 Skip Conditions。skill-quality-assessor "Last updated" 日期更新至 2026-07-06（第 15 次 LOW 问题）。唯一持续性遗留：skill-quality-assessor 加权评分脚本 context trim bug（连续 5 个周期未修复）。第七次达成"零未解决 MEDIUM+ 问题"状态。详见 `docs/quality-reports/skills-quality-assessment.md`。
+
 ---
-最后更新: 2026-07-03
+最后更新: 2026-07-06
 
 ## 维护周期（自 2026-07-03 起生效）
 
