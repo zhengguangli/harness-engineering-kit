@@ -47,18 +47,7 @@ python3 scripts/run-all.py --run-type prompt        # 仅 agent prompt 检查
 
 ## Architecture
 
-```
-Layer 0 信息采集    harness-project-intake
-Layer 1 骨架搭建    harness-bootstrap
-Layer 2 知识与约束  harness-repo-map, harness-architecture-boundaries,
-                    harness-golden-principles, harness-prompt-optimizer
-Layer 3 计划驱动    harness-exec-plans
-Layer 4 执行验证    harness-verification-loop, harness-observability-and-browser
-Layer 5 提交门      harness-commit-gate
-元层                harness-orchestration, harness-authoring
-```
-
-依赖只能向下流动。同层可并行。元层可被任意层调用。
+详见 `docs/ARCHITECTURE.md`。依赖只能向下流动。同层可并行。元层可被任意层调用。
 
 ## Skill Invocation
 
