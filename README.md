@@ -198,7 +198,7 @@ nacos-cli skill-sync resolve <skill-name> --use-agent claude-code --non-interact
 ### 本地运行
 
 ```bash
-python3 scripts/validate_skill_triggers.py
+python3 scripts/run-all.py --run-type check
 ```
 
 ### 校验规则
@@ -212,17 +212,15 @@ python3 scripts/validate_skill_triggers.py
 ### 本地全量检查（推荐）
 
 ```bash
-python3 scripts/validate_skill_triggers.py && \
-python3 scripts/run_trigger_regression.py && \
-python3 scripts/validate_agent_prompt_sync.py
+python3 scripts/run-all.py
 ```
 
 ### Agent Prompt 存在性校验
 
-`python3 scripts/validate_agent_prompt_sync.py` 验证每个 SKILL.md 是否包含 `## Agent 提示词` section。
+`python3 scripts/run-all.py --run-type prompt` 验证每个 SKILL.md 是否包含 `## Agent 提示词` section。
 
 ```bash
-python3 scripts/validate_agent_prompt_sync.py
+python3 scripts/run-all.py --run-type prompt
 ```
 
 ### 回归用例维护规范（Case Guide）
@@ -253,8 +251,8 @@ python3 scripts/validate_agent_prompt_sync.py
 
 #### 报告与产物
 
-- 回归报告：`tests/triggers/report.json`
-- 推荐更新节奏：每次修改触发词/用例后都跑一次全量验证（`python3 scripts/validate_skill_triggers.py && python3 scripts/run_trigger_regression.py && python3 scripts/validate_agent_prompt_sync.py`）
+- 回归报告：`tests/triggers/report.json`（`python3 scripts/run-all.py --run-type regression --json` 生成）
+- 推荐更新节奏：每次修改触发词/用例后都跑一次 `python3 scripts/run-all.py`
 
 
 ## 推荐的接入顺序

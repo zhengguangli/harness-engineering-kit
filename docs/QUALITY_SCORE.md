@@ -62,14 +62,14 @@
 
 ### 季度审计（每季度首周）
 
-1. **引用完整性扫描**：运行 `python3 scripts/validate_skill_triggers.py && python3 scripts/run_trigger_regression.py && python3 scripts/validate_agent_prompt_sync.py` + 用 `grep -rE 'references/\\w+' skills/*/SKILL.md | grep '不存在' 2>/dev/null || echo "ok"` 验证所有引用的参考文件存在
+1. **引用完整性扫描**：运行 `python3 scripts/run-all.py` + 用 `grep -rE 'references/\\w+' skills/*/SKILL.md | grep '不存在' 2>/dev/null || echo "ok"` 验证所有引用的参考文件存在
 2. **新鲜度检查**：检查所有 SKILL.md 的最后更新日期是否在 90 天内，超过的标记为待更新
-3. **触发回归测试**：运行 `python3 scripts/run_trigger_regression.py --json` 确保关键词映射未偏移
+3. **触发回归测试**：运行 `python3 scripts/run-all.py --run-type regression --json` 确保关键词映射未偏移
 4. **自动化检查健康**：运行各 skill 的 `python3 skills/<name>/references/automated_check_script.py` 确认特有检查覆盖率仍与 SKILL.md 章节匹配
 
 ### 月度快速检查（每月中旬）
 
-1. 运行 `python3 scripts/validate_skill_triggers.py` 确认 frontmatter 字段无退化
+1. 运行 `python3 scripts/run-all.py --run-type check` 确认 frontmatter 字段无退化
 2. 运行 `git log --oneline -20 skills/` 检查是否有新增修改后未更新最后日期的文件
 
 ### 质量阈值
