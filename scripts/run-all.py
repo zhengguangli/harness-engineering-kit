@@ -19,7 +19,6 @@ import argparse
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SKILLS_DIR = os.path.join(ROOT_DIR, "skills")
 HOME_SKILLS = os.path.expanduser("~/.claude/skills")
-HOME_SCRIPTS = os.path.join(HOME_SKILLS, "scripts")
 
 
 def run_script(name, args=None):
@@ -37,15 +36,9 @@ _verbose = sys.stdout.isatty()
 
 
 def sync():
-    """Sync skills/ and scripts/ to ~/.claude/skills/."""
-    if not os.path.isdir(HOME_SKILLS):
-        os.makedirs(HOME_SKILLS, exist_ok=True)
-    print(">>> 同步前: 部署 skills 到 ~/.claude/skills/")
+    """Sync skills/ to ~/.claude/skills/."""
+    print(">>> 部署 skills 到 ~/.claude/skills/")
     subprocess.run(["rsync", "-av", "--delete", SKILLS_DIR + "/", HOME_SKILLS + "/"],
-                   cwd=ROOT_DIR, capture_output=not _verbose)
-    print(">>> 同步前: 部署 scripts 到 ~/.claude/skills/scripts/")
-    os.makedirs(HOME_SCRIPTS, exist_ok=True)
-    subprocess.run(["rsync", "-av", os.path.join(ROOT_DIR, "scripts") + "/", HOME_SCRIPTS + "/"],
                    cwd=ROOT_DIR, capture_output=not _verbose)
     print("✅ 同步完成")
 
