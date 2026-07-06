@@ -8,7 +8,7 @@ Usage:
     python3 scripts/run-all.py --run-type regression          # 仅关键词回归
     python3 scripts/run-all.py --run-type regression --json   # 回归 JSON 报告
     python3 scripts/run-all.py --run-type prompt              # 仅 agent prompt 检查
-    python3 scripts/run-all.py --sync                         # 全量 + 同步到 ~/.claude/skills/
+    python3 scripts/run-all.py --sync                         # 全量 + 同步到 ~/.agents/skills/ (并维护 ~/.claude/skills 软链接)
 """
 
 import subprocess
@@ -35,11 +35,33 @@ def run_script(name, args=None):
 _verbose = sys.stdout.isatty()
 
 
+CLAUDE_SKILLS = os.path.expanduser("~/.claude/skills")
+
 def sync():
-    """Sync skills/ to ~/.agents/skills/."""
+    """Sync skills/ to ~/.agents/skills/ and maintain ~/.claude/skills symlink."""
     print(">>> 部署 skills 到 ~/.agents/skills/")
     subprocess.run(["rsync", "-av", "--delete", SKILLS_DIR + "/", HOME_SKILLS + "/"],
                    cwd=ROOT_DIR, capture_output=not _verbose)
+
+    # Maintain ~/.claude/skills as a symlink to ~/.agents/skills
+    if os.path.islink(CLAUDE_SKILLS):
+        current = os.readlink(CLAUDE_SKILLS)
+        if current == HOME_SKILLS:
+            print("  ~/.claude/skills -> ~/.agents/skills 软链接已存在，跳过")
+        else:
+            os.unlink(CLAUDE_SKILLS)
+            os.symlink(HOME_SKILLS, CLAUDE_SKILLS)
+            print("  ~/.claude/skills 软链接已更新")
+    elif os.path.isdir(CLAUDE_SKILLS):
+        # Migrate existing directory to symlink
+        import shutil
+        shutil.rmtree(CLAUDE_SKILLS)
+        os.symlink(HOME_SKILLS, CLAUDE_SKILLS)
+        print("  ~/.claude/skills 目录已替换为软链接")
+    else:
+        os.symlink(HOME_SKILLS, CLAUDE_SKILLS)
+        print("  ~/.claude/skills 软链接已创建")
+
     print("✅ 同步完成")
 
 
@@ -50,7 +72,7 @@ def main():
     parser.add_argument("--json", action="store_true",
                         help="回归测试输出 JSON 报告")
     parser.add_argument("--sync", action="store_true",
-                        help="验证完成后同步到 ~/.claude/skills/")
+                        help="验证完成后同步到 ~/.agents/skills/ (并维护 ~/.claude/skills 软链接)")
     args = parser.parse_args()
 
     exit_code = 0
