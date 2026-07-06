@@ -73,11 +73,10 @@
 
 | 文件 | 行数 | 备注 |
 |---|---|---|
-| `docs/skill-evaluation-process.md` | 604 | 超长评估流程文档 |
-| `skills/harness-skill-quality-assessor/references/skill-evaluation-process.md` | 598 | 是上面的副本，双重维护 |
+| `skills/harness-skill-quality-assessor/references/skill-evaluation-process.md` | 598 | 评估流程参考文件 |
 | `skills/harness-skill-quality-assessor/references/evaluation-examples.md` | 516 | 评估示例 |
 
-**建议**: `docs/skill-evaluation-process.md` 与 `references/skill-evaluation-process.md` 是同一内容的复制，应定一个 canonical 位置，另一处引用之。
+**建议**: `docs/skill-evaluation-process.md` 已删除， canonical 位置在 `skills/harness-skill-quality-assessor/references/skill-evaluation-process.md`。
 
 ---
 
@@ -98,7 +97,7 @@ Core-belief #10 定义六段式，但实际 agent prompt 主要使用两种结�
 ### GP-001: `最后更新:` 全覆盖
 
 **规则**: 所有 `docs/` 下的 `.md` 文件末尾必须包含 `最后更新: YYYY-MM-DD` 行。
-**检查方式**: `for f in docs/**/*.md; do grep -q "最后更新:" "$f" || echo "MISSING: $f"; done`
+**检查方式**: `for f in docs/**/*.md; do grep -q "最后更新:" "$f" || echo "MISSING: $f"; done` — `**` 递归通配需要 `shopt -s globstar`（Bash 4+）
 **修复行为**: 追加到文件末尾
 **当前状态**: 🟢 28/28 已覆盖
 

@@ -95,7 +95,7 @@ Key lessons from the full A+-grade optimization:
 5. **Automation support boosts efficiency**: Provide automated validation scripts and CI/CD integration
 6. **User experience requires continuous optimization**: Ensure a gentle learning curve, convenient usage, and strong error recovery
 
-See `docs/lessons-learned/skills-quality-optimization-2026-07-02.md` for detailed lessons.
+See `docs/QUALITY_SCORE.md` for detailed lessons.
 
 ---
 Last updated: 2026-07-02 (Change: added full A+-grade optimization lessons)

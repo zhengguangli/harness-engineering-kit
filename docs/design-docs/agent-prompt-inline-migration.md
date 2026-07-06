@@ -1,7 +1,7 @@
 # Agent 提示词内联迁移模式
 
 - 创建日期: 2026-07-02
-- 关联 exec-plan: `docs/exec-plans/completed/consolidate-agents-into-skills.md`
+- 关联 exec-plan: `docs/exec-plans/completed/consolidate-agents-into-skills.md`（该文件已归档）
 
 ## 背景
 
@@ -89,7 +89,7 @@ compatibility: claude-code
 
 ## 相关文件
 
-- `docs/exec-plans/completed/consolidate-agents-into-skills.md`：完整执行计划
+- `docs/design-docs/agent-prompt-inline-migration.md`：本文的决策记录
 - `docs/ARCHITECTURE.md`：目录结构说明
 - `CLAUDE.md`：硬约束描述
 

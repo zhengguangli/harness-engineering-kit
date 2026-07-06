@@ -25,11 +25,16 @@ make prompts-sync-check   # 仅 agent prompt 存在性检查
 | 13 个 skill 的分层架构与依赖方向 | `docs/ARCHITECTURE.md` |
 | agent-first 的核心运作信念 | `docs/design-docs/core-beliefs.md` |
 | 设计决策索引 | `docs/design-docs/index.md` |
+| Agent Prompt 内联迁移设计 | `docs/design-docs/agent-prompt-inline-migration.md` |
+| 设计决策详情 | `docs/design-docs/` |
 | 当前执行计划 | `docs/exec-plans/active/` |
+| Skill Quality Assessor 精炼计划 | `docs/exec-plans/active/skill-quality-assessor-refinement.md` |
 | 已知但暂不处理的技术债 | `docs/exec-plans/tech-debt-tracker.md` |
 | 产品功能规格 | `docs/product-specs/index.md` |
 | 各 skill 质量评分与趋势追踪 | `docs/QUALITY_SCORE.md` |
-| 技能生成的报告（扫描/审计/评估） | `docs/quality-reports/` |
+| 黄金原则扫描报告 | `docs/quality-reports/golden-principles-scan.md` |
+| Skills 质量评估报告 | `docs/quality-reports/skills-quality-assessment.md` |
+| 质量报告详情 | `docs/quality-reports/` |
 | 13 个 skill 的方法论正文 + agent 提示词 + 模板 | `skills/` |
 | 详细的安装方式、触发速查表、回归用例维护规范 | `README.md` |
 
@@ -64,7 +69,7 @@ Layer 5 提交门      harness-commit-gate
 
 ## Quality gates
 
-提交前必须运行 `make triggers-all`。当前全 13 个 skill 质量评分 9.12/10（A 级）。详细维度评分见 `docs/QUALITY_SCORE.md`。
+提交前必须运行 `make triggers-all`。当前全 13 个 skill 质量评分 9.47（A 级，第十四次评估）。详细维度评分见 `docs/QUALITY_SCORE.md`。
 
 ## Skill 文件结构
 
@@ -90,28 +95,9 @@ skills/<name>/
 4. 提交前运行 `make triggers-all` — **这是硬约束，提交前必须通过**
 5. 推送到 `developer` 分支（本仓库 PR 合并到 `main`）
 
-## 工作方式提示
-
-- 复杂、可能跨多次会话的任务，先用 `harness-exec-plans` 技能落一份 exec-plan，不要直接动手。
-- 改动完成后，跑自验证循环（`harness-verification-loop`）而不是一次性提交了事。
-- 提交前跑 `make triggers-all` 确保 frontmatter 校验、关键词一致性、回归测试全部通过。
-- 不确定某条规则是否仍然有效？去对应的 docs 文件查"最后校验日期"，过期的规则应该被标记而不是被信任。
-- 要给这套体系添加新能力，参考 `harness-authoring` skill。
-- **推送代码后**，主动询问用户是否同步技能包到 `~/.claude/skills`，获得允许后执行：
-
-  ```bash
-  rsync -av skills/ ~/.claude/skills/
-  ```
-
-## CI Pipeline
-
-```yaml
-push → main:      make triggers-all
-PR → main:        确保 source 为 developer 分支 + make triggers-all
-```
-
-详情见 `.github/workflows/skill-triggers.yml`。PR 必须从 `developer` 分支发起，不可直接从特性分支向 `main` 提 PR。
+> 工作方式提示详见 `docs/design-docs/core-beliefs.md`
+> CI Pipeline 详见 `docs/references/ci-pipeline.md`
 
 ---
 
-最后更新: 2026-07-03（CLAUDE.md 已合并至此文件，不再单独维护）
+最后更新: 2026-07-06（CLAUDE.md 已合并至此文件，不再单独维护）

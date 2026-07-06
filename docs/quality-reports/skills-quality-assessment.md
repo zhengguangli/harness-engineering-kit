@@ -5,6 +5,7 @@
 **参考 skill**: `harness-prompt-optimizer`
 **评估者**: skill-quality-assessor (8 维度子维度体系)
 **评估轮次**: 第 14 次
+**Last updated**: 2026-07-03
 
 ---
 
