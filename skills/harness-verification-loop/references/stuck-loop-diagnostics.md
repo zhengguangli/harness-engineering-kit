@@ -1,18 +1,18 @@
-## 当循环卡住时,先问"缺什么能力"
+## When the Loop Gets Stuck, First Ask “What Capability Is Missing”
 
-说明：下表“修复方向”引用了其他 harness 技能。若相关技能未安装，应降级为在同一上下文内手动执行等价检查，并在报告中注明“X 技能未安装，已做降级处理”。
+Note: The “Fix Direction” column in the table below references other harness skills. If the relevant skill is not installed, fall back to performing the equivalent check manually within the same context, and note in the report that “Skill X is not installed; fallback processing applied.”
 
-常见的"缺失能力"模式,以及对应的修复方向:
+Common “missing capability” patterns and their corresponding fix directions:
 
-| 卡住的症状 | 可能缺的能力 | 修复方向 |
+| Stuck Symptom | Possibly Missing Capability | Fix Direction |
 |---|---|---|
-| 反复改同一处代码但行为没变 | 看不到真实运行结果 | 接入 `harness-observability-and-browser`,给它日志/截图而不是让它猜 |
-| 改完不知道有没有破坏别处 | 缺少结构化测试/边界检查 | 接入 `harness-architecture-boundaries` 里的 lint/结构化测试 |
-| 每轮都重新探索项目背景 | 缺少可发现的上下文 | 检查 `harness-repo-map`,把缺的知识写进 docs/ |
-| lint 报错但不知道怎么改 | 报错信息没给修复指令 | 按 `harness-architecture-boundaries` 的建议,把修复方法写进报错文本 |
-| 被委派的评审 agent 报错或无响应 | 评审 agent 自身能力缺失 | 在报告中标记"评审能力不可用",自己在同一上下文内执行等价检查,或升级给人类 |
+| Repeatedly modifying the same code with no behavioral change | Cannot see actual runtime results | Integrate `harness-observability-and-browser`; give it logs/screenshots instead of letting it guess |
+| After changes, unsure if anything else is broken | Lacks structured tests/boundary checks | Integrate lint/structured tests from `harness-architecture-boundaries` |
+| Re-exploring project context every round | Lacks discoverable context | Check `harness-repo-map`; write missing knowledge into docs/ |
+| Lint errors but unsure how to fix | Error messages lack fix instructions | Following `harness-architecture-boundaries` advice, embed fix methods into error text |
+| Delegated review agent errors out or is unresponsive | Review agent itself lacks capabilities | Mark in the report that “review capability is unavailable,” perform equivalent checks manually within the same context, or escalate to a human |
 
-不要把这些症状当成"模型不够强",先假设是环境缺了一块,把这一块补全。
+Do not attribute these symptoms to “the model isn't strong enough.” First assume the environment is missing a piece, and fill that piece in.
 
 ---
-最后更新: 2026-06-30
+Last updated: 2026-06-30

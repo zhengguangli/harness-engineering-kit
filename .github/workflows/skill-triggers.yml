@@ -21,4 +21,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run full trigger validation
-        run: make triggers-all
+        run: python3 scripts/run-all.py
+
+      - name: Run skill-level automated checks
+        run: |
+          fail_count=0
+          total=0
+          for skill_dir in skills/*/; do
+            skill_name=$(basename "$skill_dir")
+            script="$skill_dir/references/automated_check_script.py"
+            if [ -f "$script" ]; then
+              total=$((total+1))
+              echo "::group::$skill_name checks"
+              python3 "$script" && echo "  ✅ $skill_name passed" || \
+                { echo "::warning::$skill_name automated checks had failures"; fail_count=$((fail_count+1)); }
+              echo "::endgroup::"
+            fi
+          done
+          echo "---"
+          echo "summary: $((total-fail_count))/$total passed, $fail_count failed"
+          if [ "$fail_count" -gt 0 ]; then
+            echo "::warning::$fail_count/$total skills had failures"
+          fi

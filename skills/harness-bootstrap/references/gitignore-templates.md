@@ -1,20 +1,20 @@
-<!-- 各技术栈 .gitignore 模板 — 由 harness-bootstrapper agent 使用 -->
-<!-- 根据项目技术栈选用对应的模板，合并到 .gitignore 中 -->
+<!-- .gitignore templates by tech stack — used by harness-bootstrapper agent -->
+<!-- Select the corresponding template based on the project's tech stack and merge into .gitignore -->
 
-## 通用规则（所有项目必须包含）
+## Common Rules (Required for All Projects)
 
 ```gitignore
-# 自动生成的文件（不要手改）
+# Auto-generated files (do not modify manually)
 docs/generated/
 
-# 编辑器和 IDE
+# Editors and IDEs
 .idea/
 .vscode/
 *.swp
 *.swo
 *~
 
-# 操作系统
+# Operating system
 .DS_Store
 Thumbs.db
 ```
@@ -69,14 +69,14 @@ coverage.xml
 ## Go
 
 ```gitignore
-# 二进制文件
+# Binary files
 *.exe
 *.exe~
 *.dll
 *.so
 *.dylib
 
-# 测试产物
+# Test artifacts
 *.test
 *.out
 *.prof
@@ -85,14 +85,14 @@ coverage.xml
 go.work
 go.work.sum
 
-# 依赖目录
+# Dependency directory
 vendor/
 
-# IDE
+# IDEs
 .idea/
 .vscode/
 
-# 环境变量
+# Environment variables
 .env
 .env.*
 !.env.example
@@ -105,24 +105,24 @@ vendor/
 **/*.rs.bk
 Cargo.lock
 
-# IDE
+# IDEs
 .idea/
 .vscode/
 *.swp
 
-# 环境变量
+# Environment variables
 .env
 .env.*
 !.env.example
 
-# 测
+# Test coverage report
 tarpaulin-report.html
 ```
 
 ## Java / Kotlin
 
 ```gitignore
-# 编译产物
+# Build artifacts
 *.class
 *.jar
 *.war
@@ -138,7 +138,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-# IDE
+# IDEs
 .idea/
 *.iml
 *.ipr
@@ -149,12 +149,12 @@ target/
 .project
 out/
 
-# 环境变量
+# Environment variables
 .env
 .env.*
 !.env.example
 
-# 日志
+# Logs
 *.log
 ```
 
@@ -167,7 +167,7 @@ out/
 .env.*
 !.env.example
 
-# 框架特定
+# Framework-specific
 /storage/*.key
 /public/hot
 /public/storage
@@ -207,15 +207,15 @@ public/bundles/
 /vendor/bundle
 /lib/bundle/
 
-# 依赖目录
+# Dependency directory
 node_modules/
 
-# 环境变量
+# Environment variables
 .env
 .env.*
 !.env.example
 
-# IDE
+# IDEs
 .idea/
 .vscode/
 *.swp
@@ -267,11 +267,11 @@ deps/
 .elixir_ls/
 ```
 
-## Multi-stack 项目
+## Multi-stack Project
 
 ```gitignore
-# 多技术栈项目额外忽略
-# 根据实际启用的栈取消对应注释
+# Additional ignores for multi-stack projects
+# Uncomment corresponding sections based on actual stacks used
 
 # # Node.js
 # node_modules/
@@ -285,10 +285,10 @@ deps/
 # vendor/
 ```
 
-## 使用说明
+## Usage Guide
 
-1. **先用通用规则**：所有项目必须包含通用规则部分
-2. **按技术栈追加**：根据项目实际使用的技术栈追加对应规则
-3. **不要照搬全部**：只启用项目实际使用的部分
-4. **docs/ 不能忽略**：`docs/` 是源知识目录，绝对不能整体忽略，只忽略 `docs/generated/`
-5. **环境变量文件**：`.env` 文件必须忽略，但保留 `.env.example` 模板
+1. **Start with common rules**: All projects must include the Common Rules section
+2. **Append by tech stack**: Add corresponding rules based on the project's actual tech stack
+3. **Don't copy everything**: Only enable the sections actually used by the project
+4. **docs/ must NOT be ignored**: `docs/` is the source knowledge directory and must never be completely ignored — only ignore `docs/generated/`
+5. **Environment variable files**: `.env` files must be ignored, but keep `.env.example` templates

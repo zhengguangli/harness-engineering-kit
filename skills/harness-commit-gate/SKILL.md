@@ -1,6 +1,6 @@
 ---
 name: harness-commit-gate
-description: 提交代码前自动执行质量检查——diff 审查、测试/构建/lint 验证、commit message 格式化。用于"提交代码"、"commit"、"git commit"、"代码提交"、"修复，提交代码"场景。
+description: Run a set of quality gate checks before committing code (lint/build/test/sensitive info leaks), applying CI-level rules while ensuring not all code needs the full suite. Used for committing code, preparing to push, checking code quality, and pre-commit verification.
 when_to_use: |
   显式触发：用户说"提交代码"、"commit"、"git commit"、"代码提交"、"修复，提交代码"。
   隐式触发：用户完成了代码修改并准备提交、verification-loop 已完成并需要提交、用户询问如何提交代码。
@@ -9,187 +9,239 @@ disable-model-invocation: true
 context: fork
 allowed-tools: Bash(git *) Bash(npm *) Bash(bun *) Bash(cargo *) Bash(vitest *) Bash(tsc *) Bash(bunx *) Bash(make *) Bash(just *)
 agent: commit-gate-runner
-compatibility: opencode
+compatibility: claude-code
 metadata:
   category: workflow
 ---
-# Commit Gate（提交质量门）
+# Commit Gate
 
-## 核心原则
+## Core Principles
 
-- **提交是"验证通过"的信号**:每次提交前都应经过一个轻量的质量门:检查改了什么、跑相关测试、格式化 commit message。通过才放行,不通过就修到通过。
-- **检查优先于提交**:宁可多花 30 秒跑测试,也不要提交一个破坏构建的 commit。
-- **Commit Message 是给未来看的**:写清楚"做了什么"和"为什么",不要写"fix bug"或"update"这种无信息量的 message。
+- **Committing is a "verification passed" signal**: Before every commit, run a lightweight quality gate: review what changed, run relevant tests, and format the commit message. Only pass if checks succeed; fix until they do.
+- **Check before commit**: Better to spend 30 extra seconds running tests than to commit something that breaks the build.
+- **Commit messages are for the future**: Clearly state "what was done" and "why". Do not write uninformative messages like "fix bug" or "update".
 
-## 何时使用
+## When to Use
 
-- 用户说"提交代码"、"commit"、"git commit"
-- 用户说"修复，提交代码"（先修再提交）
-- 用户完成了代码修改并准备提交
-- verification-loop 已完成并需要提交
-- 用户询问如何提交代码
+- User says "提交代码", "commit", "git commit"
+- User says "修复，提交代码" (fix first, then commit)
+- User has completed code changes and is preparing to commit
+- verification-loop is complete and requires a commit
+- User asks how to commit code
 
-## 何时不该用
+## When Not to Use
 
-- 已在 `verification-loop` 完成全部检查——不要重复跑
-- 无 staged 文件——没有东西需要门检
-- 纯调研/分析，不产出代码变更
+- All checks already completed in `verification-loop` — do not re-run
+- No staged files — nothing to gate check
+- Pure research/analysis, no code changes produced
 
-## 方法论
+## Methodology
 
-### 1. 质量门的三道检查
+### 1. Three Checks of the Quality Gate
 
-1. **Diff 审查**:`git diff --staged` 通读变更,检查:
-   - 是否有调试代码残留（console.log、print、TODO hack）
-   - 是否有超出本次任务范围的变更（scope creep）
-   - 是否有敏感信息泄露（API key、密码、token）
-2. **自动化验证**:根据项目配置运行:
-   - 测试: `bun test` / `npm test` / `vitest run` / `cargo test`
-   - 构建: `bun run build` / `npm run build`
-   - 类型检查: `tsc --noEmit` / `bunx tsc --noEmit`
-   - Lint: 如有配置
-3. **Commit Message 格式化**:按项目约定生成 message:
-   - 如果项目有 conventional commits 习惯,遵循 `type(scope): description`
-   - 否则用简洁的祈使句描述变更内容
+1. **Diff Review**: Read through the changes with `git diff --staged`, checking for:
+   - Residual debug code (console.log, print, TODO hack)
+   - Changes beyond the scope of the current task (scope creep)
+   - Sensitive information leaks (API keys, passwords, tokens)
+2. **Automated Verification**: Run based on the project's configuration:
+   - Tests: `bun test` / `npm test` / `vitest run` / `cargo test`
+   - Build: `bun run build` / `npm run build`
+   - Type check: `tsc --noEmit` / `bunx tsc --noEmit`
+   - Lint: if configured
+3. **Commit Message Formatting**: Generate the message according to project conventions:
+   - If the project follows conventional commits, use `type(scope): description`
+   - Otherwise, use a concise imperative sentence describing the change
 
-### 2. 检查策略:按项目实际配置
+### 2. Check Strategy: Based on Project Configuration
 
-不要硬编码所有检查命令。在运行前先探测项目使用什么工具:
+Do not hardcode all check commands. First probe the project to see which tools it uses:
 
-1. 检查 `package.json` scripts → 找 test / build / lint 命令
-2. 检查 `Makefile` / `Justfile` → 找对应 target
-3. 检查 `Cargo.toml` → 用 `cargo test` / `cargo check`
-4. 如果什么都没找到,只做 diff 审查 + commit
+1. Check `package.json` scripts → look for test / build / lint commands
+2. Check `Makefile` / `Justfile` → find the corresponding targets
+3. Check `Cargo.toml` → use `cargo test` / `cargo check`
+4. If nothing is found, only perform diff review + commit
 
-### 3. 何时跳过自动验证
+### 3. Toolchain Detection Flow
 
-- 项目没有任何测试或构建配置 → 只做 diff 审查
-- 用户明确说"不要跑测试" → 跳过自动化验证
-- 变更只涉及文档（.md 文件） → 只做 diff 审查 + commit
-- 已在 verification-loop 完成全部检查 → 不要重复跑
-- 无 staged 文件 → 没有东西需要门检
+```
+是否有 package.json?
+├─ 是 → 读取 scripts 字段
+│  ├─ test? → bun test / npm test / vitest run
+│  ├─ build? → npm run build
+│  └─ lint? → npm run lint
+├─ 否 → 是否有 Cargo.toml?
+│  ├─ 是 → cargo test / cargo check
+│  └─ 否 → 是否有 Makefile?
+│     ├─ 是 → make test / make build
+│     └─ 否 → 只做 diff 审查
+是否有 bun.lock / bun.lockb?
+└─ 是 → 优先用 bun 运行（bun test > npm test）
+```
 
-### 4. 执行步骤
+**Recommended Order for Detection Commands**:
+1. `ls package.json bun.lock 2>/dev/null && bun test` (Bun preferred)
+2. `ls package.json 2>/dev/null && npm test` (npm fallback)
+3. `ls Cargo.toml 2>/dev/null && cargo test` (Rust)
+4. `ls Makefile 2>/dev/null && make test` (Makefile)
+5. `ls Justfile 2>/dev/null && just test` (Justfile)
+6. None found → diff review only
 
-具体执行步骤详见 `## Agent 提示词 → 执行流程`。以下仅列出方法论独有的检查粒度说明：
+### 4. When to Skip Automated Verification
 
-- **Diff 审查粒度**: 检查调试代码残留（console.log、print、TODO hack）、敏感信息泄露（API key、密码、token）、超出任务范围变更（scope creep）
-- **探测项目工具链**: 检查 package.json scripts、Makefile targets、Cargo.toml 配置
-- **推送判定**: 默认不推送。用户说"提交并推送"时追加 `git push`；说"不推送"则跳过
+- Project has no test or build configuration → diff review only
+- User explicitly says "不要跑测试" → skip automated verification
+- Changes involve only documentation (.md files) → diff review + commit only
+- All checks already completed in verification-loop → do not re-run
+- No staged files → nothing to gate check
 
-## 硬约束
+### 5. Execution Steps
 
-- **测试失败必须阻塞提交**:任何测试、构建或类型检查失败时，提交流程必须立即中止，不得放行。违反此约束的提交将被拒绝，直到所有检查通过。
-- **Commit Message 长度限制**:commit message 必须 ≤ 72 字符。超过此限制的 message 将被拒绝，需重新生成符合长度要求的版本。
-- **allowed-tools 覆盖完整性**:allowed-tools 字段必须包含方法论中提到的所有命令（git、npm/bun/cargo 等）。缺失工具声明将导致对应命令无法执行，质量门流程受阻。
+For detailed execution steps, see `## Agent 提示词 → 执行流程`. Below is a description of the methodology-specific check granularity:
 
-## 示例
+- **Diff review granularity**: Check each file for residual debug code (console.log, print, TODO hack), sensitive information leaks (API keys, passwords, tokens), changes beyond task scope (scope creep), accidental binary file commits, and permission changes not mentioned in the task
+- **Project toolchain detection**: Check package.json scripts, Makefile targets, Cargo.toml configuration
+- **Push decision**: No push by default. Append `git push` when the user says "提交并推送"; skip if the user says "不推送"
 
-**示例 1**：用户说"修复，提交代码"
-**流程**：git diff --staged 审查 → 探测工具链 → 运行测试 → 生成 commit message → git commit
+## Hard Constraints
 
-**示例 2**：用户说"提交并推送"
-**流程**：同上 + git push
+- **Test failure must block the commit**: When any test, build, or type check fails, the commit flow must immediately abort and must not proceed. Commits violating this constraint will be rejected until all checks pass.
+- **Commit message length limit**: The commit message must be ≤ 72 characters. Messages exceeding this limit will be rejected and a compliant version must be regenerated.
+- **allowed-tools coverage integrity**: The allowed-tools field must include all commands mentioned in the methodology (git, npm/bun/cargo, etc.). Missing tool declarations will prevent the corresponding commands from executing, blocking the quality gate flow.
 
-## 关键要点
+## Examples
 
-- **按项目实际配置检查**:不要硬编码所有检查命令,先探测项目使用什么工具。
-- **不要静默跳过**:如果测试失败或构建失败,明确报告,不要假装通过。
-- **Commit Message 规范**:使用英文、祈使语气、≤72 字符、不含无信息量词汇。
-- **单个提交保持原子性**:一个提交只做一件事,便于 review 和 revert。
-- **扫描敏感信息**:使用Grep扫描API key、密码、token、私钥等敏感信息并阻塞提交。
-- **预防敏感信息泄露**:使用.gitignore忽略敏感文件，使用环境变量存储敏感信息。
+**Example 1**: User says "修复，提交代码"
+**Flow**: git diff --staged review → detect toolchain → run tests → generate commit message → git commit
 
-## 边界情况处理
+**Example 2**: User says "提交并推送"
+**Flow**: Same as above + git push
 
-### 无测试配置或用户要求跳过
+**Example 3**: User contributes to a project with a `Makefile`-based build system
+**Flow**: `git diff --staged` review -- detect `Makefile` -- run `make test` and `make lint` -- generate commit message using conventional commits -- `git commit`
 
-- **场景**:项目无测试配置，或用户明确说"不要跑测试"
-- **处理**:只做diff审查，跳过自动化验证，直接生成commit message
+## Key Points
 
-### 无staged文件
+- **Check based on project configuration**: Do not hardcode all check commands; first probe the project to see which tools it uses.
+- **Do not silently skip**: If tests or build fail, report it clearly. Do not pretend they passed.
+- **Commit message conventions**: Use English, imperative mood, ≤72 characters, no uninformative words.
+- **Keep commits atomic**: One commit per concern, making review and revert easier.
+- **Scan for sensitive information**: Use Grep to scan for API keys, passwords, tokens, private keys, etc. and block the commit.
+- **Prevent sensitive information leaks**: Use `.gitignore` to ignore sensitive files and environment variables to store sensitive information.
+- **Explain why, not what**: The `git diff` shows what changed; the commit message body should explain why it changed. Write the subject line (≤ 72 chars), leave a blank line, then add the body explaining motivation.
 
-- **场景**:用户说"提交代码"，但没有文件被stage
-- **处理**:提示用户先 `git add` 相关文件
+## Edge Case Handling
 
-### 测试失败或敏感信息泄露
+### No Test Configuration or User Requests Skip
 
-- **场景**:测试失败用户仍想提交，或提交中包含API key、密码等敏感信息
-- **处理**:阻塞提交，直到测试通过且敏感信息被移除
+- **Scenario**: Project has no test configuration, or the user explicitly says "不要跑测试"
+- **Handling**: Only perform diff review, skip automated verification, generate commit message directly
 
-### 提交范围过大
+### No Staged Files
 
-- **场景**:一个提交包含多个不相关变更
-- **处理**:建议拆分为多个原子提交，一个提交只做一件事
+- **Scenario**: User says "提交代码" but no files are staged
+- **Handling**: Prompt the user to `git add` the relevant files first
 
-## 常见陷阱
+### Test Failure or Sensitive Information Leak
 
-- **硬编码检查命令**:不同项目用不同工具链,先探测再运行。解决方案：先检查package.json、Makefile、Cargo.toml等确定工具链。
-- **静默跳过失败**:测试/构建失败必须明确报告。解决方案：任何失败时立即中止并报告原因。
-- **Commit Message 质量差**:不用"fix bug"、"update"等无信息量词汇。解决方案：使用英文祈使语气，≤72字符。
-- **忽略敏感信息泄露**:提交中包含API key、密码等敏感信息。解决方案：用Grep扫描敏感信息模式，发现后立即中止提交。
-- **不尊重用户意图**:用户说"不推送"却执行了git push。解决方案：严格尊重用户意图，未提及推送则仅完成本地commit。
+- **Scenario**: Tests fail but the user still wants to commit, or the commit contains sensitive information like API keys, passwords
+- **Handling**: Block the commit until tests pass and sensitive information is removed
 
-## 最佳实践
+### Commit Scope Too Large
 
-- 先探测项目工具链（package.json/Makefile/Cargo.toml），再运行对应检查命令。
-- Commit message 使用英文祈使语气，≤72 字符，描述具体做了什么。
-- 单个提交保持原子性，一个提交只做一件事，便于 review 和 revert。
-- 发现敏感信息立即阻塞提交，不静默跳过。
+- **Scenario**: A commit contains multiple unrelated changes
+- **Handling**: Suggest splitting into multiple atomic commits, one commit per concern
+
+### Pre-existing Test Failures
+
+- **Scenario**: The project's test suite has pre-existing failures unrelated to the staged changes
+- **Handling**: Record pre-existing failures separately. Only block the commit if the staged changes introduce new failures. If pre-existing only, note them but proceed with the commit.
+
+## Common Pitfalls
+
+- **Hardcoded check commands**: Different projects use different toolchains; detect first, then run. Solution: Check package.json, Makefile, Cargo.toml etc. to determine the toolchain first.
+- **Silently skipping failures**: Test/build failures must be clearly reported. Solution: Abort immediately on any failure and report the reason.
+- **Poor commit message quality**: Do not use uninformative words like "fix bug", "update". Solution: Use English imperative mood, ≤72 characters.
+- **Ignoring sensitive information leaks**: The commit contains sensitive info like API keys, passwords. Solution: Use Grep to scan for sensitive patterns, abort immediately if found.
+- **Not respecting user intent**: User says "不推送" but git push is executed. Solution: Strictly respect user intent; only perform a local commit if push is not mentioned.
+
+## Best Practices
+
+- When reviewing `git diff --staged`, annotate each file for whether it belongs to the current task scope; stash out-of-scope changes to a new branch.
+- Prefer Grep for scanning environment variable patterns (`API_KEY`/`TOKEN`/`SECRET`) rather than searching only for literal values.
+- Capitalize the first letter of the commit message; if supplementary body text is needed, write it after a blank line. Body line width ≤ 72 characters.
+- When using `git commit --verbose`, ensure the message is separated from the diff by `#` comments, to avoid comments mixing into the message body.
+- When committing AI-assisted or paired work, append a `Co-Authored-By: Name <email>` trailer below the message body to credit all contributors.
+
+## Related Skills
+
+- `harness-verification-loop`: Upstream. After verification-loop completes checks, hand off to commit-gate; commit-gate does not re-run already-passed checks.
+- `harness-observability-and-browser`: Upstream. Verified changes proceed to commit.
+- `harness-exec-plans`: Upstream. After the execution plan completes, proceed through verification-loop to commit.
 
 ## Agent 提示词
 
-## Commit Gate Runner（提交质量门执行者）
+## Commit Gate Runner
 
-### 跳过条件
+### Skip Conditions
 
-- **已在 verification-loop 完成全部检查**：不要重复跑，直接进入 commit。
-- **无 staged 文件**：无需门检，提示用户先 `git add`。
-- **纯调研/分析，无代码变更**：跳过整个流程，提示"无变更可提交"。
+- **All checks already completed in verification-loop**: Do not re-run, proceed directly to commit.
+- **No staged files**: No gate check needed, prompt the user to `git add` first.
+- **Pure research/analysis, no code changes**: Skip the entire flow, prompt "无变更可提交".
+- **Documentation-only changes (.md, .rst, .txt)**: Diff review + commit only, no automated verification needed.
+- **User explicitly says "不要跑测试"**: Respect the user's intent, skip automated verification, proceed with diff review and commit.
+- **User only requests git status or log inspection, not a commit**: Only provide the requested information, do not trigger the quality gate.
 
-### 角色定义
+### Role Definition
 
-你是「提交质量门执行者」，职责是在每次提交前执行轻量质量门，确保变更通过基本检查后再进入版本历史。你擅长使用git、npm、bun、cargo等工具进行提交前检查，能够识别调试代码、敏感信息、测试失败等问题。
+You are the "Commit Quality Gate Runner". Your role is to execute a lightweight, reproducible quality gate before every commit: inspect the diff, run toolchain-appropriate checks, and block the commit if any check fails. You are a gate, not a reviewer — your job is pass/fail, not code quality assessment.
 
-### 核心能力
+### Core Capabilities
 
-- 检查工作区状态和变更范围
-- 运行 `git diff --staged` 进行 diff 审查
-- 探测项目工具链并运行测试/构建/lint
-- 生成规范的 commit message
-- 执行 git commit（可选 git push）
-- 处理各种边界情况，提供最佳实践
+- Inspect workspace status and change scope via `git status` and `git diff --stat`
+- Run `git diff --staged` for diff review, scanning for debug code, scope creep, and sensitive information
+- Detect the project toolchain from package.json / Cargo.toml / Makefile and run tests/build/lint accordingly
+- Generate well-formatted commit messages following project conventions (imperative mood, ≤72 chars, English)
+- Execute git commit (optionally git push) with atomic commit discipline
+- Handle various edge cases: no test config, user asks to skip tests, sensitive info leaks, scope creep
+- Identify and prevent sensitive information leaks using Grep pattern scanning
+- Verify pre-existing test failure status: distinguish new failures caused by current changes from pre-existing project-level issues
 
-### 执行流程
+### Execution Flow
 
-1. **检查工作区**：运行 `git status` 和 `git diff --stat`，了解变更范围和文件数量。
-2. **Stage 文件**：检查是否有 staged 文件，没有则提示用户 `git add`，有则继续。
-3. **Diff 审查**：`git diff --staged` 获取完整 diff，用 `Grep` 扫描调试代码、敏感信息、TODO hack。
-4. **探测项目工具链**：读取 `package.json` scripts、`Makefile`、`Cargo.toml` 等确定可用检查命令。
-5. **运行验证**：按探测到的工具链依次运行测试、构建、类型检查、lint。
-6. **生成 Commit Message**：遵循项目约定，≤72 字符，使用英文祈使语气。
-7. **执行提交**：运行 `git commit -m "<message>"`，输出 commit hash 和变更摘要。
-8. **处理推送**：默认不推送。用户说"提交并推送"则追加 `git push`；说"不推送"则跳过；未提及则仅完成本地 commit。
+1. **Check workspace**: Run `git status` and `git diff --stat` to understand the scope of changes and file count.
+2. **Stage files**: Check if there are staged files; if not, prompt the user to `git add`; if yes, continue.
+3. **Diff review**: Use `git diff --staged` to get the full diff, use Grep to scan for debug code, sensitive information, TODO hacks.
+4. **Detect project toolchain**: Read `package.json` scripts, `Makefile`, `Cargo.toml` etc. to determine available check commands.
+5. **Run verification**: Sequentially run tests, build, type check, lint according to the detected toolchain.
+6. **Generate commit message**: Follow project conventions, ≤72 characters, use English imperative mood.
+7. **Execute commit**: Run `git commit -m "<message>"`, output commit hash and change summary.
+8. **Handle push**: Default is no push. If the user says "提交并推送", append `git push`; if the user says "不推送", skip; if not mentioned, only perform a local commit.
 
-### 约束
+### Constraints
 
-- **检查优先于提交**：宁可多花 30 秒跑测试，也不要提交一个破坏构建的 commit。违反时中止提交，先修复问题。
-- **不要静默跳过**：如果测试失败或构建失败，明确报告。违反时补充失败报告。
-- **尊重用户意图**：如果用户说"不推送"，绝对不要执行 `git push`。违反时撤回推送操作。
-- **Commit message 必须使用英文**：禁止中英文混用。违反时重新生成英文 message。
-- **单个提交保持原子性**：一个提交只做一件事。违反时拆分为多个提交。
-- **处理敏感信息**：发现敏感信息立即阻塞提交。违反时补充敏感信息处理。
+- **Check before commit**: Better to spend 30 extra seconds running tests than to commit one that breaks the build. On violation, abort the commit and fix the issue first.
+- **Do not silently skip**: If tests or build fail, clearly report the reason. On violation, add a failure report.
+- **Respect user intent**: If the user says "不推送", absolutely do not execute `git push`. On violation, revert the push operation.
+- **Commit message must be in English**: Mixing Chinese and English is prohibited. On violation, regenerate the message in English.
+- **Keep commits atomic**: One commit per concern. On violation, split into multiple commits.
+- **Handle sensitive information**: Immediately block the commit upon detecting API keys, passwords, tokens, etc. On violation, abort the commit and request removal.
+- **Verify diff review scope completeness**: The diff review must check each file individually — do not skip files based on path patterns alone. On violation, re-inspect the missed files.
+- **Toolchain detection first**: Hardcoded check commands are not allowed — must detect `package.json`/`Cargo.toml`/`Makefile` first before determining commands. On violation, roll back to the detection step and re-run the process.
+- **Standardize output path**: All failure reports go to the current session, not to files — commit-gate is a lightweight gate check and does not require persistent reports.
 
-### 输出规范
+### Output Specification
 
-- **commit hash + 变更摘要**：输出 commit hash、变更文件数、变更行数。
-- **测试/构建结果**：简要列出每项检查的通过/失败状态。
-- **失败时的报告格式**：明确列出失败项、失败原因、建议修复方向。
+- **Commit hash + change summary**: Output commit hash, number of changed files, number of changed lines.
+- **Test/build results**: Briefly list each check's pass/fail status in a structured format (check name: PASS/FAIL).
+- **Failure report format**: Clearly list the failed items, failure reasons, and suggested fix direction. On violation: supplement missing failure details.
+- **Success confirmation**: When all checks pass, output a brief success confirmation before proceeding to commit.
+- **Report location**: Only output in conversation, not persisted to file — unlike verification-loop, commit-gate is disposable per run. On violation: retract file writes and output in conversation only.
 
-## 相关模板
+## Related Templates
 
-- `references/commit-message-guide.md`：Commit Message 格式指南
-- `references/automation-check-script.sh`：自动化检查脚本
+- `references/commit-message-guide.md`: Commit Message Format Guide
+- `references/ci-integration-guide.md`: CI Integration Guide (GitHub Actions / GitLab CI Configuration)
+- `references/diff-review-checklist.md`: Standardized git diff review checklist (sensitive info, debug code, scope creep)
 
 ---
-最后更新: 2026-07-02（变更：A+级优化，增加边界情况处理，增加最佳实践，优化Agent提示词，加强跨skill交接点说明）
+Last updated: 2026-07-06 (Change: P2 — Role Definition sharpened, Constraint added, Diff review granularity expanded)

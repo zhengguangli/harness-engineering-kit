@@ -1,147 +1,147 @@
-# Prompt Optimizer 质量评估测试
+# Prompt Optimizer Quality Assessment Tests
 
-## 测试说明
+## Test Description
 
-本文件包含 `harness-prompt-optimizer` skill 的质量评估测试用例。测试分为四个维度：
-1. 触发准确性
-2. 输入类型判断
-3. 语言确认
-4. 输出质量
+This file contains quality assessment test cases for the `harness-prompt-optimizer` skill. Tests cover four dimensions:
+1. Trigger Accuracy
+2. Input Type Judgment
+3. Language Confirmation
+4. Output Quality
 
-每个测试用例包含：输入、期望行为、评估标准。
-
----
-
-## 一、触发准确性测试
-
-### 应触发（显式触发）
-
-| ID | 输入 | 期望行为 | 评估标准 |
-|---|---|---|---|
-| T1.1 | "优化一下 我希望AI能帮我review代码" | 直接进入优化流程 | 识别"优化一下"触发词 |
-| T1.2 | "帮我优化我的描述：写一个数据分析的prompt" | 直接进入优化流程 | 识别"帮我优化"触发词 |
-| T1.3 | "改进一下 这个prompt效果不好：You are a code reviewer" | 直接进入优化流程 | 识别"改进一下"触发词 |
-| T1.4 | "帮我写个prompt 让AI帮我写营销文案" | 直接进入优化流程 | 识别"帮我写个prompt"触发词 |
-| T1.5 | "给我一个system prompt 处理客服对话" | 直接进入优化流程 | 识别"给我一个"触发词 |
-
-### 应触发（隐式触发）
-
-| ID | 输入 | 期望行为 | 评估标准 |
-|---|---|---|---|
-| T2.1 | "You are a code reviewer. Find bugs." | 快速确认后进入优化流程 | 识别为 system prompt |
-| T2.2 | "我希望AI能帮我分析数据，要输出JSON格式" | 快速确认后进入优化流程 | 识别为需求描述 |
-| T2.3 | "这个agent行为不对，输出格式不稳定" | 评估是否需要优化 prompt | 识别为 agent 行为问题 |
-| T2.4 | "我在做一个code review bot" | 主动提供 prompt 优化能力 | 识别为构建 agent 场景 |
-
-### 不应触发
-
-| ID | 输入 | 期望行为 | 评估标准 |
-|---|---|---|---|
-| T3.1 | "帮我写个函数" | 不触发，正常处理代码请求 | 识别为代码实现 |
-| T3.2 | "这个bug怎么修" | 不触发，正常处理 bug 修复 | 识别为调试请求 |
-| T3.3 | "今天天气怎么样" | 不触发，正常对话 | 识别为闲聊 |
-| T3.4 | "读一下这个文件" | 不触发，正常读取文件 | 识别为文件操作 |
-
-### 边界情况
-
-| ID | 输入 | 期望行为 | 评估标准 |
-|---|---|---|---|
-| T3.5 | "优化"（没给内容） | 询问："请提供需要优化的内容" | 识别为触发词但缺内容 |
-| T3.6 | "帮我写个prompt"（没描述需求） | 询问："请描述你的需求和使用场景" | 识别为触发词但缺需求 |
-| T3.7 | "优化这个"（后面没内容） | 询问："请提供需要优化的内容" | 识别为触发词但缺内容 |
-
-### 简单任务判断测试
-
-| ID | 输入 | 期望行为 | 评估标准 |
-|---|---|---|---|
-| T3.8 | "帮我写个hello world" | 跳过条件触发，输出精简版 | 识别为简单任务 |
-| T3.9 | "翻译这段话" | 跳过条件触发，输出精简版 | 识别为简单任务 |
-| T3.10 | "总结这篇文章" | 跳过条件触发，输出精简版 | 识别为简单任务 |
-| T3.11 | "帮我起个名字" | 跳过条件触发，输出精简版 | 识别为简单任务 |
+Each test case includes: Input, Expected Behavior, Evaluation Criteria.
 
 ---
 
-## 二、输入类型判断测试
+## 1. Trigger Accuracy Tests
 
-| ID | 输入 | 期望判断 | 评估标准 |
+### Should Trigger (Explicit Trigger)
+
+| ID | Input | Expected Behavior | Evaluation Criteria |
 |---|---|---|---|
-| T4.1 | "帮我写一个代码审查的prompt" | 需求描述，从零写 | 用户描述需求，无现有 prompt |
-| T4.2 | "优化这个：You are a helpful assistant. Answer questions." | system prompt，优化现有 | 贴了现有 prompt |
-| T4.3 | "我希望AI能帮我分析数据，要输出JSON格式" | 需求描述，从零写 | 用户描述需求，无现有 prompt |
-| T4.4 | "这个prompt效果不好：You are a code reviewer. Find bugs and bad practices. Output JSON." | system prompt，优化现有 | 贴了现有 prompt，且有结构 |
-| T4.5 | "帮我优化：我希望AI能review代码，要求：1.找出bug 2.输出JSON格式" | 混合内容，拆分 | 既有需求描述又有格式要求 |
+| T1.1 | "优化一下 我希望AI能帮我review代码" | Enter optimization flow directly | Recognize "优化一下" trigger word |
+| T1.2 | "帮我优化我的描述：写一个数据分析的prompt" | Enter optimization flow directly | Recognize "帮我优化" trigger word |
+| T1.3 | "改进一下 这个prompt效果不好：You are a code reviewer" | Enter optimization flow directly | Recognize "改进一下" trigger word |
+| T1.4 | "帮我写个prompt 让AI帮我写营销文案" | Enter optimization flow directly | Recognize "帮我写个prompt" trigger word |
+| T1.5 | "给我一个system prompt 处理客服对话" | Enter optimization flow directly | Recognize "给我一个" trigger word |
+
+### Should Trigger (Implicit Trigger)
+
+| ID | Input | Expected Behavior | Evaluation Criteria |
+|---|---|---|---|
+| T2.1 | "You are a code reviewer. Find bugs." | Quick confirmation, then enter optimization flow | Recognize as system prompt |
+| T2.2 | "我希望AI能帮我分析数据，要输出JSON格式" | Quick confirmation, then enter optimization flow | Recognize as requirement description |
+| T2.3 | "这个agent行为不对，输出格式不稳定" | Assess whether prompt optimization is needed | Recognize as agent behavior issue |
+| T2.4 | "我在做一个code review bot" | Proactively offer prompt optimization | Recognize as building agent scenario |
+
+### Should NOT Trigger
+
+| ID | Input | Expected Behavior | Evaluation Criteria |
+|---|---|---|---|
+| T3.1 | "帮我写个函数" | Do not trigger, handle code request normally | Recognize as code implementation |
+| T3.2 | "这个bug怎么修" | Do not trigger, handle bug fix normally | Recognize as debugging request |
+| T3.3 | "今天天气怎么样" | Do not trigger, normal conversation | Recognize as casual chat |
+| T3.4 | "读一下这个文件" | Do not trigger, read file normally | Recognize as file operation |
+
+### Boundary Cases
+
+| ID | Input | Expected Behavior | Evaluation Criteria |
+|---|---|---|---|
+| T3.5 | "优化" (no content provided) | Ask: "Please provide the content to optimize" | Recognize trigger word but missing content |
+| T3.6 | "帮我写个prompt" (no requirements described) | Ask: "Please describe your requirements and use case" | Recognize trigger word but missing requirements |
+| T3.7 | "优化这个" (nothing follows) | Ask: "Please provide the content to optimize" | Recognize trigger word but missing content |
+
+### Simple Task Judgment Tests
+
+| ID | Input | Expected Behavior | Evaluation Criteria |
+|---|---|---|---|
+| T3.8 | "帮我写个hello world" | Skip conditional trigger, output simplified version | Recognize as simple task |
+| T3.9 | "翻译这段话" | Skip conditional trigger, output simplified version | Recognize as simple task |
+| T3.10 | "总结这篇文章" | Skip conditional trigger, output simplified version | Recognize as simple task |
+| T3.11 | "帮我起个名字" | Skip conditional trigger, output simplified version | Recognize as simple task |
 
 ---
 
-## 三、语言确认测试
+## 2. Input Type Judgment Tests
 
-| ID | 输入 | 期望行为 | 评估标准 |
+| ID | Input | Expected Judgment | Evaluation Criteria |
 |---|---|---|---|
-| T5.1 | "优化一下 帮我写营销文案" | 询问"prompt 需要中文还是英文？" | 中文需求，未指定语言 |
-| T5.2 | "优化这个prompt：You are a code reviewer" | 默认输出英文 | 英文内容 |
-| T5.3 | "帮我写个英文prompt 处理客服对话" | 直接输出英文 | 用户明确要求英文 |
-| T5.4 | "写一个中文prompt 分析数据" | 直接输出中文 | 用户明确要求中文 |
-| T5.5 | "优化这个：我希望AI能review代码，要求output JSON" | 询问"prompt 需要中文还是英文？" | 中英文混合，未指定语言 |
+| T4.1 | "帮我写一个代码审查的prompt" | Requirement description, write from scratch | User describes requirements, no existing prompt |
+| T4.2 | "优化这个：You are a helpful assistant. Answer questions." | System prompt, optimize existing | User pasted an existing prompt |
+| T4.3 | "我希望AI能帮我分析数据，要输出JSON格式" | Requirement description, write from scratch | User describes requirements, no existing prompt |
+| T4.4 | "这个prompt效果不好：You are a code reviewer. Find bugs and bad practices. Output JSON." | System prompt, optimize existing | User pasted an existing prompt with structure |
+| T4.5 | "帮我优化：我希望AI能review代码，要求：1.找出bug 2.输出JSON格式" | Mixed content, split | Both requirement description and format constraints |
 
 ---
 
-## 四、输出质量测试
+## 3. Language Confirmation Tests
 
-### 优化现有 prompt 流程测试
-
-| ID | 测试场景 | 检查项 | 评估标准 |
+| ID | Input | Expected Behavior | Evaluation Criteria |
 |---|---|---|---|
-| T6.0 | 优化现有 system prompt | 保留好的部分 | 识别并保留原有 prompt 中有效的部分 |
-| T6.0.1 | 优化现有 system prompt | 改进有问题的部分 | 识别并改进原有 prompt 中的问题 |
-| T6.0.2 | 优化现有 system prompt | 补充缺失的部分 | 识别并补充原有 prompt 中缺失的六区块 |
+| T5.1 | "优化一下 帮我写营销文案" | Ask: "Should the prompt be in Chinese or English?" | Chinese requirement, unspecified language |
+| T5.2 | "优化这个prompt：You are a code reviewer" | Default output in English | English content |
+| T5.3 | "帮我写个英文prompt 处理客服对话" | Output directly in English | User explicitly requested English |
+| T5.4 | "写一个中文prompt 分析数据" | Output directly in Chinese | User explicitly requested Chinese |
+| T5.5 | "优化这个：我希望AI能review代码，要求output JSON" | Ask: "Should the prompt be in Chinese or English?" | Mixed Chinese/English, unspecified language |
 
-### 六区块完整性检查
+---
 
-| ID | 测试场景 | 检查项 | 评估标准 |
+## 4. Output Quality Tests
+
+### Existing Prompt Optimization Flow Tests
+
+| ID | Test Scenario | Check Item | Evaluation Criteria |
 |---|---|---|---|
-| T6.1 | 复杂任务（代码审查） | Role / Context / Variables / Execution / Constraints / Examples | 六个区块全部存在 |
-| T6.2 | 简单任务（写个hello world） | Role / Execution / Constraints | 可以精简，但至少三个区块 |
+| T6.0 | Optimize existing system prompt | Preserve good parts | Identify and retain effective parts of the original prompt |
+| T6.0.1 | Optimize existing system prompt | Improve problematic parts | Identify and improve issues in the original prompt |
+| T6.0.2 | Optimize existing system prompt | Supplement missing parts | Identify and supplement missing six-block sections in the original prompt |
 
-### 约束质量检查
+### Six-Block Completeness Check
 
-| ID | 检查项 | 评估标准 |
+| ID | Test Scenario | Check Item | Evaluation Criteria |
+|---|---|---|---|
+| T6.1 | Complex task (code review) | Role / Context / Variables / Execution / Constraints / Examples | All six blocks present |
+| T6.2 | Simple task (write hello world) | Role / Execution / Constraints | Can be simplified, but at least three blocks |
+
+### Constraint Quality Check
+
+| ID | Check Item | Evaluation Criteria |
 |---|---|---|
-| T7.1 | 每条约束包含违反后果 | 约束格式为"规则 + 违反时的行为" |
-| T7.2 | 约束数量 ≤ 8 | 不超过 8 条约束 |
-| T7.3 | 包含必备约束 | 输出格式、幻觉防护、安全防护（根据任务类型） |
+| T7.1 | Each constraint includes violation consequences | Constraint format: "Rule + behavior when violated" |
+| T7.2 | Constraint count ≤ 8 | No more than 8 constraints |
+| T7.3 | Includes required constraints | Output format, hallucination prevention, safety guard (based on task type) |
 
-### 示例覆盖检查
+### Example Coverage Check
 
-| ID | 检查项 | 评估标准 |
+| ID | Check Item | Evaluation Criteria |
 |---|---|---|
-| T8.1 | 至少 2 个示例 | standard + edge case |
-| T8.2 | 示例与 Schema 一致 | 输出格式符合定义的 Schema |
-| T8.3 | 示例覆盖边界情况 | 包含缺失数据、歧义、错误输入等场景 |
+| T8.1 | At least 2 examples | Standard + edge case |
+| T8.2 | Examples consistent with Schema | Output format conforms to defined Schema |
+| T8.3 | Examples cover boundary cases | Include scenarios like missing data, ambiguity, erroneous input |
 
-### 领域适配检查
+### Domain Adaptation Check
 
-| ID | 领域 | 期望侧重点 | 评估标准 |
+| ID | Domain | Expected Emphasis | Evaluation Criteria |
 |---|---|---|---|
-| T9.1 | 代码审查 | Constraints 优先 | Severity Anchoring、Actionable Fixes |
-| T9.2 | 文案撰写 | Examples 优先 | 多个 Variants、Platform Calibration |
-| T9.3 | 数据分析 | Execution Chain 优先 | Data Anchoring、Confidence Levels |
-| T9.4 | 客服对话 | Constraints 优先 | Empathy First、Escalation Triggers |
+| T9.1 | Code review | Constraints first | Severity Anchoring, Actionable Fixes |
+| T9.2 | Copywriting | Examples first | Multiple Variants, Platform Calibration |
+| T9.3 | Data analysis | Execution Chain first | Data Anchoring, Confidence Levels |
+| T9.4 | Customer service dialogue | Constraints first | Empathy First, Escalation Triggers |
 
 ---
 
-## 五、测试执行方法
+## 5. Test Execution Method
 
-### 手动测试流程
+### Manual Test Flow
 
-1. 准备测试环境：确保 skill 已加载
-2. 按顺序执行测试用例：输入 → 观察行为 → 记录结果
-3. 对比期望行为：符合/不符合
-4. 记录不符合的用例：分析原因，提出改进方向
+1. Prepare test environment: Ensure the skill is loaded
+2. Execute test cases in order: Input → Observe behavior → Record results
+3. Compare against expected behavior: Pass/Fail
+4. Record failing cases: Analyze causes, propose improvement directions
 
-### 自动化测试（未来）
+### Automated Testing (Future)
 
 ```bash
-# 伪代码
+# Pseudo code
 for test_case in test_cases:
     result = run_skill(test_case.input)
     assert result.behavior == test_case.expected_behavior
@@ -150,20 +150,20 @@ for test_case in test_cases:
 
 ---
 
-## 六、测试结果记录模板
+## 6. Test Results Recording Template
 
-| 测试日期 | 测试用例 ID | 结果 | 问题描述 | 改进建议 |
+| Test Date | Test Case ID | Result | Issue Description | Improvement Suggestion |
 |---|---|---|---|---|
 | YYYY-MM-DD | T1.1 | PASS/FAIL | - | - |
 
 ---
 
-## 七、持续改进
+## 7. Continuous Improvement
 
-1. **每周运行一次测试**：检查 skill 是否退化
-2. **新增用例**：遇到新的场景/边界情况，添加到测试文件
-3. **更新期望行为**：当 skill 逻辑调整时，同步更新期望行为
-4. **分析失败用例**：找出共性问题，优化 skill 设计
+1. **Run tests weekly**: Check for skill regression
+2. **Add new cases**: When encountering new scenarios / edge cases, add to the test file
+3. **Update expected behavior**: When skill logic is adjusted, update expected behavior accordingly
+4. **Analyze failing cases**: Identify common issues, optimize skill design
 
 ---
-最后更新: 2026-07-02
+Last updated: 2026-07-02

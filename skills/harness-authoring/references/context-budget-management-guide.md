@@ -1,184 +1,184 @@
-# 上下文预算管理指南
+# Context Budget Management Guide
 
-## 核心理念
+## Core Principle
 
-上下文窗口是稀缺资源。每个设计决策都要回答一个问题：**这个内容对上下文预算的影响是什么？**
+Context windows are scarce resources. Every design decision should answer one question: **What is the impact of this content on the context budget?**
 
-## 三层加载机制详解
+## Three-Layer Loading Mechanism
 
-### 第一层：元数据（始终常驻）
+### Layer 1: Metadata (Always Resident)
 
-**预算**：~100 词（name + description + when_to_use）
+**Budget**: ~100 words (name + description + when_to_use)
 
-**设计要点**：
-- name：简短明确，便于检索（≤ 5 词）
-- description：做什么 + 什么时候用（≥ 20 字符）
-- when_to_use：显式/隐式触发条件 + 不触发条件
+**Design Points**:
+- name: Short and clear for easy retrieval (≤ 5 words)
+- description: What it does + When to use (≥ 20 characters)
+- when_to_use: Explicit/implicit trigger conditions + non-trigger conditions
 
-**示例对比**：
+**Example Comparison**:
 
 ```yaml
-# ❌ 差：模糊，无法区分
-description: 帮助处理代码相关任务
+# ❌ Bad: vague, indistinguishable
+description: Helps with code-related tasks
 
-# ✅ 好：具体，能区分
-description: 指导如何为 harness 体系编写新的 skill 或 subagent——遵循渐进式披露与上下文预算原则。用于"怎么写一个好的 SKILL.md"、"给 harness 添新能力"场景。
+# ✅ Good: specific, distinguishable
+description: Guides how to write new skills or subagents for the harness system — following progressive disclosure and context budget principles. Used for "how to write a good SKILL.md", "add new capabilities to harness" scenarios.
 ```
 
-**常见错误**：
-- ❌ description 太短（< 20 字符）——触发条件不明确
-- ❌ description 太长（> 200 词）——常驻上下文浪费
-- ❌ when_to_use 缺失——触发和不触发边界模糊
+**Common Mistakes**:
+- ❌ description too short (< 20 characters) — trigger conditions unclear
+- ❌ description too long (> 200 words) — wastes resident context
+- ❌ when_to_use missing — trigger and non-trigger boundaries are blurry
 
-### 第二层：SKILL.md 正文（触发时加载）
+### Layer 2: SKILL.md Body (Loaded on Trigger)
 
-**预算**：≤ 500 行
+**Budget**: ≤ 500 lines
 
-**设计要点**：
-- 核心原则 ≤ 5 条（每条一句话）
-- 执行流程步骤 ≤ 7 步
-- 硬约束 ≤ 5 条
-- 最佳实践每类 ≤ 5 条
+**Design Points**:
+- Core principles ≤ 5 (one sentence each)
+- Execution flow steps ≤ 7
+- Hard constraints ≤ 5
+- Best practices per category ≤ 5
 
-**章节结构建议**：
+**Suggested Section Structure**:
 
-| 章节 | 建议行数 | 内容 |
+| Section | Suggested Lines | Content |
 |---|---|---|
-| 核心原则 | 10-20 行 | 3-5 条核心信念 |
-| 何时使用 | 10-20 行 | 触发条件（显式/隐式/不触发） |
-| 方法论 | 50-150 行 | 核心流程和决策框架 |
-| 操作步骤 | 30-80 行 | 具体执行步骤 |
-| 硬约束 | 10-20 行 | 不可违反的规则 |
-| 边界情况 | 20-40 行 | 特有边界情况 |
-| 最佳实践 | 30-60 行 | 分类的最佳实践 |
-| 常见陷阱 | 10-20 行 | 典型错误 |
-| Agent 提示词 | 50-150 行 | agent 的 system prompt |
+| Core Principles | 10-20 lines | 3-5 core beliefs |
+| When to Use | 10-20 lines | Trigger conditions (explicit/implicit/non-trigger) |
+| Methodology | 50-150 lines | Core process and decision framework |
+| Operation Steps | 30-80 lines | Concrete execution steps |
+| Hard Constraints | 10-20 lines | Inviolable rules |
+| Edge Cases | 20-40 lines | Skill-specific edge cases |
+| Best Practices | 30-60 lines | Categorized best practices |
+| Common Pitfalls | 10-20 lines | Typical mistakes |
+| Agent Prompt | 50-150 lines | Agent system prompt |
 
-**膨胀检测信号**：
-- 单个章节超过 100 行 → 考虑拆分到 references/
-- 总行数接近 450 行 → 提前规划拆分
-- 出现"详细内容见..."但没有对应文件 → 需要创建 references 文件
+**Blow-up Detection Signals**:
+- A single section exceeds 100 lines → consider splitting into references/
+- Total lines approach 450 → plan ahead for splitting
+- "See details in..." appears without a corresponding file → need to create a references file
 
-### 第三层：绑定资源（按需加载）
+### Layer 3: Bound Resources (Loaded on Demand)
 
-**预算**：无限制（但每个文件应控制在合理范围）
+**Budget**: Unlimited (but each file should stay within reasonable bounds)
 
-**文件组织原则**：
+**File Organization Principles**:
 
 ```
 references/
-├── quick-reference.md      # 快速查阅表（< 100行）
-├── deep-dive-*.md          # 深入指南（各 < 200行）
-├── templates/              # 模板文件
-├── examples/               # 示例文件
-└── scripts/                # 可执行脚本
+├── quick-reference.md      # Quick reference table (< 100 lines)
+├── deep-dive-*.md          # Deep dive guides (each < 200 lines)
+├── templates/              # Template files
+├── examples/               # Example files
+└── scripts/                # Executable scripts
 ```
 
-**加载指引写法**：
+**Loading Guide Style**:
 
 ```markdown
-## 深入参考
-- 快速查阅设计模式 → `references/quick-reference.md`
-- 深入了解某个模式 → `references/deep-dive-{模式名}.md`
-- 获取可复制模板 → `references/templates/`
+## In-Depth Reference
+- Quick design pattern lookup → `references/quick-reference.md`
+- Deep dive into a pattern → `references/deep-dive-{pattern-name}.md`
+- Ready-to-copy templates → `references/templates/`
 ```
 
-**原则**：正文里写"什么情况下该去读哪个参考文件"，不写"详细内容如下"。
+**Principle**: The body text should say "under what circumstances to read which reference file", not "detailed content follows below".
 
-## 预算监控方法
+## Budget Monitoring Methods
 
-### 行数检查
+### Line Count Check
 
 ```bash
-# 检查 SKILL.md 正文行数（不含 frontmatter）
+# Check body line count of SKILL.md (excluding frontmatter)
 total_lines=$(wc -l < SKILL.md)
 frontmatter_end=$(awk '/^---$/{count++; if(count==2) print NR}' SKILL.md)
 body_lines=$((total_lines - frontmatter_end - 1))
-echo "正文行数: $body_lines"
+echo "Body lines: $body_lines"
 if [ $body_lines -gt 450 ]; then
-    echo "⚠️ 警告：正文接近 500 行上限"
+    echo "⚠️  Warning: Body approaching 500 line limit"
 fi
 ```
 
-### 内容密度检查
+### Content Density Check
 
-| 指标 | 合格标准 | 超标处理 |
+| Metric | Pass Standard | Over-limit Action |
 |---|---|---|
-| 核心原则数量 | ≤ 5 条 | 合并或移至 references/ |
-| 执行流程步骤数 | ≤ 7 步 | 拆分为子流程 |
-| 硬约束数量 | ≤ 5 条 | 合并或移至 references/ |
-| 单章节行数 | ≤ 100 行 | 拆分到 references/ |
-| 示例数量 | ≤ 5 个 | 保留最典型的 3 个 |
+| Core principle count | ≤ 5 | Merge or move to references/ |
+| Execution flow steps | ≤ 7 | Split into sub-processes |
+| Hard constraints count | ≤ 5 | Merge or move to references/ |
+| Lines per section | ≤ 100 | Split into references/ |
+| Example count | ≤ 5 | Keep the 3 most typical |
 
-## 拆分策略
+## Split Strategy
 
-### 何时拆分
+### When to Split
 
-- 正文逼近 450 行
-- 单个章节超过 100 行
-- 出现"详细内容见..."但没有对应文件
-- 同一信息在多处出现（维护成本高）
+- Body approaching 450 lines
+- A single section exceeds 100 lines
+- "See details in..." appears without a corresponding file
+- Same information appears in multiple places (high maintenance cost)
 
-### 拆分方式
+### How to Split
 
-**方式一：按主题拆分**
+**Method 1: Split by Topic**
 ```
-原 SKILL.md（500行）
-├── SKILL.md（精简到 300行）
-├── references/pattern-a.md（100行）
-├── references/pattern-b.md（100行）
-└── references/examples.md（80行）
-```
-
-**方式二：按深度拆分**
-```
-原 SKILL.md（500行）
-├── SKILL.md（精简到 200行，只保留核心流程）
-├── references/quick-reference.md（100行，快速查阅）
-└── references/deep-dive.md（200行，深入指南）
+Original SKILL.md (500 lines)
+├── SKILL.md (trimmed to 300 lines)
+├── references/pattern-a.md (100 lines)
+├── references/pattern-b.md (100 lines)
+└── references/examples.md (80 lines)
 ```
 
-**方式三：按角色拆分**
+**Method 2: Split by Depth**
 ```
-原 SKILL.md（500行）
-├── SKILL.md（方法论部分）
-├── references/agent-guide.md（agent 执行部分）
-└── references/templates.md（模板部分）
+Original SKILL.md (500 lines)
+├── SKILL.md (trimmed to 200 lines, only core process)
+├── references/quick-reference.md (100 lines, quick lookup)
+└── references/deep-dive.md (200 lines, in-depth guide)
 ```
 
-### 拆分后的引用规范
+**Method 3: Split by Role**
+```
+Original SKILL.md (500 lines)
+├── SKILL.md (methodology section)
+├── references/agent-guide.md (agent execution section)
+└── references/templates.md (template section)
+```
+
+### Post-Split Reference Convention
 
 ```markdown
-## 在正文中写加载指引
-- 设计模式详情 → `references/skill-design-patterns.md`
-- 上下文管理细节 → `references/context-budget-management-guide.md`
-- 跨平台同步细节 → `references/cross-platform-sync-guide.md`
+## Write loading guide in body text
+- Design pattern details → `references/skill-design-patterns.md`
+- Context management details → `references/context-budget-management-guide.md`
+- Cross-platform sync details → `references/cross-platform-sync-guide.md`
 
-## 在 Agent 提示词中引用
-使用 `skills` 字段预加载相关技能，而不是在 system prompt 里重复内容。
+## Reference in Agent Prompt
+Use the `skills` field to preload related skills instead of duplicating content in the system prompt.
 ```
 
-## 常见预算问题与解决
+## Common Budget Problems and Solutions
 
-| 问题 | 原因 | 解决 |
+| Problem | Cause | Solution |
 |---|---|---|
-| 正文超 500 行 | 所有内容都塞在正文里 | 拆分到 references/ |
-| 常驻内容过多 | description 写太长 | 精简到核心信息 |
-| 加载指引缺失 | 拆分后忘记写引用 | 补充"什么情况下读哪个文件" |
-| 信息重复 | 同一内容在正文和 references 都出现 | 正文只写摘要，details 放 references/ |
-| 触发不准确 | description 模糊 | 具体化触发场景 |
+| Body exceeds 500 lines | Everything crammed into the body | Split into references/ |
+| Resident content too large | description written too long | Trim to core information |
+| Missing loading guide | Split without adding references | Add "under what circumstances to read which file" |
+| Information duplication | Same content appears in both body and references | Body only has summary, details go in references/ |
+| Inaccurate triggering | Vague description | Specify trigger scenarios |
 
-## 预算优化清单
+## Budget Optimization Checklist
 
-创建/修改 skill 时，逐项检查：
+When creating/modifying a skill, check each item:
 
-- [ ] description 是否 ≤ 200 词？
-- [ ] description 是否同时包含"做什么"和"什么时候用"？
-- [ ] 正文是否 ≤ 500 行？
-- [ ] 单个章节是否 ≤ 100 行？
-- [ ] 核心原则是否 ≤ 5 条？
-- [ ] 执行流程步骤是否 ≤ 7 步？
-- [ ] 硬约束是否 ≤ 5 条？
-- [ ] 是否有 references/ 子目录按需加载详细内容？
-- [ ] 正文是否写了"什么情况下读哪个参考文件"？
-- [ ] 是否避免了信息在正文和 references 中重复？
+- [ ] Is description ≤ 200 words?
+- [ ] Does description include both "what it does" and "when to use"?
+- [ ] Is the body ≤ 500 lines?
+- [ ] Is each section ≤ 100 lines?
+- [ ] Are core principles ≤ 5?
+- [ ] Are execution flow steps ≤ 7?
+- [ ] Are hard constraints ≤ 5?
+- [ ] Is there a references/ subdirectory for on-demand loading?
+- [ ] Does the body say "under what circumstances to read which reference file"?
+- [ ] Is information duplication between body and references avoided?

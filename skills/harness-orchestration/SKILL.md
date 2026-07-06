@@ -1,176 +1,320 @@
 ---
 name: harness-orchestration
-description: 编排 harness-engineering-kit 中 skill 的组合与工作流路由——根据用户目标选择正确的 skill 组合和执行顺序。用于"我该用哪些 skill"、"规划多 skill 协作"、"工作流怎么走"、"进入新项目不确定先后顺序"场景。
+description: Orchestrate skill combinations and workflow routing in the current project — selecting the right skill mix and execution order based on user goals. Used for deciding which skills to use, planning multi-skill collaboration, and navigating workflow order in new projects.
 when_to_use: |
   显式触发：用户问"我该用哪些 skill"、"怎么组合这些 skill"、"工作流怎么走"、"进入新项目不确定先后顺序"。
   隐式触发：用户面对多个 skill 不知如何组合、复杂任务需要规划多 skill 协作流程、用户进入新项目后第一次对话。
   不触发：用户明确知道要用哪个 skill（直接使用，不需要路由）、任务简单只涉及单个 skill、用户在问具体 skill 的用法而非组合。
 context: fork
 agent: orchestrator
-compatibility: opencode
+compatibility: claude-code
+allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *)
 metadata:
   category: routing
 ---
-# 技能编排与工作流路由（Orchestration）
+# Skill Orchestration & Workflow Routing
 
-## 核心原则
-- **组合比单点更重要**：选择正确的 skill 组合和执行顺序，比掌握单个 skill 更关键。
-- **按需使用，不全量启动**：12 个 skill 是按需使用的工具箱，不是每次都要全走一遍。
-- **编排是路由知识**：主对话持续记住的决策逻辑，不是"委派出去等结果"的执行任务。
+## Core Principles
+- **Composition over individual skills**: Choosing the right skill combination and execution order is more critical than mastering any single skill.
+- **On-demand usage, not full suite every time**: The 13 skills are a toolbox to be used on demand — not a checklist to run through every time.
+- **Orchestration is routing knowledge**: It is decision logic that the main conversation remembers — not an execution task to delegate and wait for results.
+- **Clarify before routing**: When the goal is ambiguous, ask clarifying questions before making routing decisions. Guessing wastes more time than asking.
+- **Intake before bootstrap**: In Greenfield initialization, always run `project-intake` before `bootstrap` — the skeleton must match the actual project.
 
-## 何时使用
-- 用户问"我该用哪些 skill"或"怎么开始用这套 harness"
-- 用户问"怎么组合这些 skill"或"工作流怎么走"
-- 面对多个 skill 不知如何组合
-- 进入新项目，不确定先做什么后做什么
-- 复杂任务需要规划多 skill 协作流程
+## When to Use
+- User asks "我该用哪些 skill" or "怎么开始用这套 harness"
+- User asks "怎么组合这些 skill" or "工作流怎么走"
+- User is unsure how to combine multiple skills
+- Entering a new project, uncertain about the order of next steps
+- Complex task requiring multi-skill collaboration planning
 
-## 何时不该用
-- 用户明确知道要用哪个 skill——直接使用，不需要路由。
-- 任务简单，只涉及单个 skill——不需要编排开销。
+## When Not to Use
+- User explicitly knows which skill to use — use it directly, no routing needed.
+- Task is simple, involving only a single skill — no orchestration overhead needed.
+- User is asking about a specific skill's usage, not skill combinations — answer the usage question directly.
 
-## 五条标准工作流
+## Five Standard Workflows
 
-### Workflow 1: Greenfield 初始化
-1. 执行 `project-intake`，产出结构化项目卡片
-2. 执行 `bootstrap`，生成 AGENTS.md + docs/ 骨架
-3. 执行 `repo-map`，校验文档结构完整性
-4. 执行 `architecture-boundaries` + `golden-principles`（小项目可跳过 `architecture-boundaries`）
+### Workflow 1: Greenfield Initialization
+1. Execute `project-intake` to produce a structured project card
+2. Execute `bootstrap` to generate CLAUDE.md + docs/ skeleton
+3. Execute `repo-map` to verify document structural integrity
+4. Execute `architecture-boundaries` + `golden-principles` (small projects may skip `architecture-boundaries`)
 
-### Workflow 2: 日常功能开发
-1. （可选）执行 `exec-plans`，落盘执行计划
-2. 实现功能代码
-3. 执行 `verification-loop`，自验证循环
-4. 执行 `commit-gate`，提交前质量检查
+### Workflow 2: Daily Feature Development
+1. (Optional) Execute `exec-plans` to create an execution plan
+2. Implement feature code
+3. Execute `verification-loop` for self-verification
+4. Execute `commit-gate` for pre-commit quality check
 
-### Workflow 3: 代码质量修复
-1. 执行 `golden-principles`，扫描品味漂移
-2. （可选）执行 `architecture-boundaries`，处理结构性问题
-3. 执行 `verification-loop`，自验证循环
-4. 执行 `commit-gate`，提交前质量检查
+### Workflow 3: Code Quality Fixes
+1. Execute `golden-principles` to scan for taste drift
+2. (Optional) Execute `architecture-boundaries` to address structural issues
+3. Execute `verification-loop` for self-verification
+4. Execute `commit-gate` for pre-commit quality check
 
-### Workflow 4: 扩展 harness 体系
-1. 执行 `authoring`，编写新 skill/agent
-2. （可选）执行 `bootstrap`，初始化新结构
-3. 执行 `repo-map`，校验文档结构完整性
+### Workflow 4: Extending the Harness System
+1. Execute `authoring` to write a new skill/agent
+2. (Optional) Execute `bootstrap` to initialize new structure
+3. Execute `repo-map` to verify document structural integrity
 
-### Workflow 5: 优化 prompt 质量
-1. 执行 `prompt-optimizer`（独立使用，无需其他 skill 配合）
+### Workflow 5: Optimizing Prompt Quality
+1. Execute `prompt-optimizer` (standalone, no other skills needed)
 
-三层路由判断和详细交接点表见 `references/routing-decision-tree.md`。
+See `references/routing-decision-tree.md` for the three-layer routing decision framework and detailed handoff table.
 
-## 方法论
-### 常见省略场景
-- 小项目不需要 `architecture-boundaries`（无多层架构要守）。
-- 纯文档改动不需要 `verification-loop` 和 `observability-and-browser`。
-- 已有完善 harness 结构的项目不重走 Workflow 1。
-- `authoring` 只在扩展 harness 体系时使用。
-- `prompt-optimizer` 只在需要优化提示词时使用。
+## Methodology
 
-## 硬约束
-- **Workflow 1 不得跳过 `project-intake`**：违反则 `bootstrap` 生成的骨架可能与项目实际不符，导致后续返工。
-- **不得对已明确 skill 的用户强制编排**：用户明确说"用 X skill"时直接执行，违反则浪费上下文窗口，降低效率。
+### 1. Three-Layer Routing Decision Framework
 
-## 示例
+Routing decisions are made across three layers, from coarse to fine. Each layer narrows the scope, avoiding a search across all 13 skills at once:
 
-**示例 1**：用户说"我想给这个项目添加国际化支持"
-**路由**：Workflow 2（日常功能开发）→ exec-plans → 实现 → verification-loop → commit-gate
+```
+用户目标 → Layer 1: 项目生命周期阶段 → Layer 2: 任务类型 → Layer 3: 具体 skill 及顺序
+```
 
-**示例 2**：用户说"这个项目的代码风格不统一"
-**路由**：Workflow 3（代码质量修复）→ golden-principles → verification-loop → commit-gate
+**Layer 1 — Project Phase Determination**:
+- New project → Workflow 1 (Greenfield)
+- Existing project with harness in place → see Layer 2
+- Existing harness being extended → Workflow 4
 
-## 关键要点
+**Layer 2 — Task Type Determination**:
+- Implementing new features → Workflow 2
+- Fixing code quality/style → Workflow 3
+- Optimizing prompts → Workflow 5
+- Multiple goals at once → break into independent sub-goals, route each separately, then combine
 
-- 先判断用户目标属于哪条工作流，再决定 skill 组合。
-- 目标跨多个工作流时，说明组合方式和交接点。
-- 目标有歧义时先澄清再路由，不猜测。
-- 简单任务跳过重量级 skill，避免过度工程。
-- 根据项目规模调整工作流：小项目简化，大项目完整执行。
-- 避免全量启动所有 skills，根据用户目标匹配工作流。
-- 遵循工作流顺序，确保前置步骤完成后再进行后续步骤。
-- 定期审计工作流，确保流程的有效性和适用性。
+**Layer 3 — Specific Skill Matching**:
+- Refer to the keyword matching table in `references/routing-decision-tree.md`
+- Output `[skill name] → [execution order] → [omission suggestions]`
 
-## 跨skill交接点
+### 2. Quick Guide to User Intent Matching
 
-| 上游skill | 产出物 | 下游consumer | 交接方式 |
+Quickly identify the workflow based on the user's natural language:
+
+| User says… | May belong to… | Default workflow | Clarifying question |
+|---------|----------|-----------|---------|
+| "初始化"、"新建项目"、"开始" | Workflow 1 | Workflow 1 | "是否需要搭骨架？" |
+| "实现"、"添加"、"开发"、"功能" | Workflow 2 | Workflow 2 | "是功能开发还是修复问题？" |
+| "修复"、"清理"、"重构"、"风格"、"质量" | Workflow 3 | Workflow 2 | "是功能缺陷还是代码质量问题？" |
+| "新建 skill"、"新 agent"、"添加能力" | Workflow 4 | Workflow 4 | "确认是扩展 harness 体系？" |
+| "优化 prompt"、"改提示词"、"写好 prompt" | Workflow 5 | Workflow 5 | — |
+
+When matching '修复', first confirm whether it's a functional defect or code quality — the former follows Workflow 2, the latter follows Workflow 3.
+
+### 3. Omission Decision Guide
+
+Decide which skills to omit or retain based on project size and user needs. The table below supersedes all individual omission rules — use it directly for the most common scenarios:
+
+| Scenario | Keep skills | Can omit |
+|------|-----------|--------|
+| Single-file script change | verification-loop, commit-gate | exec-plans, architecture-boundaries |
+| Small feature (< 3 files) | commit-gate | verification-loop (use quick check) |
+| Large feature (> 10 files) | Full Workflow 2 | — |
+| Documentation-only change | commit-gate (diff review only) | verification-loop, observability |
+| Existing CI test coverage | commit-gate (no need to rerun) | verification-loop test steps |
+| User explicitly says 'no tests' | commit-gate (diff + commit only) | Automated verification |
+| Small project, no multi-layer architecture | — | architecture-boundaries |
+| Existing well-established harness structure | — | Workflow 1 (Greenfield) re-run |
+| Not extending the harness system | — | authoring |
+| Not optimizing prompts | — | prompt-optimizer |
+
+When the scenario is not listed above, fall back to the Three-Layer Routing Decision Framework in section 1.
+
+## Hard Constraints
+- **Workflow 1 must not skip `project-intake`**: Violating this means the skeleton generated by `bootstrap` may not match the actual project, leading to rework.
+- **Do not force orchestration on users who already know which skill to use**: When a user explicitly says '用 X skill', execute it directly. Violating this wastes context window and reduces efficiency.
+
+## Examples
+
+**Example 1**: User says '我想给这个项目添加国际化支持'
+**Route**: Workflow 2 (Daily Feature Development) → exec-plans → Implementation → verification-loop → commit-gate
+
+**Example 2**: User says '这个项目的代码风格不统一'
+**Route**: Workflow 3 (Code Quality Fixes) → golden-principles → verification-loop → commit-gate
+
+**Example 3**: User says '新项目,用这套 harness 初始化'
+**Route**: Workflow 1 (Greenfield Initialization) → project-intake → bootstrap → repo-map → (optional) architecture-boundaries + golden-principles
+
+**Example 4**: User says '帮我优化 prompt,再初始化新项目'
+**Route**: Cross-workflow combination → first Workflow 5 (prompt-optimizer), then Workflow 1 (Greenfield)
+**Handoff point**: Prompt output from prompt-optimizer → stored for later use while Greenfield initialization runs independently
+
+**Example 5**: User says '修复这个 bug 并保证不会出现类似问题'
+**Route**: Cross-workflow combination → first Workflow 2 (fix the bug: exec-plans → implement → verification-loop → commit-gate), then Workflow 3 (prevent recurrence: golden-principles → encode pattern as rule → verification-loop → commit-gate)
+**Handoff point**: Bug fix knowledge from Workflow 2 → input for golden principle distillation in Workflow 3
+
+**Example 6**: User says '帮我看看这个项目的架构有没有问题'
+**Route**: '帮我看看' + '架构' → Workflow 3 (Code Quality Fixes) → first step should be architecture-boundaries to scan structural drift → then verification-loop → commit-gate (Note: no golden-principles needed since the concern is structural, not stylistic)
+
+**Example 7**: User says '我要重构这个模块，但怕影响现有功能'
+**Route**: Cross-workflow combination → first Workflow 2 (feature: exec-plans → implement with verification-loop for each incremental step → commit-gate), pre-loaded with "golden-principles scan" as a precautionary step before implementation to capture existing patterns
+**Handoff point**: Golden principles baseline scan → used as regression guard during refactoring verification
+
+## Key Points
+
+- First determine which workflow the user's goal belongs to, then decide on the skill combination.
+- When a goal spans multiple workflows, explain the combination approach and handoff points.
+- When the goal is ambiguous, clarify before routing — don't guess.
+- For simple tasks, skip heavyweight skills to avoid over-engineering.
+- Adjust workflows based on project scale: simplify for small projects, complete execution for large ones.
+- Avoid starting all skills at once; match the workflow based on the user's goal.
+- Follow the workflow order to ensure prerequisite steps are completed before moving to subsequent steps.
+- Regularly audit workflows to ensure their effectiveness and applicability.
+- Handoff points are the most fragile link in multi-workflow orchestration — confirm upstream deliverables are complete before the downstream workflow begins.
+
+## Cross-Skill Handoff Points
+
+| Upstream skill | Output | Downstream consumer | Handoff method |
 |---|---|---|---|
-| `project-intake` | 结构化项目卡片 | `bootstrap` | 卡片信息直接传入 |
-| `exec-plans` | exec-plan文件 | `verification-loop` | 文件路径传递 |
-| `verification-loop` | 验证通过信号 | `commit-gate` | 完成总结传递 |
-| `golden-principles` | 修复队列 | `verification-loop` | 逐项修复清单 |
-| `architecture-boundaries` | lint规则 | `verification-loop`/`commit-gate` | 作为自检项 |
+| `project-intake` | Structured project card | `bootstrap` | Card info passed directly |
+| `exec-plans` | exec-plan file | `verification-loop` | File path passed |
+| `verification-loop` | Verification pass signal | `commit-gate` | Completion summary passed |
+| `golden-principles` | Fix queue | `verification-loop` | Item-by-item fix list |
+| `architecture-boundaries` | Lint rules | `verification-loop`/`commit-gate` | Used as self-check item |
 
-跨工作流组合时，按上表确认上游已落盘，再进入下一步。
+When combining across workflows, use the table above to confirm upstream deliverables are complete before proceeding.
 
-## 边界情况处理
+## Edge Case Handling
 
-> 通用边界情况（目标澄清、项目规模极小、遗留项目改造、多团队协作等）参见 `references/common-edge-cases.md`，以下仅列出本 skill 特有的边界情况。
+> For general edge cases (goal clarification, very small projects, legacy project renovation, multi-team collaboration, etc.) see `references/common-edge-cases.md`. The following only lists edge cases specific to this skill.
 
-### 跨多个工作流
+### Spanning Multiple Workflows
 
-**场景**：用户目标涉及多个工作流
-**处理**：识别跨工作流任务，说明组合方式和交接点
+**Scenario**: The user's goal involves multiple workflows
+**Handling**: Identify cross-workflow tasks, explain the combination approach and handoff points
 
-## 常见陷阱
-- **全量启动**：每次把 12 个 skill 全走一遍，浪费时间和上下文。→ 根据用户目标选择合适的工作流，只使用必要的 skills。
-- **跳过前置步骤**：不走 `project-intake` 就开始 `bootstrap`，骨架可能和项目实际不符。→ 严格遵循工作流顺序。
-- **混淆品味与结构**：用 `golden-principles` 处理结构性问题，或用 `architecture-boundaries` 处理品味偏好。→ 明确区分，选择正确的 skill。
-- **过度路由**：用户明确知道要什么 skill 时，不需要绕一圈编排。→ 直接使用，不需要编排。
-- **不澄清就路由**：目标有歧义时直接猜测用户意图。→ 先澄清再路由，不猜测。
+### User Insists on Wrong Skill
 
-## 最佳实践
+**Scenario**: The user explicitly asks to use a skill that doesn't match their goal (e.g., using `architecture-boundaries` for a taste preference issue)
+**Handling**: Politely explain why the chosen skill may not be the best fit and suggest the recommended route, but respect the user's final decision
 
-- 先判断用户目标属于哪条工作流，再决定 skill 组合，避免全量启动。
-- 简单任务跳过重量级 skill（如 exec-plans、verification-loop），避免过度工程。
-- 目标有歧义时先澄清再路由，不猜测用户意图。
-- 跨工作流组合时按交接点表确认上游已落盘，再进入下一步。
+### Multi-goal Ambiguity
+
+**Scenario**: The user's request contains multiple independent goals (e.g., "fix a bug and optimize prompts")
+**Handling**: Decompose into independent sub-goals, route each separately, then combine the recommendations with explicit handoff points between them
+
+### User Changes Their Mind Mid-Workflow
+
+**Scenario**: The user starts following Workflow 2 (feature), then says "actually, let's clean up the code quality first"
+**Handling**: Acknowledge the pivot. Retain any useful output already produced (e.g., an execution plan file from exec-plans) and re-route the remaining work into the new workflow. Do not discard completed work — make the handoff explicit.
+
+## Common Pitfalls
+- **Full suite start**: Running through all 13 skills every time wastes time and context. → Choose the appropriate workflow based on the user's goal, using only necessary skills.
+- **Skipping prerequisite steps**: Starting `bootstrap` without `project-intake` may produce a skeleton that doesn't match the project. → Strictly follow the workflow order.
+- **Confusing taste with structure**: Using `golden-principles` for structural issues, or `architecture-boundaries` for taste preferences. → Clearly differentiate and choose the right skill.
+- **Over-routing**: When the user explicitly knows which skill they want, no need to go through orchestration. → Use it directly, no orchestration needed.
+- **Routing without clarification**: Guessing the user's intent when the goal is ambiguous. → Clarify before routing, don't guess.
+- **User rejects routing advice**: When the user chooses a different skill or workflow than recommended, accept the choice and execute directly. → Do not insist on the recommended route; the user's explicit instruction takes precedence.
+- **Re-routing on the same goal**: Repeating the routing recommendation after the user has already chosen a different path. → Accept the user's choice and stop routing for that goal.
+
+## FAQ / Troubleshooting
+
+### Multiple workflows match simultaneously
+
+**Q**: The user's goal could match Workflow 2 (feature) and Workflow 3 (quality) at the same time — how to route?
+**A**: Ask a differentiating question first (e.g., "是功能缺陷还是代码质量问题？"). If still ambiguous, default to Workflow 2 (feature) and let the implementation phase reveal whether quality work is needed.
+
+### User insists on the wrong workflow
+
+**Q**: The user explicitly insists on Workflow 1 (Greenfield) but the project already has a harness structure.
+**A**: Clarify once — "这个项目已经有 harness 结构了，不需要重新初始化。你想做功能开发还是修复问题？" If the user insists, execute their choice.
+
+### Routing advice was ignored earlier, then the user returns
+
+**Q**: The user ignored routing advice, did something else, and now asks for the next step.
+**A**: Do not re-route from scratch. Assume the intermediate work happened as the user chose. Ask "你现在到哪一步了？" and route from the current state forward.
+
+### Cross-workflow combination
+
+**Q**: The user's goal spans two workflows — e.g., "fix a bug and also optimize prompts."
+**A**: Decompose into independent sub-goals. Route each through its own workflow and describe the handoff between them. Execution order: complete one workflow before starting the next to avoid context fragmentation.
+
+## Best Practices
+
+- When the user says '帮我看看' or '看看这个项目', default to the first two steps of Workflow 1 (Greenfield Initialization): project-intake → repo-map.
+- When the user says '修复', first distinguish between '功能缺陷' (Workflow 2) and '代码质量' (Workflow 3) — one clarifying question resolves the ambiguity.
+- For multi-layer nested routing, prefer matching specific workflows (Workflow 2-5) first; fall back to Workflow 1 if no match is found.
+- If a new user request comes in during workflow execution, finish the current workflow before entering a new route to avoid context fragmentation.
+- When the user's task clearly fits a single workflow, output routing recommendations concisely in 2-3 bullet points — lengthy explanations waste the user's context when they just need to get started.
 
 ## Agent 提示词
 
-## orchestrator（技能编排顾问）
+## orchestrator (Skill Orchestration Advisor)
 
-### 角色定义
+### Skip Conditions
 
-只读路由顾问，根据用户目标推荐正确的 skill 组合和执行顺序，由主对话按建议调用对应 skill。
+- **User explicitly knows which skill to use**: Use it directly, no routing needed.
+- **Task is simple, involving only a single skill**: No orchestration overhead needed.
+- **User is asking about a specific skill's usage, not combination**: Answer the usage question directly.
+- **User's goal is already satisfied by a single standard workflow**: Route to that workflow, no cross-workflow combination needed.
+- **The project already has an established harness structure and the user is working within it**: No need for Greenfield initialization routing — fall directly to Workflow 2-5 matching.
+- **The user is already mid-execution of a previously recommended route with no deviation**: Do not re-alert with routing advice — continue supporting the current step.
 
-### 跳过条件
+### Role Definition
 
-- **用户明确知道要用哪个 skill**：直接使用，不需要路由。
-- **任务简单，只涉及单个 skill**：不需要编排开销。
-- **用户在问具体 skill 的用法而非组合**：直接回答用法问题。
+Read-only routing advisor that recommends the correct skill combination and execution order based on the user's goal. The main conversation calls the corresponding skills following the recommendations.
 
-### 核心能力
+### Core Capabilities
 
-- 判断用户目标属于哪条标准工作流（初始化/日常开发/质量修复/扩展 harness/prompt 优化）。
-- 识别跨工作流任务，说明组合方式和交接点。
-- 根据任务规模判断哪些 skill 可以省略。
+- Determine which standard workflow (1-5) the user's goal falls under: initialization / daily development / quality fixes / extending harness / prompt optimization.
+- Identify cross-workflow tasks and explain the combination approach and handoff points between workflows.
+- Determine which skills can be omitted based on task scale and project maturity.
+- Route user goals to specific skills when the user explicitly names them (no orchestration overhead).
+- Clarify ambiguous goals with targeted questions before routing — don't guess.
+- Track session state to avoid redundant routing: if routing advice was already given and accepted, continue from the user's current state rather than re-running the decision framework.
 
-### 执行流程
+### Execution Flow
 
-1. **理解目标**：判断用户意图属于哪条工作流，分析用户需求、项目状态和技术背景。
-2. **匹配工作流**：参考五条标准工作流和决策树，选择匹配的工作流，检查是否涉及多个工作流。
-3. **输出建议**：推荐 skill 组合、执行顺序、省略建议和交接点说明。
-4. **跨流组合**：如目标跨多个工作流，说明组合方式和交接点的前置条件与产出物。
+1. **Understand the goal**: Determine which workflow the user's intent belongs to, analyze the user's needs, project status, and technical context.
+2. **Match the workflow**: Refer to the five standard workflows and decision tree, select the matching workflow, and check if multiple workflows are involved.
+3. **Output recommendations**: Recommend skill combinations, execution order, omission suggestions, and handoff point descriptions.
+4. **Cross-workflow combination**: If the goal spans multiple workflows, explain the combination approach and handoff point prerequisites and outputs.
 
-### 约束
+### Constraints
 
-- **只读不执行**：不替用户调用任何 skill，只输出路由建议。违反时撤回执行，以建议形式输出。
-- **先澄清再路由**：目标有歧义时先提问，不猜测。违反时补充澄清问题。
-- **简单任务不绕路**：明确知道用哪个 skill 时直接建议，不需要绕一圈编排。违反时简化建议。
-- **守住前置依赖**：跨工作流组合时按交接点表确认上游已落盘；尤其 Workflow 1 必须先经 `project-intake` 再 `bootstrap`。违反时补充缺失的前置步骤。
-- **区分工作流类型**：必须准确区分初始化、日常开发、质量修复、扩展 harness、prompt 优化等类型，不能混淆。违反时重新分类。
-- **提供具体建议**：每个建议都必须具体、可执行，不能模糊。违反时补充具体建议。
+- **Read-only, no execution**: Do not invoke any skill on behalf of the user; only output routing recommendations. Violation: withdraw the execution and output as a suggestion.
+- **Clarify before routing**: When the goal is ambiguous, ask questions first, don't guess. Violation: supplement with clarifying questions.
+- **Simple tasks don't detour**: When the user clearly knows which skill to use, recommend it directly without going through orchestration. Violation: simplify the recommendation.
+- **Uphold prerequisite dependencies**: When combining across workflows, use the handoff table to confirm upstream deliverables are complete; especially Workflow 1 must go through `project-intake` before `bootstrap`. Violation: supplement the missing prerequisite steps.
+- **Distinguish workflow types**: Must accurately distinguish between initialization, daily development, quality fixes, extending harness, prompt optimization, etc.; do not confuse them. Violation: reclassify.
+- **Provide specific recommendations**: Every recommendation must be specific and actionable, not vague. Violation: supplement with specific details.
+- **Output without self-invocation**: Routing recommendations are output as conversation text — do not invoke skills or create files. Violation: withdraw the skill invocation.
 
-### 输出规范
+### Output Specification
 
-- **推荐 skill 列表**：按执行顺序排列，包含 skill 名称和简要职责说明。
-- **工作流编号**：明确属于哪条标准工作流（1-5），或标注"跨流组合"。
-- **省略建议**：标注哪些步骤可跳过及理由。
-- **交接点说明**：跨工作流时，说明每个交接点的前置条件和产出物。
+- **Recommended skill list**: Ordered by execution order, including skill names and brief responsibility descriptions.
+- **Workflow number**: Clearly indicate which standard workflow it belongs to (1-5), or mark as '跨流组合' (cross-workflow combination).
+- **Omission suggestions**: Indicate which steps can be skipped and the reason.
+- **Handoff point description**: When spanning workflows, describe the prerequisites and outputs for each handoff point.
+- **Output location**: Conversation output only, no file creation — orchestration is routing advice, not execution results.
 
-## 相关模板
+**Output template example:**
 
-- `references/routing-decision-tree.md`：路由决策树与标准工作流
+```
+## Routing Recommendation
+
+**Workflow**: 2 (Daily Feature Development)
+**Recommended Sequence**:
+1. `exec-plans` — Create an execution plan for the feature
+2. *Implementation* — Write feature code
+3. `verification-loop` — Self-verify the implementation
+4. `commit-gate` — Pre-commit quality check
+
+**Omission**: Skip `architecture-boundaries` (no multi-layer architecture in this project)
+**Handoff**: Completion summary from `verification-loop` → input for `commit-gate`
+```
+
+## Related Skills
+
+- Upstream **None**: This skill is a meta-layer routing entry, does not depend on outputs from other skills
+- Downstream **project-intake / exec-plans / authoring / golden-principles / prompt-optimizer**: This skill routes to the corresponding skill based on the user's goal
+
+## Related Templates
+
+- `references/routing-decision-tree.md`: Routing decision tree and standard workflows
+- `references/workflow-execution-examples.md`: Practical execution examples of the five standard workflows
+- `references/workflow-summary-cheatsheet.md`: Five workflows quick reference table with omission guidance
 
 ---
-最后更新: 2026-07-02（变更：A+级优化，增加边界情况处理，增加最佳实践，优化Agent提示词，加强跨skill交接点说明）
+Last updated: 2026-07-06 (Change: A+ optimization batch — examples, key points, best practices, edge cases, core capabilities, skip conditions)

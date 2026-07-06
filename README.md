@@ -1,66 +1,49 @@
 # Harness Engineering Kit
 
-一套通用、与具体项目无关的 **skills + agents** 套件,适用于 **Claude Code** 和 **Codex**。把 OpenAI《Harness engineering: leveraging Codex in an agent-first world》和 LangChain《The Anatomy of an Agent Harness》两篇文章里的核心方法论,落地成可以直接放进任意仓库的可执行工件。
+一套通用、与具体项目无关的 **skills + agents** 套件,完美适配 **Claude Code CLI**。把 OpenAI《Harness engineering: leveraging Codex in an agent-first world》和 LangChain《The Anatomy of an Agent Harness》两篇文章里的核心方法论,落地成可以直接放进任意仓库的可执行工件。
 
 > Agent = Model + Harness。模型提供智能,harness 提供让这份智能变成可靠产出所需要的一切:状态、工具、反馈回路、可机械强制的约束。这套工具集就是 harness 的一部分。
 
-## 来源与核心论点
+## Sources and Core Arguments
 
-- **OpenAI**(`harness-engineering`,2026-02):用三位工程师、五个月时间,以"0 行人工手写代码"的约束,生成了百万行代码的产品。核心经验:AGENTS.md 应该是地图不是百科全书,docs/ 才是知识系统记录;架构边界要被机械强制而不是靠人工 review 维持品味;熵增需要持续的小颗粒度清扫而不是定期大扫除;agent 看不见的知识等于不存在。
-- **LangChain**(`The Anatomy of an Agent Harness`,2026-03):把 harness 拆解为文件系统、bash/代码执行、沙箱、记忆与搜索、对抗 context rot 的机制(压缩、工具输出卸载、skills 渐进式披露)、长时程自主执行(规划 + 自验证 + Ralph Loop)。核心论点:这些都是"模型出厂时不具备、必须靠 harness 补上"的能力。
+- **OpenAI** (`harness-engineering`, 2026-02): Three engineers, five months, zero hand-written lines of code as a constraint, produced a million-line product. Core takeaways: CLAUDE.md should be a map not an encyclopedia — docs/ is where the knowledge lives; architecture boundaries must be mechanically enforced, not left to human code review taste; entropy needs continuous small cleanups, not periodic big overhauls; knowledge the agent cannot see does not exist.
+- **LangChain** (`The Anatomy of an Agent Harness`, 2026-03): Decomposes a harness into the filesystem, bash/code execution, sandbox, memory and search, mechanisms to fight context rot (compression, tool output offloading, progressive disclosure of skills), and long-horizon autonomous execution (planning + self-verification + Ralph Loop). Core thesis: these are capabilities the model does not ship with — the harness must supply them.
 
-两篇文章的方法论高度互补——OpenAI 提供了"在真实大规模工程里怎么落地"的具体经验,LangChain 提供了"为什么每一个 harness 组件存在"的第一性原理推导。这套工具集按两者共同强调的几个支点组织。
+The two papers are highly complementary — OpenAI provides concrete experience from real large-scale engineering, while LangChain provides first-principles reasoning for why each harness component exists. This toolset is organized around the pillars both emphasize.
 
-## 目录结构
+## Directory Structure
 
 ```
 harness-engineering-kit/
-├── .gitignore                           # 忽略 docs/generated/、AGENTS.md、CLAUDE.md（均由 agent 按项目生成）
+├── .gitignore                           # 忽略 docs/generated/、CLAUDE.md、CLAUDE.md（均由 agent 按项目生成）
 └── skills/                              # 13 个 skill（方法论 + agent 提示词 + 模板）
-    ├── harness-architecture-boundaries/ # 分层架构与依赖方向的机械强制
-    ├── harness-authoring/               # 元技能:如何给这套体系本身加新能力
-    ├── harness-bootstrap/               # 一键初始化 harness 结构
-    ├── harness-commit-gate/             # 提交质量门
-    ├── harness-exec-plans/              # 执行计划作为一等公民工件
-    ├── harness-golden-principles/       # 黄金原则与持续垃圾回收
-    ├── harness-observability-and-browser/ # 浏览器 + 可观测性反馈传感器
-    ├── harness-orchestration/           # 技能编排与工作流路由
-    ├── harness-project-intake/          # 项目接入分析与项目卡片
-    ├── harness-prompt-optimizer/        # 提示词优化与结构化 Prompt 工程
-    ├── harness-repo-map/                # 入口文件地图 + docs/ 系统记录
-    ├── harness-skill-quality-assessor/  # Skills质量评估与改进建议
-    └── harness-verification-loop/       # Ralph Wiggum 自验证循环
+    ├── harness-architecture-boundaries/ # Layered architecture and dependency direction with mechanical enforcement
+    ├── harness-authoring/               # Meta-skill: how to author new skills for this harness system
+    ├── harness-bootstrap/               # One-click harness initialization
+    ├── harness-commit-gate/             # Commit quality gate
+    ├── harness-exec-plans/              # Execution plans as first-class artifacts for complex tasks
+    ├── harness-golden-principles/       # Golden principles and continuous entropy cleanup
+    ├── harness-observability-and-browser/ # Browser automation + observability feedback sensors
+    ├── harness-orchestration/           # Skill orchestration and workflow routing
+    ├── harness-project-intake/          # Project intake analysis and structured project cards
+    ├── harness-prompt-optimizer/        # Prompt optimization and structured prompt engineering
+    ├── harness-repo-map/                # Entry file map + docs/ system records
+    ├── harness-skill-quality-assessor/  # Skills quality assessment with improvement recommendations
+    └── harness-verification-loop/       # Ralph Wiggum self-verification loop
 ```
 
 安装后由 agent 按项目生成的文件(不在仓库中):
-- `AGENTS.md` — Codex 入口地图
+- `CLAUDE.md` — 入口地图
 - `CLAUDE.md` — Claude Code 入口地图
 - `docs/` — 架构文档、执行计划、质量评分等
 
 每个 skill 内部结构:
 ```
 skills/<name>/
-├── SKILL.md                             # 方法论正文（含跨平台 frontmatter）
-├── agents/
-│   ├── <agent-name>.md                  # Canonical agent 系统提示词（Claude Code + OpenCode 格式）
-│   └── openai.yaml                      # Codex UI 元数据 + 系统提示词（与 .md 同步）
+├── SKILL.md                             # 方法论正文（含 frontmatter）
 └── references/
     └── *-template.md                    # 模板文件（生成到目标项目的 docs/）
 ```
-
-### 跨平台兼容性
-
-SKILL.md 的 frontmatter 设计为跨平台兼容——各平台只读自己认识的字段，忽略未知字段：
-
-| 字段 | Claude Code | OpenCode | Codex |
-|---|---|---|---|
-| `name` | ✅ | ✅ (必须) | ✅ |
-| `description` | ✅ | ✅ (必须) | ✅ |
-| `when_to_use` | ✅ | ✅ (触发匹配) | ❌ 忽略 |
-| `disable-model-invocation` | ✅ | ✅ | ❌ 忽略 |
-| `allowed-tools` | ✅ | ✅ | ❌ 忽略 |
-| `compatibility` | ❌ 忽略 | ✅ | ❌ 忽略 |
-| `metadata` | ❌ 忽略 | ✅ | ❌ 忽略 |
 
 ## Skill 与 Agent 的使用方式
 
@@ -128,12 +111,8 @@ Skill 不直接"调用" Agent。主对话根据 Skill 的指导决定何时 spaw
 ```
 
 - **约束**区块包含每条规则 + 违反时的行为，确保 agent 在边界内运行
-- `.md`（Claude Code / OpenCode）和 `openai.yaml`（Codex）两个版本的系统提示词保持同步
-- 工具名映射：`Bash` ↔ `exec_command`、`Edit` ↔ `apply_patch`、`Write` ↔ `apply_patch`、`Read` ↔ `read_file`、`Glob` ↔ `list_dir`、`Grep` ↔ `grep`
 
 ## 安装方式
-
-### Claude Code
 
 Skills 和 agents 都是按位置发现的纯文本文件,直接复制即可。
 
@@ -141,60 +120,21 @@ Skills 和 agents 都是按位置发现的纯文本文件,直接复制即可。
 
 ```bash
 cp -r skills/*  <你的项目>/.claude/skills/
-cp skills/*/agents/*.md  <你的项目>/.claude/agents/
 ```
 
 **用户级(跨项目个人习惯)**
 
 ```bash
 cp -r skills/*  ~/.claude/skills/
-cp skills/*/agents/*.md  ~/.claude/agents/
 ```
 
 项目级与用户级同名时,项目级优先。
-
-### OpenCode
-
-OpenCode 从 `.opencode/skills/`、`.claude/skills/`、`.agents/skills/` 三个位置发现 skills。
-
-**项目级(推荐)**
-
-```bash
-cp -r skills/*  <你的项目>/.opencode/skills/
-```
-
-**用户级(跨项目)**
-
-```bash
-cp -r skills/*  ~/.config/opencode/skills/
-```
-
-OpenCode 也兼容 `.claude/skills/` 路径,所以如果项目已为 Claude Code 安装过,无需重复复制。
-
-### Codex
-
-Skills 是 Codex 的能力扩展机制。安装到项目的 `.codex/skills/` 目录即可。
-
-**项目级(推荐)**
-
-```bash
-mkdir -p <你的项目>/.codex/skills/
-cp -r skills/*  <你的项目>/.codex/skills/
-```
-
-**用户级(跨项目)**
-
-```bash
-cp -r skills/*  ~/.codex/skills/
-```
-
-安装后重启 Codex 生效。
 
 > 模板文件已内嵌在各 skill 的 `references/` 子目录中,由 agent 首次为项目初始化 docs/ 骨架时按需生成,无需手动拷贝。
 
 ## 技能同步(nacos-cli skill-sync)
 
-手动复制容易遗漏或版本不一致。[`nacos-cli skill-sync`](https://nacos.io/skill-sync/SKILL.md) 可以把仓库里的 skills 自动同步到多个 agent 目录（Codex、Claude 等）,支持 local 模式（symlink 保持一致）和 Nacos 模式（团队远程同步）。
+手动复制容易遗漏或版本不一致。[`nacos-cli skill-sync`](https://nacos.io/skill-sync/SKILL.md) 可以把仓库里的 skills 自动同步到 `.claude/skills/` 目录,支持 local 模式（symlink 保持一致）和 Nacos 模式（团队远程同步）。
 
 ### 前置安装
 
@@ -245,7 +185,7 @@ nacos-cli skill-sync add --all --non-interactive
 nacos-cli skill-sync start --non-interactive
 
 # 遇到冲突时（某 skill 在多个 agent 目录有不同版本）
-nacos-cli skill-sync resolve <skill-name> --use-agent codex --non-interactive
+nacos-cli skill-sync resolve <skill-name> --use-agent claude-code --non-interactive
 ```
 
 > local 模式下 symlink 自动保持同步,大部分时候只需 `status` 看一眼。Nacos 模式下 daemon 会轮询远端变更。
@@ -258,9 +198,7 @@ nacos-cli skill-sync resolve <skill-name> --use-agent codex --non-interactive
 ### 本地运行
 
 ```bash
-make triggers-check
-# 或
-./scripts/validate-skill-triggers.sh
+python3 scripts/run-all.py --run-type check
 ```
 
 ### 校验规则
@@ -274,18 +212,15 @@ make triggers-check
 ### 本地全量检查（推荐）
 
 ```bash
-make triggers-all
-# 依次执行：结构校验 -> 关键词一致性校验 -> 回归测试 -> 跨平台 prompt 同步校验
+python3 scripts/run-all.py
 ```
 
-### 跨平台 Prompt 同步校验
+### Agent Prompt 存在性校验
 
-每个 agent 的 `.md` 和 `openai.yaml` 系统提示词必须保持同步。`make prompts-sync-check` 比较两者规范化后的字节比，比值在 `[0.95, 1.05]` 区间内视为同步。
+`python3 scripts/run-all.py --run-type prompt` 验证每个 SKILL.md 是否包含 `## Agent 提示词` section。
 
 ```bash
-make prompts-sync-check
-# 或严格模式（阻断 CI）
-STRICT=1 ./scripts/validate-agent-prompt-sync.sh
+python3 scripts/run-all.py --run-type prompt
 ```
 
 ### 回归用例维护规范（Case Guide）
@@ -308,7 +243,7 @@ STRICT=1 ./scripts/validate-agent-prompt-sync.sh
 
 #### 关键词一致性要求
 
-回归脚本依赖静态关键词映射（`scripts/run-trigger-regression.sh` 中的 `SKILL_KW`）。  
+回归脚本依赖静态关键词映射（`scripts/run_trigger_regression.py` 中的 `SKILL_KW`）。  
 当你新增 case 时，务必保证：
 
 1. 所有用于匹配的关键词在对应 `SKILL.md` 中真实存在
@@ -316,8 +251,8 @@ STRICT=1 ./scripts/validate-agent-prompt-sync.sh
 
 #### 报告与产物
 
-- 回归报告：`tests/triggers/report.json`
-- 推荐更新节奏：每次修改触发词/用例后都跑一次 `make triggers-all`
+- 回归报告：`tests/triggers/report.json`（`python3 scripts/run-all.py --run-type regression --json` 生成）
+- 推荐更新节奏：每次修改触发词/用例后都跑一次 `python3 scripts/run-all.py`
 
 
 ## 推荐的接入顺序
@@ -330,13 +265,13 @@ STRICT=1 ./scripts/validate-agent-prompt-sync.sh
 
 ### Layer 1 · 骨架搭建
 
-2. **`harness-bootstrap`**:根据项目卡片生成 AGENTS.md 地图、`docs/` 目录骨架、.gitignore 规则和 CI 模板。这是整个 harness 的物理地基。
+2. **`harness-bootstrap`**:根据项目卡片生成 CLAUDE.md 地图、`docs/` 目录骨架、.gitignore 规则和 CI 模板。这是整个 harness 的物理地基。
 
 ### Layer 2 · 知识体系与约束规则
 
 以下四项依赖 Layer 1 的产出(`docs/` 结构已存在),但彼此之间可以并行推进:
 
-3. **`harness-repo-map`** + `doc-gardener`:校验 AGENTS.md 是否只是"地图"而非"百科全书",确保 `docs/` 里的指针准确、无断链。这是知识的可发现性保障。
+3. **`harness-repo-map`** + `doc-gardener`:校验 CLAUDE.md 是否只是"地图"而非"百科全书",确保 `docs/` 里的指针准确、无断链。这是知识的可发现性保障。
 4. **`harness-architecture-boundaries`** + `boundary-auditor`:在 `docs/ARCHITECTURE.md` 里写入分层模型与依赖方向规则,建立结构性红线。哪怕一开始只能靠文档约束,也先确立规则再逐步补上 lint。
 5. **`harness-golden-principles`** + `entropy-collector`:把人类品味编码为可机械检查的规则,建立周期性清扫节奏(可与上一步并行)。
 6. **`harness-prompt-optimizer`**:优化和创建结构化 Prompt,提升 agent 与 LLM 交互的确定性和输出质量。可与上述三项并行推进。
@@ -389,7 +324,7 @@ STRICT=1 ./scripts/validate-agent-prompt-sync.sh
 |---|---|
 | harness-project-intake | "分析当前项目"、"这个项目是做什么的" |
 | harness-bootstrap | "为这个项目初始化 harness"、"init harness" |
-| harness-repo-map | "AGENTS.md 太大需要瘦身"、"审计文档断链" |
+| harness-repo-map | "CLAUDE.md 太大需要瘦身"、"审计文档断链" |
 | harness-architecture-boundaries | "建立分层架构"、"出现了循环依赖" |
 | harness-golden-principles | "治理 AI 生成代码的重复模式"、"建立周期性代码扫描机制" |
 | harness-prompt-optimizer | "优化这个 prompt"、"帮我写一个 system prompt" |

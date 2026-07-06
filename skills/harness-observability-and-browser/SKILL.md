@@ -1,149 +1,190 @@
 ---
 name: harness-observability-and-browser
-description: 让 agent 通过浏览器自动化和可观测性数据直接验证工作成果，而非只靠读代码"猜"结果。用于"复现 UI bug"、"确认 P99 延迟达标"、"需要截图验证"、"验证用户旅程是否正常"、"检查性能预算是否超标"场景。
+description: Enable agents to directly verify work results through browser automation and observability data, rather than guessing by reading code. Used for reproducing UI bugs, confirming P99 latency, screenshot verification, validating user journeys, and checking performance budgets.
 when_to_use: |
   显式触发：用户需要复现 UI bug、确认性能/可靠性约束（如 P99 延迟）、需要截图或运行时证据验证改动效果、验证用户旅程是否正常。
   隐式触发：verification-loop 跑完但缺真实运行时信号、改动影响用户可见行为但缺截图、改动涉及性能预算但未查指标、修复声称"修好了"但附不出证据。
   不触发：改动是纯文档/配置变更、改动可通过静态分析完全验证、环境中无浏览器自动化工具且任务不依赖运行时信号（先报告能力缺口即可）。
 context: fork
 agent: qa-verifier
-compatibility: opencode
+compatibility: claude-code
+allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *) Bash(npx *)
 metadata:
   category: verification
 ---
-# 可观测性与浏览器验证（Observability & Browser）
+# Observability & Browser Verification
 
-## 核心原则
-- **用真实信号替代推断**：agent 的每个判断应基于亲眼看到的信号——浏览器实际渲染的状态、日志实际打出的错误、指标实际测到的延迟。没有这些，agent 只能靠读代码静态推断。
-- **反馈传感器是一等公民**：浏览器快照、结构化日志、指标查询、追踪数据都是"反馈传感器"，验证结果必须附带这些证据。
-- **验收标准必须可机械检查**：写"P99 延迟 < 800ms"，不写"看起来不错"。
-## 何时使用
-- 需要复现 UI bug 或验证用户旅程是否正常。
-- 需要确认性能/可靠性约束（启动时间、P99 延迟）。
-- 没有自动化手段确认改动是否真的修好了问题。
-## 何时不该用
-- 不涉及 UI 行为也不涉及性能/可靠性约束。
-- 改动可通过静态分析（类型检查、lint、单元测试）完全验证。
-- 纯文档/配置变更。
-- 环境中无浏览器自动化工具且任务不依赖运行时信号——报告能力缺口即可。
-## 方法论
+## Core Principles
+- **Replace inference with real signals**: Every agent judgment should be based on first-hand signals — the actual state rendered in the browser, errors actually logged, latency actually measured by metrics. Without these, the agent can only statically infer by reading code.
+- **Feedback sensors are first-class citizens**: Browser snapshots, structured logs, metric queries, and trace data are all "feedback sensors." Verification results must be accompanied by this evidence.
+- **Acceptance criteria must be machine-checkable**: Write "P99 latency < 800ms", not "looks good."
 
-### 两类反馈传感器
+## When to Use
+- When you need to reproduce a UI bug or verify whether a user journey is working correctly.
+- When you need to confirm performance/reliability constraints (startup time, P99 latency).
+- When there is no automated means to confirm whether a change actually fixed the problem.
 
-1. **浏览器驱动验证**：UI bug 复现、交互流程验证、视觉回归检查。完整循环见 `references/browser-verification-cycle.md`。
-2. **可观测性回路**：性能预算、可靠性约束、跨服务行为验证。应用输出结构化日志/指标/追踪，agent 通过查询接口验证约束，不读代码猜测运行时行为。
-串联使用：实现修复 → 可观测性确认底层行为 → 浏览器确认用户可见结果 → 两类证据附在 PR/exec-plan 里。
+## When Not to Use
+- The change does not involve UI behavior or performance/reliability constraints.
+- The change can be fully verified through static analysis (type checking, lint, unit tests).
+- Pure documentation/configuration changes.
+- No browser automation tool is available in the environment and the task does not depend on runtime signals — just report the capability gap.
 
-### 验收标准示例
+## Methodology
 
-- "P99 延迟 < 800ms"（指标查询验证）
-- "关键用户旅程截图前后对比无异常"（浏览器截图验证）
-- "过去 N 次运行中某错误日志出现 0 次"（日志查询验证）
-- "页面加载时间 < 3秒"（性能测量验证）
-- "移动端登录流程截图与设计稿一致"（视觉回归验证）
+### Two Types of Feedback Sensors
 
-## 操作步骤
-1. **明确验证目标并路由**：涉及 UI → 浏览器验证；涉及性能/可靠性 → 可观测性验证；两者都涉及 → 先可观测性后浏览器。
-2. **浏览器验证**：执行浏览器驱动验证循环，产出修复前后对比证据（截图/DOM 快照）。
-3. **可观测性验证**：把约束写成可查询断言，用可观测性工具验证并记录数值。
-4. **附证**：把验证结果（截图、查询结果）附在改动说明里——所有检查必须通过才算验证完成。
-5. **能力缺口**：如项目缺少必要观测能力，记录缺口本身作为待修的"环境缺失"。
-## 硬约束
-- **没有证据支撑的结论不得附入 PR**：违反则 verification-loop 打回，要求补充验证证据后重新提交。
-- **浏览器截图必须包含时间戳和 URL**：缺少元数据的截图视为无效证据，verification-loop 打回。
+1. **Browser-driven verification**: Reproduce UI bugs, verify interaction flows, check visual regressions. For the full cycle, see `references/browser-verification-cycle.md`.
+2. **Observability loop**: Performance budgets, reliability constraints, cross-service behavior verification. The application outputs structured logs/metrics/traces, and the agent validates constraints through query interfaces without reading code to guess runtime behavior.
 
-## 示例
+Chained usage: Implement fix → Observability confirms underlying behavior → Browser confirms user-visible results → Both types of evidence attached in PR/exec-plan.
 
-**示例 1**：用户说"登录页面白屏了"
-**处理**：浏览器验证 → 打开页面 → 截图对比 → 发现 JS 报错 → 报告给实现型 agent
+### Browser Automation Configuration Reference
 
-**示例 2**：用户说"P99 延迟是否达标"
-**处理**：可观测性验证 → 查询指标 → 对比阈值 → 输出是/否 + 证据
+Playwright and Puppeteer are two mainstream browser automation tools. In this skill, install the browser engine on demand via `npx playwright install` before use.
 
-## 关键要点
-- 没有证据支撑的结论不要下——要么补充验证手段，要么明确说"无法在当前环境下验证"。
-- 浏览器和可观测性是互补的：浏览器看用户视角，可观测性看系统视角。
-- 验证产出物要具体到可直接附进 PR 描述或 exec-plan 验收记录。
-- 使用稳定的测试环境，确保与生产环境一致。
-- 设计可重复的测试，使用固定数据和状态。
-- 捕获充分证据：截图包含时间戳和 URL，记录控制台日志。
-- 使用结构化日志（JSON 格式），包含时间戳、级别、请求 ID。
-- 监控关键路径，识别关键业务流程的错误率和延迟。
+**Common configurations**:
+- **Chrome/Chromium headless mode**: `npx playwright install chromium` → `npx playwright test --headed=false`
+- **Mobile emulation**: `playwright.devices['iPhone 14']` (Playwright) or `puppeteer.devices['iPhone 14']` (Puppeteer)
+- **Visual regression**: Playwright's `page.screenshot({fullPage: true})` + pixel-level diff tools (e.g. `pixelmatch`)
+- **Network throttling**: Playwright's `page.route()` intercepts requests to simulate poor network conditions
+- **Real device cloud**: BrowserStack / Sauce Labs integration (see configuration in `references/browser-automation-guide.md`)
 
-## 边界情况处理
+### Acceptance Criteria Examples
 
-> 通用边界情况（基础设施缺失等）参见 `references/common-edge-cases.md`，以下仅列出本 skill 特有的边界情况。
+- "P99 latency < 800ms" (metric query verification)
+- "Screenshots of critical user journeys show no anomalies in before/after comparison" (browser screenshot verification)
+- "Zero occurrences of a specific error log in the last N runs" (log query verification)
+- "Page load time < 3 seconds" (performance measurement verification)
+- "Mobile login flow screenshot matches the design mockup" (visual regression verification)
+- "HTTP response status for endpoint X is 200 and response body contains field Y" (API verification)
+- "Console has zero errors after executing user journey Z" (browser console verification)
+- "Network waterfall shows asset X loads within 2 seconds under 3G throttling" (network performance verification)
 
-### 历史数据污染
-**场景**：历史日志/指标干扰当前验证
-**处理**：验证前清理历史数据，或使用时间范围过滤，添加唯一标识隔离验证
+### Verification Procedure
+1. **Clarify the verification target and route it**: Involves UI → browser verification; involves performance/reliability → observability verification; involves both → observability first, then browser.
+2. **Browser verification**: Execute the browser-driven verification cycle, producing before/after comparison evidence (screenshots/DOM snapshots).
+3. **Observability verification**: Write constraints as queryable assertions, use observability tools to verify and record the values.
+4. **Attach evidence**: Attach verification results (screenshots, query results) in the change description — all checks must pass for verification to be complete.
+5. **Capability gaps**: If the project lacks necessary observability capabilities, record the gap itself as a to-be-fixed "environment deficiency."
 
-### 跨服务验证
-**场景**：需要验证跨多个服务的请求链路
-**处理**：使用分布式追踪（如Jaeger、Zipkin），记录请求链路，验证每个服务的性能指标
+## Hard Constraints
+- **Conclusions without supporting evidence must not be attached to a PR**: Violations will be rejected by verification-loop, requiring supplemental verification evidence before resubmission.
+- **Browser screenshots must include a timestamp and URL**: Screenshots lacking metadata are considered invalid evidence and will be rejected by verification-loop.
 
-### 移动端验证
-**场景**：需要验证移动端页面的显示和交互
-**处理**：使用Playwright的移动端模拟或真机测试（如BrowserStack、Sauce Labs）
+## Examples
 
-## 常见陷阱
-- **读代码猜运行时行为**：代码写了 try-catch 不代表异常真的被捕获了，要看日志。
-- **自由文本日志**：不可查询、不可聚合，必须用结构化日志。
-- **验证无证据**：说"修好了"但附不出截图或查询结果。
-- **环境数据污染**：历史日志/指标干扰当前验证，不清理就用。
-- **浏览器自动化工具不可用**：环境中没有安装浏览器自动化工具。
-- **性能指标查询失败**：监控系统不可用或查询语法错误。
+**Example 1**: User says "登录页面白屏了"
+**Handling**: Browser verification → Open page → Compare screenshots → Discover JS error → Report to the implementation agent
 
-## 最佳实践
+**Example 2**: User says "P99 延迟是否达标"
+**Handling**: Observability verification → Query metrics → Compare against thresholds → Output yes/no + evidence
 
-- 没有证据支撑的结论不要下——要么补充验证手段，要么明确说"无法验证"。
-- 浏览器和可观测性是互补的：浏览器看用户视角，可观测性看系统视角。
-- 验证产出物要具体到可直接附进 PR 描述或 exec-plan 验收记录。
-- 使用结构化日志（JSON 格式），包含时间戳、级别、请求ID。
+## Key Points
+- Do not draw conclusions without supporting evidence — either add validation methods, or explicitly state "cannot be verified in the current environment."
+- Browser and observability are complementary: the browser sees the user's perspective, observability sees the system's perspective.
+- Verification outputs should be concrete enough to be directly attached in PR descriptions or exec-plan acceptance records.
+- Use a stable test environment that is consistent with the production environment.
+- Design repeatable tests using fixed data and state.
+- Capture sufficient evidence: screenshots with timestamps and URLs, record console logs.
+- Use structured logs (JSON format) including timestamps, levels, and request IDs.
+- Monitor critical paths, identifying error rates and latency for key business flows.
+- Pre-validate acceptance criteria before starting: reject subjective criteria in favor of machine-checkable conditions.
+- When both verification types are needed, run observability first (system-level), then browser (user-level).
+
+## Edge Case Handling
+
+> For general edge cases (infrastructure deficiencies, etc.) see `references/common-edge-cases.md`. Only the edge cases unique to this skill are listed below.
+
+### Historical Data Contamination
+**Scenario**: Historical logs/metrics interfere with current verification
+**Handling**: Clean historical data before verification, or use time-range filtering, add unique identifiers to isolate verification
+
+### Cross-Service Verification
+**Scenario**: Need to verify a request chain spanning multiple services
+**Handling**: Use distributed tracing (e.g., Jaeger, Zipkin), record request chains, verify performance metrics for each service
+
+### Mobile Verification
+**Scenario**: Need to verify mobile page rendering and interaction
+**Handling**: Use Playwright's mobile emulation or real device testing (e.g., BrowserStack, Sauce Labs)
+
+## Common Pitfalls
+- **Reading code to guess runtime behavior**: Just because code has a try-catch doesn't mean the exception is actually being caught — check the logs.
+- **Free-text logs**: Not queryable, not aggregatable — must use structured logs.
+- **Verification without evidence**: Claiming "it's fixed" without providing screenshots or query results.
+- **Environmental data contamination**: Historical logs/metrics interfere with current verification, used without cleanup.
+- **Browser automation tool unavailable**: No browser automation tool is installed in the environment.
+- **Performance metric query failure**: Monitoring system is unavailable or the query syntax is wrong.
+
+## Best Practices
+
+- Before browser verification, confirm the dev server is accessible: `curl -o /dev/null -s -w "%{http_code}" http://localhost:<port>`.
+- Include test case identifier and timestamp in screenshot filenames: `login-flow-before-20260703T1430Z.png`, for easy archiving and comparison.
+- For performance verification, use the median of the last N runs rather than the average to exclude single-spike interference.
+- When embedding screenshots in PR descriptions, use `<details><summary>Before / After</summary>![screenshot]</details>` to collapse them and avoid overly long PR bodies.
+
+## Related Skills
+
+- Upstream **harness-verification-loop**: Receives outputs (verification cycle trigger signals) as the trigger for runtime verification
+- Downstream **harness-commit-gate**: This skill's outputs (verification result evidence) are passed downstream as the basis for quality gate pass
+
+## Related Templates
+
+- `references/browser-verification-cycle.md`: Complete browser-driven verification cycle flow
+- `references/common-edge-cases.md`: General edge case handling guide
 
 ## Agent 提示词
 
-## QA 验证员（QA Verifier）
+## QA Verifier
 
-### 角色定义
+### Skip Conditions
 
-基于真实运行时信号（浏览器渲染、结构化日志、指标、追踪）产出验证证据，不修改代码，只确认"问题是否真实存在/是否真的被解决"。擅长使用浏览器自动化和可观测性工具进行验证。
+- **Pure documentation/configuration changes with no runtime behavior change**: Skip the entire verification process.
+- **Changes that can be fully verified through static analysis** (type checking, lint, unit tests): Skip browser and observability verification.
+- **No browser automation tool in the environment and the task does not depend on runtime signals**: Report the capability gap and terminate.
+- **Change only affects backend API responses with no user-visible UI impact**: Skip browser verification; observability verification may still apply.
+- **User explicitly says "不需要验证" or "直接提交"**: Respect the user's intent; do not trigger verification.
+- **Performance metrics system is unavailable and the task requires metric verification**: Report the capability gap and fall back to log analysis if available.
 
-### 跳过条件
+### Role Definition
 
-- **纯文档/配置变更，无运行时行为变化**：跳过整个验证流程。
-- **改动可通过静态分析完全验证**（类型检查、lint、单元测试）：跳过浏览器和可观测性验证。
-- **环境中无浏览器自动化工具且任务不依赖运行时信号**：报告能力缺口后终止。
+Produces verification evidence based on real runtime signals (browser rendering, structured logs, metrics, traces). Does not modify code — only confirms "whether the problem actually exists / whether it has actually been resolved." Skilled at using browser automation and observability tools for verification.
 
-### 核心能力
+### Core Capabilities
 
-- 检测环境中可用的浏览器自动化工具并驱动验证循环。
-- 把性能/可靠性约束转化为可查询断言并执行验证。
-- 产出触发前后对比证据（截图、DOM 快照、查询数值）。
-- 给出"是/否 + 证据"的明确结论。
+- Detect available browser automation tools in the environment and drive the verification cycle.
+- Translate performance/reliability constraints into queryable assertions and execute verification.
+- Pre-validate acceptance criteria to ensure they are machine-checkable before starting verification.
+- Produce before/after comparison evidence (screenshots, DOM snapshots, query values).
+- Distinguish verification types (UI, performance, reliability) and apply the correct method for each.
+- Give clear "yes/no + evidence" conclusions.
 
-### 执行流程
+### Execution Flow
 
-1. **明确目标**：验证用户可见行为（UI）、底层运行时约束（性能/可靠性），还是两者。
-2. **环境检查**：检测浏览器自动化工具是否可用。不可用且任务为 UI 验证 → 报告能力缺口，不退回读代码猜测。
-3. **UI 验证**：驱动应用、拍摄触发前后状态快照（DOM/截图），观察控制台与网络请求。
-4. **性能验证**：把约束写成可查询断言（如"P99 < 2s"），通过日志/指标查询工具验证。
-5. **产出证据**：触发前 vs 触发后状态、查询数值 vs 约束阈值，成对呈现。
-6. **明确结论**：问题是否复现、修复是否生效、约束是否满足——用"是/否 + 证据"格式。
+0. **Pre-check acceptance criteria**: Confirm verification targets are machine-checkable. Reject subjective criteria (e.g., "看起来不错") and ask for rewrite with measurable conditions.
+1. **Clarify the target**: Verify user-visible behavior (UI), underlying runtime constraints (performance/reliability), or both.
+2. **Environment check**: Detect whether browser automation tools are available. If unavailable and the task is UI verification → report the capability gap, do not fall back to reading code and guessing.
+3. **UI verification**: Drive the application, capture before/after state snapshots (DOM/screenshots), observe console output and network requests.
+4. **Performance verification**: Write constraints as queryable assertions (e.g., "P99 < 2s"), verify via log/metric query tools.
+5. **Produce evidence**: Present before vs. after state, query values vs. constraint thresholds as paired comparisons.
+6. **Clear conclusion**: Whether the problem was reproduced, whether the fix took effect, whether constraints are satisfied — in "yes/no + evidence" format.
 
-### 约束
+### Constraints
 
-- **只读不改**：不修改业务代码——发现问题时报告给实现型 agent 处理。
-- **无证据不下结论**：每个结论必须附带证据（截图、日志片段、查询结果）。
-- **不退回读代码猜测**：环境缺少浏览器自动化工具且任务为 UI 验证时，报告能力缺口而非读代码推断。
-- **区分验证类型**：必须准确区分UI验证、性能验证、可靠性验证，不能混淆。
+- **Read-only, no modifications**: Do not modify business code — when a problem is found, report it to the implementation agent for handling. Violations: revert the modification operation.
+- **No conclusion without evidence**: Every conclusion must be accompanied by evidence (screenshots, log excerpts, query results). Violations: supply the missing evidence.
+- **Do not fall back to reading code and guessing**: When the environment lacks browser automation tools and the task is UI verification, report the capability gap rather than inferring by reading code. Violations: stop inferring and report the environment deficiency.
+- **Distinguish verification types**: Must accurately distinguish between UI verification, performance verification, and reliability verification — do not conflate them. Violations: reclassify.
+- **Screenshot metadata mandatory**: Every screenshot must include a timestamp and page URL — screenshots missing either element are considered invalid evidence. Violations: re-take screenshots with complete metadata.
+- **Pre-check acceptance criteria before starting**: If the acceptance criteria are subjective ("看起来不错"), reject and request rewrite with machine-checkable conditions before proceeding. Violations: stop verification, request corrected criteria.
 
-### 输出规范
+### Output Specification
 
-- 证据列表按"触发前 vs 触发后 / 预期值 vs 实测值"成对呈现。
-- 结论格式："是/否 + 证据链接 + 时间戳"。
-- 如环境缺工具，标"环境缺失 X，本次仅做静态推断，结论置信度低"。
-- 按UI问题、性能问题、可靠性问题分类，每个问题附带修复建议。
+- Evidence list presented in "before vs. after / expected vs. actual" paired format.
+- Conclusion format: "yes/no + evidence link + timestamp".
+- If the environment lacks tools, mark "Environment missing X, only static inference performed this round, low confidence in conclusion."
+- Categorize by UI issues, performance issues, and reliability issues, each with remediation suggestions.
+- Output primarily in conversation — if archiving is needed, attach screenshots and query results in the PR description or exec-plan acceptance records, not as standalone files.
 
 ---
-最后更新: 2026-07-02（变更：精简版，移除相关模板/自动化检查冗余内容，精简Agent提示词执行流程）
+Last updated: 2026-07-06 (Change: Agent Prompt enhanced — Skip Conditions 3→6, Core Capabilities 4→6, Execution Flow pre-check added, Acceptance Criteria examples expanded)

@@ -2,41 +2,41 @@
 
 <!-- Canonical owner: harness-architecture-boundaries -->
 
-这个文件定义跨领域的架构地图与依赖方向规则。规则要尽量被 `harness-architecture-boundaries` 技能里描述的方式编码成 lint/结构化测试,而不是只停留在文字描述。
+This file defines the cross-domain architecture map and dependency direction rules. Rules should be encoded into lint/structured tests using the methods described in the `harness-architecture-boundaries` skill as much as possible, rather than remaining as textual descriptions only.
 
-## 领域划分
+## Domain Breakdown
 
-| 领域 | 简述 | 对应代码路径 |
+| Domain | Description | Corresponding Code Path |
 |---|---|---|
-| <领域 A> | ... | `src/<a>/` |
-| <领域 B> | ... | `src/<b>/` |
+| <Domain A> | ... | `src/<a>/` |
+| <Domain B> | ... | `src/<b>/` |
 
-## 每个领域内部的分层与依赖方向
+## Internal Layering and Dependency Direction for Each Domain
 
 ```
 Types → Config → Repo → Service → Runtime → UI
 ```
 
-> 这是一个示例分层,不是必须照搬的标准——按项目实际情况定义自己的层次,但保持"固定方向 + 有限合法边数"这个模式。
+> This is an example layering, not a mandatory standard — define your own layers based on the project's actual situation, but keep the pattern of "fixed direction + limited legal edges."
 
-- 依赖只能"向前"流动,不允许反向 import。
-- 横切关注点(鉴权、连接器、遥测、特性开关)不允许散落进任意层,必须通过 `Providers` 这个单一显式入口进入。
-- `Utils` 放跨领域的纯工具函数,只能被 `Providers` 使用,不能反向依赖具体领域内部实现。
+- Dependencies can only flow "forward;" reverse imports are not allowed.
+- Cross-cutting concerns (authentication, connectors, telemetry, feature flags) must not be scattered into arbitrary layers — they must enter through a single explicit `Providers` entry point.
+- `Utils` holds cross-domain pure utility functions, can only be used by `Providers`, and must not depend on internal implementations of specific domains in reverse.
 
-## 数据边界规则
+## Data Boundary Rules
 
-- 所有跨边界的数据(外部 API 响应、用户输入、数据库读取结果)必须在进入边界时被解析为强类型。
-- 解析失败时应该在边界处显式失败,而不是把未解析的数据继续向下传递。
+- All cross-boundary data (external API responses, user input, database read results) must be parsed into strongly-typed structures upon entering the boundary.
+- On parse failure, the error should be surfaced explicitly at the boundary rather than allowing unparsed data to propagate downstream.
 
-## 机械强制现状
+## Mechanical Enforcement Status
 
-| 规则 | 强制方式 | 状态 |
+| Rule | Enforcement Method | Status |
 |---|---|---|
-| 分层依赖方向 | <lint 工具/脚本名称> | ✅ 已强制 / ⚠️ 仅文档,未强制 |
-| 数据边界解析 | <lint 工具/脚本名称> | ✅ / ⚠️ |
-| <补充其他规则> | | |
+| Layering dependency direction | <lint tool/script name> | ✅ Enforced / ⚠️ Documentation only, not enforced |
+| Data boundary parsing | <lint tool/script name> | ✅ / ⚠️ |
+| <Add other rules> | | |
 
-> 任何标记为"⚠️ 仅文档,未强制"的规则,都应该被当作待办——用 `boundary-auditor` agent 巡检发现的违规,或者直接补上对应的 lint 规则。
+> Any rule marked as "⚠️ Documentation only, not enforced" should be treated as a TODO — violations found by the `boundary-auditor` agent inspection, or add the corresponding lint rule.
 
 ---
-最后更新: <YYYY-MM-DD>
+Last updated: <YYYY-MM-DD>

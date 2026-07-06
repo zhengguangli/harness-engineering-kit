@@ -1,181 +1,184 @@
-# Execution Chain 设计指南
+# Execution Chain Design Guide
 
-## 什么是 Execution Chain
+## What is an Execution Chain
 
-Execution Chain 是 prompt 中对任务执行步骤的编号列表——强制 LLM 按特定顺序执行，而不是自行决定流程。
+An Execution Chain is a numbered list of task execution steps within a prompt — it forces the LLM to follow a specific order rather than deciding the flow on its own.
 
-## 为什么需要 Execution Chain
+## Why You Need an Execution Chain
 
-| 没有 Execution Chain | 有 Execution Chain |
+| Without Execution Chain | With Execution Chain |
 |---|---|
-| LLM 自行决定执行顺序 | 强制按步骤执行 |
-| 跳步或乱序 | 步骤间有数据流 |
-| 输出不可预测 | 输出可复现 |
-| 难以调试 | 每步可独立验证 |
+| LLM decides the execution order | Enforces step-by-step execution |
+| Skips steps or processes out of order | Steps have data flow |
+| Unpredictable output | Reproducible output |
+| Hard to debug | Each step can be independently verified |
 
-## 设计原则
+## Design Principles
 
-### 原则一：步骤数 ≤ 7
+### Principle 1: Steps ≤ 7
 
-LLM 的上下文窗口有限，步骤太多会丢失前序步骤的上下文。
+The LLM's context window is limited; too many steps will cause it to lose context from earlier steps.
 
 ```markdown
-# ❌ 差：步骤太多
-1. 步骤1
-2. 步骤2
-3. 步骤3
+# ❌ Bad: Too many steps
+1. Step 1
+2. Step 2
+3. Step 3
 ...
-10. 步骤10
+10. Step 10
 
-# ✅ 好：精简步骤
-1. 步骤1
-2. 步骤2
-3. 步骤3
-4. 步骤4
+# ✅ Good: Concise steps
+1. Step 1
+2. Step 2
+3. Step 3
+4. Step 4
 ```
 
-**如果步骤超过 7 步**：
-- 合并相关步骤
-- 拆分为子 prompt
-- 使用条件分支减少线性步骤
+**If steps exceed 7**:
+- Merge related steps
+- Split into sub-prompts
+- Use conditional branching to reduce linear steps
 
-### 原则二：每步有明确的输入和输出
+### Principle 2: Each Step Has Clear Input and Output
 
 ```markdown
-# ❌ 差：无数据流
-1. 分析数据
-2. 生成报告
-3. 检查质量
+# ❌ Bad: No data flow
+1. Analyze data
+2. Generate report
+3. Check quality
 
-# ✅ 好：有数据流
-1. 解析输入数据 → 输出：结构化数据对象
-2. 统计结构化数据的各维度指标 → 输出：指标摘要
-3. 基于指标摘要生成报告 → 输出：报告文本
-4. 检查报告文本是否符合规范 → 输出：检查结果
+# ✅ Good: Has data flow
+1. Parse input data → Output: structured data object
+2. Calculate metrics across dimensions of structured data → Output: metrics summary
+3. Generate report based on metrics summary → Output: report text
+4. Check report text against specifications → Output: check result
 ```
 
-### 原则三：步骤是可执行的
+### Principle 3: Steps Must Be Executable
 
 ```markdown
-# ❌ 差：模糊
-1. 考虑各种情况
-2. 做出最佳决策
-3. 确保质量
+# ❌ Bad: Vague
+1. Consider various scenarios
+2. Make the best decision
+3. Ensure quality
 
-# ✅ 好：具体
-1. 列出所有可能的分类（最多 5 个）
-2. 对每个分类统计出现次数
-3. 按出现次数降序排列
-4. 选择前 3 个分类作为主要发现
+# ✅ Good: Specific
+1. List all possible classifications (max 5)
+2. Count occurrences for each classification
+3. Sort by occurrence count in descending order
+4. Select the top 3 classifications as key findings
 ```
 
-### 原则四：包含判断和分支
+### Principle 4: Include Decisions and Branching
 
 ```markdown
-1. 检查输入数据格式是否为 JSON
-   - 是 → 进入步骤 2
-   - 否 → 输出错误信息，终止流程
-2. 解析 JSON 数据
-3. 验证必要字段是否存在
-   - 是 → 进入步骤 4
-   - 否 → 输出缺失字段列表，终止流程
-4. 执行数据分析
+1. Check if input data format is JSON
+   - Yes → proceed to step 2
+   - No → output error message, terminate flow
+2. Parse JSON data
+3. Verify required fields exist
+   - Yes → proceed to step 4
+   - No → output missing fields list, terminate flow
+4. Perform data analysis
 ```
 
-## Execution Chain 模板
+## Execution Chain Templates
 
-### 线性流程
-
-```markdown
-# Execution Chain
-1. [输入处理]：接收 {{input}}，验证格式 → 输出：validated_input
-2. [核心处理]：分析 validated_input → 输出：analysis_result
-3. [输出生成]：基于 analysis_result 生成输出 → 输出：final_output
-4. [验证]：检查 final_output 是否符合规范 → 输出：验证结果
-```
-
-### 条件分支流程
+### Linear Flow
 
 ```markdown
 # Execution Chain
-1. 判断任务类型：{{task_type}}
-   - "analysis" → 进入步骤 2
-   - "generation" → 进入步骤 4
-   - "review" → 进入步骤 6
-
-2. [分析流程]：执行数据分析 → 输出：analysis_result
-3. 基于 analysis_result 生成报告 → 输出：报告，终止
-
-4. [生成流程]：基于 {{requirements}} 生成内容 → 输出：draft
-5. 审查 draft 质量 → 输出：最终内容，终止
-
-6. [审查流程]：检查 {{target}} 是否符合规范 → 输出：审查报告，终止
+1. [Input Processing]: Receive {{input}}, validate format → Output: validated_input
+2. [Core Processing]: Analyze validated_input → Output: analysis_result
+3. [Output Generation]: Generate output based on analysis_result → Output: final_output
+4. [Verification]: Check final_output against specifications → Output: verification result
 ```
 
-### 循环流程
+### Conditional Branching Flow
 
 ```markdown
 # Execution Chain
-1. 生成初始方案 → 输出：current_solution
-2. 评估 current_solution 的质量 → 输出：evaluation_result
-3. 判断 evaluation_result 是否达标
-   - 是 → 输出 current_solution，终止
-   - 否 → 进入步骤 4
-4. 基于 evaluation_result 优化 current_solution → 输出：new_solution
-5. 将 new_solution 赋值给 current_solution → 回到步骤 2
+1. Determine task type: {{task_type}}
+   - "analysis" → proceed to step 2
+   - "generation" → proceed to step 4
+   - "review" → proceed to step 6
 
-# 约束：最多循环 3 次，仍未达标则输出当前最佳方案
+2. [Analysis Flow]: Perform data analysis → Output: analysis_result
+3. Generate report based on analysis_result → Output: report, terminate
+
+4. [Generation Flow]: Generate content based on {{requirements}} → Output: draft
+5. Review draft quality → Output: final content, terminate
+
+6. [Review Flow]: Check {{target}} against specifications → Output: review report, terminate
 ```
 
-## 步骤粒度控制
+### Loop Flow
 
-| 粒度 | 适用场景 | 示例 |
+```markdown
+# Execution Chain
+1. Generate initial solution → Output: current_solution
+2. Evaluate quality of current_solution → Output: evaluation_result
+3. Determine if evaluation_result meets the standard
+   - Yes → output current_solution, terminate
+   - No → proceed to step 4
+4. Optimize current_solution based on evaluation_result → Output: new_solution
+5. Assign new_solution to current_solution → Return to step 2
+
+# Constraint: Maximum 3 iterations. If still not meeting standard, output the best current solution
+```
+
+## Step Granularity Control
+
+| Granularity | Applicable Scenarios | Example |
 |---|---|---|
-| 粗粒度 | 简单任务 | "1. 分析 2. 生成 3. 检查" |
-| 中粒度 | 中等复杂度 | "1. 解析 2. 统计 3. 比较 4. 输出" |
-| 细粒度 | 复杂任务 | 每个子操作一个步骤 |
+| Coarse | Simple tasks | "1. Analyze 2. Generate 3. Check" |
+| Medium | Moderate complexity | "1. Parse 2. Count 3. Compare 4. Output" |
+| Fine | Complex tasks | One step per sub-operation |
 
-**选择原则**：每个步骤应该是一个完整的、可独立验证的操作。如果一个步骤需要进一步拆解才能理解，说明粒度太粗。
+**Selection Principle**: Each step should be a complete, independently verifiable operation. If a step needs to be further broken down to be understood, the granularity is too coarse.
 
-## 与变量字典的配合
+## Coordination with Variables Dictionary
 
-Execution Chain 中引用变量字典的变量：
+Referencing variables from the Variables Dictionary in the Execution Chain:
 
 ```markdown
 # Variables Dictionary
-| 变量名 | 类型 | 必填 | 说明 |
+| Variable | Type | Required | Description |
 |---|---|---|---|
-| input_data | string | 是 | 输入数据 |
-| output_format | enum | 是 | 输出格式 |
+| input_data | string | Yes | Input data |
+| output_format | enum | Yes | Output format |
 
 # Execution Chain
-1. 解析 {{input_data}} → 输出：parsed_data
-2. 分析 parsed_data → 输出：analysis
-3. 按 {{output_format}} 格式化 analysis → 输出：最终结果
+1. Parse {{input_data}} → Output: parsed_data
+2. Analyze parsed_data → Output: analysis
+3. Format analysis according to {{output_format}} → Output: final result
 ```
 
-## 与 Constraints 的配合
+## Coordination with Constraints
 
-Execution Chain 的每一步都受 Constraints 约束：
+Every step in the Execution Chain is subject to Constraints:
 
 ```markdown
 # Execution Chain
-1. 解析输入数据 → 输出：parsed_data
-2. 分析 parsed_data → 输出：analysis
+1. Parse input data → Output: parsed_data
+2. Analyze parsed_data → Output: analysis
 
 # Constraints
-- 步骤1中：只解析提供的数据，不编造字段
-- 步骤2中：只使用 parsed_data 中存在的字段进行分析
-- 步骤2中：如数据不足，输出"数据不足，无法分析"而非猜测
+- In step 1: Only parse provided data, do not fabricate fields
+- In step 2: Only use fields present in parsed_data for analysis
+- In step 2: If data is insufficient, output "Insufficient data, unable to analyze" rather than guessing
 ```
 
-## 常见错误
+## Common Mistakes
 
-| 错误 | 后果 | 修正 |
+| Mistake | Consequence | Fix |
 |---|---|---|
-| 步骤太多（> 7） | LLM 丢失上下文 | 合并或拆分 |
-| 步骤模糊 | LLM 自行解释 | 具体化每个步骤 |
-| 无数据流 | 步骤间断裂 | 明确输入输出关系 |
-| 无判断分支 | 所有情况走同一路由 | 添加条件判断 |
-| 缺少终止条件 | 无限循环 | 每条路径有终点 |
-| 步骤不可执行 | LLM 跳过 | 确保每步可独立执行 |
+| Too many steps (> 7) | LLM loses context | Merge or split |
+| Vague steps | LLM interprets on its own | Make each step concrete |
+| No data flow | Disconnected steps | Clarify input/output relationships |
+| No decision branching | Same route for all cases | Add conditional checks |
+| Missing termination conditions | Infinite loop | Every path has an endpoint |
+| Steps not executable | LLM skips them | Ensure each step is independently executable |
+
+---
+Last updated: 2026-07-03

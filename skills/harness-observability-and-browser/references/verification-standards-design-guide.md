@@ -1,169 +1,169 @@
-# 验证标准设计指南
+# Verification Standards Design Guide
 
-## 设计原则
+## Design Principles
 
-验收标准必须满足 **MECE 原则**（Mutually Exclusive, Collectively Exhaustive）：
-- **互斥**：每个标准检查独立的维度，不重叠
-- **穷尽**：所有标准合起来覆盖完整的验证目标
+Acceptance criteria must satisfy the **MECE principle** (Mutually Exclusive, Collectively Exhaustive):
+- **Mutually Exclusive**: Each criterion checks an independent dimension, with no overlap
+- **Collectively Exhaustive**: All criteria together cover the complete verification goal
 
-## 标准分类
+## Criteria Classification
 
-### 按验证类型
+### By Verification Type
 
-| 类型 | 检查内容 | 工具 | 示例 |
+| Type | What It Checks | Tool | Example |
 |---|---|---|---|
-| UI 验证 | 页面渲染、交互流程 | 浏览器自动化 | "按钮点击后弹出确认框" |
-| 性能验证 | 延迟、吞吐量、资源使用 | 指标查询 | "P99 延迟 < 800ms" |
-| 可靠性验证 | 错误率、恢复时间、可用性 | 日志+指标 | "错误率 < 0.1%" |
-| 安全验证 | 权限、输入校验、加密 | 静态+动态分析 | "SQL 注入测试通过" |
+| UI Verification | Page rendering, interaction flow | Browser automation | "A confirmation dialog appears after button click" |
+| Performance Verification | Latency, throughput, resource usage | Metric query | "P99 latency < 800ms" |
+| Reliability Verification | Error rate, recovery time, availability | Logs + metrics | "Error rate < 0.1%" |
+| Security Verification | Permissions, input validation, encryption | Static + dynamic analysis | "SQL injection test passes" |
 
-### 按验证时机
+### By Verification Timing
 
-| 时机 | 目的 | 示例 |
+| Timing | Purpose | Example |
 |---|---|---|
-| 冒烟测试 | 基本功能是否可用 | "登录流程正常" |
-| 回归测试 | 改动未破坏现有功能 | "旧 API 仍返回正确格式" |
-| 性能测试 | 满足性能约束 | "P99 < 800ms" |
-| 混沌测试 | 容错和恢复能力 | "服务不可用后 30 秒内恢复" |
+| Smoke Test | Basic functionality works | "Login flow works correctly" |
+| Regression Test | Changes do not break existing functionality | "Old API still returns correct format" |
+| Performance Test | Meets performance constraints | "P99 latency < 800ms" |
+| Chaos Test | Fault tolerance and recovery capability | "Recovers within 30 seconds after service outage" |
 
-## 标准编写规范
+## Standards Writing Guidelines
 
-### 格式要求
+### Format Requirements
 
-每条标准必须包含：
-1. **可测量的指标**：数值化的、可查询的
-2. **阈值**：明确的通过/失败边界
-3. **验证方法**：如何获取证据
-4. **判定规则**：什么情况算通过
+Each criterion must include:
+1. **Measurable indicator**: Numeric, queryable
+2. **Threshold**: Clear pass/fail boundary
+3. **Verification method**: How to obtain evidence
+4. **Judgment rule**: What constitutes a pass
 
-### 示例对比
+### Example Comparison
 
 ```markdown
-# ❌ 差：模糊、不可测量
-- 页面加载速度要快
-- 用户体验要好
-- 系统要稳定
+# ❌ Bad: vague, not measurable
+- Page load speed should be fast
+- User experience should be good
+- The system should be stable
 
-# ✅ 好：具体、可测量
-- 页面加载时间 < 3 秒（Lighthouse 测量）
-- P99 API 延迟 < 800ms（Prometheus 查询）
-- 错误率 < 0.1%（过去 1 小时的日志统计）
-- 关键用户旅程截图与设计稿一致（视觉回归对比）
+# ✅ Good: specific, measurable
+- Page load time < 3s (measured by Lighthouse)
+- P99 API latency < 800ms (Prometheus query)
+- Error rate < 0.1% (log statistics over the past hour)
+- Key user journey screenshots match design specs (visual regression comparison)
 ```
 
-### 标准模板
+### Standards Template
 
 ```markdown
-## 验收标准
+## Acceptance Criteria
 
-### 功能验证
-| 标准 | 阈值 | 验证方法 | 证据 |
+### Functional Verification
+| Criterion | Threshold | Verification Method | Evidence |
 |---|---|---|---|
-| 登录流程 | 成功跳转到 dashboard | Playwright E2E 测试 | 截图+日志 |
-| 表单提交 | 数据正确写入数据库 | API 测试+DB 查询 | 查询结果 |
+| Login flow | Successfully redirects to dashboard | Playwright E2E test | Screenshot + logs |
+| Form submission | Data correctly written to database | API test + DB query | Query results |
 
-### 性能验证
-| 标准 | 阈值 | 验证方法 | 证据 |
+### Performance Verification
+| Criterion | Threshold | Verification Method | Evidence |
 |---|---|---|---|
-| 页面加载时间 | < 3s | Lighthouse 测试 | 报告截图 |
-| API P99 延迟 | < 800ms | Prometheus 查询 | 查询结果 |
-| 错误率 | < 0.1% | 日志统计 | 统计结果 |
+| Page load time | < 3s | Lighthouse test | Report screenshot |
+| API P99 latency | < 800ms | Prometheus query | Query results |
+| Error rate | < 0.1% | Log analysis | Analysis results |
 
-### 可靠性验证
-| 标准 | 阈值 | 验证方法 | 证据 |
+### Reliability Verification
+| Criterion | Threshold | Verification Method | Evidence |
 |---|---|---|---|
-| 服务可用性 | > 99.9% | 监控系统 | 监控面板截图 |
-| 故障恢复时间 | < 30s | 混沌测试 | 测试日志 |
+| Service availability | > 99.9% | Monitoring system | Dashboard screenshot |
+| Fault recovery time | < 30s | Chaos test | Test logs |
 ```
 
-## 验证目标路由
+## Verification Target Routing
 
-根据改动类型选择验证标准：
+Select verification criteria based on change type:
 
 ```
-改动类型判断：
-├── 纯 UI 改动 → UI 验证标准
-├── API 改动 → 性能+功能验证标准
-├── 数据库改动 → 功能+可靠性验证标准
-├── 配置改动 → 冒烟测试标准
-└── 混合改动 → 组合验证标准
+Change type determination:
+├── Pure UI changes → UI verification criteria
+├── API changes → Performance + functional verification criteria
+├── Database changes → Functional + reliability verification criteria
+├── Configuration changes → Smoke test criteria
+└── Mixed changes → Combined verification criteria
 ```
 
-### UI 改动验证标准
+### UI Change Verification Criteria
 
 ```markdown
-- 页面渲染正常（无 JS 错误）
-- 交互流程完整（点击→响应→结果）
-- 视觉回归通过（截图对比差异 < 1%）
-- 响应式布局正常（移动端/桌面端）
+- Page renders normally (no JS errors)
+- Interaction flow is complete (click -> response -> result)
+- Visual regression passes (screenshot difference < 1%)
+- Responsive layout works (mobile/desktop)
 ```
 
-### API 改动验证标准
+### API Change Verification Criteria
 
 ```markdown
-- 接口返回正确格式（Schema 验证）
-- 响应时间 < 阈值
-- 错误码正确（4xx/5xx）
-- 向后兼容（旧客户端仍能调用）
+- API returns correct format (Schema validation)
+- Response time < threshold
+- Status codes are correct (4xx/5xx)
+- Backward compatible (old client can still call)
 ```
 
-### 数据库改动验证标准
+### Database Change Verification Criteria
 
 ```markdown
-- 数据迁移成功（无数据丢失）
-- 查询性能不退化（P99 < 阈值）
-- 数据一致性（主从同步正常）
-- 回滚方案可用
+- Data migration succeeds (no data loss)
+- Query performance does not degrade (P99 < threshold)
+- Data consistency (master-slave sync normal)
+- Rollback plan is available
 
 ```
 
-## 能力缺口处理
+## Capability Gap Handling
 
-### 缺口识别
+### Gap Identification
 
-当项目缺少验证所需的观测能力时，记录缺口：
+When the project lacks the observability capabilities required for verification, record the gap:
 
 ```markdown
-## 能力缺口
+## Capability Gaps
 
-| 缺口 | 影响 | 建议修复 |
+| Gap | Impact | Suggested Fix |
 |---|---|---|
-| 缺少结构化日志 | 无法查询特定错误 | 添加 JSON 格式日志 |
-| 缺少性能指标 | 无法验证 P99 延迟 | 集成 Prometheus |
-| 缺少 E2E 测试 | 无法验证用户旅程 | 添加 Playwright 测试 |
+| Missing structured logging | Cannot query specific errors | Add JSON format logs |
+| Missing performance metrics | Cannot verify P99 latency | Integrate Prometheus |
+| Missing E2E tests | Cannot verify user journeys | Add Playwright tests |
 ```
 
-### 缺口处理原则
+### Gap Handling Principles
 
-1. **不要跳过验证**：能力缺口不能成为"不验证"的理由
-2. **记录缺口本身**：缺口作为待修的"环境缺失"
-3. **降级验证**：用可用的手段做部分验证
-4. **明确置信度**：标注"因缺少 X，结论置信度低"
+1. **Do not skip verification**: A capability gap is not an excuse to "skip verification"
+2. **Record the gap itself**: Gaps are "environmental deficiencies" to be fixed
+3. **Degraded verification**: Use available means to perform partial verification
+4. **Be explicit about confidence**: Note "Due to missing X, conclusion confidence is low"
 
-## 验证报告模板
+## Verification Report Template
 
 ```markdown
-## 验证报告
+## Verification Report
 
-### 基本信息
-- 验证时间：YYYY-MM-DD HH:MM
-- 验证环境：[环境名称]
-- 验证范围：[改动描述]
+### Basic Information
+- Verification Time: YYYY-MM-DD HH:MM
+- Verification Environment: [environment name]
+- Verification Scope: [change description]
 
-### 验证结果
-| 标准 | 预期 | 实测 | 结果 | 证据 |
+### Verification Results
+| Criterion | Expected | Actual | Result | Evidence |
 |---|---|---|---|---|
-| 页面加载时间 | < 3s | 2.1s | ✅ | Lighthouse 报告 |
-| API P99 延迟 | < 800ms | 650ms | ✅ | Prometheus 查询 |
-| 错误率 | < 0.1% | 0.05% | ✅ | 日志统计 |
+| Page load time | < 3s | 2.1s | ✅ | Lighthouse report |
+| API P99 latency | < 800ms | 650ms | ✅ | Prometheus query |
+| Error rate | < 0.1% | 0.05% | ✅ | Log analysis |
 
-### 能力缺口
-| 缺口 | 影响 | 建议 |
+### Capability Gaps
+| Gap | Impact | Suggestion |
 |---|---|---|
-| 缺少 X | 无法验证 Y | 添加 Z |
+| Missing X | Cannot verify Y | Add Z |
 
-### 结论
-- 整体结果：✅ 通过 / ❌ 不通过
-- 未通过项：[列出]
-- 建议：[下一步行动]
+### Conclusion
+- Overall Result: ✅ Pass / ❌ Fail
+- Failed Items: [list]
+- Suggestion: [next steps]
 ```

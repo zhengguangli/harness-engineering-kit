@@ -1,51 +1,51 @@
-<!-- 项目卡片模板 — 由 project-analyzer agent 使用 -->
+<!-- Project card template — used by project-analyzer agent -->
 
-## 项目卡片
+## Project Card
 
-**一句话概述**: <用一句话说清楚这个项目是什么、做什么>
+**One-line summary**: <Describe what this project is and what it does in one sentence>
 
-### 技术栈
+### Tech Stack
 
-| 维度 | 值 |
+| Dimension | Value |
 |---|---|
-| 语言 | <语言及版本> |
-| 框架 | <框架> |
-| 运行时 | <Node/Bun/Deno/...> |
-| 包管理 | <npm/bun/pnpm/cargo/...> |
-| 部署目标 | <Cloudflare Workers/Vercel/Docker/...> |
+| Language | <Language and version> |
+| Framework | <Framework> |
+| Runtime | <Node/Bun/Deno/...> |
+| Package Manager | <npm/bun/pnpm/cargo/...> |
+| Deployment Target | <Cloudflare Workers/Vercel/Docker/...> |
 
-### 目录骨架
+### Directory Structure
 
 ```
-<项目根目录>/
-├── src/          # <职责>
-├── test/         # <职责>
-├── docs/         # <职责>
+<Project root>/
+├── src/          # <Responsibility>
+├── test/         # <Responsibility>
+├── docs/         # <Responsibility>
 ├── ...
-└── <配置文件>
+└── <Config file>
 ```
 
-### 关键模块
+### Key Modules
 
-- **<模块名>**: <一句话职责>（`<文件路径>`）
-- **<模块名>**: <一句话职责>（`<文件路径>`）
+- **<Module name>**: <One-line responsibility> (`<File path>`)
+- **<Module name>**: <One-line responsibility> (`<File path>`)
 
-### 构建与运行
+### Build & Run
 
-| 操作 | 命令 |
+| Action | Command |
 |---|---|
-| 安装 | `<命令>` |
-| 开发 | `<命令>` |
-| 测试 | `<命令>` |
-| 构建 | `<命令>` |
-| 部署 | `<命令>` |
+| Install | `<Command>` |
+| Dev | `<Command>` |
+| Test | `<Command>` |
+| Build | `<Command>` |
+| Deploy | `<Command>` |
 
-### 近期活跃
+### Recent Activity
 
-- 最近 commit: `<日期> — <摘要>`
-- 版本: `<版本号>`（如可获取）
+- Recent commit: `<Date> — <Summary>`
+- Version: `<Version>` (if available)
 
-### 已知约束 / 注意事项
+### Known Constraints / Notes
 
-- <从 README、配置、代码中提取的约束>
-- <过时文档、缺失配置等问题>
+- <Constraints extracted from README, config, and code>
+- <Outdated documentation, missing configuration, etc.>

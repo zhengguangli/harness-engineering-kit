@@ -19,3 +19,10 @@ build/
 
 # 测试产物
 tests/triggers/report.json
+
+# Python 缓存
+__pycache__/
+*.pyc
+
+# 质量报告（每次运行时生成）
+docs/quality-reports/*.md

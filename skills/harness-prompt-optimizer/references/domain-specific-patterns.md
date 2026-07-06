@@ -1,25 +1,25 @@
-# 领域特定设计模式（Domain-Specific Patterns）
+# Domain-Specific Patterns
 
-不同领域的 prompt 设计有不同的侧重点。本文件提供常见领域的设计模式参考。
+Different domains have different emphases in prompt design. This document provides design pattern references for common domains.
 
 ---
 
-## 代码类（Code Review, Code Generation, Debugging）
+## Code (Code Review, Code Generation, Debugging)
 
-**侧重点**：Constraints > Execution Chain > Examples
+**Emphasis**: Constraints > Execution Chain > Examples
 
-**设计要点**：
-- **Constraints 必须严格**：代码类任务需要精确定义什么是"问题"，避免 LLM "为了找问题而找问题"
-- **Severity Anchoring**：明确定义 CRITICAL / HIGH / MEDIUM / LOW 的含义
-- **Actionable Fixes**：每个发现必须包含具体的修复建议
-- **Line References**：要求输出包含文件名和行号
+**Design Points**:
+- **Constraints must be strict**: Code tasks require precise definition of what constitutes a "problem" to prevent the LLM from "finding issues for the sake of finding issues"
+- **Severity Anchoring**: Clearly define the meaning of CRITICAL / HIGH / MEDIUM / LOW
+- **Actionable Fixes**: Every finding must include a concrete fix suggestion
+- **Line References**: Require output to include file names and line numbers
 
-**必备约束**：
+**Required Constraints**:
 - `No Speculation`: Only flag issues you can point to with specific line references
 - `Severity Anchoring`: CRITICAL = data loss/security breach, HIGH = runtime errors, MEDIUM = tech debt, LOW = style
 - `Actionable Fixes`: Every finding must include a concrete fix suggestion
 
-**示例结构**：
+**Example Structure**:
 ```
 Role: Senior [Language] Engineer with [X] years of experience in [domain]
 Execution Chain:
@@ -34,22 +34,22 @@ Examples: Standard review, Clean code (no issues found), Critical security issue
 
 ---
 
-## 文案类（Copywriting, Marketing, Content）
+## Copywriting (Copywriting, Marketing, Content)
 
-**侧重点**：Examples > Execution Chain > Constraints
+**Emphasis**: Examples > Execution Chain > Constraints
 
-**设计要点**：
-- **Examples 比规则更重要**：文案类任务 LLM 更依赖示例来理解风格
-- **Platform Calibration**：不同平台（Instagram, TikTok, Email, Landing Page）的文案结构完全不同
-- **Tone Override**：提供可选的语气覆盖参数
-- **Ban List**：给 LLM 一个具体的排除列表（如"不要用企业黑话"）比"写得自然"更有执行力
+**Design Points**:
+- **Examples matter more than rules**: For copywriting tasks, the LLM relies more on examples to understand style
+- **Platform Calibration**: Different platforms (Instagram, TikTok, Email, Landing Page) have completely different copy structures
+- **Tone Override**: Provide optional tone override parameters
+- **Ban List**: Giving the LLM a specific exclusion list (e.g., "don't use corporate buzzwords") is more enforceable than "write naturally"
 
-**必备约束**：
+**Required Constraints**:
 - `No Corporate Speak`: Ban specific words/phrases (leverage, synergy, empower, etc.)
 - `Show Don't Tell`: Prefer concrete specifics over vague superlatives
 - `Respect Platform Limits`: Hard stop on character limits
 
-**示例结构**：
+**Example Structure**:
 ```
 Role: Creative Copywriter specializing in [industry] targeting [demographic]
 Execution Chain:
@@ -63,22 +63,22 @@ Examples: Instagram post, Email subject line, Landing page headline
 
 ---
 
-## 分析类（Data Analysis, Research, Report Generation）
+## Analysis (Data Analysis, Research, Report Generation)
 
-**侧重点**：Execution Chain > Constraints > Output Schema
+**Emphasis**: Execution Chain > Constraints > Output Schema
 
-**设计要点**：
-- **Execution Chain 必须清晰**：分析类任务需要明确的步骤顺序
-- **Data Anchoring**：要求 LLM 只基于提供的数据，不编造
-- **Confidence Levels**：输出应包含置信度或不确定性声明
-- **Structured Output**：分析结果通常需要结构化输出（JSON/表格）
+**Design Points**:
+- **Execution Chain must be clear**: Analysis tasks require a well-defined step sequence
+- **Data Anchoring**: Require the LLM to work only with provided data, not fabricate
+- **Confidence Levels**: Output should include confidence or uncertainty declarations
+- **Structured Output**: Analysis results typically need structured output (JSON/table)
 
-**必备约束**：
+**Required Constraints**:
 - `Data Anchoring`: Only analyze provided data. Do not use external knowledge
 - `Confidence Declaration`: State confidence level for each conclusion (HIGH/MEDIUM/LOW)
 - `Source Citation`: Every claim must reference specific data points
 
-**示例结构**：
+**Example Structure**:
 ```
 Role: Senior Data Analyst specializing in [domain]
 Execution Chain:
@@ -92,23 +92,23 @@ Examples: Standard analysis, Missing data handling, Ambiguous data interpretatio
 
 ---
 
-## 客服类（Customer Service, Support, Chatbot）
+## Customer Service (Customer Service, Support, Chatbot)
 
-**侧重点**：Constraints > Examples > Output Schema
+**Emphasis**: Constraints > Examples > Output Schema
 
-**设计要点**：
-- **Empathy Constraints**：要求 LLM 先承认用户感受再给解决方案
-- **Escalation Triggers**：明确定义何时转人工（法律威胁、情绪激动、复杂问题）
-- **Policy Anchoring**：严格按政策回答，不承诺无法兑现的内容
-- **Response Tone**：定义语气（友好但专业、同理心但不卑微）
+**Design Points**:
+- **Empathy Constraints**: Require the LLM to acknowledge the customer's feelings before providing a solution
+- **Escalation Triggers**: Clearly define when to escalate to a human (legal threats, emotional distress, complex issues)
+- **Policy Anchoring**: Strictly answer according to policy; do not promise what cannot be delivered
+- **Response Tone**: Define tone (friendly but professional, empathetic but not submissive)
 
-**必备约束**：
+**Required Constraints**:
 - `Empathy First`: Acknowledge customer frustration before delivering bad news
 - `Policy Anchoring`: Never promise refunds/benefits that violate policy
 - `Escalation Trigger`: If customer mentions "lawyer" or "sue", immediately offer human agent
 - `No Speculation`: Do not invent reasons for denial
 
-**示例结构**：
+**Example Structure**:
 ```
 Role: Customer Service Specialist for [company/industry]
 Execution Chain:
@@ -122,23 +122,23 @@ Examples: Eligible refund, Ineligible refund, Fraudulent claim, Angry customer
 
 ---
 
-## 翻译类（Translation, Localization）
+## Translation (Translation, Localization)
 
-**侧重点**：Constraints > Examples > Variables Dictionary
+**Emphasis**: Constraints > Examples > Variables Dictionary
 
-**设计要点**：
-- **Style Preservation**：要求保留原文风格（正式/非正式、技术/通俗）
-- **Cultural Adaptation**：不仅是语言翻译，还要文化适配
-- **Terminology Consistency**：专业术语必须一致
-- **Format Preservation**：保留原文格式（Markdown、HTML、代码块）
+**Design Points**:
+- **Style Preservation**: Require preserving the original style (formal/informal, technical/colloquial)
+- **Cultural Adaptation**: Not just language translation, but cultural adaptation
+- **Terminology Consistency**: Professional terminology must be consistent
+- **Format Preservation**: Preserve original formatting (Markdown, HTML, code blocks)
 
-**必备约束**：
+**Required Constraints**:
 - `Style Preservation`: Maintain the original tone and formality level
 - `Cultural Adaptation`: Adapt idioms and cultural references for target audience
 - `Terminology Consistency`: Use consistent translations for technical terms
 - `Format Preservation`: Keep original formatting (Markdown, HTML, code blocks)
 
-**示例结构**：
+**Example Structure**:
 ```
 Role: Professional Translator specializing in [domain] (e.g., legal, medical, technical)
 Variables:
@@ -157,22 +157,22 @@ Examples: Technical document, Marketing copy, Legal text
 
 ---
 
-## 教育类（Tutoring, Explanation, Teaching）
+## Education (Tutoring, Explanation, Teaching)
 
-**侧重点**：Execution Chain > Examples > Constraints
+**Emphasis**: Execution Chain > Examples > Constraints
 
-**设计要点**：
-- **Scaffolding**：从简单到复杂逐步讲解
-- **Check Understanding**：要求 LLM 检查用户是否理解
-- **Multiple Explanations**：同一概念用不同方式解释
-- **Practice Problems**：提供练习题巩固理解
+**Design Points**:
+- **Scaffolding**: Progress from simple to complex step by step
+- **Check Understanding**: Require the LLM to check if the user understands
+- **Multiple Explanations**: Explain the same concept in different ways
+- **Practice Problems**: Provide practice questions to reinforce understanding
 
-**必备约束**：
+**Required Constraints**:
 - `Check Understanding`: After each concept, ask "Does this make sense?" or provide a quick quiz
 - `Multiple Angles`: Explain each concept at least 2 different ways
 - `No Jargon Without Definition`: Define technical terms before using them
 
-**示例结构**：
+**Example Structure**:
 ```
 Role: [Subject] Tutor with [X] years of teaching experience
 Execution Chain:
@@ -187,16 +187,16 @@ Examples: Beginner explanation, Advanced explanation, Misconception correction
 
 ---
 
-## 快速选择指南
+## Quick Selection Guide
 
-| 你的任务类型 | 侧重点 | 关键设计元素 |
+| Your Task Type | Emphasis | Key Design Elements |
 |---|---|---|
-| 代码审查/生成 | Constraints | Severity Anchoring, Actionable Fixes, Line References |
-| 文案撰写 | Examples | Platform Calibration, Ban List, Multiple Variants |
-| 数据分析 | Execution Chain | Data Anchoring, Confidence Levels, Source Citation |
-| 客服对话 | Constraints | Empathy First, Policy Anchoring, Escalation Triggers |
-| 翻译 | Constraints | Style Preservation, Cultural Adaptation, Terminology |
-| 教育/讲解 | Execution Chain | Scaffolding, Check Understanding, Multiple Angles |
+| Code Review/Generation | Constraints | Severity Anchoring, Actionable Fixes, Line References |
+| Copywriting | Examples | Platform Calibration, Ban List, Multiple Variants |
+| Data Analysis | Execution Chain | Data Anchoring, Confidence Levels, Source Citation |
+| Customer Service | Constraints | Empathy First, Policy Anchoring, Escalation Triggers |
+| Translation | Constraints | Style Preservation, Cultural Adaptation, Terminology |
+| Education/Explanation | Execution Chain | Scaffolding, Check Understanding, Multiple Angles |
 
 ---
-最后更新: 2026-07-02
+Last updated: 2026-07-02

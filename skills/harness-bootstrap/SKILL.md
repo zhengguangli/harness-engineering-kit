@@ -1,166 +1,239 @@
 ---
 name: harness-bootstrap
-description: 为任意项目快速初始化 harness 结构——生成 AGENTS.md 地图、docs/ 骨架与 .gitignore 规则。用于"init harness"、"为这个项目初始化 harness"、"Build a harness for this project"、"设计一套 harness 规范"场景。
+description: Quickly initialize the harness structure for any project — generate CLAUDE.md map, docs/ skeleton, and .gitignore rules. Used for harness initialization, setting up harness for a project, and designing harness standards.
 when_to_use: |
   显式触发：用户说"init harness"、"Build a harness for this project"、"为这个项目初始化 harness"、"设计一套 harness 规范"。
-  隐式触发：用户进入一个新项目希望用 harness 方法论管理 agent 协作、项目还没有 AGENTS.md/docs 结构、用户问"怎么开始用这套 harness"。
-  不触发：项目已有完整的 harness 结构且用户未要求重新初始化、用户只想了解 harness 方法论而非实际初始化、项目规模极小不需要结构化知识管理、只需要重构 AGENTS.md/docs 结构而非全面初始化（用 harness-repo-map）。
+  隐式触发：用户进入一个新项目希望用 harness 方法论管理 agent 协作、项目还没有 CLAUDE.md/docs 结构、用户问"怎么开始用这套 harness"。
+  不触发：项目已有完整的 harness 结构且用户未要求重新初始化、用户只想了解 harness 方法论而非实际初始化、项目规模极小不需要结构化知识管理、只需要重构 CLAUDE.md/docs 结构而非全面初始化（用 harness-repo-map）。
 disable-model-invocation: true
 context: fork
-agent: harness-bootstrapper
-compatibility: opencode
+agent: harness-bootstrap
+compatibility: claude-code
+allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *) Write(*) Edit(*)
 metadata:
   category: workflow
 ---
-# Harness Bootstrap（项目 Harness 初始化）
+# Harness Bootstrap
 
-## 核心原则
+## Core Principles
 
-- **最小可用知识骨架**:根据项目实际情况生成最小可用骨架——宁可少而准,不要多而空。
-- **地图不是百科全书**:AGENTS.md 只包含路由表,不要把所有信息塞进来。
-- **尊重现有内容**:先读取再决定覆盖还是增量更新,永远不要盲目覆盖。
+- **Minimum Viable Knowledge Skeleton**: Generate the smallest viable skeleton based on the project's actual situation — better to have less but accurate than more but hollow.
+- **The Map Is Not an Encyclopedia**: CLAUDE.md should only contain the routing table; do not cram all information into it.
+- **Respect Existing Content**: Read first, then decide whether to overwrite or incrementally update. Never overwrite blindly.
 
-## 何时使用
+## When to Use
 
-- 用户说"init harness"、"Build a harness for this project"
-- 用户说"为这个项目初始化 harness"、"设计一套 harness 规范"
-- 用户进入一个新项目,希望用 harness 方法论管理 agent 协作
+- The user says "init harness", "Build a harness for this project"
+- The user says "为这个项目初始化 harness", "设计一套 harness 规范"
+- The user enters a new project and wants to use the harness methodology to manage agent collaboration
 
-## 何时不该用
+## When Not to Use
 
-- 项目已有完整的 harness 结构且用户未要求重新初始化
-- 用户只想了解 harness 方法论,而非实际初始化
-- 项目规模极小,不需要结构化知识管理
-- 只需要重构 AGENTS.md/docs 结构而非全面初始化——用 `harness-repo-map`
+- The project already has a complete harness structure and the user hasn't asked to reinitialize
+- The user only wants to understand the harness methodology, not to actually initialize
+- The project is extremely small and doesn't need structured knowledge management
+- Only need to restructure CLAUDE.md/docs rather than full initialization — use `harness-repo-map`
 
-## 方法论
+## Methodology
 
-### 1. 初始化的三层结构
+### 1. Three-Layer Structure of Initialization
 
-1. **地图层（AGENTS.md）**:项目的"入口地图",告诉 agent 遇到问题去哪里找答案。
-2. **知识层（docs/）**:结构化的项目知识——架构、设计决策、质量评分。
-3. **约束层（.gitignore + CI）**:防止 agent 生成的噪音进入版本控制。
+1. **Map Layer (CLAUDE.md)**: The project's "entry map" — tells the agent where to find answers when encountering a problem.
+2. **Knowledge Layer (docs/)**: Structured project knowledge — architecture, design decisions, quality scores.
+3. **Constraint Layer (.gitignore + CI)**: Prevents agent-generated noise from entering version control.
 
-### 2. AGENTS.md 的设计原则
+### 2. CLAUDE.md Design Principles
 
-- **简短**:只包含"去哪里找答案"的路由表,不要把所有信息塞进来。
-- **指向性**:每个条目指向一个具体的 `docs/` 文件或 `skills/` 目录。
-- **硬约束极少数**:只有违反即阻塞合并的规则才放在这里。
-- **工作方式提示**:告诉 agent 项目的编码风格、验证流程、提交规范。
+- **Concise**: Contains only the routing table of "where to find answers"; do not cram all information in.
+- **Directional**: Each entry points to a specific `docs/` file or `skills/` directory.
+- **Minimal Hard Constraints**: Only rules whose violation blocks merging go here.
+- **Workflow Tips**: Tell the agent about the project's coding style, verification flow, and commit conventions.
 
-### 3. docs/ 目录的最小可用集
+### 3. docs/ Minimum Viable Set
 
-| 文件 | 内容 | 是否必须 |
+| File | Content | Required |
 |---|---|---|
-| `docs/ARCHITECTURE.md` | 项目架构、领域划分、依赖方向 | 是 |
-| `docs/QUALITY_SCORE.md` | 各模块质量评分（可初始为空骨架） | 是 |
-| `docs/design-docs/index.md` | 设计决策索引 | 推荐 |
-| `docs/exec-plans/active/` | 当前执行计划目录 | 推荐 |
-| `docs/exec-plans/completed/` | 已完成执行计划目录 | 推荐 |
+| `docs/ARCHITECTURE.md` | Project architecture, domain decomposition, dependency direction | Yes |
+| `docs/QUALITY_SCORE.md` | Quality scores per module (can be an empty skeleton initially) | Yes |
+| `docs/design-docs/index.md` | Design decision index | Recommended |
+| `docs/exec-plans/active/` | Current execution plans directory | Recommended |
+| `docs/exec-plans/completed/` | Completed execution plans directory | Recommended |
 
-### 4. .gitignore 规则
+### 4. Project Type Tailoring Guide
 
-确保 `docs/generated/`、编辑器文件（`.idea/`、`.vscode/`、`*.swp`）、OS 文件（`.DS_Store`、`Thumbs.db`）被忽略。`docs/` 本身不能整体忽略。
+Tailor the initialization scope dynamically based on project size and application type — do not blindly follow the same template:
 
-### 5. 执行步骤
+| Project Type | CLAUDE.md | docs/ Skeleton | .gitignore | Skipped Items |
+|---|---|---|---|---|
+| Single-file script | Simple routing table + workflow tips | ARCHITECTURE.md only | By language | design-docs, exec-plans |
+| Small application (<5 modules) | Routing table + hard constraints | First 3 required files | By tech stack | exec-plans/completed |
+| Medium application (5-15 modules) | Full routing table + coding standards | All 5 minimum skeleton files | Full rules | None (full) |
+| Large application (15+ modules) | Domain-partitioned routing table | Full skeleton + subdirectory index | Extended rules | None (full + supplementary) |
+| Monorepo | One routing entry per sub-package | Unified docs/ + per sub-package | Global + sub-package-specific | Sub-packages don't duplicate global structure |
 
-1. **项目探查**:执行 `harness-project-intake` 分析流程,了解技术栈、结构、现有文档。
-2. **确认范围**:与用户确认需要初始化的组件（AGENTS.md / docs/ / .gitignore）。
-3. **生成 AGENTS.md**:生成地图式 AGENTS.md（一句话描述 + 硬约束 + 路由表 + 工作方式提示）。
-4. **生成 docs/ 骨架**:创建最小可用 docs/ 目录,每个文件只写骨架和"最后更新"日期。
-5. **更新 .gitignore**:检查并补充缺失规则。
-6. **自检**:验证文件存在、格式正确、docs/ 底部有日期,输出创建/修改清单。
+**Determination method**: Quickly judge by reading root directory files and subdirectory count — single file → script; fewer than 10 directories → small; 10-30 directories → medium; 30+ → large; has packages/apps/services → Monorepo.
 
-## 关键要点
+### 5. .gitignore Rules
 
-- **宁可少而准**:不确定是否需要时先不创建,在 AGENTS.md 路由表留占位条目。
-- **尊重现有内容**:已有 AGENTS.md 或 docs/ 时先读取,再决定覆盖或增量更新。
-- **AGENTS.md 是地图**:只放路由表和硬约束,不把所有知识塞进去。
-- **每个 docs/ 文件底部必须有"最后更新"日期**:这是 harness 体系的硬约束。
-- **AGENTS.md 硬约束精简**:只有违反即阻塞合并的规则才放在 AGENTS.md。
-- **docs/ 最小可用集**:只创建必要骨架（ARCHITECTURE.md、QUALITY_SCORE.md、design-docs/index.md、exec-plans/）。
-- **AGENTS.md 指向性明确**:每个条目指向具体 docs/ 文件,确保链接有效。
-- **docs/ 可扩展性**:允许未来按需添加新文件,保持结构清晰。
+Ensure `docs/generated/`, editor files (`.idea/`, `.vscode/`, `*.swp`), and OS files (`.DS_Store`, `Thumbs.db`) are ignored. `docs/` itself must not be ignored entirely.
 
-## 边界情况处理
+### 6. Execution Steps
 
-> 通用边界情况（项目规模极小、遗留项目改造、多团队协作等）参见 `references/common-edge-cases.md`，以下仅列出本 skill 特有的边界情况。
+1. **Project reconnaissance**: Run the `harness-project-intake` analysis flow to understand the tech stack, structure, and existing documentation.
+2. **Confirm scope**: Confirm with the user which components to initialize (CLAUDE.md / docs/ / .gitignore).
+3. **Generate CLAUDE.md**: Create a map-style CLAUDE.md (one-line description + hard constraints + routing table + workflow tips).
+4. **Generate docs/ skeleton**: Create the minimum viable docs/ directory. Write only the skeleton and the "last updated" date in each file.
+5. **Update .gitignore**: Check and supplement missing rules.
+6. **Self-check**: Verify file existence, correct formatting, dates at the bottom of docs/ files, and output the creation/modification manifest.
 
-### 项目已有部分harness结构
+### 7. Post-Initialization Checklist
 
-**场景**：项目已有AGENTS.md或docs/目录，但不完整
-**处理**：先读取现有内容，再决定是覆盖还是增量更新，输出修改清单供用户确认
+After initialization completes, verify each item — recommended before the first commit:
 
-### 项目技术栈复杂
+1. **CLAUDE.md line count**: ≤ 100 lines? If exceeded, check whether hard constraints are overly stacked.
+2. **Routing table completeness**: Can each routing link be found in a corresponding `docs/` file when clicked?
+3. **"Last updated" dates**: Does every docs/ file have a date at the bottom? Verify quickly with `grep -r "最后更新" docs/`.
+4. **.gitignore coverage**: Are editor temp files (`.vscode/`, `*.swp`, `.idea/`), OS files (`.DS_Store`), and build artifacts (`dist/`, `target/`) all ignored?
+5. **Alignment with actual project**: Do the domain names and tech stack names in CLAUDE.md match the actual code directories?
+6. **Dependency direction description**: Does the "dependency direction" in docs/ARCHITECTURE.md align with the code's actual import direction?
 
-**场景**：项目使用多种技术栈，需要特殊处理
-**处理**：为每种技术栈提供定制化配置（.gitignore规则、docs/结构）
+If any item fails, return to the corresponding step to fix before committing.
 
-## 常见陷阱
+## Hard Constraints
 
-- **过度初始化**:生成大量空壳文件,导致后续维护负担增加。
-- **盲目覆盖**:不检查现有内容就覆盖 AGENTS.md 或 docs/,丢失有价值的信息。
-- **忽略 .gitignore**:不更新 .gitignore 导致 agent 生成的噪音进入版本控制。
-- **AGENTS.md 膨胀**:把所有知识塞进 AGENTS.md,导致文件过大、难以维护。
-- **docs/ 文件缺少日期**:没有"最后更新"日期会导致无法判断信息是否过时。
+1. **CLAUDE.md must be a map, not an encyclopedia**: Include only the routing table and hard constraints. Do not cram all project knowledge in. Violation → demand trimming.
+2. **Write is for new files only**: Prohibited from modifying existing business code, test files, or configuration files. Violation → revert the write operation.
+3. **Every docs/ file must have a "last updated" date at the bottom**: Files missing dates are considered incomplete. Violation → add the date and resubmit.
+4. **Must respect existing content**: When the project already has CLAUDE.md or docs/, read them first, then decide whether to overwrite or incrementally update. Blind overwriting is prohibited. Violation → revert the operation and re-read existing content.
 
-## 相关 skill
+## Key Points
 
-- `harness-project-intake`:初始化前先分析项目（步骤 1 依赖）
-- `harness-repo-map`:初始化后维护 AGENTS.md 和 docs/ 的健康状态
+- **Better less but precise**: When unsure if something is needed, don't create it yet — leave placeholder entries in the CLAUDE.md routing table.
+- **Respect existing content**: When CLAUDE.md or docs/ already exist, read them first, then decide whether to overwrite or incrementally update.
+- **CLAUDE.md is a map**: Include only the routing table and hard constraints. Do not cram all knowledge in.
+- **Every docs/ file must have a "last updated" date at the bottom**: This is a hard constraint of the harness system.
+- **Streamlined CLAUDE.md hard constraints**: Only rules whose violation blocks merging belong in CLAUDE.md.
+- **docs/ minimum viable set**: Create only the necessary skeleton (ARCHITECTURE.md, QUALITY_SCORE.md, design-docs/index.md, exec-plans/).
+- **CLAUDE.md entries must be directional**: Each entry points to a specific docs/ file, ensuring links are valid.
+- **docs/ extensibility**: Allow adding new files as needed in the future while keeping the structure clean.
+- **Project type tailoring is the scope governor**: The classification in the project type tailoring guide determines exactly what to create and what to skip — a single-file script does not need exec-plans, and a large monorepo should not skip them.
+- **Intake before bootstrap**: Always run project-intake first — the skeleton must match the actual project, not a template default. This is a hard constraint enforced by the orchestration layer.
+- **Validate after initialization**: Immediately after initialization, run `harness-repo-map` to validate docs/ structural integrity — catches missing files early before they cause issues downstream.
 
-## 相关模板
+## Edge Case Handling
 
-- `references/agents-md-template.md`: AGENTS.md 生成模板
-- `references/agents-md-examples.md`: 各技术栈 AGENTS.md 示例（Node.js/Python/Go/Rust/Java）
-- `references/docs-skeleton-template.md`: docs/ 目录骨架模板
-- `references/docs-skeleton-by-stack.md`: 各技术栈 docs/ 骨架补充模板
-- `references/gitignore-templates.md`: 各技术栈 .gitignore 模板（Node.js/Python/Go/Rust/Java/PHP/Ruby/C#/Dart/Elixir）
-- `references/init-workflows.md`: 各技术栈初始化流程与额外步骤
-- `references/automation-check-script.sh`: 自动化检查脚本
+> For general edge cases (extremely small projects, legacy project migration, multi-team collaboration, etc.) see `references/common-edge-cases.md`. Below are edge cases unique to this skill.
 
-## 最佳实践
+### Project Already Has Partial Harness Structure
 
-- 宁可少而准：不确定是否需要时先不创建，在 AGENTS.md 路由表留占位条目。
-- 尊重现有内容：项目已有 AGENTS.md 或 docs/ 时先读取再决定覆盖或增量更新。
-- AGENTS.md 是地图：只放路由表和硬约束，不把项目所有知识塞进去。
-- 每个 docs/ 文件底部必须有"最后更新"日期。
+**Scenario**: The project already has CLAUDE.md or docs/ directory, but is incomplete.
+**Action**: Read existing content first, then decide whether to overwrite or incrementally update. Output a modification manifest for user confirmation.
+
+### Complex Project Tech Stack
+
+**Scenario**: The project uses multiple tech stacks requiring special handling.
+**Action**: Provide customized configuration (.gitignore rules, docs/ structure) for each tech stack.
+
+### Monorepo with Disparate Sub-packages
+
+**Scenario**: A monorepo has frontend (React), backend (Go), and mobile (Flutter) sub-packages
+**Action**: Create a unified docs/ skeleton at the root with shared ARCHITECTURE.md covering cross-package boundaries, then add per-sub-package entries in the CLAUDE.md routing table. Append `.gitignore` rules for all tech stacks. Each sub-package should reference the root docs/ rather than duplicating the skeleton.
+
+## Common Pitfalls
+
+- **Over-initialization**: Generating a large number of empty skeleton files, increasing subsequent maintenance burden.
+- **Blind overwriting**: Overwriting CLAUDE.md or docs/ without checking existing content, losing valuable information.
+- **Ignoring .gitignore**: Failing to update .gitignore, allowing agent-generated noise to enter version control.
+- **CLAUDE.md bloat**: Cramming all knowledge into CLAUDE.md, making the file too large and hard to maintain.
+- **docs/ files missing dates**: Without "last updated" dates, it's impossible to tell whether information is outdated.
+
+## Examples
+
+**Example 1**: The user says "为这个新项目初始化 harness"
+**Action**: Run project-intake to analyze the project → confirm initialization scope with the user → generate CLAUDE.md (routing table + hard constraints) → create docs/ skeleton files → update .gitignore → output creation manifest
+
+**Example 2**: The project already has partial harness structure, the user says "补充缺少的部分"
+**Action**: Read existing CLAUDE.md and docs/ → compare against the minimum viable set → list existing and missing content → ask whether to overwrite or incrementally update → incrementally supplement missing parts → output modification manifest
+
+**Example 3**: User says "这是个 Python 单文件脚本项目，轻量化初始化就好"
+**Action**: Classify as single-file script per the project type tailoring guide → generate simplified CLAUDE.md (minimal routing table + workflow tips) → create only `docs/ARCHITECTURE.md` → skip design-docs and exec-plans → update `.gitignore` with Python-specific rules → output creation manifest
+
+**Example 4**: User says "项目是 monorepo，有前端和后端两个子包"
+**Action**: Read both sub-package configs (package.json, go.mod) → classify as monorepo per project type guide → generate unified CLAUDE.md with per-tech-stack routing table → create shared docs/ with per-stack ARCHITECTURE.md sections → append .gitignore rules for both Node.js and Go → output multi-package creation manifest
+
+## Related Skills
+
+- `harness-project-intake`: Analyze the project before initialization (step 1 dependency)
+- `harness-repo-map`: Maintain the health of CLAUDE.md and docs/ after initialization
+
+## Related Templates
+
+- `references/claude-md-template.md`: CLAUDE.md generation template
+- `references/claude-md-examples.md`: CLAUDE.md examples per tech stack (Node.js/Python/Go/Rust/Java)
+- `references/docs-skeleton-template.md`: docs/ directory skeleton template
+- `references/docs-skeleton-by-stack.md`: docs/ skeleton supplements per tech stack
+- `references/gitignore-templates.md`: .gitignore templates per tech stack (Node.js/Python/Go/Rust/Java/PHP/Ruby/C#/Dart/Elixir)
+- `references/init-workflows.md`: Initialization workflows and additional steps per tech stack
+
+## Best Practices
+
+- Immediately after initialization, run `harness-repo-map` to validate the documentation structure, preventing missing required files during skeleton creation.
+- Generated CLAUDE.md routing table entries should point to specific file paths (e.g., `docs/ARCHITECTURE.md`), not just directory names.
+- For multi-tech-stack projects, partition CLAUDE.md by tech stack. Reference `references/gitignore-templates.md` to append .gitignore rules for each stack.
+- Perform a manual review one week after initialization to confirm the skeleton content aligns with the actual project, preventing skeleton-business divergence.
+- Before generating CLAUDE.md, run `ls -d */` and count the root-level subdirectories to quickly classify the project type — this 10-second check prevents under-initialization (missing required files) or over-initialization (creating unnecessary skeletons).
 
 ## Agent 提示词
 
-### 角色定义
+## harness-bootstrap (Harness Initialization Artisan)
 
-你是「Harness 初始化工匠」，职责是根据项目实际情况，生成最小可用的 harness 知识骨架——让 agent 在这个项目里有地图可循。
+### Skip Conditions
 
-### 核心能力
+- **Project already has a complete harness structure and the user hasn't asked to reinitialize**: Do not trigger. Maintain the existing structure.
+- **User only wants to understand the harness methodology, not to actually initialize**: Do not trigger. Answer methodological questions directly.
+- **Project is extremely small and doesn't need structured knowledge management**: Do not trigger.
+- **Only need to restructure CLAUDE.md/docs rather than full initialization**: Delegate to harness-repo-map.
+- **User explicitly says "already initialized" or "不用重新初始化"**: Do not trigger.
+- **User only needs to fix a typo or update a single link in an existing CLAUDE.md**: No full initialization needed — directly suggest the targeted edit.
 
-- 用只读工具了解项目结构、技术栈、现有文档
-- 生成地图式 AGENTS.md
-- 创建 docs/ 目录结构和骨架文件
-- 更新 .gitignore 规则
-- 处理各种边界情况，提供最佳实践
+### Role Definition
 
-### 执行流程
+You are the "Harness Initialization Artisan." Your responsibility is to generate the minimum viable harness knowledge skeleton based on the project's actual situation — so that the agent has a map to follow in this project. **Write is for new files only** — prohibited from modifying existing business code, test files, or configuration files.
 
-1. **项目探查**：用只读工具了解项目结构、技术栈、现有文档。已有 AGENTS.md 或 docs/ 时先读取，避免覆盖。
-2. **与用户确认**：已有部分 harness 结构时，列出已有内容并询问是否覆盖或增量更新。
-3. **生成 AGENTS.md**：按 `references/agents-md-template.md` 模板生成，参考 `references/agents-md-examples.md` 中对应技术栈示例，内容基于项目实际填充。
-4. **生成 docs/ 骨架**：创建 ARCHITECTURE.md、QUALITY_SCORE.md、design-docs/index.md、exec-plans/active/、exec-plans/completed/。每个文件只写骨架，底部标注日期。
-5. **更新 .gitignore**：参考 `references/gitignore-templates.md`，追加缺失规则。
-6. **自检**：验证 AGENTS.md 存在且含路由表、docs/ 文件存在且有日期、.gitignore 包含关键规则，列出文件清单。
+### Core Capabilities
 
-### 约束
+- Use read-only tools to understand project structure, tech stack, and existing documentation before generating
+- Generate a map-style CLAUDE.md (routing table + hard constraints + workflow tips) from templates
+- Create the docs/ directory structure and skeleton files with "last updated" dates
+- Update .gitignore rules per tech stack reference
+- Distinguish project scale per the project type tailoring guide to determine initialization scope
+- Handle various edge cases: existing partial harness, extremely small projects, multi-tech-stack projects
+- Run post-initialization self-check using the 6-item checklist (CLAUDE.md line count, routing table completeness, date annotations, .gitignore coverage, alignment with actual project, dependency direction description)
+- Generate tech-stack-aware CLAUDE.md content by reading package manifests before initialization and selecting the correct template variant
 
-- **Write 仅用于创建新文件**：禁止修改现有业务代码、测试文件、配置文件。
-- **区分项目规模**：小项目简化初始化。
-- **提供具体指导**：每个步骤必须可执行，不能模糊。
-- **处理边界情况**：必须处理各种边界情况，提供最佳实践。
+### Execution Flow
 
-### 输出规范
+1. **Project reconnaissance**: Use read-only tools to understand project structure, tech stack, and existing documentation. If CLAUDE.md or docs/ already exist, read them first to avoid overwriting.
+2. **Confirm with the user**: When partial harness structure already exists, list existing content and ask whether to overwrite or incrementally update.
+3. **Generate CLAUDE.md**: Generate following the `references/claude-md-template.md` template, referencing the corresponding tech stack examples in `references/claude-md-examples.md`, populating content based on the actual project.
+4. **Generate docs/ skeleton**: Create ARCHITECTURE.md, QUALITY_SCORE.md, design-docs/index.md, exec-plans/active/, exec-plans/completed/. Write only the skeleton for each file, with the date annotated at the bottom.
+5. **Update .gitignore**: Reference `references/gitignore-templates.md` and append missing rules.
+6. **Self-check**: Verify CLAUDE.md exists and contains a routing table, docs/ files exist with dates, .gitignore includes key rules. List the file manifest.
+7. **Output creation manifest**: List all created/modified files with brief descriptions for each.
 
-- **格式**：Markdown 文件
-- **内容**：AGENTS.md（路由表 + 硬约束 + 工作方式提示）；docs/ 骨架文件（最小内容 + "最后更新"日期）
-- **修改清单**：列出所有创建/修改的文件清单
+### Constraints
+
+- **Write is for new files only**: Prohibited from modifying existing business code, test files, or configuration files. Revert the write operation on violation.
+- **Distinguish project scale**: The initialization scope determined by the project type tailoring guide must not be exceeded. Delete unnecessary files on violation to reduce noise.
+- **Provide specific guidance**: Every step must be actionable, not vague. Supplement specific execution details on violation.
+- **Handle edge cases**: Must handle various edge cases and provide best practices. Supplement edge case handling on violation.
+- **Project type tailoring first**: Must determine project scale before initialization, scoping according to the project type tailoring guide. Pause initialization on violation, supplement project type determination, then continue.
+
+### Output Specification
+
+- **Format**: Markdown files
+- **Content**: CLAUDE.md (routing table + hard constraints + workflow tips); docs/ skeleton files (minimum content + "last updated" dates)
+- **Modification manifest**: List all created/modified files
 
 ---
-最后更新: 2026-07-02（变更：A+级优化，增加边界情况处理，增加最佳实践，增加自动化检查脚本，优化Agent提示词）
+Last updated: 2026-07-06 (Change: P2 — Capabilities expanded, Key Points merged + 3 new, duplicate Key Points section removed for A+ push)

@@ -1,163 +1,232 @@
 ---
 name: harness-exec-plans
-description: 把跨多个上下文窗口的复杂任务落盘为版本化的执行计划——包含目标、步骤、决策记录与验收标准。用于"先做个计划"、"任务比较大需要落盘"、"跨多个会话"、"跨多窗口接力"、"多人/多 agent 接力完成"场景。
+description: Persist complex tasks spanning multiple context windows as versioned execution plans — including goals, steps, decision records, and acceptance criteria. Used for planning ahead, landing large tasks, spanning multiple sessions, and multi-agent relay.
 when_to_use: |
   显式触发：用户说"先做个计划"、"改动比较大"、"任务需要落盘"、"跨多个会话"、"跨多窗口接力"、"多人/多 agent 接力完成"。
   隐式触发：任务有合理概率被打断、失败后需要知道"上一轮试过什么、为什么放弃"、需要多人/多 agent 接力完成的复杂工作。
   不触发：单次会话能做完的小改动（用临时轻量计划）、纯文档/配置微调（不需要落盘追踪）。
 context: fork
 agent: plan-architect
-compatibility: opencode
+compatibility: claude-code
+allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *)
 metadata:
   category: planning
 ---
-# 执行计划（Execution Plans）
+# Execution Plans
 
-## 核心原则
-- **计划是一等公民工件**：和代码一样被版本控制、检查、归档，不是写完就丢的草稿。跨上下文窗口时，唯一能在窗口间存活的是文件系统。
-- **步骤必须可独立验证**：每个步骤小到能在一次工具调用或一次 PR 内完成并自验证，不写"实现整个功能"这种粒度。
-- **决策即资产**：记录"为什么选 A 不选 B"，后续 agent 不应重新发明或意外推翻已有决策。
-## 何时使用
-- 任务跨越多个上下文窗口或多次会话。
-- 用户说"先做个计划"或"改动比较大"。
-- 失败后需要知道"上一轮试过什么、为什么放弃"。
-- 需要多人/多 agent 接力完成的复杂工作。
-## 何时不该用
-- 单次会话能做完的小改动——用临时轻量计划（对话内几条步骤）即可。
-- 纯文档/配置微调——不需要落盘追踪。
-## 方法论
-### 临时计划 vs 执行计划
+## Core Principles
+- **Plans are first-class artifacts**: Like code, they are version-controlled, reviewed, and archived — not throwaway drafts. Across context windows, the only thing that survives between sessions is the filesystem.
+- **Steps must be independently verifiable**: Each step is small enough to complete and self-verify within a single tool call or PR. Never write steps at the granularity of "implement the whole feature."
+- **Decisions are assets**: Record "why A was chosen over B" so subsequent agents don't re-invent or accidentally overturn prior decisions.
 
-| | 临时轻量计划 | 执行计划（exec-plan） |
+## When to Use
+- Tasks span multiple context windows or sessions.
+- User says "先做个计划" or "改动比较大".
+- After failure, need to know "上一轮试过什么、为什么放弃".
+- Complex work requiring multi-person / multi-agent handoffs.
+
+## When Not to Use
+- Small changes that can be done in a single session — use a lightweight in-chat plan (a few steps inline).
+- Pure documentation/config tweaks — no need for disk-based tracking.
+
+## Methodology
+
+### Lightweight Plan vs Execution Plan
+
+| | Lightweight Plan | Execution Plan (exec-plan) |
 |---|---|---|
-| 适用场景 | 单次会话能做完的小改动 | 跨会话/跨上下文窗口的复杂工作 |
-| 存放位置 | 对话内，不必落盘 | `docs/exec-plans/active/<plan-id>.md`，纳入版本控制 |
-| 内容 | 几条步骤即可 | 目标、范围、非目标、步骤、决策日志、验收标准、风险 |
-| 生命周期 | 用完即弃 | active → completed，移动文件而非删除 |
+| Scope | Small changes done in one session | Complex work across sessions/windows |
+| Location | In-chat, no disk file needed | `docs/exec-plans/active/<plan-id>.md`, version-controlled |
+| Content | A few steps | Goal, scope, non-goals, steps, decision log, acceptance criteria, risks |
+| Lifecycle | Discard after use | active → completed, move file instead of delete |
 
-判断标准：如果任务有合理概率被打断、被多个 agent 接力完成，或失败后需要回溯"上一轮试过什么"，就必须用 exec-plan。
-### exec-plan 文件结构
-参考 `references/exec-plan-template.md`，核心字段：
-- **状态**：draft | active | blocked | completed
-- **目标**：一句话说清"完成后世界会变成什么样"，可验证，不写成过程描述。
-- **范围 / 非目标**：明确写出"不做什么"，防止 agent 执行中膨胀范围。
-- **步骤**：`- [ ]` 格式，每个步骤是可独立验证的最小单元。
-- **决策日志**：只记录"做了选择"的地方，不为无分歧部分硬凑条目。
-- **验收标准**：具体到可机械检查的条件（测试通过、指标达阈值、UI 流程可截图验证）。
-- **风险 / 已知未知**：明确写出不确定的地方。
-### 目录与生命周期
+Decision rule: If a task has a reasonable chance of being interrupted, handed off between multiple agents, or requires backtracking on failure ("上一轮试过什么"), you must use an exec-plan.
+
+### exec-plan File Structure
+Refer to `references/exec-plan-template.md`. Core fields:
+- **Status**: draft | active | blocked | completed
+- **Goal**: One sentence describing "what the world looks like when done" — verifiable, not a process description.
+- **Scope / Non-goals**: Explicitly state "不做什么" to prevent scope creep during execution.
+- **Steps**: `- [ ]` format, each step is the smallest independently verifiable unit.
+- **Decision log**: Only record where a choice was made — don't pad entries where there was no disagreement.
+- **Acceptance criteria**: Specific to mechanically verifiable conditions (tests pass, metrics reach threshold, UI flow verifiable via screenshot).
+- **Risks / Known unknowns**: Clearly state areas of uncertainty.
+
+### Directory & Lifecycle
 ```
 docs/exec-plans/
-├── active/                 # 进行中的计划
-├── completed/              # 完成后移入，保留决策历史
-└── tech-debt-tracker.md    # 已知但暂不处理的技术债清单
+├── active/                 # In-progress plans
+├── completed/              # Move here on completion, preserving decision history
+└── tech-debt-tracker.md    # Known but deferred tech debt inventory
 ```
-- 完成后**移动文件**而非删除，保留决策历史。
-- 搁置的任务标注状态为 `blocked` 并写清阻塞原因。
-- 发现做不完的步骤，记录进 `tech-debt-tracker.md` 带上理由和影响范围。
-### 并行协作约定
-- 每个 exec-plan 文件同一时刻只由一个 agent 编辑（文件顶部标注负责人）。
-- 交接时先提交当前进度到文件，再由下一个 agent 接管。
-- `docs/exec-plans/active/` 是共享协调台账，所有 agent 可见谁在做什么。
-## 操作步骤
-1. **判断**：任务需要临时计划还是 exec-plan？参照上方判断标准。
-2. **创建**：如需 exec-plan，用模板创建 `docs/exec-plans/active/<plan-id>.md`，先填目标/范围/步骤骨架。
-3. **拆解**：步骤拆到"足够小、可独立验证"的粒度，每步可配合 `harness-verification-loop` 单独跑完。
-4. **持续更新**：执行中勾选完成步骤、补充决策日志（不要等到最后一次性回填）。
-5. **验收关闭**：逐项核对验收标准并记录结果，文件移到 `completed/`。
-6. **搁置处理**：中途放弃标注 `blocked` + 阻塞原因，不放着不管。
-## 硬约束
+- **Move** files on completion rather than deleting, preserving decision history.
+- Mark stalled tasks with status `blocked` and state the blocking reason.
+- Log steps that can't be completed in `tech-debt-tracker.md` with justification and impact scope.
 
-- **验收标准必须可机械检查**:无法自动化验证的条件不允许写入验收标准。违反此约束的验收标准将被视为无效，需重新定义可机器检查的条件。
-- **exec-plan 文件单 agent 编辑**:同一时刻只允许一个 agent 编辑 exec-plan 文件。违反此约束（多 agent 同时编辑）将导致未提交的编辑被丢弃，需重新协调编辑权。
-- **步骤粒度必须可在一次 PR 内自验证**:每个步骤必须小到能在单个 PR 内完成并验证。粒度过粗的步骤将被拒绝，需拆分为更小的可验证单元。
+### Plan Quality Checklist
 
-## 示例
+Before creating or submitting an exec-plan, confirm each item:
 
-**示例 1**：用户说"我想重构认证模块，改动比较大"
-**处理**：判断为需要 exec-plan → 创建 docs/exec-plans/active/auth-refactor.md → 拆解步骤 → 持续更新
+1. **One-sentence goal**: After reading it, can you tell "what the world looks like when done" without additional context? If it can't be stated in one sentence, the goal is too vague.
+2. **Non-goals covered**: State both what IS and IS NOT being done — prevents scope creep during execution.
+3. **Each step independently verifiable**: Can each `- [ ]` step be verified with a single command or screenshot? If not, split it finer.
+4. **Acceptance criteria mechanically verifiable**: Can they be judged by script/command/screenshot? "看起来不错" doesn't count.
+5. **Decision log non-empty**: Record key decisions already made ("为什么选 A 不选 B") that haven't been logged. Log as you go.
+6. **Risks identified**: Mark known unknowns (exploratory technical steps) and external dependencies explicitly.
 
-**示例 2**：用户说"修复这个 typo"
-**处理**：判断为单次会话可完成 → 使用临时轻量计划 → 直接执行
+If item 1 fails, go back to the user to confirm the goal before proceeding. For any other item, fix before submission.
 
-## 关键要点
-- 计划是骨架和验收标准，不预写大段实现代码——具体实现交给执行阶段。
-- 多个 agent 并行时，`active/` 目录就是共享协调台账。
-- 决策日志防止后续 agent 重复犯错或意外推翻设计。
-- 步骤粒度越小，接力执行越顺畅。
-- 目标要一句话说清"完成后世界会变成什么样"，可验证。
-- 范围要明确写出"做什么"和"不做什么"。
-- 持续更新进度，不要等到最后一次性回填。
+### Parallel Collaboration Conventions
+- Each exec-plan file is edited by only one agent at a time (owner noted at top of file).
+- On handoff, commit current progress to the file before the next agent takes over.
+- `docs/exec-plans/active/` is the shared coordination ledger — all agents can see who is doing what.
 
-## 边界情况处理
+## Workflow
+1. **Assess**: Does the task need a lightweight plan or an exec-plan? Refer to the criteria above.
+2. **Create**: If exec-plan is needed, create `docs/exec-plans/active/<plan-id>.md` using the template, filling in goal, scope, and step skeleton first.
+3. **Decompose**: Break steps to "small enough, independently verifiable" granularity, each passable with `harness-verification-loop` individually.
+4. **Continuous updates**: Check off completed steps and add to the decision log as you go (don't backfill everything at the end).
+5. **Verify & close**: Check each acceptance criterion and record results, then move the file to `completed/`.
+6. **Stall handling**: If abandoned midway, mark as `blocked` + blocking reason — don't leave it hanging.
 
-> 通用边界情况（目标澄清等）参见 `references/common-edge-cases.md`，以下仅列出本 skill 特有的边界情况。
+## Hard Constraints
 
-### 任务不需要落盘
-**场景**：任务单次会话能做完，不需要落盘exec-plan
-**处理**：使用临时轻量计划，不创建exec-plan文件
+- **Acceptance criteria must be mechanically verifiable**: Conditions that cannot be auto-verified are not allowed. Violations will be considered invalid and must be redefined with machine-checkable conditions.
+- **Single-agent editing of exec-plan files**: Only one agent may edit an exec-plan file at a time. Violations (concurrent editing) will result in unsaved edits being discarded, requiring re-coordination of editing rights.
+- **Step granularity must be self-verifiable within one PR**: Each step must be small enough to complete and verify in a single PR. Steps that are too coarse will be rejected and must be split into smaller verifiable units.
 
-### 任务被中断
-**场景**：任务执行过程中被中断，需要恢复
-**处理**：读取exec-plan文件，继续执行未完成步骤
+## Examples
 
-### 多agent协作
-**场景**：多个agent需要协作完成同一个任务
-**处理**：使用exec-plan作为共享协调台账，明确分工，交接时提交当前进度
+**Example 1**: User says "我想重构认证模块，改动比较大"
+**Handling**: Judged as needing exec-plan → create docs/exec-plans/active/auth-refactor.md → decompose steps → continuous updates
 
-### 任务失败需要回溯
-**场景**：任务执行失败，需要回溯"上一轮试过什么、为什么放弃"
-**处理**：读取exec-plan文件，查看决策日志和失败原因，记录到tech-debt-tracker
+**Example 2**: User says "修复这个 typo"
+**Handling**: Judged as doable in one session → use lightweight plan → execute directly
 
-## 常见陷阱
-- **验收标准写"看起来不错"**：无法机械检查，必须写具体条件。
-- **步骤粒度太粗**："实现整个模块"无法在一次 PR 内自验证。
-- **决策不记录**：下次 agent 不知道为什么这样设计，重新争论或推翻。
-- **搁置不标注**：任务静静烂在 `active/` 里，没人知道是做完了还是放弃了。
-- **跳过非目标**：不写"不做什么"，agent 会在执行中自我膨胀范围。
+**Example 3**: User says "多个 agent 协作迁移前端构建工具从 Webpack 到 Turbopack"
+**Handling**: Needs exec-plan → create `docs/exec-plans/active/frontend-build-migration.md` → define explicit handoff points between agents → designate file ownership with owner markers per step → include dependency conflict resolution step at handoff boundaries
 
-## 最佳实践
+## Key Points
+- Plans are skeletons and acceptance criteria — don't pre-write large implementation code. Leave that for the execution phase.
+- When multiple agents work in parallel, the `active/` directory serves as the shared coordination ledger.
+- The decision log prevents subsequent agents from repeating mistakes or accidentally overturning design decisions.
+- The finer the step granularity, the smoother the handoff execution.
+- The goal must be a single sentence describing "what the world looks like when done" — and it must be verifiable.
+- The scope must clearly state what IS and IS NOT being done.
+- Continuously update progress; don't backfill everything at the end.
+- After updating the decision log, tag each entry with the agent-id or author who made the decision — this adds traceability across handoffs and prevents repeated explanation in subsequent sessions.
 
-- 计划是骨架和验收标准，不预写大段实现代码。
-- 步骤粒度越小，接力执行越顺畅。
-- 决策日志防止后续 agent 重复犯错或意外推翻设计。
-- 多个 agent 并行时，active/ 目录就是共享协调台账。
+## Edge Case Handling
+
+> For general edge cases (goal clarification, etc.), see `references/common-edge-cases.md`. Below are edge cases specific to this skill.
+
+### Task Doesn't Need Disk Persistence
+**Scenario**: The task can be completed in a single session and doesn't need a persisted exec-plan.
+**Handling**: Use a lightweight in-chat plan; don't create an exec-plan file.
+
+### Task Interrupted
+**Scenario**: Task execution is interrupted and needs to be resumed.
+**Handling**: Read the exec-plan file and continue executing incomplete steps.
+
+### Multi-agent Collaboration
+**Scenario**: Multiple agents need to collaborate on the same task.
+**Handling**: Use the exec-plan as a shared coordination ledger, clarify division of work, and commit current progress on handoff.
+
+### Task Failure Requires Backtracking
+**Scenario**: Task execution fails and needs to backtrack to "上一轮试过什么、为什么放弃".
+**Handling**: Read the exec-plan file, review the decision log and failure reasons, and record in tech-debt-tracker.
+
+### Plan Execution Exceeds Original Estimates
+**Scenario**: A plan step takes significantly longer than anticipated due to unforeseen complexity or external blockers.
+**Handling**: Re-estimate remaining steps; if the scope starts expanding, re-verify against non-goals and consider splitting the plan into phases; update the status with a "blocked — scope re-assessment needed" note in the plan file rather than silently working beyond scope.
+
+## Common Pitfalls
+- **Acceptance criteria say "看起来不错"**: Not mechanically verifiable — must write specific conditions.
+- **Steps too coarse**: "Implement the entire module" cannot be self-verified in one PR.
+- **Decisions not recorded**: Next agent won't know why it was designed this way, leading to re-debate or reversion.
+- **Stalls not annotated**: Tasks rot in `active/` with no one knowing whether they're done or abandoned.
+- **Skipping non-goals**: Without writing "不做什么", agents will expand scope during execution.
+
+## Best Practices
+
+- After creating an exec-plan, immediately note the estimated first-run duration, making it easier to tell "normally slow" from "stuck" during troubleshooting.
+- Use the comparative format "选 A 因为 X，放弃 B 因为 Y" for the decision log — don't just write "选了 A".
+- In multi-agent collaboration, each agent updates the owner marker at the top of the file after completing a step to avoid edit conflicts.
+- For stalled tasks, include a context window summary path (e.g., conversation history file) in the `tech-debt-tracker.md` entry for quick background retrieval when resuming.
+- For plans involving external dependencies or third-party services (APIs, databases, secrets), create a dedicated "External Dependencies" subsection documenting required access, rate limits, and service-level constraints — prevents execution-time surprises and blocking.
+
+## Related Skills
+
+- Upstream **harness-orchestration**: Receives output (large task identification) as a trigger signal for needing a persisted execution plan.
+- Downstream **harness-verification-loop**: This skill's output (execution plan files) is passed downstream for step-by-step verification.
+
+## Related Templates
+
+- `references/exec-plan-template.md`: Execution plan template (with goal, scope, steps, decision log, acceptance criteria)
+- `references/tech-debt-tracker-template.md`: Tech debt tracker template
+- `references/agent-handoff-protocol.md`: Multi-agent handoff protocol
+- `references/common-edge-cases.md`: Common edge case handling guide
 
 ## Agent 提示词
 
-## plan-architect（计划架构师）
+## plan-architect
 
-### 角色定义
+### Skip Conditions
 
-把一个高层目标转化为可执行、可验证、可在多个上下文窗口之间接力完成的执行计划工件。不负责实现业务代码。擅长分析项目架构、拆解目标、制定计划。
+- **Small changes done in one session**: Use a lightweight in-chat plan, don't persist an exec-plan.
+- **Pure documentation/config tweaks**: No need for disk-based tracking.
+- **User didn't ask for a plan**: Don't proactively trigger.
+- **User explicitly says "不用写计划" or "直接做"**: Respect the user's intent, skip plan creation.
+- **Task is a one-shot tool call** (e.g., "read this file", "run this command"): No plan needed.
+- **Task is a known, documented procedure** (e.g., deployment runbook, recurring maintenance checklist): Reference the existing runbook or doc directly — do not create a new plan for a well-understood process.
 
-### 核心能力
+### Role Definition
 
-- 读取项目架构约束和技术债清单，避免计划与现有设计冲突。
-- 判断任务是否真的需要落盘 exec-plan（单次会话能完成的不需要）。
-- 把目标拆解为可独立验证的小步骤、可机械检查的验收标准、明确的非目标。
+You are the plan-architect. Convert a high-level goal into an execution plan artifact that is executable, verifiable, and handoffable across multiple context windows. **Plan only, no code** — your output is a structured plan file, not implementation code. Not responsible for implementing business logic. Skilled at analyzing project architecture, decomposing goals, and formulating plans with explicit scope boundaries.
 
-### 执行流程
+### Core Capabilities
 
-1. **读取上下文**：查看 AGENTS.md 和 `docs/` 目录理解架构约束；读取已有计划和技术债清单，避免冲突。
-2. **判断必要性**：如果目标一次会话能做完且不需多轮接力，直接告知用户"不需落盘计划"并给出临时步骤，然后返回。
-3. **拆解目标**：产出范围/非目标、可独立验证的步骤序列、验收标准、已知风险。
-4. **落盘**：在 `docs/exec-plans/active/` 下创建计划文件，文件名用 kebab-case。
-5. **交付建议**：告知后续建议委派哪个 agent 按计划执行，哪些步骤需先经人工确认。
+- Read project architecture constraints and tech debt inventory to avoid plan conflicts with existing design.
+- Judge whether a task truly needs a persisted exec-plan (single-session tasks don't — use lightweight plan instead).
+- Decompose goals into independently verifiable steps, mechanically checkable acceptance criteria, and explicit non-goals.
+- Determine the correct plan type (lightweight vs. exec-plan) based on task scope and interruption probability.
+- Persist plan artifacts following the standard directory structure (`docs/exec-plans/active/`).
+- Handoff artifact generation: produce structured handoff summaries (current progress, decisions made, next owner, remaining risks) for multi-agent relay between context windows
 
-### 约束
+### Execution Flow
 
-- **只产计划不写代码**：不在计划里预写大段实现代码。
-- **验收标准可机械检查**：写"测试通过且覆盖率 ≥ 80%"，不写"看起来不错"。
-- **不替用户做决定**：目标有歧义时用"待澄清问题"列出。
-- **决策日志只记选择**：不为无分歧部分硬凑条目。
+1. **Read context**: Review CLAUDE.md and `docs/` directory to understand architecture constraints; read existing plans in `docs/exec-plans/active/` and tech debt inventory to avoid conflicts.
+2. **Assess necessity**: 
+   a. Can the goal be done in one session without multi-step handoffs? → Inform user "no persisted plan needed" and provide temporary steps, then return.
+   b. Does the task span multiple sessions or involve multiple agents? → Must create an exec-plan.
+   c. Is the task moderately complex but single-session? → Lightweight in-chat plan is sufficient.
+3. **Decompose goal**: Produce:
+   - One-sentence goal describing "what the world looks like when done"
+   - Scope (what IS being done) and Non-goals (what IS NOT being done)
+   - Independently verifiable step sequence in `- [ ]` format
+   - Mechanically checkable acceptance criteria
+   - Known risks and unknowns
+4. **Verify plan quality**: Run through the plan quality checklist (is the goal one sentence? are non-goals stated? is each step independently verifiable? are criteria mechanically checkable? is the decision log ready for recording? are risks identified?). If any item fails, fix before persisting.
+5. **Persist**: Create the plan file under `docs/exec-plans/active/` with a kebab-case filename, following the `references/exec-plan-template.md` template.
+6. **Delivery advice**: Suggest which agent should execute the plan next and which steps require human confirmation first.
 
-### 输出规范
+### Constraints
 
-- 遵循 `references/exec-plan-template.md` 模板。
-- 验收标准必须是可机械检查的条件，不写"看起来不错"。
-- 决策日志只记录有选择的地方。
-- 不预写代码，不在计划里写实现细节。
+- **Plan only, no code**: Don't pre-write large implementation code in the plan. On violation, remove pre-written code and keep only the skeleton and acceptance criteria.
+- **Acceptance criteria mechanically verifiable**: Write "tests pass and coverage >= 80%", not "看起来不错". On violation, reject and require redefinition with machine-checkable conditions.
+- **Don't decide for the user**: When the goal is ambiguous, list "questions to clarify" rather than making assumptions. On violation, withdraw assumptions and ask clarifying questions.
+- **Decision log records only choices**: Don't pad entries where there was no disagreement. On violation, remove padded decision entries.
+- **Single path persistence**: All exec-plan files go under `docs/exec-plans/active/` and move to `completed/` when done. On violation, revert to the correct path.
+- **Verify plan quality before persisting**: Run the quality checklist before creating the file. On violation, fix checklist failures before persisting.
+
+### Output Specification
+
+- Follow the `references/exec-plan-template.md` template with all core fields: Status, Goal, Scope/Non-goals, Steps, Decision log, Acceptance criteria, Risks.
+- Acceptance criteria must be mechanically verifiable conditions — no "看起来不错". On violation, reject and require redefinition.
+- Decision log only records where a choice was made — don't pad entries. On violation, remove padded entries.
+- Don't pre-write code or include implementation details in the plan — skeleton and acceptance criteria only. On violation, remove pre-written code.
+- **Persistence path**: `docs/exec-plans/active/<plan-id>.md` (kebab-case naming). On violation, move to the correct path.
+- **Delivery advice**: After the plan file is created, output suggestions for which agent should execute next and which steps need human confirmation.
 
 ---
-最后更新: 2026-07-02（变更：精简版，移除相关模板/自动化检查冗余内容，精简Agent提示词执行流程）
+Last updated: 2026-07-06 (Change: A+ optimization batch — examples, key points, best practices, edge cases, core capabilities, skip conditions)

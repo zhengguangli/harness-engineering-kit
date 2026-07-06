@@ -1,230 +1,230 @@
-# Skill 设计模式参考
+# Skill Design Patterns Reference
 
-## 设计模式总览
+## Design Pattern Overview
 
-| 模式 | 适用场景 | 复杂度 |
+| Pattern | Use Case | Complexity |
 |---|---|---|
-| 知识注入型 | 主对话需要持续参考某领域知识 | 低 |
-| 流程引导型 | 复杂多步骤任务需要结构化流程 | 中 |
-| 检查清单型 | 验证/审计场景需要逐项检查 | 低 |
-| 工具编排型 | 需要协调多个工具/子agent | 高 |
-| 渐进披露型 | 信息量大需要分层加载 | 高 |
+| Knowledge Injection | Main conversation needs ongoing reference to domain knowledge | Low |
+| Process Guidance | Complex multi-step tasks need structured workflow | Medium |
+| Checklist | Verification/audit scenarios requiring item-by-item checks | Low |
+| Tool Orchestration | Needs to coordinate multiple tools/sub-agents | High |
+| Progressive Disclosure | Large amount of information needs layered loading | High |
 
-## 模式一：知识注入型
+## Pattern 1: Knowledge Injection
 
-最简单的 skill 形态——将领域知识注入当前上下文供主对话参考。
+The simplest skill form — injects domain knowledge into the current context for the main conversation to reference.
 
-**结构模板**：
+**Structure Template**:
 
 ```yaml
 ---
 name: domain-knowledge
-description: 为 XXX 场景提供领域知识参考。
+description: Provides domain knowledge reference for XXX scenarios.
 context: fork
-compatibility: opencode
+compatibility: claude-code
 ---
 # Domain Knowledge
 
-## 核心概念
-- 概念A：定义与边界
-- 概念B：定义与边界
+## Core Concepts
+- Concept A: Definition and boundaries
+- Concept B: Definition and boundaries
 
-## 决策规则
-- 当遇到 X 时，选择 Y
-- 当遇到 Z 时，选择 W
+## Decision Rules
+- When encountering X, choose Y
+- When encountering Z, choose W
 
-## 常见误区
-- 误区1：...（正确做法：...）
-- 误区2：...（正确做法：...）
+## Common Misconceptions
+- Misconception 1: ... (correct approach: ...)
+- Misconception 2: ... (correct approach: ...)
 ```
 
-**设计要点**：
-- 正文控制在 200 行以内（这类 skill 通常很精简）
-- 核心概念 ≤ 10 个，超出则拆分到 references/
-- 决策规则用"当...时，选择..."句式，消除歧义
+**Design Points**:
+- Body text within 200 lines (this type of skill is typically compact)
+- Core concepts ≤ 10; beyond that, split into references/
+- Decision rules use the "When... choose..." format to eliminate ambiguity
 
-**反模式**：
-- ❌ 把整本教科书塞进 skill——应拆分到 references/ 按需加载
-- ❌ 概念定义模糊——"X 是一种很好的实践"不如"X 指的是：1/2/3"
+**Anti-patterns**:
+- ❌ Stuffing an entire textbook into a skill — should split into references/ for on-demand loading
+- ❌ Vague concept definitions — "X is a good practice" is worse than "X refers to: 1/2/3"
 
-## 模式二：流程引导型
+## Pattern 2: Process Guidance
 
-定义复杂多步骤任务的执行流程，主对话按步骤推进。
+Defines the execution flow for complex multi-step tasks, with the main conversation progressing step by step.
 
-**结构模板**：
+**Structure Template**:
 
 ```yaml
 ---
 name: workflow-guide
-description: 引导 XXX 流程的执行——从 A 到 B 到 C。
+description: Guides the execution of XXX workflow — from A to B to C.
 context: fork
-compatibility: opencode
+compatibility: claude-code
 ---
 # Workflow Guide
 
-## 核心原则
-- 原则1：...
-- 原则2：...
+## Core Principles
+- Principle 1: ...
+- Principle 2: ...
 
-## 执行流程
+## Execution Flow
 
-### Phase 1: 准备
-1. 步骤1（检查 X）
-2. 步骤2（准备 Y）
+### Phase 1: Preparation
+1. Step 1 (check X)
+2. Step 2 (prepare Y)
 
-### Phase 2: 执行
-3. 步骤3（执行 A）
-4. 步骤4（验证 B）
+### Phase 2: Execution
+3. Step 3 (execute A)
+4. Step 4 (verify B)
 
-### Phase 3: 收尾
-5. 步骤5（记录 C）
+### Phase 3: Wrap-up
+5. Step 5 (record C)
 
-## 边界情况
-- 情况1 → 处理方式
-- 情况2 → 处理方式
+## Edge Cases
+- Case 1 → Handling approach
+- Case 2 → Handling approach
 ```
 
-**设计要点**：
-- Phase 数量 ≤ 5，每个 Phase 内步骤 ≤ 5
-- 每个步骤必须是可执行的（不是"考虑X"而是"检查X是否存在"）
-- 边界情况用"情况→处理"映射，不要写长段落
+**Design Points**:
+- Phase count ≤ 5, steps per phase ≤ 5
+- Each step must be actionable (not "consider X" but "check if X exists")
+- Edge cases use "case → handling" mapping, no long paragraphs
 
-**反模式**：
-- ❌ 步骤描述模糊——"做好准备工作"不如"确认以下3项已就绪：..."
-- ❌ 缺少终止条件——每个 Phase 应有明确的"完成标准"
+**Anti-patterns**:
+- ❌ Vague step descriptions — "make preparations" is worse than "confirm the following 3 items are ready: ..."
+- ❌ Missing termination conditions — each Phase should have clear "completion criteria"
 
-## 模式三：检查清单型
+## Pattern 3: Checklist
 
-验证/审计场景的逐项检查结构。
+Item-by-item verification structure for audit/validation scenarios.
 
-**结构模板**：
+**Structure Template**:
 
 ```yaml
 ---
 name: quality-checklist
-description: 检查 XXX 是否符合质量标准。
+description: Checks whether XXX meets quality standards.
 context: fork
-compatibility: opencode
+compatibility: claude-code
 ---
 # Quality Checklist
 
-## 检查项
+## Check Items
 
-### 必检项（全部通过才算合格）
-- [ ] 检查项1：标准描述 + 判定方法
-- [ ] 检查项2：标准描述 + 判定方法
+### Mandatory Items (all must pass to qualify)
+- [ ] Check item 1: Standard description + judgment method
+- [ ] Check item 2: Standard description + judgment method
 
-### 推荐项（建议通过）
-- [ ] 检查项3：标准描述 + 判定方法
+### Recommended Items (suggested to pass)
+- [ ] Check item 3: Standard description + judgment method
 
-## 判定规则
-- 全部必检项通过 → ✅ 合格
-- 任一必检项未通过 → ❌ 不合格，列出未通过项
-- 推荐项未通过 → ⚠️ 警告，不阻塞
+## Judgment Rules
+- All mandatory items pass → ✅ Qualified
+- Any mandatory item fails → ❌ Unqualified; list failed items
+- Recommended item fails → ⚠️ Warning, not blocking
 
-## 输出格式
-| 检查项 | 结果 | 证据 |
+## Output Format
+| Check Item | Result | Evidence |
 |---|---|---|
-| 检查项1 | ✅/❌ | 具体证据 |
+| Check item 1 | ✅/❌ | Specific evidence |
 ```
 
-**设计要点**：
-- 必检项 ≤ 10 项，超出则分组
-- 每项必须有明确的判定方法（不是"看起来对"）
-- 输出格式固定，便于自动化解析
+**Design Points**:
+- Mandatory items ≤ 10; group if exceeded
+- Each item must have a clear judgment method (not "looks right")
+- Fixed output format for automated parsing
 
-## 模式四：工具编排型
+## Pattern 4: Tool Orchestration
 
-协调多个工具或子 agent 完成复杂任务。
+Coordinates multiple tools or sub-agents to complete complex tasks.
 
-**结构模板**：
+**Structure Template**:
 
 ```yaml
 ---
 name: tool-orchestrator
-description: 编排 XXX 工具链完成 YYY 任务。
+description: Orchestrates XXX toolchain to complete YYY tasks.
 context: fork
-compatibility: opencode
+compatibility: claude-code
 ---
 # Tool Orchestrator
 
-## 工具清单
-| 工具 | 用途 | 权限 |
+## Tool Inventory
+| Tool | Purpose | Permission |
 |---|---|---|
-| tool1 | 用途1 | read |
-| tool2 | 用途2 | read, write |
+| tool1 | Purpose 1 | read |
+| tool2 | Purpose 2 | read, write |
 
-## 编排流程
-1. 调用 tool1（输入：A，输出：B）
-2. 基于 B 判断路由
-3. 路由1 → 调用 tool2
-4. 路由2 → 调用 tool3
+## Orchestration Flow
+1. Call tool1 (input: A, output: B)
+2. Route based on B
+3. Route 1 → call tool2
+4. Route 2 → call tool3
 
-## 错误处理
-- tool1 失败 → 重试1次，仍失败则终止
-- tool2 超时 → 切换到备用工具
+## Error Handling
+- tool1 fails → retry once, terminate if still failing
+- tool2 times out → switch to fallback tool
 ```
 
-**设计要点**：
-- 工具清单包含权限声明（呼应最小权限原则）
-- 编排流程用数据流描述（输入→处理→输出）
-- 每个工具调用必须有错误处理路径
+**Design Points**:
+- Tool inventory includes permission declarations (aligns with least-privilege principle)
+- Orchestration flow described with data flow (input → processing → output)
+- Each tool call must have an error handling path
 
-## 模式五：渐进披露型
+## Pattern 5: Progressive Disclosure
 
-信息量大的知识体系分层组织。
+Large knowledge systems organized in layers.
 
-**结构模板**：
+**Structure Template**:
 
 ```yaml
 ---
 name: progressive-knowledge
-description: XXX 领域知识——按需深入。
+description: XXX domain knowledge — dive deeper on demand.
 context: fork
-compatibility: opencode
+compatibility: claude-code
 ---
 # Progressive Knowledge
 
-## 核心概念（始终加载）
-- 概念1：一句话定义
-- 概念2：一句话定义
+## Core Concepts (Always Loaded)
+- Concept 1: One-sentence definition
+- Concept 2: One-sentence definition
 
-## 深入指南（按需加载）
-- 详细内容 → 参考 `references/deep-dive-1.md`
-- 详细内容 → 参考 `references/deep-dive-2.md`
+## In-Depth Guides (Loaded on Demand)
+- Detailed content → Reference `references/deep-dive-1.md`
+- Detailed content → Reference `references/deep-dive-2.md`
 
-## 快速参考（高频查阅）
-| 场景 | 做法 |
+## Quick Reference (High-Frequency Lookup)
+| Scenario | Approach |
 |---|---|
-| 场景A | 做法1 |
-| 场景B | 做法2 |
+| Scenario A | Approach 1 |
+| Scenario B | Approach 2 |
 ```
 
-**设计要点**：
-- 核心概念控制在 5 个以内（始终加载的部分）
-- 深入指南用文件引用，正文只写"什么情况下读哪个文件"
-- 快速参考表覆盖最高频的 80% 场景
+**Design Points**:
+- Core concepts ≤ 5 (the part always loaded)
+- In-depth guides use file references; body only says "under what circumstances to read which file"
+- Quick reference table covers the 80% most frequent scenarios
 
-## 选择模式的决策树
+## Pattern Selection Decision Tree
 
 ```
-需要注入知识到主对话？
-├── 知识量少（< 200行）→ 知识注入型
-├── 知识量大 → 渐进披露型
-└── 需要执行流程？
-    ├── 线性流程 → 流程引导型
-    ├── 需要判断路由 → 工具编排型
-    └── 需要逐项验证 → 检查清单型
+Need to inject knowledge into the main conversation?
+├── Small knowledge volume (< 200 lines) → Knowledge Injection
+├── Large knowledge volume → Progressive Disclosure
+└── Need execution flow?
+    ├── Linear flow → Process Guidance
+    ├── Needs routing decisions → Tool Orchestration
+    └── Needs item-by-item verification → Checklist
 ```
 
-## 混合模式
+## Hybrid Patterns
 
-实践中经常混合使用：
+In practice, patterns are often combined:
 
-| 混合方式 | 示例 |
+| Hybrid Approach | Example |
 |---|---|
-| 知识注入 + 检查清单 | 领域知识 + 质量检查标准 |
-| 流程引导 + 工具编排 | 多步骤流程中嵌入工具调用 |
-| 渐进披露 + 流程引导 | 核心流程 + 按需深入的参考资料 |
+| Knowledge Injection + Checklist | Domain knowledge + quality inspection standards |
+| Process Guidance + Tool Orchestration | Tool calls embedded in multi-step workflow |
+| Progressive Disclosure + Process Guidance | Core flow + on-demand in-depth reference materials |
 
-**混合原则**：以一种模式为主，其他模式为辅。不要在一个 skill 里同时使用 3 种以上模式，否则结构会混乱。
+**Hybrid Principle**: Use one pattern as the primary, others as supplementary. Do not use more than 3 patterns in a single skill, otherwise the structure becomes chaotic.

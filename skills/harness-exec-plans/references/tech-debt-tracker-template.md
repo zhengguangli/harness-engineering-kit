@@ -1,15 +1,15 @@
-# 技术债跟踪(Tech Debt Tracker)
+# Tech Debt Tracker
 
-记录已知但暂不处理的技术债。由 `entropy-collector` 和 `doc-gardener` agent 在发现"决定暂缓处理"的问题时写入,而不是悄悄丢弃。定期复查,避免这个文件本身也变成被遗忘的坟场。
+Records known tech debt that is temporarily not being addressed. Written by `entropy-collector` and `doc-gardener` agents when they discover "decided to defer" issues, rather than silently discarding them. Review periodically to prevent this file itself from becoming a forgotten graveyard.
 
-## 当前条目
+## Current Entries
 
-| 记录日期 | 问题描述 | 影响范围 | 暂缓理由 | 复查日期 |
+| Date Recorded | Description | Impact Scope | Deferral Reason | Review Date |
 |---|---|---|---|---|
-| <YYYY-MM-DD> | <简述偏差/问题> | <影响的领域/文件> | <为什么这次没有立即修> | <下次该重新评估的时间> |
+| <YYYY-MM-DD> | <brief description of deviation/issue> | <affected area/file> | <why it wasn't fixed this time> | <when to reassess> |
 
-## 已解决条目(归档)
+## Resolved Entries (Archived)
 
-| 解决日期 | 问题描述 | 解决方式 |
+| Resolution Date | Description | Resolution |
 |---|---|---|
 | | | |

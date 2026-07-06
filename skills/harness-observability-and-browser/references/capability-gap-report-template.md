@@ -1,186 +1,186 @@
-# 能力缺口报告模板
+# Capability Gap Report Template
 
-## 使用场景
+## Usage
 
-当项目缺少验证所需的观测能力时（如无浏览器自动化工具、无性能监控、无结构化日志），使用此模板记录缺口。
+When the project lacks the observability capabilities required for verification (e.g., no browser automation tool, no performance monitoring, no structured logging), use this template to record the gap.
 
-## 报告模板
-
-```markdown
-# 能力缺口报告
-
-## 基本信息
-- **报告时间**：YYYY-MM-DD HH:MM
-- **报告人**：[agent 名称]
-- **项目**：[项目名称]
-- **关联任务**：[需要验证但无法完成的任务]
-
-## 缺口清单
-
-### 缺口 1：[缺口名称]
-
-| 字段 | 内容 |
-|---|---|
-| **缺口描述** | [具体缺少什么能力] |
-| **影响范围** | [哪些验证任务受影响] |
-| **当前状态** | [现有的替代方案（如有）] |
-| **替代方案置信度** | 高/中/低（无证据支撑时为"低"） |
-| **建议修复方式** | [如何填补这个缺口] |
-| **优先级** | P0/P1/P2 |
-| **预计工作量** | [估算] |
-
-**受影响的验证任务**：
-- 任务1：[描述] → 无法执行，原因：[原因]
-- 任务2：[描述] → 降级执行，原因：[原因]
-
-**替代方案**（如有）：
-- [替代方案描述]
-- 置信度说明：[为什么置信度是高/中/低]
-
-### 缺口 2：[缺口名称]
-
-[同上格式]
-```
-
-## 常见缺口类型
-
-### 类型一：浏览器自动化工具缺失
+## Report Template
 
 ```markdown
-### 缺口：Playwright/Puppeteer 未安装
+# Capability Gap Report
 
-| 字段 | 内容 |
+## Basic Information
+- **Report Time**: YYYY-MM-DD HH:MM
+- **Reporter**: [agent name]
+- **Project**: [project name]
+- **Related Task**: [task requiring verification that cannot be completed]
+
+## Gap List
+
+### Gap 1: [Gap Name]
+
+| Field | Content |
 |---|---|
-| **缺口描述** | 环境中未安装浏览器自动化工具 |
-| **影响范围** | 所有 UI 验证任务 |
-| **当前状态** | 只能通过读代码静态推断 |
-| **替代方案置信度** | 低（无法验证实际渲染结果） |
-| **建议修复方式** | 运行 `npm init playwright@latest` 安装 |
-| **优先级** | P0 |
-| **预计工作量** | 10 分钟 |
+| **Gap Description** | [what capability is missing] |
+| **Impact Scope** | [which verification tasks are affected] |
+| **Current Status** | [existing workaround if any] |
+| **Workaround Confidence** | High / Medium / Low ("Low" when no evidence supports it) |
+| **Suggested Fix** | [how to fill this gap] |
+| **Priority** | P0 / P1 / P2 |
+| **Estimated Effort** | [estimate] |
 
-**受影响的验证任务**：
-- 复现 UI bug → 无法执行
-- 验证用户旅程 → 无法执行
-- 截图对比 → 无法执行
+**Affected Verification Tasks**:
+- Task 1: [description] → Cannot execute, reason: [reason]
+- Task 2: [description] → Degraded execution, reason: [reason]
 
-**替代方案**：
-- 静态分析代码推断 UI 行为
-- 置信度：低——代码写了 try-catch 不代表异常真的被捕获了
+**Workaround** (if any):
+- [workaround description]
+- Confidence note: [why confidence is High/Medium/Low]
+
+### Gap 2: [Gap Name]
+
+[Same format as above]
 ```
 
-### 类型二：性能监控缺失
+## Common Gap Types
+
+### Type 1: Missing Browser Automation Tool
 
 ```markdown
-### 缺口：Prometheus/Grafana 未部署
+### Gap: Playwright/Puppeteer Not Installed
 
-| 字段 | 内容 |
+| Field | Content |
 |---|---|
-| **缺口描述** | 项目无性能指标采集和查询能力 |
-| **影响范围** | 所有性能验证任务 |
-| **当前状态** | 无法查询 P99 延迟、错误率等指标 |
-| **替代方案置信度** | 低（无法获取运行时性能数据） |
-| **建议修复方式** | 部署 Prometheus + Grafana，或接入 Datadog |
-| **优先级** | P1 |
-| **预计工作量** | 2-4 小时 |
+| **Gap Description** | No browser automation tool is installed in the environment |
+| **Impact Scope** | All UI verification tasks |
+| **Current Status** | Can only infer UI behavior by reading code statically |
+| **Workaround Confidence** | Low (cannot verify actual rendering results) |
+| **Suggested Fix** | Run `npm init playwright@latest` to install |
+| **Priority** | P0 |
+| **Estimated Effort** | 10 minutes |
 
-**受影响的验证任务**：
-- P99 延迟验证 → 无法执行
-- 错误率验证 → 无法执行
-- 吞吐量验证 → 无法执行
+**Affected Verification Tasks**：
+- Reproduce UI bug → Cannot execute
+- Verify user journey → Cannot execute
+- Screenshot comparison → Cannot execute
 
-**替代方案**：
-- 使用应用日志中的时间戳手动计算延迟
-- 置信度：中——日志采样可能不完整
+**Workaround**：
+- Static code analysis to infer UI behavior
+- Confidence: Low — writing a try-catch in code does not mean the exception was actually caught
 ```
 
-### 类型三：结构化日志缺失
+### Type 2: Missing Performance Monitoring
 
 ```markdown
-### 缺口：日志为自由文本格式
+### Gap: Prometheus/Grafana Not Deployed
 
-| 字段 | 内容 |
+| Field | Content |
 |---|---|
-| **缺口描述** | 应用日志使用自由文本而非 JSON 结构化格式 |
-| **影响范围** | 日志查询和分析任务 |
-| **当前状态** | 只能全文搜索，无法按字段过滤 |
-| **替代方案置信度** | 中（全文搜索可部分替代） |
-| **建议修复方式** | 改用 JSON 格式日志，添加 requestId/service 等字段 |
-| **优先级** | P1 |
-| **预计工作量** | 4-8 小时 |
+| **Gap Description** | Project has no performance metric collection and querying capability |
+| **Impact Scope** | All performance verification tasks |
+| **Current Status** | Cannot query P99 latency, error rate, etc. |
+| **Workaround Confidence** | Low (unable to obtain runtime performance data) |
+| **Suggested Fix** | Deploy Prometheus + Grafana, or integrate Datadog |
+| **Priority** | P1 |
+| **Estimated Effort** | 2-4 hours |
 
-**受影响的验证任务**：
-- 错误日志查询 → 降级执行（全文搜索）
-- 请求链路追踪 → 无法执行
-- 错误率统计 → 降级执行（人工统计）
+**Affected Verification Tasks**：
+- P99 latency verification → Cannot execute
+- Error rate verification → Cannot execute
+- Throughput verification → Cannot execute
 
-**替代方案**：
-- 使用 grep 全文搜索错误日志
-- 置信度：中——无法按字段精确过滤
+**Workaround**：
+- Manually calculate latency using timestamps in application logs
+- Confidence: Medium — log sampling may be incomplete
 ```
 
-### 类型四：分布式追踪缺失
+### Type 3: Missing Structured Logging
 
 ```markdown
-### 缺口：无分布式追踪系统
+### Gap: Logs in Free-Text Format
 
-| 字段 | 内容 |
+| Field | Content |
 |---|---|
-| **缺口描述** | 多服务架构无请求链路追踪 |
-| **影响范围** | 跨服务延迟分析、链路调试 |
-| **当前状态** | 只能看单服务日志，无法串联请求链路 |
-| **替代方案置信度** | 低（无法获取完整链路数据） |
-| **建议修复方式** | 接入 Jaeger/Zipkin，添加 trace ID 传播 |
-| **优先级** | P2 |
-| **预计工作量** | 1-2 天 |
+| **Gap Description** | Application logs use free-text format instead of JSON structured format |
+| **Impact Scope** | Log query and analysis tasks |
+| **Current Status** | Can only do full-text search, cannot filter by field |
+| **Workaround Confidence** | Medium (full-text search can partially substitute) |
+| **Suggested Fix** | Switch to JSON format logs, add requestId/service and other fields |
+| **Priority** | P1 |
+| **Estimated Effort** | 4-8 hours |
 
-**受影响的验证任务**：
-- 跨服务延迟分析 → 无法执行
-- 链路瓶颈定位 → 无法执行
-- 级联故障分析 → 无法执行
+**Affected Verification Tasks**：
+- Error log query → Degraded execution (full-text search)
+- Request trace analysis → Cannot execute
+- Error rate calculation → Degraded execution (manual counting)
 
-**替代方案**：
-- 手动在每个服务的日志中搜索相同 requestId
-- 置信度：低——费时且容易遗漏
+**Workaround**：
+- Use grep to full-text search error logs
+- Confidence: Medium — cannot filter precisely by field
 ```
 
-## 缺口优先级定义
+### Type 4: Missing Distributed Tracing
 
-| 优先级 | 定义 | 修复时间 |
+```markdown
+### Gap: No Distributed Tracing System
+
+| Field | Content |
+|---|---|
+| **Gap Description** | Multi-service architecture lacks request tracing |
+| **Impact Scope** | Cross-service latency analysis, trace debugging |
+| **Current Status** | Can only view per-service logs, cannot correlate request traces |
+| **Workaround Confidence** | Low (cannot obtain complete trace data) |
+| **Suggested Fix** | Integrate Jaeger/Zipkin, add trace ID propagation |
+| **Priority** | P2 |
+| **Estimated Effort** | 1-2 days |
+
+**Affected Verification Tasks**：
+- Cross-service latency analysis → Cannot execute
+- Trace bottleneck identification → Cannot execute
+- Cascading failure analysis → Cannot execute
+
+**Workaround**：
+- Manually search for the same requestId across each service's logs
+- Confidence: Low — time-consuming and easy to miss
+```
+
+## Gap Priority Definitions
+
+| Priority | Definition | Fix Timeline |
 |---|---|---|
-| P0 | 阻塞核心验证任务 | 立即修复 |
-| P1 | 影响重要验证任务 | 本迭代内修复 |
-| P2 | 影响辅助验证任务 | 下迭代修复 |
+| P0 | Blocks core verification tasks | Fix immediately |
+| P1 | Affects important verification tasks | Fix within this iteration |
+| P2 | Affects auxiliary verification tasks | Fix in next iteration |
 
-## 缺口处理流程
+## Gap Handling Flow
 
 ```
-发现能力缺口
-├── 记录缺口（使用模板）
-├── 评估优先级
-│   ├── P0 → 立即报告用户，建议修复
-│   ├── P1 → 记录并报告，建议本迭代修复
-│   └── P2 → 记录，建议排入 backlog
-├── 降级验证（如有替代方案）
-│   ├── 替代方案置信度高 → 执行替代方案
-│   ├── 替代方案置信度中 → 执行但标注置信度
-│   └── 替代方案置信度低 → 不执行，标注无法验证
-└── 产出报告
-    ├── 缺口清单
-    ├── 降级验证结果
-    └── 修复建议
+Capability gap discovered
+├── Record gap (use template)
+├── Assess priority
+│   ├── P0 → Report to user immediately, recommend fix
+│   ├── P1 → Record and report, recommend fix this iteration
+│   └── P2 → Record, recommend adding to backlog
+├── Degraded verification (if workaround available)
+│   ├── Workaround confidence High → Execute workaround
+│   ├── Workaround confidence Medium → Execute but note confidence
+│   └── Workaround confidence Low → Skip, mark as unverifiable
+└── Produce report
+    ├── Gap list
+    ├── Degraded verification results
+    └── Fix recommendations
 ```
 
-## 与 verification-loop 的集成
+## Integration with verification-loop
 
-在 verification-loop 的自检步骤中加入能力缺口检查：
+Add a capability gap check in the self-check step of verification-loop:
 
 ```markdown
-## 自检清单
-- [ ] 环境中是否有浏览器自动化工具？
-- [ ] 环境中是否有性能监控系统？
-- [ ] 应用是否使用结构化日志？
-- [ ] 多服务架构是否有分布式追踪？
+## Self-Check List
+- [ ] Is there a browser automation tool in the environment?
+- [ ] Is there a performance monitoring system in the environment?
+- [ ] Does the application use structured logging?
+- [ ] Is there distributed tracing in a multi-service architecture?
 
-如果任何一项为"否"，生成能力缺口报告并标注受影响的验证任务。
+If any item is "No", generate a capability gap report and note the affected verification tasks.
 ```
