@@ -43,6 +43,7 @@ make prompts-sync-check   # 仅 agent prompt 存在性检查
 - 每个 `SKILL.md` 的 frontmatter 必须包含 `description`（>= 20 字符）、`when_to_use`、`compatibility` 字段，不含已废弃的 `version` 字段。
 - 每个 skill 的 agent 提示词维护在 `SKILL.md` 的 `## Agent 提示词` section，不再使用独立的 `agents/<name>.md` 文件。
 - Skills 之间不允许循环依赖；依赖方向见 `docs/ARCHITECTURE.md`。
+- `compatibility` 和 `metadata`（含 `category`）为 harness 自定义 frontmatter 扩展字段，非 Claude Code 标准字段。Claude Code 会静默忽略未识别的字段。
 
 ## Architecture
 

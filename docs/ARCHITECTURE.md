@@ -61,6 +61,7 @@ tests/   → skills/    (Regression test cases verify skill trigger logic)
 ## Data Boundary Rules
 
 - Each `SKILL.md`'s frontmatter is a contract between the skill and the platform -- the platform only reads fields it recognizes and ignores unknown fields.
+- `compatibility` and `metadata` (with `category`) are harness-specific custom frontmatter extensions, not Claude Code standard fields. They are silently ignored by Claude Code.
 - The canonical version of agent prompts lives in the `## Agent 提示词` section of `SKILL.md`.
 
 ## Current Enforcement Status
