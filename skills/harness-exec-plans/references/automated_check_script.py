@@ -108,6 +108,8 @@ for pattern, label in [
     (r"exec-plan.*(?:File Structure|Template)", "exec-plan file structure/template section"),
     (r"Lightweight Plan", "Lightweight Plan concept"),
     (r"Parallel Collaboration", "Parallel Collaboration concept"),
+    (r"Plan Quality Checklist", "Plan Quality Checklist section"),
+    (r"Decision log", "Decision log concept"),
 ]:
     total_extra += 1
     if has_text(content, pattern, re.IGNORECASE):

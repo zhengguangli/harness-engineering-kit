@@ -80,6 +80,9 @@ Don't confuse them: taste preferences should not be CI hard blocks (they slow th
 **Example 2**: Multiple bugs caused by unhandled async errors
 **Resolution**: Establish async error handling standards, document as taste principles
 
+**Example 3**: Quarterly audit reveals a rule about import ordering has triggered zero times for three consecutive cycles
+**Resolution**: Retire the rule and update documentation. Prettier now handles import ordering -- the golden principle is redundant.
+
 ## Key Points
 - Distinguishing from `architecture-boundaries` is critical — don't make taste preferences into merge blockers.
 - Fix PRs should be as small as possible, reviewable within one minute.
@@ -87,6 +90,7 @@ Don't confuse them: taste preferences should not be CI hard blocks (they slow th
 - Quality score records (`docs/QUALITY_SCORE.md`) reflect long-term trends.
 - Regularly audit golden principles to ensure effectiveness and applicability.
 - Document golden principles for team understanding and adherence.
+- Cross-project portability: if the same taste principle triggers in multiple repositories, consider promoting it to a shared lint rule in a common config package.
 
 ## Edge Case Handling
 
@@ -99,6 +103,10 @@ Don't confuse them: taste preferences should not be CI hard blocks (they slow th
 ### AI-generated Code Governance
 **Scenario**: AI-generated code varies in quality and requires special governance
 **Handling**: Establish AI code generation standards, use automated tools for checking, establish AI code review processes
+
+### Legacy Codebase with Massive Violations
+**Scenario**: The codebase has thousands of existing violations against a newly established golden principle
+**Handling**: Do not attempt to fix everything at once. Use incremental adoption: scope each sweep to one module, one file type, or one pattern type. Record the full inventory in `tech-debt-tracker.md` and process it in prioritized batches.
 
 ## Common Pitfalls
 - **Inventing principles out of thin air**: Not starting from real signals, rules detached from reality → every principle must be backed by specific review feedback, bug reports, or refactoring requirements.
@@ -113,6 +121,7 @@ Don't confuse them: taste preferences should not be CI hard blocks (they slow th
 - Scan reports should only output deviations corresponding to encoded rules — don't generate suggestions for new unencoded rules to avoid noise.
 - Fix PRs for auto-merge should be uniformly named with the `[GC-auto]` prefix so humans can quickly identify them in the merge queue.
 - During quarterly audits, prioritize retiring principles with zero triggers for three consecutive cycles.
+- For each new golden principle, link it to a specific code location (file:line) of the review comment or bug report that inspired it, so future readers understand the real-world context without rediscovering it.
 
 ## Related Skills
 
@@ -138,6 +147,7 @@ Don't confuse them: taste preferences should not be CI hard blocks (they slow th
 - **User only wants to understand existing principles, not establish new ones**: Do not trigger scanning, answer directly.
 - **User explicitly says "不需要扫描" or "不做规则":** Respect the user's intent, do not trigger the scan cycle.
 - **The project already has comprehensive lint coverage and no documented taste principles exist yet**: Only scan existing lint rules; do not invent taste principles.
+- **The codebase is undergoing a major active refactor**: Scanning for style deviations during structural churn produces noise, not signals. Defer scanning until the refactor stabilizes.
 
 ### Role Definition
 
@@ -151,6 +161,7 @@ Scan the codebase on a fixed rhythm, comparing against encoded golden principles
 - Scope fix recommendations to one deviation type per report — do not mix unrelated cleanups.
 - Produce structured reports with fix recommendations and impact scope.
 - Distinguish between golden principle deviations and structural architecture violations for correct routing.
+- Cross-file pattern drift detection: identify inconsistent implementations of the same concept across multiple files (e.g., different error handling styles across modules).
 
 ### Execution Flow
 
@@ -179,4 +190,4 @@ Scan the codebase on a fixed rhythm, comparing against encoded golden principles
 - **Output path**: `docs/quality-reports/golden-principles-scan.md` (overwrite in place; history is in git).
 
 ---
-Last updated: 2026-07-06 (Change: Chinese→English consistency for When to Use/When Not to Use/Edge Cases/Agent Skip Conditions; Agent Prompt expanded — Skip Conditions 3→5, Core Capabilities 4→6, Execution Flow enhanced)
+Last updated: 2026-07-06 (Change: A+ optimization batch — examples, key points, best practices, edge cases, core capabilities, skip conditions)

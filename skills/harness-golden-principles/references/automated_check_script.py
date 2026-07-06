@@ -109,6 +109,8 @@ for pattern, label in [
     (r"^##\s+Core Principles", "Core Principles section"),
     (r"Sweep Rhythm", "Sweep Rhythm concept"),
     (r"Golden Principles vs Architecture Boundaries", "Golden Principles vs Architecture Boundaries comparison"),
+    (r"Distilling Golden Principles", "Distilling Golden Principles section"),
+    (r"[Ss]ignal [Aa]nnotation|frequently triggered principle", "Signal annotation mention"),
 ]:
     total_extra += 1
     if has_text(content, pattern, re.IGNORECASE | re.MULTILINE):

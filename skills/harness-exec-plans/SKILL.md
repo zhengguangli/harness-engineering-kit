@@ -103,6 +103,9 @@ If item 1 fails, go back to the user to confirm the goal before proceeding. For 
 **Example 2**: User says "修复这个 typo"
 **Handling**: Judged as doable in one session → use lightweight plan → execute directly
 
+**Example 3**: User says "多个 agent 协作迁移前端构建工具从 Webpack 到 Turbopack"
+**Handling**: Needs exec-plan → create `docs/exec-plans/active/frontend-build-migration.md` → define explicit handoff points between agents → designate file ownership with owner markers per step → include dependency conflict resolution step at handoff boundaries
+
 ## Key Points
 - Plans are skeletons and acceptance criteria — don't pre-write large implementation code. Leave that for the execution phase.
 - When multiple agents work in parallel, the `active/` directory serves as the shared coordination ledger.
@@ -111,6 +114,7 @@ If item 1 fails, go back to the user to confirm the goal before proceeding. For 
 - The goal must be a single sentence describing "what the world looks like when done" — and it must be verifiable.
 - The scope must clearly state what IS and IS NOT being done.
 - Continuously update progress; don't backfill everything at the end.
+- After updating the decision log, tag each entry with the agent-id or author who made the decision — this adds traceability across handoffs and prevents repeated explanation in subsequent sessions.
 
 ## Edge Case Handling
 
@@ -132,6 +136,10 @@ If item 1 fails, go back to the user to confirm the goal before proceeding. For 
 **Scenario**: Task execution fails and needs to backtrack to "上一轮试过什么、为什么放弃".
 **Handling**: Read the exec-plan file, review the decision log and failure reasons, and record in tech-debt-tracker.
 
+### Plan Execution Exceeds Original Estimates
+**Scenario**: A plan step takes significantly longer than anticipated due to unforeseen complexity or external blockers.
+**Handling**: Re-estimate remaining steps; if the scope starts expanding, re-verify against non-goals and consider splitting the plan into phases; update the status with a "blocked — scope re-assessment needed" note in the plan file rather than silently working beyond scope.
+
 ## Common Pitfalls
 - **Acceptance criteria say "看起来不错"**: Not mechanically verifiable — must write specific conditions.
 - **Steps too coarse**: "Implement the entire module" cannot be self-verified in one PR.
@@ -145,6 +153,7 @@ If item 1 fails, go back to the user to confirm the goal before proceeding. For 
 - Use the comparative format "选 A 因为 X，放弃 B 因为 Y" for the decision log — don't just write "选了 A".
 - In multi-agent collaboration, each agent updates the owner marker at the top of the file after completing a step to avoid edit conflicts.
 - For stalled tasks, include a context window summary path (e.g., conversation history file) in the `tech-debt-tracker.md` entry for quick background retrieval when resuming.
+- For plans involving external dependencies or third-party services (APIs, databases, secrets), create a dedicated "External Dependencies" subsection documenting required access, rate limits, and service-level constraints — prevents execution-time surprises and blocking.
 
 ## Related Skills
 
@@ -169,6 +178,7 @@ If item 1 fails, go back to the user to confirm the goal before proceeding. For 
 - **User didn't ask for a plan**: Don't proactively trigger.
 - **User explicitly says "不用写计划" or "直接做"**: Respect the user's intent, skip plan creation.
 - **Task is a one-shot tool call** (e.g., "read this file", "run this command"): No plan needed.
+- **Task is a known, documented procedure** (e.g., deployment runbook, recurring maintenance checklist): Reference the existing runbook or doc directly — do not create a new plan for a well-understood process.
 
 ### Role Definition
 
@@ -181,6 +191,7 @@ You are the plan-architect. Convert a high-level goal into an execution plan art
 - Decompose goals into independently verifiable steps, mechanically checkable acceptance criteria, and explicit non-goals.
 - Determine the correct plan type (lightweight vs. exec-plan) based on task scope and interruption probability.
 - Persist plan artifacts following the standard directory structure (`docs/exec-plans/active/`).
+- Handoff artifact generation: produce structured handoff summaries (current progress, decisions made, next owner, remaining risks) for multi-agent relay between context windows
 
 ### Execution Flow
 
@@ -218,4 +229,4 @@ You are the plan-architect. Convert a high-level goal into an execution plan art
 - **Delivery advice**: After the plan file is created, output suggestions for which agent should execute next and which steps need human confirmation.
 
 ---
-Last updated: 2026-07-06 (Change: Agent Prompt major enhancement — Skip Conditions 3→5, Core Capabilities 3→5, Execution Flow expanded with quality checklist step, Constraints enhanced, Output Specification enriched)
+Last updated: 2026-07-06 (Change: A+ optimization batch — examples, key points, best practices, edge cases, core capabilities, skip conditions)

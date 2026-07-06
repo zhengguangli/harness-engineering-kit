@@ -116,6 +116,7 @@ If any item fails, return to the corresponding step to fix before committing.
 - **docs/ minimum viable set**: Create only the necessary skeleton (ARCHITECTURE.md, QUALITY_SCORE.md, design-docs/index.md, exec-plans/).
 - **CLAUDE.md entries must be directional**: Each entry points to a specific docs/ file, ensuring links are valid.
 - **docs/ extensibility**: Allow adding new files as needed in the future while keeping the structure clean.
+- **Project type tailoring is the scope governor**: The classification in the project type tailoring guide determines exactly what to create and what to skip — a single-file script does not need exec-plans, and a large monorepo should not skip them.
 
 ## Edge Case Handling
 
@@ -130,6 +131,11 @@ If any item fails, return to the corresponding step to fix before committing.
 
 **Scenario**: The project uses multiple tech stacks requiring special handling.
 **Action**: Provide customized configuration (.gitignore rules, docs/ structure) for each tech stack.
+
+### Monorepo with Disparate Sub-packages
+
+**Scenario**: A monorepo has frontend (React), backend (Go), and mobile (Flutter) sub-packages
+**Action**: Create a unified docs/ skeleton at the root with shared ARCHITECTURE.md covering cross-package boundaries, then add per-sub-package entries in the CLAUDE.md routing table. Append `.gitignore` rules for all tech stacks. Each sub-package should reference the root docs/ rather than duplicating the skeleton.
 
 ## Common Pitfalls
 
@@ -146,6 +152,12 @@ If any item fails, return to the corresponding step to fix before committing.
 
 **Example 2**: The project already has partial harness structure, the user says "补充缺少的部分"
 **Action**: Read existing CLAUDE.md and docs/ → compare against the minimum viable set → list existing and missing content → ask whether to overwrite or incrementally update → incrementally supplement missing parts → output modification manifest
+
+**Example 3**: User says "这是个 Python 单文件脚本项目，轻量化初始化就好"
+**Action**: Classify as single-file script per the project type tailoring guide → generate simplified CLAUDE.md (minimal routing table + workflow tips) → create only `docs/ARCHITECTURE.md` → skip design-docs and exec-plans → update `.gitignore` with Python-specific rules → output creation manifest
+
+**Example 4**: User says "项目是 monorepo，有前端和后端两个子包"
+**Action**: Classify as monorepo → generate a unified docs/ skeleton at the root → create a CLAUDE.md with one routing entry per sub-package → append combined `.gitignore` (Node.js + Python rules) → add a note that sub-packages don't duplicate the global structure
 
 ## Related Skills
 
@@ -167,6 +179,7 @@ If any item fails, return to the corresponding step to fix before committing.
 - Generated CLAUDE.md routing table entries should point to specific file paths (e.g., `docs/ARCHITECTURE.md`), not just directory names.
 - For multi-tech-stack projects, partition CLAUDE.md by tech stack. Reference `references/gitignore-templates.md` to append .gitignore rules for each stack.
 - Perform a manual review one week after initialization to confirm the skeleton content aligns with the actual project, preventing skeleton-business divergence.
+- Before generating CLAUDE.md, run `ls -d */` and count the root-level subdirectories to quickly classify the project type — this 10-second check prevents under-initialization (missing required files) or over-initialization (creating unnecessary skeletons).
 
 ## Agent 提示词
 
@@ -179,6 +192,7 @@ If any item fails, return to the corresponding step to fix before committing.
 - **Project is extremely small and doesn't need structured knowledge management**: Do not trigger.
 - **Only need to restructure CLAUDE.md/docs rather than full initialization**: Delegate to harness-repo-map.
 - **User explicitly says "already initialized" or "不用重新初始化"**: Do not trigger.
+- **User only needs to fix a typo or update a single link in an existing CLAUDE.md**: No full initialization needed — directly suggest the targeted edit.
 
 ### Role Definition
 
@@ -192,6 +206,7 @@ You are the "Harness Initialization Artisan." Your responsibility is to generate
 - Update .gitignore rules per tech stack reference
 - Distinguish project scale per the project type tailoring guide to determine initialization scope
 - Handle various edge cases: existing partial harness, extremely small projects, multi-tech-stack projects
+- Run post-initialization self-check using the 6-item checklist (CLAUDE.md line count, routing table completeness, date annotations, .gitignore coverage, alignment with actual project, dependency direction description)
 
 ### Execution Flow
 
@@ -218,4 +233,4 @@ You are the "Harness Initialization Artisan." Your responsibility is to generate
 - **Modification manifest**: List all created/modified files
 
 ---
-Last updated: 2026-07-06 (Change: Agent Prompt enhanced — Skip Conditions 4→5, Core Capabilities expanded with project type classification, Execution Flow step 7 added, Output Specification enriched)
+Last updated: 2026-07-06 (Change: A+ optimization batch — examples, key points, best practices, edge cases, core capabilities, skip conditions)

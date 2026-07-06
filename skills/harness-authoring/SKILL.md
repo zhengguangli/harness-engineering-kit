@@ -103,6 +103,12 @@ When the body approaches 500 lines, split content into `references/` sub-files, 
 **Example 2**: New skill overlaps with existing harness-commit-gate
 **Action**: Merge or clearly define boundaries, don't create choice paralysis between two similar options
 
+**Example 3**: User says "这个 skill 超过 500 行了，帮我瘦身"
+**Action**: Check current line count, identify content that can be extracted as complete topic blocks into `references/` sub-files, update `SKILL.md` body with loading instructions, and update navigation pointers in CLAUDE.md
+
+**Example 4**: User says "我要加一个新 subagent 专门跑自动化测试"
+**Action**: Determine it's a subagent (can execute independently), configure `allowed-tools` with test runner tools only (no `Write`/`Edit`), choose a lightweight model for test execution, and skip creating a full skill
+
 ## Key Points
 
 - **Skill is knowledge, Subagent is execution**: The two appearing paired is division of labor, not duplication.
@@ -112,6 +118,7 @@ When the body approaches 500 lines, split content into `references/` sub-files, 
 - **description must be truthful**: Every claimed capability must be substantiated in the body.
 - **Avoid capability overlap**: Check existing capabilities before adding new ones; merge or define boundaries if overlap exists.
 - **Canonical version**: `## Agent 提示词` is the single entry point for modifications.
+- **Agent prompt and skill body are co-located**: Maintaining both in a single `SKILL.md` avoids the drift problem of separate agent prompt files — edit once, synchronize automatically.
 
 ## Related Templates
 
@@ -145,6 +152,11 @@ When the body approaches 500 lines, split content into `references/` sub-files, 
 **Scenario**: Claims capabilities for trigger rate but the body does not deliver
 **Action**: Every claimed capability must be genuinely substantiated in the body
 
+### Subagent Tool Permission Escalation
+
+**Scenario**: A subagent initially configured as read-only later needs write capability for a new task
+**Action**: Explicitly update `allowed-tools` in the frontmatter — do not write silent exceptions in the agent prompt body, as this creates a gap between declared permissions and actual behavior
+
 ## Common Pitfalls
 
 - **Skill and Subagent confusion**: Making a task that could be completed independently into a Skill, consuming the main context; or making knowledge that needs continuous reference into a Subagent, causing context discontinuity.
@@ -158,6 +170,7 @@ When the body approaches 500 lines, split content into `references/` sub-files, 
 - Place loading instructions for references/ sub-files at the end of the body, before the Agent prompt, so the agent reads the loading guide first, then the execution flow after triggering.
 - For a new skill's Agent prompt, write skip conditions first — if skip conditions are clearly written, even if the body that follows has errors, it will not cause false triggers.
 - When checking overlap, besides file name scanning, use grep to search for verb phrases in the `description` field, flagging synonym combinations as potential overlaps.
+- When splitting a bloated skill, move complete sections (not partial paragraphs) to `references/` — each reference file should cover a unified topic, making it easy for the agent to load what it needs on demand without reading adjacent irrelevant content.
 
 ## Agent 提示词
 
@@ -170,6 +183,7 @@ When the body approaches 500 lines, split content into `references/` sub-files, 
 - **The project does not use the harness methodology**: Do not trigger.
 - **The new capability can be merged into an existing skill**: Suggest merging instead of creating a new skill.
 - **The user only needs to update existing SKILL.md content** (e.g., fix a typo, update a reference): No scaffolding needed — directly suggest the edit.
+- **The user is asking about which skill to use for a specific task** (e.g., "how do I verify my code"): Delegate to harness-orchestration for routing — this skill only handles writing and extending skills, not skill usage advice.
 
 ### Role Definition
 
@@ -183,6 +197,7 @@ You are the "Skill Scaffolder", responsible for generating complete file skeleto
 - Update CLAUDE.md pointers and navigation table
 - Judge skill vs. subagent based on context impact and execution isolation needs
 - Self-check output against quality criteria: body ≤ 500 lines, description complete, agent prompt paired
+- Slim existing bloated skills by identifying extractable content and moving complete sections into references/ sub-files while maintaining coherent section flow in the body
 
 ### Execution Flow
 
@@ -221,4 +236,4 @@ You are the "Skill Scaffolder", responsible for generating complete file skeleto
 - `references/common-edge-cases.md`: General edge case handling guide
 
 ---
-Last updated: 2026-07-06 (Change: Chinese→English for When to Use/When Not to Use, Agent Prompt enhanced — Skip Conditions 3→5, Core Capabilities 4→6, old Related Templates→new inline + formal section in Related Templates for all reference files)
+Last updated: 2026-07-06 (Change: A+ optimization batch — examples, key points, best practices, edge cases, core capabilities, skip conditions)

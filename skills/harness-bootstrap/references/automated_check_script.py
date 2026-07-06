@@ -110,6 +110,8 @@ for pattern, label in [
     (r"Project Type Tailoring Guide", "Project Type Tailoring Guide"),
     (r"Three-Layer Structure", "Three-Layer Structure"),
     (r"Post-Initialization Checklist", "Post-Initialization Checklist"),
+    (r"\.gitignore", ".gitignore rules section"),
+    (r"Write is for new files only", "Hard constraint: Write for new files only"),
 ]:
     total_extra += 1
     if has_text(content, pattern, re.IGNORECASE | re.MULTILINE):

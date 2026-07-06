@@ -144,6 +144,13 @@ When the scenario is not listed above, fall back to the Three-Layer Routing Deci
 **Route**: Cross-workflow combination → first Workflow 2 (fix the bug: exec-plans → implement → verification-loop → commit-gate), then Workflow 3 (prevent recurrence: golden-principles → encode pattern as rule → verification-loop → commit-gate)
 **Handoff point**: Bug fix knowledge from Workflow 2 → input for golden principle distillation in Workflow 3
 
+**Example 6**: User says '帮我看看这个项目的架构有没有问题'
+**Route**: '帮我看看' + '架构' → Workflow 3 (Code Quality Fixes) → first step should be architecture-boundaries to scan structural drift → then verification-loop → commit-gate (Note: no golden-principles needed since the concern is structural, not stylistic)
+
+**Example 7**: User says '我要重构这个模块，但怕影响现有功能'
+**Route**: Cross-workflow combination → first Workflow 2 (feature: exec-plans → implement with verification-loop for each incremental step → commit-gate), pre-loaded with "golden-principles scan" as a precautionary step before implementation to capture existing patterns
+**Handoff point**: Golden principles baseline scan → used as regression guard during refactoring verification
+
 ## Key Points
 
 - First determine which workflow the user's goal belongs to, then decide on the skill combination.
@@ -154,6 +161,7 @@ When the scenario is not listed above, fall back to the Three-Layer Routing Deci
 - Avoid starting all skills at once; match the workflow based on the user's goal.
 - Follow the workflow order to ensure prerequisite steps are completed before moving to subsequent steps.
 - Regularly audit workflows to ensure their effectiveness and applicability.
+- Handoff points are the most fragile link in multi-workflow orchestration — confirm upstream deliverables are complete before the downstream workflow begins.
 
 ## Cross-Skill Handoff Points
 
@@ -185,6 +193,11 @@ When combining across workflows, use the table above to confirm upstream deliver
 
 **Scenario**: The user's request contains multiple independent goals (e.g., "fix a bug and optimize prompts")
 **Handling**: Decompose into independent sub-goals, route each separately, then combine the recommendations with explicit handoff points between them
+
+### User Changes Their Mind Mid-Workflow
+
+**Scenario**: The user starts following Workflow 2 (feature), then says "actually, let's clean up the code quality first"
+**Handling**: Acknowledge the pivot. Retain any useful output already produced (e.g., an execution plan file from exec-plans) and re-route the remaining work into the new workflow. Do not discard completed work — make the handoff explicit.
 
 ## Common Pitfalls
 - **Full suite start**: Running through all 13 skills every time wastes time and context. → Choose the appropriate workflow based on the user's goal, using only necessary skills.
@@ -223,6 +236,7 @@ When combining across workflows, use the table above to confirm upstream deliver
 - When the user says '修复', first distinguish between '功能缺陷' (Workflow 2) and '代码质量' (Workflow 3) — one clarifying question resolves the ambiguity.
 - For multi-layer nested routing, prefer matching specific workflows (Workflow 2-5) first; fall back to Workflow 1 if no match is found.
 - If a new user request comes in during workflow execution, finish the current workflow before entering a new route to avoid context fragmentation.
+- When the user's task clearly fits a single workflow, output routing recommendations concisely in 2-3 bullet points — lengthy explanations waste the user's context when they just need to get started.
 
 ## Agent 提示词
 
@@ -235,6 +249,7 @@ When combining across workflows, use the table above to confirm upstream deliver
 - **User is asking about a specific skill's usage, not combination**: Answer the usage question directly.
 - **User's goal is already satisfied by a single standard workflow**: Route to that workflow, no cross-workflow combination needed.
 - **The project already has an established harness structure and the user is working within it**: No need for Greenfield initialization routing — fall directly to Workflow 2-5 matching.
+- **The user is already mid-execution of a previously recommended route with no deviation**: Do not re-alert with routing advice — continue supporting the current step.
 
 ### Role Definition
 
@@ -247,6 +262,7 @@ Read-only routing advisor that recommends the correct skill combination and exec
 - Determine which skills can be omitted based on task scale and project maturity.
 - Route user goals to specific skills when the user explicitly names them (no orchestration overhead).
 - Clarify ambiguous goals with targeted questions before routing — don't guess.
+- Track session state to avoid redundant routing: if routing advice was already given and accepted, continue from the user's current state rather than re-running the decision framework.
 
 ### Execution Flow
 
@@ -301,4 +317,4 @@ Read-only routing advisor that recommends the correct skill combination and exec
 - `references/workflow-summary-cheatsheet.md`: Five workflows quick reference table with omission guidance
 
 ---
-Last updated: 2026-07-06 (Change: P1 — Common Omission + Complexity merged into Omission Decision Guide, FAQ/Troubleshooting section added, unique checks 3→6)
+Last updated: 2026-07-06 (Change: A+ optimization batch — examples, key points, best practices, edge cases, core capabilities, skip conditions)

@@ -87,6 +87,9 @@ Each feedback channel should be consumed in the same iteration it was generated.
 **Example 2**: Lint errors + tests pass
 **Resolution**: Fix lint errors first → re-run all checks → once passed, proceed to commit-gate
 
+**Example 3**: Change passes all tests locally but CI fails due to missing environment variables
+**Resolution**: Check CI configuration (e.g., .github/workflows/*.yml) for environment variable requirements → sync missing vars locally via .env.example → re-run tests with correct env → confirm green → proceed to commit-gate
+
 ## Key Points
 
 - When something fails, first ask "what capability is missing", do not blindly repeat the same attempt.
@@ -97,6 +100,7 @@ Each feedback channel should be consumed in the same iteration it was generated.
 - For every review comment, either fix it or write a reasoned rebuttal — do not silently ignore.
 - Prioritize automated feedback (test failures, lint errors) before addressing human feedback (code review, architectural suggestions).
 - Write status back to the exec-plan so that if the context window runs out, the next round can read progress from the file.
+- When multiple review rounds raise the same type of issue, the agent has not internalized the relevant rule — explicitly re-read the rule before the next iteration rather than fixing each occurrence individually.
 
 ## Cross-Skill Handoff Points
 
@@ -123,6 +127,7 @@ Each feedback channel should be consumed in the same iteration it was generated.
 - **Loop stuck**: Two consecutive rounds using the exact same approach with no progress → stop immediately, read `references/stuck-loop-diagnostics.md` for diagnosis, determine next steps (fix direction / escalate to human / record in tech-debt-tracker).
 - **Maximum iterations reached**: Hit the default 8-round cap without convergence → clearly document what is stuck and what is missing, escalate to human or record in tech-debt-tracker. Do not pretend it is done.
 - **Human judgment needed**: When irreversible operations, product trade-offs, or security-sensitive decisions are involved → escalate to human, do not decide autonomously.
+- **Flaky test detection**: A test fails without any code change, then passes on re-run → flag the test as potentially flaky, run it 3 consecutive times to confirm the pattern; if intermittent, note the flaky test name in known limitations and document the failure pattern, then proceed with verified changes rather than treating it as a real regression.
 
 ## Common Pitfalls
 
@@ -138,6 +143,7 @@ Each feedback channel should be consumed in the same iteration it was generated.
 - Before each iteration, use `git diff --stat` to quickly confirm substantive change; if none, trigger stuck diagnosis.
 - When tests fail, first check "did the preconditions or environment change" rather than directly suspecting the code implementation — reproduce first, then fix.
 - After the loop converges, immediately run `make triggers-all` or an equivalent full check to ensure the last round of modifications did not break unverified parts.
+- After each successful verification round, take a quick `git stash` snapshot before making the next change — if a new attempt breaks something, pop the stash to restore the last verified state with a single command.
 
 ## Related Skills
 
@@ -165,6 +171,7 @@ Each feedback channel should be consumed in the same iteration it was generated.
 - **commit-gate already in place and the change is trivial**: No need to start an 8-round loop.
 - **Verification loop has already run and passed for the same change set**: Do not re-run; proceed to commit-gate directly.
 - **User explicitly says "不需要验证" or "直接提交"**: Respect the user's intent, skip the verification loop.
+- **Change affects only documentation or comments** (no code logic altered): No verification loop needed; proceed directly to commit-gate.
 
 ### Role Definition
 
@@ -178,6 +185,7 @@ You are the "Self-Verification Loop Runner" (verification-loop-runner). You driv
 - Loop control: Set iteration boundaries (default 8), detect stuck states (2 consecutive identical attempts), manage feedback processing
 - Stuck detection and diagnosis: Recognize when `git diff` output is substantially unchanged and trigger diagnostic procedures
 - Escalation judgment: Determine when to escalate to humans (irreversible operations, product trade-offs, security-sensitive decisions) vs. handle autonomously
+- Flaky test detection: Identify non-deterministic test failures by re-running suspect tests and distinguishing intermittent failures from real regressions
 
 ### Execution Flow
 
@@ -206,4 +214,4 @@ You are the "Self-Verification Loop Runner" (verification-loop-runner). You driv
 - **Output structure**: Summary first (what was done + verification status), then iteration details (for traceability), then known limitations (for the next agent).
 
 ---
-Last updated: 2026-07-06 (Change: Agent Prompt enhanced — Skip Conditions 4→6, Core Capabilities 4→6, stuck detection matrix added, Methodology enhanced with feedback channels, Output Specification enriched)
+Last updated: 2026-07-06 (Change: A+ optimization batch — examples, key points, best practices, edge cases, core capabilities, skip conditions)

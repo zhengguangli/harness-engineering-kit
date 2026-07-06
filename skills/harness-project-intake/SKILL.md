@@ -99,6 +99,9 @@ Always output the structured card below — never output raw file content:
 **Example 2**: User says "分析一下这个项目的架构"
 **Handling**: Execute the 6-step collection process, output a structured card with tech stack, directory skeleton, and key modules
 
+**Example 3**: User enters a Go-based Monorepo and says "分析这个项目"
+**Handling**: Detect monorepo structure via sub-package directories (services/, cmd/) → Run 6-step collection for root first → Per sub-package manifest detection (go.mod) → Output tiered project card with root overview + per-sub-package language matrix annotated "monorepo"
+
 ## Key Points
 
 - All information collection is invisible to the user; only the final card is output.
@@ -108,6 +111,7 @@ Always output the structured card below — never output raw file content:
 - Document analysis decisions for team understanding and compliance.
 - Annotate uncertainty: when information is incomplete or inferred, annotate the basis.
 - Structured output: Output in the project card template covering 5 dimensions; format must be clear and readable.
+- For Monorepo projects, distinguish between "shared toolchain" (same package manager and runtime across sub-packages) and "independent toolchains" (each sub-package may use different runtimes or build systems) — this determines whether to produce a single aggregated card or per-sub-package cards.
 
 ## Edge Case Handling
 
@@ -132,6 +136,11 @@ Always output the structured card below — never output raw file content:
 
 **Scenario**: The project uses a monorepo structure with multiple sub-packages/apps.
 **Handling**: Use `ls` to identify sub-package directories under the root like `packages/`, `apps/`, `services/`. Independently run package manifest detection (step 2) for each sub-package, aggregating multiple tech stack cards. Annotate "monorepo" in the project card and list language/framework/package manager variations per sub-package.
+
+### Lockfile-Only Project
+
+**Scenario**: The project only has a lockfile (package-lock.json, yarn.lock, Cargo.lock, go.sum) without a corresponding package manifest.
+**Handling**: Read the lockfile header to identify the package manager (npm/yarn/pnpm/cargo/go); note "No package manifest found; package manager inferred from lockfile" in the tech stack card. Do not extract dependency versions from the lockfile — list them only if a manifest is found.
 
 ## Common Pitfalls
 
@@ -167,6 +176,7 @@ Always output the structured card below — never output raw file content:
 - When detecting package manifests in step 2, use `ls` wildcards (`package.json`, `Cargo.toml`, `go.mod`) to avoid `cat` on each file individually.
 - For Monorepo, only list the sub-package language matrix on first pass — do not recursively analyze each sub-package's deep modules.
 - After outputting the card, leave a closing note: "Analysis is based on current workspace state; dependencies and configuration may change subsequently" to manage expectations.
+- When the project has no README, check for alternative documentation entry points (docs/, CONTRIBUTING.md, ARCHITECTURE.md, wiki URLs in package.json comments) before marking the description as "Not found".
 
 ## Agent 提示词
 
@@ -178,6 +188,7 @@ Always output the structured card below — never output raw file content:
 - **User has already worked in this project and does not need re-analysis**: Do not trigger.
 - **User is asking about a specific skill's usage, not analyzing the project itself**: Answer the usage question directly.
 - **Project is already fully analyzed and the user has confirmed the card is accurate**: Do not re-analyze unless the project structure has changed.
+- **Project has been previously analyzed with no structural changes detected**: Check git log for file changes to package manifest or README since the last analysis timestamp; if unchanged, skip re-analysis and return the cached project card.
 
 ### Role Definition
 
@@ -191,6 +202,7 @@ You are the "Project Analyzer" (project-analyzer). Quickly and silently collect 
 - File reading: `Read` to read configuration and documentation files efficiently
 - Project type classification: single package, Monorepo, or single-file script — determine depth tier
 - Handle various edge cases: no package manifest, outdated README, unknown tech stack
+- Multi-card generation for Monorepo projects: detect sub-package boundaries and independently produce per-sub-package tech stack cards with varied toolchains
 
 ### Execution Flow
 
@@ -219,4 +231,4 @@ You are the "Project Analyzer" (project-analyzer). Quickly and silently collect 
 - Output location: Conversation output only — do not create project card files on disk. On violation: retract file writes and output in conversation.
 
 ---
-Last updated: 2026-07-06 (Change: Agent Prompt enhanced — Skip Conditions 2→4, Role Definition strengthened, Core Capabilities 5→6 with project type classification, Output Specification enriched)
+Last updated: 2026-07-06 (Change: A+ optimization batch — examples, key points, best practices, edge cases, core capabilities, skip conditions)

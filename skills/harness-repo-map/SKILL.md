@@ -117,6 +117,9 @@ Failures are written as agent-friendly repair instructions so whoever finds them
 **Example 4**: ARCHITECTURE.md references a module path that no longer exists
 **Handling**: HIGH severity — misleading content. Update the architecture map to reflect the current module structure, re-validate all cross-references
 
+**Example 5**: A new developer reports the docs/ structure is confusing to navigate
+**Handling**: doc-gardener scans for orphaned files, checks navigation table coverage, and suggests a reorganized directory skeleton with a clearer hierarchy documented in CLAUDE.md
+
 ## Key Points
 
 - When CLAUDE.md exceeds 100 lines, slim it down by moving content to `docs/` — it's a map, not an encyclopedia.
@@ -128,6 +131,7 @@ Failures are written as agent-friendly repair instructions so whoever finds them
 - Each directory has a clear responsibility and naming convention; avoid excessive nesting.
 - After document restructuring, keep old CLAUDE.md entries for one collaboration cycle with soft-link comments, then remove them completely.
 - Run `find docs -name '*.md' -exec grep -l '\\](' {} \\;` once after fixing broken links to confirm no residual broken links remain.
+- Use git history as an implicit freshness signal: a document unchanged for 60+ days while surrounding code has evolved is likely stale, regardless of its "last validated" date.
 
 ## Edge Case Handling
 
@@ -152,6 +156,11 @@ Failures are written as agent-friendly repair instructions so whoever finds them
 
 **Scenario**: Key documents have not been updated for over 30 days.
 **Handling**: Mark as pending validation, update document content, update the "last updated" date.
+
+### Generated vs Hand-written Documentation Conflict
+
+**Scenario**: Automated generators and hand-written docs both write to docs/ but produce conflicting descriptions of the same component.
+**Handling**: Separate generated docs into `docs/generated/` with a clear header marking them as auto-generated. Hand-written docs in other subdirectories take precedence. doc-gardener reports conflicts as MEDIUM severity.
 
 ## Common Pitfalls
 
@@ -185,6 +194,7 @@ Failures are written as agent-friendly repair instructions so whoever finds them
 - Each doc type in docs/ (design docs, specs, references) should use an independent preface template to help agents quickly determine whether to read deeper.
 - After migration, keep old CLAUDE.md entries for one collaboration cycle with soft-link comments (`# Originally in CLAUDE.md, moved to docs/xxx.md`), then remove them completely.
 - After fixing broken links, run `find docs -name '*.md' -exec grep -l '\\](' {} \\;` once to confirm no residual broken links remain.
+- When migrating from an external wiki or docs platform (Confluence, Notion, GitBook), batch-convert related pages into one docs/ subdirectory to preserve the original information hierarchy, then link from the CLAUDE.md navigation table.
 
 ## Agent 提示词
 
@@ -196,7 +206,8 @@ Failures are written as agent-friendly repair instructions so whoever finds them
 - **User only needs to update a specific document**: Do not trigger a full scan — directly suggest how to update.
 - **Project needs full from-scratch harness initialization**: Hand off to harness-bootstrap, do not trigger doc-gardener.
 - **User explicitly says "文档不需要审计" or "不用检查"**: Respect the user's intent, do not trigger.
-- **The project has no CLAUDE.md or docs/ yet**: Inform the user that the knowledge base structure doesn't exist — recommend harness-bootstrap first.
+- **The project has no CLAUDE.md or docs/ yet**: Inform the user that the knowledge base structure doesn't exist -- recommend harness-bootstrap first.
+- **The project's docs/ structure was validated and passed all checks in the last scan**: No actionable findings, skip re-audit unless explicitly requested.
 
 ### Role Definition
 
@@ -210,6 +221,7 @@ You are the "document gardener" (doc-gardener). Your mission is to keep the repo
 - Execution plan audit: active plan existence in `docs/exec-plans/active/`, tech-debt-tracker maintenance status
 - Independent severity rating per finding: HIGH (misleading content/broken links) / MEDIUM (missing but not functionally impacting) / LOW (suggested improvement)
 - Read-only operations: only use `Bash` (grep/cat/find), `Glob`, `Grep`, `Read`; **forbidden** from writing/deleting/modifying files
+- Content migration planning: assess CLAUDE.md bloat, design target docs/ structure, generate a per-section split plan mapping CLAUDE.md paragraphs to docs/*.md destinations
 
 ### Execution Flow
 
@@ -241,4 +253,4 @@ Execute the following steps strictly in order, using the minimum number of tool 
 - **Best practices**: Provide best practices for knowledge base management, document maintenance, and directory structure.
 
 ---
-Last updated: 2026-07-06 (Change: P1 — Methodology entry flow decision added, Related Skills expanded to handoff table with deliverables/ When to skip, unique checks 0→6)
+Last updated: 2026-07-06 (Change: A+ optimization batch — examples, key points, best practices, edge cases, core capabilities, skip conditions)

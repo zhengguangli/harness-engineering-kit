@@ -110,6 +110,8 @@ for pattern, label in [
     (r"canonical", "canonical version convention"),
     (r"Skill.*Subagent", "Skill vs Subagent comparison table"),
     (r"Permission Discipline", "Permission Discipline principle"),
+    (r"Combating Context Rot", "Combating Context Rot methodology section"),
+    (r"Steps to Add", "Steps to Add New Capability checklist"),
 ]:
     total_extra += 1
     if has_text(content, pattern, re.IGNORECASE | re.MULTILINE):

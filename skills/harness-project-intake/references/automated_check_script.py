@@ -101,4 +101,17 @@ checker.print_json()
 
 passed_extra, total_extra = check_reference_files(checker, SKILL_DIR,
     ["project-card-template.md", "package-manifests.md", "tech-stack-detection.md"])
+
+# Skill-specific content checks
+content = read_file(os.path.join(SKILL_DIR, "SKILL.md"))
+for pattern, label in [
+    (r"6 Step[s]?", "6-step collection methodology"),
+    (r"Conclusion first", "Conclusion-first principle"),
+]:
+    total_extra += 1
+    if has_text(content, pattern, re.IGNORECASE):
+        passed_extra += 1; checker.check_pass(label)
+    else:
+        print(f"  [FAIL] Missing {label}")
+
 print_extra_summary(checker, passed_extra, total_extra)

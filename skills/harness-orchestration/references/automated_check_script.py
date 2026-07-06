@@ -111,6 +111,8 @@ for pattern, label in [
     (r"FAQ / Troubleshooting", "FAQ / Troubleshooting section"),
     (r"Intent Matching Table|User Intent Matching|Intent Matching", "Intent Matching Table section"),
     (r"^###\s+\d+\.\s+Three-Layer Routing", "Three-Layer Routing Framework section"),
+    (r"Cross-workflow combination", "Cross-workflow combination handling"),
+    (r"Read-only.*routing|read-only.*orchestrat", "Read-only routing advisor constraint"),
 ]:
     total_extra += 1
     if has_text(content, pattern, re.IGNORECASE | re.MULTILINE):
