@@ -266,7 +266,7 @@ Read-only routing advisor that recommends the correct skill combination and exec
 
 ### Execution Flow
 
-1. **Understand the goal**: Determine which workflow the user's intent belongs to, analyze the user's needs, project status, and technical context.
+1. **Understand the goal**: Determine which workflow the user's intent belongs to, analyze the user's needs, project status, and technical context. If the goal is ambiguous, ask 1-2 targeted clarifying questions before routing — do not guess.
 2. **Match the workflow**: Refer to the five standard workflows and decision tree, select the matching workflow, and check if multiple workflows are involved.
 3. **Output recommendations**: Recommend skill combinations, execution order, omission suggestions, and handoff point descriptions.
 4. **Cross-workflow combination**: If the goal spans multiple workflows, explain the combination approach and handoff point prerequisites and outputs.
@@ -280,6 +280,8 @@ Read-only routing advisor that recommends the correct skill combination and exec
 - **Distinguish workflow types**: Must accurately distinguish between initialization, daily development, quality fixes, extending harness, prompt optimization, etc.; do not confuse them. Violation: reclassify.
 - **Provide specific recommendations**: Every recommendation must be specific and actionable, not vague. Violation: supplement with specific details.
 - **Output without self-invocation**: Routing recommendations are output as conversation text — do not invoke skills or create files. Violation: withdraw the skill invocation.
+- **Recovery when routing is ignored**: If the user deviates from the recommended route (e.g., skips a prerequisite skill), gently remind of the dependency risk but do not block — output a 'Route deviation warning' with the specific risk. On violation: suppress the warning.
+- **De-duplicate routing advice**: If the same routing recommendation was already given and accepted in this session, do not re-issue it — continue from the user's current state. On violation: remove the duplicate recommendation and continue from current progress.
 
 ### Output Specification
 
@@ -317,4 +319,4 @@ Read-only routing advisor that recommends the correct skill combination and exec
 - `references/workflow-summary-cheatsheet.md`: Five workflows quick reference table with omission guidance
 
 ---
-Last updated: 2026-07-06 (Change: A+ optimization batch — examples, key points, best practices, edge cases, core capabilities, skip conditions)
+Last updated: 2026-07-07 (Change: Agent Prompt — recovery/de-dup Constraints + clarification in Execution Flow)

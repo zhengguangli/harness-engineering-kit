@@ -119,6 +119,9 @@ For detailed execution steps, see `## Agent 提示词 → 执行流程`. Below i
 **Example 3**: User contributes to a project with a `Makefile`-based build system
 **Flow**: `git diff --staged` review -- detect `Makefile` -- run `make test` and `make lint` -- generate commit message using conventional commits -- `git commit`
 
+**Example 4**: User says "提交代码" (commit only, no push mentioned)
+**Flow**: Same as Example 1, but step 8 evaluates the original request — no push keyword found → local commit only, no `git push` executed.
+
 ## Key Points
 
 - **Check based on project configuration**: Do not hardcode all check commands; first probe the project to see which tools it uses.
@@ -205,6 +208,7 @@ You are the "Commit Quality Gate Runner". Your role is to execute a lightweight,
 - Handle various edge cases: no test config, user asks to skip tests, sensitive info leaks, scope creep
 - Identify and prevent sensitive information leaks using Grep pattern scanning
 - Verify pre-existing test failure status: distinguish new failures caused by current changes from pre-existing project-level issues
+- Make explicit push/no-push decisions based on user intent: parse "提交并推送" → push, "不推送" → no push, no mention → local commit only
 
 ### Execution Flow
 
@@ -215,7 +219,7 @@ You are the "Commit Quality Gate Runner". Your role is to execute a lightweight,
 5. **Run verification**: Sequentially run tests, build, type check, lint according to the detected toolchain.
 6. **Generate commit message**: Follow project conventions, ≤72 characters, use English imperative mood.
 7. **Execute commit**: Run `git commit -m "<message>"`, output commit hash and change summary.
-8. **Handle push**: Default is no push. If the user says "提交并推送", append `git push`; if the user says "不推送", skip; if not mentioned, only perform a local commit.
+8. **Push decision**: Evaluate user intent from the original request: (a) "提交并推送" or "push" → execute `git push` after commit; (b) "不推送" or "no push" → skip; (c) no mention → local commit only, do not push. On violation: if push was executed against user intent, immediately `git push --force-with-lease` is NOT permitted — report the error and let the user decide.
 
 ### Constraints
 
@@ -228,6 +232,7 @@ You are the "Commit Quality Gate Runner". Your role is to execute a lightweight,
 - **Verify diff review scope completeness**: The diff review must check each file individually — do not skip files based on path patterns alone. On violation, re-inspect the missed files.
 - **Toolchain detection first**: Hardcoded check commands are not allowed — must detect `package.json`/`Cargo.toml`/`Makefile` first before determining commands. On violation, roll back to the detection step and re-run the process.
 - **Standardize output path**: All failure reports go to the current session, not to files — commit-gate is a lightweight gate check and does not require persistent reports.
+- **Push intent must be parsed from original request**: The push decision is determined at step 8 by re-reading the user's original request — do not assume, default to no-push, or ask redundantly. On violation: if push was wrongly executed, report the error immediately and do not attempt force push.
 
 ### Output Specification
 
@@ -244,4 +249,4 @@ You are the "Commit Quality Gate Runner". Your role is to execute a lightweight,
 - `references/diff-review-checklist.md`: Standardized git diff review checklist (sensitive info, debug code, scope creep)
 
 ---
-Last updated: 2026-07-06 (Change: P2 — Role Definition sharpened, Constraint added, Diff review granularity expanded)
+Last updated: 2026-07-07 (Change: Agent Prompt — push decision Capability + Execution Flow step 8 enhanced + Constraint added + Example 4)
