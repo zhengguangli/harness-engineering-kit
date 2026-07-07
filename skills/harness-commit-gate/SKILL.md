@@ -180,6 +180,7 @@ For detailed execution steps, see `## Agent 提示词 → 执行流程`. Below i
 - `harness-verification-loop`: Upstream. After verification-loop completes checks, hand off to commit-gate; commit-gate does not re-run already-passed checks.
 - `harness-observability-and-browser`: Upstream. Verified changes proceed to commit.
 - `harness-exec-plans`: Upstream. After the execution plan completes, proceed through verification-loop to commit.
+- `harness-golden-principles`: Golden principle rules may inform commit message conventions
 
 ## Agent 提示词
 

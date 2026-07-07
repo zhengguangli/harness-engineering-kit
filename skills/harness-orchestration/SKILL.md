@@ -311,6 +311,7 @@ Read-only routing advisor that recommends the correct skill combination and exec
 
 - Upstream **None**: This skill is a meta-layer routing entry, does not depend on outputs from other skills
 - Downstream **project-intake / exec-plans / authoring / golden-principles / prompt-optimizer**: This skill routes to the corresponding skill based on the user's goal
+- `harness-authoring`: When the user wants to extend the harness system with new skills
 
 ## Related Templates
 

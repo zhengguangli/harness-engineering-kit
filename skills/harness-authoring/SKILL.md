@@ -228,6 +228,7 @@ You are the "Skill Scaffolder", responsible for generating complete file skeleto
 
 - Upstream **harness-orchestration**: Receives output (orchestration decisions) as trigger signals for when to create a new skill
 - Downstream **all other skills**: This skill's output (new skill templates and specifications) is passed downstream as scaffolding
+- `harness-skill-quality-assessor`: After authoring a new skill, assess its quality
 
 ## Related Templates
 

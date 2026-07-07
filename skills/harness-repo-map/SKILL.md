@@ -188,6 +188,7 @@ Failures are written as agent-friendly repair instructions so whoever finds them
 | Downstream | **all skills** | Knowledge base structure and docs/ documentation | Caller retrieves context from docs/ for task execution | — |
 | Downstream | **harness-architecture-boundaries** | ARCHITECTURE.md domain boundaries | Generate ARCHITECTURE.md during initialization; later the boundary-auditor reads it for layer validation | Small project with no layering |
 | Downstream | **harness-golden-principles** | QUALITY_SCORE.md quality matrix | Generate during initialization; golden-principles scanner reads it for deviation scoring | No quality rules yet |
+| Cross-reference | **harness-prompt-optimizer** | When CLAUDE.md content needs prompt optimization rather than restructuring | | |
 
 ## Related Templates
 

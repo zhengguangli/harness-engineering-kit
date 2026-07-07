@@ -161,6 +161,7 @@ Always output the structured card below — never output raw file content:
 
 - Upstream **None**: This skill is the Layer 0 entry point; it does not depend on output from other skills.
 - Downstream **harness-bootstrap**: This skill's output (project card) is passed downstream for skeleton setup.
+- Downstream **harness-golden-principles**: Project analysis results inform which golden principles apply
 
 ## Related Templates
 

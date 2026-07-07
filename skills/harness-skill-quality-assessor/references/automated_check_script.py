@@ -264,7 +264,8 @@ def check_fm_agent_prompt_consistency(c, file_path):
     prompt_section_match = re.search(r"^##\s+(?:Agent Prompt|Agent 提示词)", contents, re.MULTILINE)
     if agent_name and prompt_section_match:
         # Check if agent name appears in prompt section
-        if re.search(rf"^\s*###\s+{re.escape(agent_name)}", contents, re.MULTILINE) or \
+        if re.search(rf"^\s*##\s+{re.escape(agent_name)}", contents, re.MULTILINE) or \
+           re.search(rf"^\s*###\s+{re.escape(agent_name)}", contents, re.MULTILINE) or \
            agent_name.lower() in prompt_section_match.group():
             c.check_pass("agent-prompt-consistency")
         else:

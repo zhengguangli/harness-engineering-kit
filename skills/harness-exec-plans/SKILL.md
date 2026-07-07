@@ -159,6 +159,7 @@ If item 1 fails, go back to the user to confirm the goal before proceeding. For 
 
 - Upstream **harness-orchestration**: Receives output (large task identification) as a trigger signal for needing a persisted execution plan.
 - Downstream **harness-verification-loop**: This skill's output (execution plan files) is passed downstream for step-by-step verification.
+- `harness-commit-gate`: Downstream. After plan execution completes, commit via commit-gate
 
 ## Related Templates
 

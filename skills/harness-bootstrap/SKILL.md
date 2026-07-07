@@ -163,6 +163,7 @@ If any item fails, return to the corresponding step to fix before committing.
 
 ## Related Skills
 
+- Upstream **harness-architecture-boundaries**: Provides architecture rules that inform the docs/ skeleton structure
 - `harness-project-intake`: Analyze the project before initialization (step 1 dependency)
 - `harness-repo-map`: Maintain the health of CLAUDE.md and docs/ after initialization
 
