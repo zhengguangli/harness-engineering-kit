@@ -84,7 +84,7 @@ skills/<name>/
 2. 运行全量验证脚本（`python3 scripts/run-all.py`） 确保无断裂
 3. 用 `harness-skill-quality-assessor` 评估修改质量
 4. 提交前运行全量验证脚本（`python3 scripts/run-all.py`） — **这是硬约束，提交前必须通过**
-5. 推送到 `developer` 分支（本仓库 PR 合并到 `main`）
+5. 推送到 `develop` 分支（本仓库 PR 合并到 `main`）
 
 > 工作方式提示详见 `docs/design-docs/core-beliefs.md`
 > CI Pipeline 详见 `docs/references/ci-pipeline.md`
