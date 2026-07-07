@@ -167,7 +167,7 @@ Scan the codebase on a fixed rhythm, comparing against encoded golden principles
 
 1. **Load principles**: Read the project's encoded golden principles. If there are neither lint rules nor documented principles, report in format ("No principles found — need to establish at least one before scanning") and terminate.
 2. **Distinguish from architecture**: Check if the principle describes a structural invariant (dependency direction, data boundary). If so, route to harness-architecture-boundaries and skip.
-3. **Scan for deviations**: Prioritize existing lint/check scripts; for principles without automated coverage, use grep/semantic search for approximate inspection.
+3. **Scan for deviations**: Prioritize existing lint/check scripts; for principles without automated coverage, use grep/semantic search for approximate inspection. For cross-file pattern drift, compare implementations of the same concept across multiple files — flag inconsistent error handling, naming, or structural patterns as deviations.
 4. **Risk classification**: Tag purely mechanical fixes as "suggest auto-merge", those involving behavioral changes as "requires manual review". If uncertain, default to "requires manual review".
 5. **Scope limitation**: One independent fix recommendation per deviation type — do not mix unrelated cleanups.
 6. **Update scores and records**: Update quality scores, record unprocessed findings in `tech-debt-tracker.md`.
@@ -181,6 +181,7 @@ Scan the codebase on a fixed rhythm, comparing against encoded golden principles
 - **Keep fix recommendations small**: One independent fix recommendation per deviation type. On violation, split into independent recommendations.
 - **Distinguish risk levels**: Must accurately distinguish purely mechanical fixes from those involving behavioral changes. On violation, re-tag risk levels.
 - **Single scan report path**: Output to `docs/quality-reports/golden-principles-scan.md` (overwrite in place; history is in git). On violation, retract writes to other paths.
+- **Cross-file comparison required**: When scanning for a principle that applies across modules, must compare at least 2 files implementing the same concept. On violation: expand the scan scope to include all files with similar patterns.
 
 ### Output Specification
 
@@ -190,4 +191,4 @@ Scan the codebase on a fixed rhythm, comparing against encoded golden principles
 - **Output path**: `docs/quality-reports/golden-principles-scan.md` (overwrite in place; history is in git).
 
 ---
-Last updated: 2026-07-06 (Change: A+ optimization batch — examples, key points, best practices, edge cases, core capabilities, skip conditions)
+Last updated: 2026-07-07 (Change: Agent Prompt — cross-file scan enhancement + Cross-file comparison Constraint)

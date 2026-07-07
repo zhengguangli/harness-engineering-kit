@@ -151,6 +151,8 @@ Generate a complete, ready-to-use prompt. Do not wrap in markdown code blocks (u
 - Upstream **harness-project-intake**: Receives output (project context information) as input for prompt optimization
 - Upstream **harness-repo-map**: Receives output (knowledge base information) as contextual reference for prompt optimization
 - Downstream **All skills needing structured prompts**: Output from this skill (optimized prompt text) is passed downstream for execution
+- `harness-repo-map`: When the issue is CLAUDE.md bloat rather than prompt quality
+- `harness-project-intake`: When project context is needed to write an effective prompt
 
 ## Related Templates
 
