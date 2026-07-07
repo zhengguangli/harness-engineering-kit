@@ -161,6 +161,7 @@ Always output the structured card below — never output raw file content:
 
 - Upstream **None**: This skill is the Layer 0 entry point; it does not depend on output from other skills.
 - Downstream **harness-bootstrap**: This skill's output (project card) is passed downstream for skeleton setup.
+- Downstream **harness-golden-principles**: Project analysis results inform which golden principles apply
 
 ## Related Templates
 
@@ -202,12 +203,12 @@ You are the "Project Analyzer" (project-analyzer). Quickly and silently collect 
 - File reading: `Read` to read configuration and documentation files efficiently
 - Project type classification: single package, Monorepo, or single-file script — determine depth tier
 - Handle various edge cases: no package manifest, outdated README, unknown tech stack
-- Multi-card generation for Monorepo projects: detect sub-package boundaries and independently produce per-sub-package tech stack cards with varied toolchains
+- Multi-card generation for Monorepo projects: detect sub-package boundaries (packages/, apps/, services/) and independently produce per-sub-package tech stack cards with varied toolchains; distinguish shared toolchain (same package manager) from independent toolchains (different runtimes) to determine card aggregation strategy
 
 ### Execution Flow
 
 1. **README Analysis**: Read `README.md` → Project name, one-line description, key constraints, build commands (do not output full text)
-2. **Tech Stack Identification**: Read package manifest → Tech stack (language, framework, runtime, package manager, deployment target); when all are missing, use `ls` to infer and annotate
+2. **Tech Stack Identification**: Read package manifest → Tech stack (language, framework, runtime, package manager, deployment target); when all manifests are missing, check for lockfiles (package-lock.json, yarn.lock, Cargo.lock, go.sum) and infer package manager from lockfile header; when neither exists, use `ls` to infer language from file extensions and annotate 'Inferred'
 3. **Directory Scan**: `Glob` / `find . -maxdepth 2` → Directory skeleton and module organization
 4. **Entry Point Location**: `Grep` search entry files (main/index/app) → Key module identification
 5. **Command Detection**: `package.json` scripts / `Makefile` / `Justfile` → Build, test, run commands
@@ -231,4 +232,4 @@ You are the "Project Analyzer" (project-analyzer). Quickly and silently collect 
 - Output location: Conversation output only — do not create project card files on disk. On violation: retract file writes and output in conversation.
 
 ---
-Last updated: 2026-07-06 (Change: A+ optimization batch — examples, key points, best practices, edge cases, core capabilities, skip conditions)
+Last updated: 2026-07-07 (Change: Agent Prompt — Monorepo capability enhanced + lockfile detection in Execution Flow)

@@ -188,6 +188,7 @@ Failures are written as agent-friendly repair instructions so whoever finds them
 | Downstream | **all skills** | Knowledge base structure and docs/ documentation | Caller retrieves context from docs/ for task execution | — |
 | Downstream | **harness-architecture-boundaries** | ARCHITECTURE.md domain boundaries | Generate ARCHITECTURE.md during initialization; later the boundary-auditor reads it for layer validation | Small project with no layering |
 | Downstream | **harness-golden-principles** | QUALITY_SCORE.md quality matrix | Generate during initialization; golden-principles scanner reads it for deviation scoring | No quality rules yet |
+| Cross-reference | **harness-prompt-optimizer** | When CLAUDE.md content needs prompt optimization rather than restructuring | | |
 
 ## Related Templates
 
@@ -229,7 +230,7 @@ You are the "document gardener" (doc-gardener). Your mission is to keep the repo
 - docs/ structure scan: file enumeration via `find docs -type f`, broken-link detection via extracting markdown links and verifying target existence, orphan document identification
 - Code consistency validation: component existence (ARCHITECTURE.md path references), pairing completeness (frontmatter agent field vs. Agent Prompt section match), reference integrity (navigation table paths), freshness check (last updated within 30 days)
 - Execution plan audit: active plan existence in `docs/exec-plans/active/`, tech-debt-tracker maintenance status
-- Independent severity rating per finding: HIGH (misleading content/broken links) / MEDIUM (missing but not functionally impacting) / LOW (suggested improvement)
+- Severity rating per finding: independently classify each finding as HIGH (misleading content / broken links) / MEDIUM (missing but not functionally impacting) / LOW (suggested improvement) — severity drives repair priority
 - Read-only operations: only use `Bash` (grep/cat/find), `Glob`, `Grep`, `Read`; **forbidden** from writing/deleting/modifying files
 - Content migration planning: assess CLAUDE.md bloat, design target docs/ structure, generate a per-section split plan mapping CLAUDE.md paragraphs to docs/*.md destinations
 
@@ -245,7 +246,7 @@ Execute the following steps strictly in order, using the minimum number of tool 
 
 **Step 4: Execution Plan and Tech Debt Check** — Verify `docs/exec-plans/active/` exists and `tech-debt-tracker.md` maintenance status.
 
-**Step 5: Generate Report** — For each finding category, generate an independent repair suggestion (down to the specific file and line), severity: HIGH (misleading content/broken links) / MEDIUM (missing but not functionally impacting) / LOW (suggested improvement).
+**Step 5: Generate Report** — For each finding category, generate an independent repair suggestion (down to the specific file and line). Classify severity: HIGH (misleading content / broken links) / MEDIUM (missing but not functionally impacting) / LOW (suggested improvement). List findings by severity (HIGH first).
 
 ### Constraints
 
@@ -263,4 +264,4 @@ Execute the following steps strictly in order, using the minimum number of tool 
 - **Best practices**: Provide best practices for knowledge base management, document maintenance, and directory structure.
 
 ---
-Last updated: 2026-07-06 (Change: P2 — Quick-reference diagnostic table added, Role Definition sharpened for A+ push)
+Last updated: 2026-07-07 (Change: Agent Prompt — severity rating Capability + Execution Flow Step 5 enhanced)
