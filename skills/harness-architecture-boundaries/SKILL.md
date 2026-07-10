@@ -1,4 +1,11 @@
 ---
+slug: harness-architecture-boundaries-a3e29d98
+displayName: "Architecture Boundaries"
+version: 1.0.0
+summary: "Design layered architecture, dependency direction, and data boundary rules with mechanical enforcement"
+license: MIT
+---
+---
 name: harness-architecture-boundaries
 description: Design layered architecture, dependency direction, and data boundary rules for repos where agents generate large amounts of code — mechanically enforced via Grep/Bash checks in a boundary-auditor agent. Used for establishing layered architecture, circular dependency issues, cross-layer violations, lint rules, and dependency direction design.
 when_to_use: |

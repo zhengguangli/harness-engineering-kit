@@ -1,4 +1,11 @@
 ---
+slug: harness-skill-quality-assessor-a3e29d98
+displayName: "Skill Quality Assessor"
+version: 1.0.0
+summary: "Systematically evaluate skill quality with quantifiable assessment across 8 dimensions"
+license: MIT
+---
+---
 name: harness-skill-quality-assessor
 description: Systematically evaluate skill quality in the harness system — providing quantifiable assessment reports and layered improvement recommendations across 8 dimensions including structural completeness, content quality, usability, and agent prompt quality. Used for assessing skill quality, checking compliance, auditing skills, and optimizing skills.
 when_to_use: |

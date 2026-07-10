@@ -1,4 +1,11 @@
 ---
+slug: harness-commit-gate-a3e29d98
+displayName: "Commit Gate"
+version: 1.0.0
+summary: "Run quality gate checks before committing code (lint/build/test/leaks)"
+license: MIT
+---
+---
 name: harness-commit-gate
 description: Run a set of quality gate checks before committing code (lint/build/test/sensitive info leaks), applying CI-level rules while ensuring not all code needs the full suite. Used for committing code, preparing to push, checking code quality, and pre-commit verification.
 when_to_use: |

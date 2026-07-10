@@ -1,4 +1,11 @@
 ---
+slug: harness-orchestration-a3e29d98
+displayName: "Skill Orchestration"
+version: 1.0.0
+summary: "Orchestrate skill combinations and workflow routing based on user goals"
+license: MIT
+---
+---
 name: harness-orchestration
 description: Orchestrate skill combinations and workflow routing in the current project — selecting the right skill mix and execution order based on user goals. Used for deciding which skills to use, planning multi-skill collaboration, and navigating workflow order in new projects.
 when_to_use: |

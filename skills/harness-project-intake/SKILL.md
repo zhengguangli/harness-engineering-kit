@@ -1,4 +1,11 @@
 ---
+slug: harness-project-intake-a3e29d98
+displayName: "Project Intake"
+version: 1.0.0
+summary: "One-click project analysis producing structured project cards with tech stack and architecture"
+license: MIT
+---
+---
 name: harness-project-intake
 description: One-click project analysis producing structured project cards — identity, tech stack, architecture skeleton, configuration, constraints, and activity level. Used for analyzing projects, getting project overviews, and understanding tech stacks.
 when_to_use: |

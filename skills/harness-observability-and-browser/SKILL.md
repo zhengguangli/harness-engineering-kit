@@ -1,4 +1,11 @@
 ---
+slug: harness-observability-and-browser-a3e29d98
+displayName: "Observability & Browser"
+version: 1.0.0
+summary: "Verify work results through browser automation and observability data"
+license: MIT
+---
+---
 name: harness-observability-and-browser
 description: Enable agents to directly verify work results through browser automation and observability data, rather than guessing by reading code. Used for reproducing UI bugs, confirming P99 latency, screenshot verification, validating user journeys, and checking performance budgets.
 when_to_use: |

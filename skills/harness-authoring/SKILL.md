@@ -1,4 +1,11 @@
 ---
+slug: harness-authoring-a3e29d98
+displayName: "Harness Authoring"
+version: 1.0.0
+summary: "Guide for writing new skills, subagents, or expanding the harness knowledge base"
+license: MIT
+---
+---
 name: harness-authoring
 description: Guide on how to write new skills, subagents, or expand the knowledge base for this harness system — following progressive disclosure and context budget principles. Used for writing good SKILL.md files, adding new capabilities, deciding skill vs subagent, and sliming existing skills.
 when_to_use: |

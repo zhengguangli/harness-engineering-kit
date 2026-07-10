@@ -1,4 +1,11 @@
 ---
+slug: harness-bootstrap-a3e29d98
+displayName: "Harness Bootstrap"
+version: 1.0.0
+summary: "Initialize harness structure with CLAUDE.md map, docs skeleton, and .gitignore rules"
+license: MIT
+---
+---
 name: harness-bootstrap
 description: Quickly initialize the harness structure for any project — generate CLAUDE.md map, docs/ skeleton, and .gitignore rules. Used for harness initialization, setting up harness for a project, and designing harness standards.
 when_to_use: |

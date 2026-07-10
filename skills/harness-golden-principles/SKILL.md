@@ -1,4 +1,11 @@
 ---
+slug: harness-golden-principles-a3e29d98
+displayName: "Golden Principles"
+version: 1.0.0
+summary: "Encode human expertise as mechanized rules, establish periodic codebase scanning"
+license: MIT
+---
+---
 name: harness-golden-principles
 description: Encode human expertise as mechanized Golden Principles, establish periodic codebase scanning, continuously detect pattern drift, and generate small-grained fix PRs. Used for scanning code smells, cleaning AI-generated code, establishing lint rules, unifying code style, and encoding review feedback as rules.
 when_to_use: |

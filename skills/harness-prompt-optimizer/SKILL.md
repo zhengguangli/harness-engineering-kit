@@ -1,4 +1,11 @@
 ---
+slug: harness-prompt-optimizer-a3e29d98
+displayName: "Prompt Optimizer"
+version: 1.0.0
+summary: "Transform natural language into structured, high-quality LLM prompts"
+license: MIT
+---
+---
 name: harness-prompt-optimizer
 description: Transform natural language requirements or rough prompts into structured, high-quality LLM prompts — including role definitions, variable dictionaries, execution chains, constraints, output schemas, and few-shot examples. Used for optimizing prompts, improving descriptions, writing new prompts, and fixing poorly performing prompts.
 when_to_use: |

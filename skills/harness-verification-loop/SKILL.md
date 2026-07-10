@@ -1,4 +1,11 @@
 ---
+slug: harness-verification-loop-a3e29d98
+displayName: "Verification Loop"
+version: 1.0.0
+summary: "Self-verification loop for advancing code changes to mergeable state"
+license: MIT
+---
+---
 name: harness-verification-loop
 description: Enable agents to autonomously advance code changes to a mergable state — using a self-verification loop (modify → verify → fix → re-verify) to reduce manual review burden, producing auditable records of what was tested, when, and by whom. Used for advancing changes to mergable state, confirming changes work before committing, and running smoke tests.
 when_to_use: |

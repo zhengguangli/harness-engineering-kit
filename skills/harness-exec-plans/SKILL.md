@@ -1,4 +1,11 @@
 ---
+slug: harness-exec-plans-a3e29d98
+displayName: "Execution Plans"
+version: 1.0.0
+summary: "Persist complex tasks as versioned execution plans with goals, steps, and decision records"
+license: MIT
+---
+---
 name: harness-exec-plans
 description: Persist complex tasks spanning multiple context windows as versioned execution plans — including goals, steps, decision records, and acceptance criteria. Used for planning ahead, landing large tasks, spanning multiple sessions, and multi-agent relay.
 when_to_use: |
