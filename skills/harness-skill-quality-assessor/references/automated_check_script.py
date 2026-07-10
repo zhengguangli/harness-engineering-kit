@@ -110,10 +110,11 @@ class WeightedSkillChecker:
 
     @property
     def weighted_score(self):
-        """Map penalty_score to 0-10 scale."""
-        if self.total == 0:
+        """Map penalty_score to 0-10 scale. Warnings are advisory, not penalizing."""
+        scored = self.passed + self.failed
+        if scored == 0:
             return 0.0
-        score = round(self.penalty_score * 10 / self.total, 2)
+        score = round(self.penalty_score * 10 / scored, 2)
         return max(0.0, min(10.0, score))
 
     @property
@@ -277,8 +278,20 @@ def check_fm_agent_prompt_consistency(c, file_path):
 
 
 def check_fm_metadata_category(c, file_path):
-    contents = read_file(file_path)
-    if re.search(r"category:", contents):
+    lines = read_lines(file_path)
+    in_fm = False
+    found = False
+    for line in lines:
+        stripped = line.strip()
+        if stripped == "---":
+            if in_fm:
+                break
+            in_fm = True
+            continue
+        if in_fm and re.match(r"\s*category:", stripped):
+            found = True
+            break
+    if found:
         c.check_pass("frontmatter-category")
     else:
         c.check_warn("frontmatter-category", "Missing metadata.category field")
@@ -286,8 +299,18 @@ def check_fm_metadata_category(c, file_path):
 
 def check_section(c, file_path, name, required=True):
     contents = read_file(file_path)
-    if re.search(rf"^##\s+{re.escape(name)}", contents, re.MULTILINE):
-        c.check_pass(f"section-{name}")
+    m = re.search(rf"^##\s+{re.escape(name)}", contents, re.MULTILINE)
+    if m:
+        # Check content depth: at least 2 non-empty lines after heading
+        after = contents[m.end():]
+        next_section = re.search(r"\n##\s+", after)
+        section_body = after[:next_section.start()] if next_section else after
+        non_empty = len([l for l in section_body.split("\n") if l.strip()])
+        if non_empty >= 2:
+            c.check_pass(f"section-{name}")
+        else:
+            c.check_warn(f"section-{name}",
+                         f"Section '{name}' has insufficient content ({non_empty} lines)")
     else:
         if required:
             c.check_fail(f"section-{name}", "HIGH", f"Missing required section: {name}")
@@ -317,14 +340,34 @@ def check_agent_prompt(c, file_path):
     contents = read_file(file_path)
     if re.search(r"^##\s+(?:Agent Prompt|Agent 提示词)", contents, re.MULTILINE):
         c.check_pass("agent-prompt")
+        # Get main body (before Agent Prompt section)
+        agent_start = re.search(r"^##\s+(?:Agent Prompt|Agent 提示词)", contents, re.MULTILINE)
+        main_body = contents[:agent_start.start()]
+        # Map: subsection -> list of main body section patterns that cover it
+        BODY_COVERAGE = {
+            "Skip Conditions": [r"^##\s+When\s+Not\s+to\s+Use"],
+            "Execution Flow": [r"^##\s+Methodology"],
+            "Constraints": [r"^##\s+Hard\s*Constraints"],
+            "Output Specification": [r"^##\s+Methodology", r"^##\s+Output\s+Format"],
+        }
         subs = ["Skip Conditions", "Role Definition", "Core Capabilities",
                 "Execution Flow", "Constraints", "Output Specification"]
         for s in subs:
             if re.search(rf"^\s*###\s+{re.escape(s)}", contents, re.MULTILINE):
                 c.check_pass(f"agent-prompt-{s}")
             else:
-                c.check_warn(f"agent-prompt-{s}",
-                             f"Missing Agent Prompt subsection: {s}")
+                # Check if main body already covers this content
+                covered = False
+                if s in BODY_COVERAGE:
+                    for pattern in BODY_COVERAGE[s]:
+                        if re.search(pattern, main_body, re.MULTILINE):
+                            covered = True
+                            break
+                if covered:
+                    c.check_pass(f"agent-prompt-{s}-covered")
+                else:
+                    c.check_warn(f"agent-prompt-{s}",
+                                 f"Missing Agent Prompt subsection: {s} (not covered in main body)")
     else:
         c.check_fail("agent-prompt", "HIGH", "Missing required Agent Prompt section")
 
@@ -351,14 +394,15 @@ def check_last_updated_freshness(c, file_path):
 
 def check_content_examples(c, file_path):
     contents = read_file(file_path)
-    count = len(re.findall(r"(?:example|use\s*case)", contents, re.IGNORECASE))
-    if count >= 3:
+    # Count structured examples: **Example N**: or ### Example N
+    count = len(re.findall(r"(?:\*\*Example\s+\d+\*\*|###\s+Example\s*\d*)", contents))
+    if count >= 2:
         c.check_pass("content-examples")
     elif count >= 1:
         c.check_warn("content-examples",
-                     f"Only {count} example references (recommend >=3)")
+                     f"Only {count} structured example (recommend >=2)")
     else:
-        c.check_fail("content-examples", "MEDIUM", "Missing usage examples")
+        c.check_fail("content-examples", "MEDIUM", "Missing structured examples")
 
 
 def check_content_error_handling(c, file_path):
@@ -379,11 +423,21 @@ def check_content_best_practices(c, file_path):
 
 def check_cross_skill_handoff(c, file_path):
     contents = read_file(file_path)
-    count = len(re.findall(r"handoff|upstream|downstream|dependency", contents, re.IGNORECASE))
-    if count >= 1:
-        c.check_pass("cross-skill-handoff")
+    # Check for structured handoff section (## Related Skills or ## Cross-Skill Handoff)
+    has_section = bool(re.search(
+        r"^##\s+(?:Related\s+Skills|Cross[- ]Skill\s+Handoff)", contents, re.MULTILINE))
+    if has_section:
+        # Verify it references specific harness skills
+        refs = re.findall(r"harness-[a-z-]+", contents)
+        unique_refs = set(r for r in refs if r != "harness-")
+        if len(unique_refs) >= 1:
+            c.check_pass("cross-skill-handoff")
+        else:
+            c.check_warn("cross-skill-handoff",
+                         "Related Skills section exists but no harness skill references found")
     else:
-        c.check_warn("cross-skill-handoff", "No cross-skill handoff points mentioned")
+        c.check_warn("cross-skill-handoff",
+                     "No ## Related Skills or ## Cross-Skill Handoff section")
 
 
 def check_common_edge_cases(c, file_path):
@@ -439,10 +493,10 @@ def check_no_self_ref(c, file_path):
         c.check_warn("self-reference", f"Possible self-reference ({count} times)")
 
 
-def check_skill_refs(c, file_path):
+def check_skill_refs(c, file_path, skill_name=""):
     contents = read_file(file_path)
     refs = re.findall(r"harness-[a-z-]+", contents)
-    unique_refs = sorted(set(r for r in refs if r != "harness-" and r != "harness-"))
+    unique_refs = sorted(set(r for r in refs if r != "harness-" and r != skill_name))
     missing = 0
     for ref in unique_refs:
         ref_dir = os.path.join(SKILLS_DIR, ref)
@@ -451,6 +505,29 @@ def check_skill_refs(c, file_path):
             missing += 1
     if missing == 0:
         c.check_pass("skill-reference")
+
+
+def check_agent_prompt_redundancy(c, file_path):
+    """Detect Agent Prompt subsections that duplicate main body content."""
+    contents = read_file(file_path)
+    agent_start = re.search(r"^##\s+(?:Agent Prompt|Agent 提示词)", contents, re.MULTILINE)
+    if not agent_start:
+        return
+    main_body = contents[:agent_start.start()]
+    agent_section = contents[agent_start.start():]
+    # Map subsection to main body section pattern
+    REDUNDANCY_MAP = {
+        "Skip Conditions": r"^##\s+When\s+Not\s+to\s+Use",
+        "Execution Flow": r"^##\s+Methodology",
+        "Constraints": r"^##\s+Hard\s*Constraints",
+        "Output Specification": r"^##\s+Methodology",
+    }
+    for sub, pattern in REDUNDANCY_MAP.items():
+        if not re.search(rf"^\s*###\s+{re.escape(sub)}", agent_section, re.MULTILINE):
+            continue
+        if re.search(pattern, main_body, re.MULTILINE):
+            c.check_warn("agent-prompt-redundancy",
+                         f"Agent Prompt '{sub}' duplicates main body content")
 
 
 # --- Main assessment ---
@@ -506,7 +583,10 @@ def assess_skill(skill):
 
     # Reference check
     check_no_self_ref(c, file_path)
-    check_skill_refs(c, file_path)
+    check_skill_refs(c, file_path, skill)
+
+    # Redundancy detection
+    check_agent_prompt_redundancy(c, file_path)
 
     return c.to_dict()
 

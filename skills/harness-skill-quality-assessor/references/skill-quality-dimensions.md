@@ -33,8 +33,8 @@ Updated by: claude-code
 | Includes "When Not to Use" section | `## When Not to Use` with skip scenarios | Missing section |
 | Includes "Methodology" section | `## Methodology` with step-by-step guidance | Missing section or blank |
 | Includes "Key Takeaways" section | `## Key Points` (or Key Takeaways) with 3+ items | Missing section |
-| Includes "Common Pitfalls" section | `## Common Pitfalls` with 3+ common mistakes | Missing section |
-| Includes "Agent Prompt" section (if applicable) | `## Agent 提示词` with 6 sub-sections | Missing when skill uses context:fork |
+| Includes "Common Pitfalls" section | `## Common Pitfalls` with 3+ common mistakes | Missing section or empty (< 2 lines) |
+| Includes "Agent Prompt" section (if applicable) | `## Agent 提示词` with Role Definition + Core Capabilities (other subsections optional if covered in main body) | Missing when skill uses context:fork |
 
 ### 2. Content Quality (Weight: 20%)
 
@@ -129,7 +129,7 @@ Updated by: claude-code
 **Checkpoints**:
 | Check Item | Pass Example | Fail Example |
 |------------|-------------|-------------|
-| Includes usage examples | 3+ concrete examples in `## Examples` section | No examples or only one trivial example |
+| Includes usage examples | 2+ structured examples (`**Example N**:` format) | No structured examples |
 | Includes error handling guidance | `## Edge Case Handling` with 3+ scenarios and recovery steps | No error handling section |
 | Includes troubleshooting suggestions | FAQ or troubleshooting subsection with common issues | Only says "if it fails, try again" |
 | Explanations are clear and understandable | Terminology defined, rationale provided for each constraint | Jargon without explanation |
@@ -221,8 +221,7 @@ Updated by: claude-code
 
 | Check Item | Pass Condition | Fail Condition | Severity |
 |--------|----------|----------|----------|
-| Upstream skill description | Clearly lists upstream skills and received outputs | Not mentioned | WARN |
-| Downstream skill description | Clearly lists downstream skills and transmitted outputs | Not mentioned | WARN |
+| Structured handoff section | `## Related Skills` or `## Cross-Skill Handoff` exists with specific harness-skill references | No structured section or no skill references | WARN |
 | Handoff timing | Explains when handoff is triggered | Not explained | WARN |
 | Error handling | Recovery method for failed handoff | Not explained | WARN |
 
@@ -345,7 +344,7 @@ Each dimension score = arithmetic mean of sub-dimension scores (each sub-dimensi
 
 | Misjudgment Pattern | Wrong Approach | Correct Approach |
 |----------|----------|----------|
-| Give high score if script exists | Give 9.0+ just for having automated_check_script.py | Also check the number of check items covered and verification accuracy |
+| Give high score if script exists | Give 9.0+ just for having automated_check_script.py | Also check the number of check items covered and verification accuracy; redundancy warnings are advisory, not scored |
 | Give zero score if no script | Give 0 for no automated_check_script.py | Check if there are other automation methods (e.g., shared scripts under project-level scripts/), reasonably score 6.0-7.0 |
 | Ignore CI/CD integration | Only look at scripts, not CI configuration | Check if .github/workflows integrates the script |
 
@@ -431,7 +430,9 @@ The automated check scoring has been upgraded from a simple pass-rate model to a
 | HIGH | -3 | High severity issue |
 | CRITICAL | -5 | Blocking-level issue |
 
-**Final Automated Score** = max(0, min(10, (pass_count x 1 + penalty_score) x 10 / total_check_count))
+**Final Automated Score** = max(0, min(10, (pass_count x 1 + penalty_score) x 10 / (pass_count + fail_count)))
+
+Note: Warnings are advisory and do not affect the score (not included in denominator).
 
 ---
-Last updated: 2026-07-06 (Change: Added Pass/Fail Example columns to 8 dimensions' checkpoints)
+Last updated: 2026-07-10 (Change: Added Pass/Fail Example columns to 8 dimensions' checkpoints)

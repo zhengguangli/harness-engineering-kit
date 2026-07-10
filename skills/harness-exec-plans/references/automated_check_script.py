@@ -110,11 +110,40 @@ for pattern, label in [
     (r"Parallel Collaboration", "Parallel Collaboration concept"),
     (r"Plan Quality Checklist", "Plan Quality Checklist section"),
     (r"Decision log", "Decision log concept"),
+    (r"plan overrun|Plan overrun|scope re-assessment", "Plan overrun recovery mechanism"),
+    (r"Directory.*Lifecycle|Directory & Lifecycle", "Directory lifecycle management"),
+    (r"Cross-skill handoff|cross.*skill.*handoff", "Cross-skill handoff documentation"),
 ]:
     total_extra += 1
     if has_text(content, pattern, re.IGNORECASE):
         passed_extra += 1; checker.check_pass(label)
     else:
         print(f"  [FAIL] Missing {label}")
+
+# Hard Constraints completeness: must have at least 3
+constraint_section = content[content.find("## Hard Constraints"):content.find("## Examples")] if "## Hard Constraints" in content else ""
+constraint_count = len(re.findall(r"^\s*-\s+\*\*[^*]+\*\*:", constraint_section, re.MULTILINE))
+total_extra += 1
+if constraint_count >= 3:
+    passed_extra += 1; checker.check_pass("hard-constraints-count")
+else:
+    print(f"  [FAIL] Hard Constraints count: {constraint_count} (expected ≥3)")
+
+# Examples count: must have at least 4
+example_count = len(re.findall(r"\*\*Example\s+\d+\*\*", content))
+total_extra += 1
+if example_count >= 4:
+    passed_extra += 1; checker.check_pass("examples-count")
+else:
+    print(f"  [FAIL] Examples count: {example_count} (expected ≥4)")
+
+# Agent Prompt constraints: must have at least 6
+agent_section = content[content.find("## Agent 提示词"):] if "## Agent 提示词" in content else ""
+agent_constraint_count = len(re.findall(r"^\s*-\s+\*\*[^*]+\*\*:", agent_section, re.MULTILINE))
+total_extra += 1
+if agent_constraint_count >= 6:
+    passed_extra += 1; checker.check_pass("agent-constraints-count")
+else:
+    print(f"  [FAIL] Agent Prompt constraints: {agent_constraint_count} (expected ≥6)")
 
 print_extra_summary(checker, passed_extra, total_extra)

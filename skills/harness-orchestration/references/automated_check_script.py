@@ -113,11 +113,38 @@ for pattern, label in [
     (r"^###\s+\d+\.\s+Three-Layer Routing", "Three-Layer Routing Framework section"),
     (r"Cross-workflow combination", "Cross-workflow combination handling"),
     (r"Read-only.*routing|read-only.*orchestrat", "Read-only routing advisor constraint"),
+    (r"Routing Quality Validation", "Routing Quality Validation subsection"),
+    (r"^##\s+Hard Constraints", "Hard Constraints section"),
 ]:
     total_extra += 1
     if has_text(content, pattern, re.IGNORECASE | re.MULTILINE):
         passed_extra += 1; checker.check_pass(label)
     else:
         print(f"  [FAIL] Missing {label}")
+
+# Workflow completeness: all 5 workflows must be present
+workflow_count = len(re.findall(r"###\s+Workflow\s+\d+", content))
+total_extra += 1
+if workflow_count >= 5:
+    passed_extra += 1; checker.check_pass("workflow-completeness")
+else:
+    print(f"  [FAIL] Only {workflow_count}/5 workflows defined (expected ≥5)")
+
+# Hard Constraints count: must have at least 4
+constraint_count = len(re.findall(r"^\s*-\s+\*\*[^*]+\*\*:", content[content.find("## Hard Constraints"):content.find("## Examples")] if "## Hard Constraints" in content else "", re.MULTILINE))
+total_extra += 1
+if constraint_count >= 4:
+    passed_extra += 1; checker.check_pass("hard-constraints-count")
+else:
+    print(f"  [FAIL] Hard Constraints count: {constraint_count} (expected ≥4)")
+
+# Handoff table completeness: must have at least 4 rows
+handoff_section = content[content.find("## Cross-Skill Handoff Points"):content.find("## Edge Case")] if "## Cross-Skill Handoff Points" in content else ""
+handoff_rows = len(re.findall(r"^\|.*\|.*\|.*\|", handoff_section, re.MULTILINE))
+total_extra += 1
+if handoff_rows >= 4:
+    passed_extra += 1; checker.check_pass("handoff-table-completeness")
+else:
+    print(f"  [FAIL] Handoff table rows: {handoff_rows} (expected ≥4)")
 
 print_extra_summary(checker, passed_extra, total_extra)

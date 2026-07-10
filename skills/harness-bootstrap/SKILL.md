@@ -1,11 +1,4 @@
 ---
-slug: harness-bootstrap-a3e29d98
-displayName: "Harness Bootstrap"
-version: 1.0.0
-summary: "Initialize harness structure with CLAUDE.md map, docs skeleton, and .gitignore rules"
-license: MIT
----
----
 name: harness-bootstrap
 description: Quickly initialize the harness structure for any project — generate CLAUDE.md map, docs/ skeleton, and .gitignore rules. Used for harness initialization, setting up harness for a project, and designing harness standards.
 when_to_use: |
@@ -171,8 +164,11 @@ If any item fails, return to the corresponding step to fix before committing.
 ## Related Skills
 
 - Upstream **harness-architecture-boundaries**: Provides architecture rules that inform the docs/ skeleton structure
-- `harness-project-intake`: Analyze the project before initialization (step 1 dependency)
-- `harness-repo-map`: Maintain the health of CLAUDE.md and docs/ after initialization
+- Upstream **harness-golden-principles**: Provides golden principle templates to seed the initial docs/ quality baseline
+- `harness-project-intake`: Analyze the project before initialization (step 1 dependency — mandatory upstream)
+- `harness-repo-map`: Maintain the health of CLAUDE.md and docs/ after initialization (post-init validation partner)
+- `harness-exec-plans`: Downstream — after bootstrap, use exec-plans to track any follow-up refinement work
+- `harness-orchestration`: Upstream — routes users to bootstrap when greenfield initialization is needed
 
 ## Related Templates
 
@@ -231,18 +227,30 @@ You are the "Harness Initialization Artisan." Your responsibility is to generate
 
 ### Constraints
 
-- **Write is for new files only**: Prohibited from modifying existing business code, test files, or configuration files. Revert the write operation on violation.
-- **Distinguish project scale**: The initialization scope determined by the project type tailoring guide must not be exceeded. Delete unnecessary files on violation to reduce noise.
-- **Provide specific guidance**: Every step must be actionable, not vague. Supplement specific execution details on violation.
-- **Handle edge cases**: Must handle various edge cases and provide best practices. Supplement edge case handling on violation.
-- **Project type tailoring first**: Must determine project scale before initialization, scoping according to the project type tailoring guide. Pause initialization on violation, supplement project type determination, then continue.
-- **Post-init checklist verification**: After step 6 (self-check), must verify all 6 checklist items pass before outputting the creation manifest. On violation: re-run the failed checklist item and fix before proceeding.
+- **Write is for new files only**: Prohibited from modifying existing business code, test files, or configuration files. Violation → revert the write operation immediately, confirm with `git diff` that no business code was touched, then continue with only new file creation.
+- **Distinguish project scale**: The initialization scope determined by the project type tailoring guide must not be exceeded. Violation → identify which files exceed the scope for the detected project type, delete them, and re-output the creation manifest with only scope-appropriate files.
+- **Provide specific guidance**: Every step must be actionable, not vague. Violation → identify the vague step, rewrite it with concrete commands or file paths, then proceed.
+- **Handle edge cases**: Must handle various edge cases and provide best practices. Violation → check `references/common-edge-cases.md`, identify which edge case applies, and add handling to the current step before continuing.
+- **Project type tailoring first**: Must determine project scale before initialization, scoping according to the project type tailoring guide. Violation → pause initialization immediately, run `ls -d */` to classify the project type, record the classification, then resume with the correct scope.
+- **Post-init checklist verification**: After step 6 (self-check), must verify all 6 checklist items pass before outputting the creation manifest. Violation → re-run each failed checklist item, fix the issue, re-verify all 6 pass, then output the manifest.
 
 ### Output Specification
 
 - **Format**: Markdown files
 - **Content**: CLAUDE.md (routing table + hard constraints + workflow tips); docs/ skeleton files (minimum content + "last updated" dates)
-- **Modification manifest**: List all created/modified files
+- **Modification manifest**: List all created/modified files with brief descriptions:
+  ```
+  ## Creation Manifest
+  - `CLAUDE.md` — Project map (routing table + hard constraints + workflow tips)
+  - `docs/ARCHITECTURE.md` — Architecture skeleton (domain decomposition + dependency direction)
+  - `docs/QUALITY_SCORE.md` — Quality score tracking (empty skeleton)
+  - `docs/design-docs/index.md` — Design decision index
+  - `docs/exec-plans/active/` — Active execution plans directory
+  - `docs/exec-plans/completed/` — Completed execution plans directory
+  - `.gitignore` — Updated with <tech stack> rules
+  ```
+- **Self-check results**: Output pass/fail for each of the 6 checklist items
+- **Project type classification**: State the detected project type and the initialization scope applied
 
 ---
-Last updated: 2026-07-07 (Change: Agent Prompt — post-init checklist Constraint + Execution Flow Step 6 enhanced)
+Last updated: 2026-07-10 (Change: Output Specification expanded with creation manifest format example)

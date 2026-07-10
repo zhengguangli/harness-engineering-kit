@@ -110,11 +110,39 @@ for pattern, label in [
     (r"^##\s+Best Practices", "Best Practices section"),
     (r"Finding organization specification", "Finding Organization Specification section"),
     (r"Reference Layering Model", "Reference Layering Model section"),
+    (r"Parse.*Don.*Validate|Parse, Don't Validate", "Parse Don't Validate pattern"),
+    (r"cross-cutting.*chokepoint|single chokepoint|unified Providers", "Cross-cutting chokepoint pattern"),
+    (r"Implementation variations", "Implementation variations across projects"),
 ]:
     total_extra += 1
     if has_text(content, pattern, re.IGNORECASE | re.MULTILINE):
         passed_extra += 1; checker.check_pass(label)
     else:
         print(f"  [FAIL] Missing {label}")
+
+# Hard Constraints completeness: must have at least 5
+constraint_section = content[content.find("## Hard Constraints"):content.find("## Key Points")] if "## Hard Constraints" in content else ""
+constraint_count = len(re.findall(r"^\d+\.\s+\*\*", constraint_section, re.MULTILINE))
+total_extra += 1
+if constraint_count >= 5:
+    passed_extra += 1; checker.check_pass("hard-constraints-count")
+else:
+    print(f"  [FAIL] Hard Constraints count: {constraint_count} (expected ≥5)")
+
+# Layering model diagram: must contain the arrow chain
+total_extra += 1
+if has_text(content, r"Types\s*→\s*Config\s*→\s*Repo\s*→\s*Service"):
+    passed_extra += 1; checker.check_pass("layering-model-diagram")
+else:
+    print(f"  [FAIL] Missing layering model arrow chain (Types → Config → Repo → Service)")
+
+# Agent Prompt constraints count: must have at least 5
+agent_section = content[content.find("## Agent 提示词"):] if "## Agent 提示词" in content else ""
+agent_constraint_count = len(re.findall(r"^\s*-\s+\*\*[^*]+\*\*:", agent_section, re.MULTILINE))
+total_extra += 1
+if agent_constraint_count >= 5:
+    passed_extra += 1; checker.check_pass("agent-constraints-count")
+else:
+    print(f"  [FAIL] Agent Prompt constraints: {agent_constraint_count} (expected ≥5)")
 
 print_extra_summary(checker, passed_extra, total_extra)

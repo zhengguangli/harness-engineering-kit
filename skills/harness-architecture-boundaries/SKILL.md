@@ -1,11 +1,4 @@
 ---
-slug: harness-architecture-boundaries-a3e29d98
-displayName: "Architecture Boundaries"
-version: 1.0.0
-summary: "Design layered architecture, dependency direction, and data boundary rules with mechanical enforcement"
-license: MIT
----
----
 name: harness-architecture-boundaries
 description: Design layered architecture, dependency direction, and data boundary rules for repos where agents generate large amounts of code — mechanically enforced via Grep/Bash checks in a boundary-auditor agent. Used for establishing layered architecture, circular dependency issues, cross-layer violations, lint rules, and dependency direction design.
 when_to_use: |
@@ -151,7 +144,20 @@ function parseUserInput(input: unknown): UserInput {
 **Scenario**: The project uses a microservices architecture with dependencies between services
 **Handling**: Define internal architecture rules for each service; services communicate via API
 
-## Common Pitfalls
+### Ambiguous Rule Definition
+
+**Scenario**: An architecture rule is worded vaguely (e.g., "minimize dependencies") and the boundary-auditor cannot determine whether a specific import violates it
+**Handling**: Report the ambiguity as a finding with severity MEDIUM. Rewrite the rule to be mechanically checkable (e.g., "Service layer must not import Repository layer implementations directly — must go through interfaces"). Do not attempt to enforce vague rules — precision over coverage.
+
+### Multi-Team Codebase with Conflicting Conventions
+
+**Scenario**: Different teams in the same repo follow different dependency patterns (Team A uses direct imports, Team B uses dependency injection)
+**Handling**: Identify the conflict during the audit, report both patterns as findings, and recommend the team converge on one pattern. Do not unilaterally pick a winner — present both options with trade-offs and let the team decide. Record the decision in `docs/design-docs/`.
+
+### Gradual Migration from Monolith to Layered Architecture
+
+**Scenario**: The project is migrating from a monolith to a layered architecture, and not all modules have been migrated yet
+**Handling**: Scope the audit to migrated modules only. Mark unmigrated modules as "out of scope" in the report with a note that they will be audited after migration. Do not flag violations in unmigrated code — that produces noise, not signal.
 
 - **Copying layering models blindly**: Different projects have different domain divisions and dependency directions — don't mechanically apply the 6-layer model.
   - Solution: First analyze the project's actual domain divisions and data flow, then design a suitable layering model
@@ -255,4 +261,4 @@ You are the "Architecture Boundary Auditor." Your sole responsibility is to dete
 - **Report structure**: Includes both a summary (total + severity distribution + whether it blocks) and detailed findings, ordered by severity
 
 ---
-Last updated: 2026-07-06 (Change: Section title standardization + Agent Prompt subsection name normalization)
+Last updated: 2026-07-10 (Change: Edge Cases 1→4 scenarios (ambiguous rules, multi-team, gradual migration))

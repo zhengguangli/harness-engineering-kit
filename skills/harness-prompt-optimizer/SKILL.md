@@ -1,11 +1,4 @@
 ---
-slug: harness-prompt-optimizer-a3e29d98
-displayName: "Prompt Optimizer"
-version: 1.0.0
-summary: "Transform natural language into structured, high-quality LLM prompts"
-license: MIT
----
----
 name: harness-prompt-optimizer
 description: Transform natural language requirements or rough prompts into structured, high-quality LLM prompts — including role definitions, variable dictionaries, execution chains, constraints, output schemas, and few-shot examples. Used for optimizing prompts, improving descriptions, writing new prompts, and fixing poorly performing prompts.
 when_to_use: |
@@ -59,6 +52,11 @@ Determining whether XXX is prompt/instruction-type content (when the user says "
 - No multi-step execution required (e.g., "translate this paragraph", "summarize this article")
 - Simple output format, no structured schema needed (e.g., "answer this question")
 - No constraints or rules needed (e.g., "help me come up with a name")
+
+**Boundary case supplements**:
+- **Very short prompts (< 20 characters)**: Unless the user explicitly requests optimization, suggest using as-is without structuring
+- **Already well-formed prompts (with complete role/constraints/output format)**: Unless the user identifies specific issues, no optimization needed
+- **Mature prompts iterated many times**: If the user says "this prompt has been used many times with good results", skip optimization
 
 ## Methodology
 
@@ -117,6 +115,18 @@ Generate a complete, ready-to-use prompt. Do not wrap in markdown code blocks (u
 **Example 3**: User says "优化这个测试用例生成的 prompt", existing prompt lacks edge case coverage
 **Handling**: Evaluation finds Examples only cover happy path → Supplement with edge case examples (empty input, special characters, concurrency scenarios) → Add "must cover edge cases" to Constraints → Output optimized version
 
+**Example 4**: User says "帮我优化这个代码审查的 prompt"
+**Original prompt**: "你是一个代码审查助手，帮我检查代码问题"
+**Diagnosis**: Missing specific review dimensions, output format, severity definitions
+**Optimized**: Add "Senior Code Reviewer" role + review dimensions (security/performance/readability/testing) + JSON output schema (severity/file/line/suggestion) + edge case examples
+**Change description**: From vague "check issues" to structured multi-dimensional review with parseable output
+
+**Example 5**: User says "优化这个数据分析的 prompt"
+**Original prompt**: "分析这个数据集，告诉我有什么发现"
+**Diagnosis**: Missing analysis framework, output structure, variable declarations
+**Optimized**: Add "Senior Data Analyst" role + analysis framework (descriptive/correlation/anomaly detection) + variable dictionary (dataset_path, analysis_type) + output schema (findings/insights/recommendations)
+**Change description**: From open-ended exploration to framework-driven structured analysis
+
 ## Key Points
 
 - Role and Constraints have the greatest impact on behavior; write these two first.
@@ -152,6 +162,17 @@ Generate a complete, ready-to-use prompt. Do not wrap in markdown code blocks (u
 ### Optimize Existing vs. Write from Scratch
 **Scenario**: Uncertain whether to optimize an existing prompt or write a new one from scratch
 **Handling**: Judge by input type — if it contains "You are..." or similar role definitions, optimize the existing one; if it is pure requirement description, write from scratch
+
+### Complex or Ambiguous Requirements
+**Scenario**: User's requirements are too complex or ambiguous to determine optimization direction in one pass
+**Handling**:
+1. First output a summary of current understanding for user confirmation
+2. If still ambiguous, list 2-3 possible optimization directions for user to choose
+3. Each direction should include a brief description and expected outcome
+
+### Requirement Splitting
+**Scenario**: User's requirements contain multiple independent optimization goals
+**Handling**: Suggest splitting into multiple independent prompts, each focused on one goal, to avoid over-complicating a single prompt
 
 ## Related Skills
 
@@ -194,6 +215,7 @@ You are the "Prompt Engineer" (prompt-optimizer). Transform the user's rough des
 
 1. **Trigger Confirmation**: For explicit triggers, check if content is provided; ask if missing. For implicit triggers, quickly confirm then proceed to the next step.
 2. **Input Type Judgment**: system prompt → optimize existing; requirement description → write full six-block from scratch; mixed content → split and handle separately.
+2.5. **Complex requirement confirmation**: If the requirement contains 3+ optimization goals or has ambiguities, first output a summary of understanding and list possible optimization directions, wait for user confirmation before continuing.
 3. **Evaluate Existing Prompt** (if applicable): Diagnose quality issues using the five-dimension framework; identify retain/improve/missing parts. Skip when writing from scratch.
 4. **Design Architecture**: Fill in each block following the six-block template. Role and Constraints have highest priority; Execution Chain should be 3-7 steps.
 5. **Self-Check**: Is the Role distinguishable? All variables declared? Steps ≤ 7? Constraints include violation behavior? Schema complete? Examples cover edge cases? Rules consistent with examples?
@@ -211,4 +233,4 @@ You are the "Prompt Engineer" (prompt-optimizer). Transform the user's rough des
 - If the user requests a comparison, include a before/after diff explanation.
 
 ---
-Last updated: 2026-07-06 (Change: Agent Prompt subsection order normalization + Skip Conditions consolidation)
+Last updated: 2026-07-10 (Change: boundary case supplements + 2 new examples + complex/ambiguous requirement handling + requirement splitting + Agent Prompt step 2.5)

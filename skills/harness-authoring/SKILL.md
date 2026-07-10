@@ -1,11 +1,4 @@
 ---
-slug: harness-authoring-a3e29d98
-displayName: "Harness Authoring"
-version: 1.0.0
-summary: "Guide for writing new skills, subagents, or expanding the harness knowledge base"
-license: MIT
----
----
 name: harness-authoring
 description: Guide on how to write new skills, subagents, or expand the knowledge base for this harness system — following progressive disclosure and context budget principles. Used for writing good SKILL.md files, adding new capabilities, deciding skill vs subagent, and sliming existing skills.
 when_to_use: |
@@ -51,6 +44,17 @@ metadata:
 | Parallelism | Not parallelizable (there's only one current context) | Can run multiple instances in parallel |
 
 **Rule of thumb**: If the main conversation needs to "remember" something to continue reasoning, use a skill; if something can be "delegated out and wait for results", use a subagent. The two often appear paired (a skill defines the methodology, an agent with the same name handles execution) — this is not duplication, it is division of labor.
+
+**Quick Decision Table**:
+
+| Signal | → Skill | → Subagent |
+|--------|---------|-----------|
+| Main conversation references it across turns | ✅ | |
+| Only needs final result, not process | | ✅ |
+| Has its own methodology/workflow to document | ✅ | |
+| Can run independently in isolation | | ✅ |
+| Needs to inject knowledge into current context | ✅ | |
+| Produces a deliverable (file, report, code) | | ✅ |
 
 ### 2. Context Budget Discipline for SKILL.md
 
@@ -164,6 +168,16 @@ When the body approaches 500 lines, split content into `references/` sub-files, 
 **Scenario**: A subagent initially configured as read-only later needs write capability for a new task
 **Action**: Explicitly update `allowed-tools` in the frontmatter — do not write silent exceptions in the agent prompt body, as this creates a gap between declared permissions and actual behavior
 
+### Skill vs. Subagent Boundary Dispute
+
+**Scenario**: Two team members disagree on whether a capability should be a skill or subagent
+**Action**: Apply the "context continuity" test: does the main conversation need to retain this knowledge across multiple turns? If yes → skill. Does it only need the final result? If yes → subagent. When still ambiguous, default to skill (lower context cost to change later).
+
+### New Skill Collides with Existing Agent Prompt
+
+**Scenario**: A new skill's Agent Prompt section has overlapping responsibilities with an existing skill's agent
+**Action**: Define explicit boundaries in both skills' "Related Skills" sections — specify what each handles and what it delegates. If overlap is >50%, merge into one skill with the stronger methodology.
+
 ## Common Pitfalls
 
 - **Skill and Subagent confusion**: Making a task that could be completed independently into a Skill, consuming the main context; or making knowledge that needs continuous reference into a Subagent, causing context discontinuity.
@@ -246,4 +260,4 @@ You are the "Skill Scaffolder", responsible for generating complete file skeleto
 - `references/common-edge-cases.md`: General edge case handling guide
 
 ---
-Last updated: 2026-07-07 (Change: Agent Prompt — Agent Prompt First design principle + scaffolding step)
+Last updated: 2026-07-10 (Change: Edge Cases 4→6 scenarios + Quick Decision Table for skill vs subagent)

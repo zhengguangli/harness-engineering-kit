@@ -1,11 +1,4 @@
 ---
-slug: harness-project-intake-a3e29d98
-displayName: "Project Intake"
-version: 1.0.0
-summary: "One-click project analysis producing structured project cards with tech stack and architecture"
-license: MIT
----
----
 name: harness-project-intake
 description: One-click project analysis producing structured project cards — identity, tech stack, architecture skeleton, configuration, constraints, and activity level. Used for analyzing projects, getting project overviews, and understanding tech stacks.
 when_to_use: |
@@ -149,6 +142,21 @@ Always output the structured card below — never output raw file content:
 **Scenario**: The project only has a lockfile (package-lock.json, yarn.lock, Cargo.lock, go.sum) without a corresponding package manifest.
 **Handling**: Read the lockfile header to identify the package manager (npm/yarn/pnpm/cargo/go); note "No package manifest found; package manager inferred from lockfile" in the tech stack card. Do not extract dependency versions from the lockfile — list them only if a manifest is found.
 
+### Private / Authenticated Monorepo
+
+**Scenario**: A monorepo where sub-packages reference each other via workspace protocols (e.g., `"@repo/ui": "workspace:*"`), but no root-level package.json exists.
+**Handling**: Detect workspace patterns by scanning for `pnpm-workspace.yaml`, `lerna.json`, or `turbo.json`; use these to map sub-package boundaries even without a root manifest. Annotate "workspace protocol detected" in the card.
+
+### Project with No README and No Manifest
+
+**Scenario**: The project has no README.md, no package manifest, and no lockfile — only source files.
+**Handling**: Infer language from file extensions (`.py` → Python, `.go` → Go, `.rs` → Rust); check for `Makefile`/`Justfile`/`Dockerfile` for build hints; annotate "Inferred (no manifest, no README)" in all affected dimensions. Do not fabricate a project description.
+
+### Generated / Vendored Directory
+
+**Scenario**: The project root contains `node_modules/`, `.venv/`, `vendor/`, or other generated directories that should not be analyzed.
+**Handling**: Skip generated directories in the directory skeleton; note their existence in "Known Constraints" (e.g., "vendored dependencies present"). Do not list generated files as key modules.
+
 ## Common Pitfalls
 
 - **Dumping raw data**: Outputting the full text of `cat README.md` to the user — the user wants conclusions, not process.
@@ -224,11 +232,13 @@ You are the "Project Analyzer" (project-analyzer). Quickly and silently collect 
 
 ### Constraints
 
-- **Read-only**: No file writes, deletes, or modifications. No commands that modify the file system such as `npm install`. Revert any violation.
-- **No fabrication**: Write "Not found" or "Not configured" when information is missing; do not guess. Correct violations by replacing with "Not found" and recording the source.
-- **Silent collection**: All collection processes are invisible to the user; only the final card is output. Delete any intermediate output if violated.
-- **Rapid convergence**: Complete 5-dimension collection within 6-8 tool calls. If violated, stop over-exploration and merge similar tool calls.
-- **Monorepo tiered collection**: When sub-package directories are found at the root, collect in tiers — first the global structure, then supplement per sub-package. If violated, retract the global card and re-output in tiered structure.
+- **Read-only**: No file writes, deletes, or modifications. No commands that modify the file system such as `npm install`. Violation → revert any write operation immediately and continue with read-only tools only.
+- **No fabrication**: Write "Not found" or "Not configured" when information is missing; do not guess. Violation → replace fabricated content with "Not found", record what was attempted, and note the gap in "Known Constraints".
+- **Silent collection**: All collection processes are invisible to the user; only the final card is output. Violation → delete any intermediate output that leaked to the user and re-output only the final card.
+- **Rapid convergence**: Complete 5-dimension collection within 6-8 tool calls. Violation → stop over-exploration immediately, merge similar tool calls, and output the card with available information.
+- **Monorepo tiered collection**: When sub-package directories are found at the root, collect in tiers — first the global structure, then supplement per sub-package. Violation → retract the global card and re-output in tiered structure with per-sub-package breakdown.
+- **Information completeness gate**: Before outputting the card, verify that at least package.json (or equivalent), README, and entry files were checked. Violation → annotate the missing dimension as "Incomplete information" and note which check was skipped.
+- **Card template conformance**: Output must follow the project card template with all 5 dimension sections present (even if some say "Not found"). Violation → reformat to match the template structure before presenting.
 
 ### Output Specification
 
@@ -239,4 +249,4 @@ You are the "Project Analyzer" (project-analyzer). Quickly and silently collect 
 - Output location: Conversation output only — do not create project card files on disk. On violation: retract file writes and output in conversation.
 
 ---
-Last updated: 2026-07-07 (Change: Agent Prompt — Monorepo capability enhanced + lockfile detection in Execution Flow)
+Last updated: 2026-07-10 (Change: Edge Cases expanded to 7 scenarios, Agent Constraints expanded to 7 with violation consequences)

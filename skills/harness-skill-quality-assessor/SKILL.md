@@ -1,11 +1,4 @@
 ---
-slug: harness-skill-quality-assessor-a3e29d98
-displayName: "Skill Quality Assessor"
-version: 1.0.0
-summary: "Systematically evaluate skill quality with quantifiable assessment across 8 dimensions"
-license: MIT
----
----
 name: harness-skill-quality-assessor
 description: Systematically evaluate skill quality in the harness system — providing quantifiable assessment reports and layered improvement recommendations across 8 dimensions including structural completeness, content quality, usability, and agent prompt quality. Used for assessing skill quality, checking compliance, auditing skills, and optimizing skills.
 when_to_use: |
@@ -120,6 +113,12 @@ Select a mode based on evaluation goals and available time:
 **Example 3**: User says "检查所有 skills 是否符合规范"
 **Handling**: Batch evaluation mode → traverse all SKILL.md files → automated script scans everything → sampled manual review (2 out of every 10 skills) → summary report → includes trend comparison and common issue analysis
 
+**Example 4**: User says "这个新 skill 和 prompt-optimizer 比怎么样"
+**Handling**: Detailed evaluation mode → evaluate target skill across 8 dimensions → side-by-side comparison table with prompt-optimizer → identify relative strengths (e.g., more edge cases) and gaps (e.g., fewer examples) → actionable suggestions referencing prompt-optimizer's specific patterns
+
+**Example 5**: User says "上次评估后的改进效果如何"
+**Handling**: Detailed evaluation mode → read previous report from `docs/quality-reports/skills-quality-assessment.md` → re-evaluate the same skill → generate delta report (score changes per dimension, resolved issues, new issues) → update trend data in `docs/QUALITY_SCORE.md`
+
 ## Key Points
 
 - **Unified evaluation criteria**: All skills use the same criteria to ensure comparable results.
@@ -160,6 +159,8 @@ Select a mode based on evaluation goals and available time:
 - **Insufficient automation**: Over-relying on manual evaluation, leading to low efficiency and high subjectivity.
 - **Neglecting user experience**: Focusing only on technical metrics while ignoring learning curve and usability.
 - **Stagnant quality standards**: Not updating quality benchmarks, failing to adapt to new requirements and challenges.
+- **Score inflation over time**: Giving progressively higher scores across evaluation cycles without tightening criteria — scores should reflect actual quality, not evaluation fatigue. Periodically recalibrate by re-evaluating a reference skill from scratch.
+- **Over-reliance on reference skill**: Automatically giving high scores because the reference skill scores high, or penalizing a skill for not matching the reference on every metric. Each skill should be scored on its own merits; the reference is a calibration tool, not a mandatory template.
 
 ## Related Skills
 
@@ -180,6 +181,7 @@ Select a mode based on evaluation goals and available time:
 - When scoring each sub-dimension, provide a one-sentence rationale immediately after the score (e.g., "Deducted 0.5 points due to missing reference file X") for traceability and reproducibility.
 - When comparing against the reference skill, focus on the evaluated skill's unique strengths (it doesn't need to match the reference skill on every metric).
 - Trend data rows must retain at least 6 historical records; mark "insufficient samples" when fewer than 6 records exist.
+- After completing a detailed evaluation, feed HIGH/CRITICAL findings into `harness-authoring` for guided fixes — create a short improvement execution plan with the finding, the suggested fix, and the expected score delta. This closes the evaluation→improvement loop.
 
 ## Agent 提示词
 
@@ -249,4 +251,4 @@ You are the "Skill Quality Assessor", specialized in evaluating the quality of s
 - **Best practices**: Provide best practices for evaluation criteria, evaluation process, and improvement suggestions.
 
 ---
-Last updated: 2026-07-06 (Change: scoring script section name sync — Key Takeaways→Key Points)
+Last updated: 2026-07-10 (Change: Examples 3→5, Common Pitfalls +2, Best Practices +1, evaluation standards 7-fix batch)

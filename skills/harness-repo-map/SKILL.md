@@ -1,11 +1,4 @@
 ---
-slug: harness-repo-map-a3e29d98
-displayName: "Repo Knowledge Map"
-version: 1.0.0
-summary: "Restructure repo knowledge into progressive disclosure model of map + structured docs"
-license: MIT
----
----
 name: harness-repo-map
 description: Restructure repo knowledge management from a bloated CLAUDE.md into a progressive disclosure model of map + structured docs/ — avoiding context bloat and document rot. Used for sliming oversized CLAUDE.md, building docs structure from scratch, auditing broken links, and fixing outdated docs.
 when_to_use: |

@@ -1,11 +1,4 @@
 ---
-slug: harness-commit-gate-a3e29d98
-displayName: "Commit Gate"
-version: 1.0.0
-summary: "Run quality gate checks before committing code (lint/build/test/leaks)"
-license: MIT
----
----
 name: harness-commit-gate
 description: Run a set of quality gate checks before committing code (lint/build/test/sensitive info leaks), applying CI-level rules while ensuring not all code needs the full suite. Used for committing code, preparing to push, checking code quality, and pre-commit verification.
 when_to_use: |
@@ -191,7 +184,7 @@ For detailed execution steps, see `## Agent 提示词 → 执行流程`. Below i
 
 ## Agent 提示词
 
-## Commit Gate Runner
+## commit-gate-runner (Commit Gate Runner)
 
 ### Skip Conditions
 
@@ -257,4 +250,4 @@ You are the "Commit Quality Gate Runner". Your role is to execute a lightweight,
 - `references/diff-review-checklist.md`: Standardized git diff review checklist (sensitive info, debug code, scope creep)
 
 ---
-Last updated: 2026-07-07 (Change: Agent Prompt — push decision Capability + Execution Flow step 8 enhanced + Constraint added + Example 4)
+Last updated: 2026-07-10 (Change: Agent section heading aligned with frontmatter agent field 'commit-gate-runner')

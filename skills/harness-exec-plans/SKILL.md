@@ -1,11 +1,4 @@
 ---
-slug: harness-exec-plans-a3e29d98
-displayName: "Execution Plans"
-version: 1.0.0
-summary: "Persist complex tasks as versioned execution plans with goals, steps, and decision records"
-license: MIT
----
----
 name: harness-exec-plans
 description: Persist complex tasks spanning multiple context windows as versioned execution plans — including goals, steps, decision records, and acceptance criteria. Used for planning ahead, landing large tasks, spanning multiple sessions, and multi-agent relay.
 when_to_use: |
@@ -98,9 +91,9 @@ If item 1 fails, go back to the user to confirm the goal before proceeding. For 
 
 ## Hard Constraints
 
-- **Acceptance criteria must be mechanically verifiable**: Conditions that cannot be auto-verified are not allowed. Violations will be considered invalid and must be redefined with machine-checkable conditions.
-- **Single-agent editing of exec-plan files**: Only one agent may edit an exec-plan file at a time. Violations (concurrent editing) will result in unsaved edits being discarded, requiring re-coordination of editing rights.
-- **Step granularity must be self-verifiable within one PR**: Each step must be small enough to complete and verify in a single PR. Steps that are too coarse will be rejected and must be split into smaller verifiable units.
+- **Acceptance criteria must be mechanically verifiable**: Conditions that cannot be auto-verified are not allowed. Violation → reject the plan, list the non-verifiable criteria, and require the author to rewrite each as a script/command/screenshot-checkable condition before re-submission.
+- **Single-agent editing of exec-plan files**: Only one agent may edit an exec-plan file at a time (owner noted at top of file). Violation (concurrent editing) → discard the later agent's edits, restore to the last committed version, and require explicit handoff coordination before the second agent proceeds.
+- **Step granularity must be self-verifiable within one PR**: Each step must be small enough to complete and verify in a single PR. Violation → reject the step, provide a split suggestion showing how to break it into 2-3 independently verifiable sub-steps, and require re-submission.
 
 ## Examples
 
@@ -112,6 +105,12 @@ If item 1 fails, go back to the user to confirm the goal before proceeding. For 
 
 **Example 3**: User says "多个 agent 协作迁移前端构建工具从 Webpack 到 Turbopack"
 **Handling**: Needs exec-plan → create `docs/exec-plans/active/frontend-build-migration.md` → define explicit handoff points between agents → designate file ownership with owner markers per step → include dependency conflict resolution step at handoff boundaries
+
+**Example 4**: User says "重构支付模块，需要先研究现有方案再动手，可能跨 2-3 个会话"
+**Handling**: Needs exec-plan → create `docs/exec-plans/active/payment-refactor.md` → Phase 1: research & decision log (记录"选 Stripe SDK 因为 X，放弃自建因为 Y") → Phase 2: implementation with per-step acceptance criteria → Phase 3: verification-loop per step → handoff each phase with context window summary path → mark status `blocked` if research phase reveals unexpected complexity
+
+**Example 5**: Plan execution fails midway — Step 3 of 5 passes but Step 4 hits an unexpected blocker
+**Handling**: Read the exec-plan file → review decision log for context → mark Step 4 as `blocked` with root cause annotation → update plan status to `blocked — scope re-assessment needed` → record the blocker in `tech-debt-tracker.md` → if Step 5 depends on Step 4, mark it as blocked too → output recovery options: (a) split Step 4 into smaller sub-steps, (b) re-scope to skip Step 4, (c) wait for external dependency → ask user which path to take before resuming
 
 ## Key Points
 - Plans are skeletons and acceptance criteria — don't pre-write large implementation code. Leave that for the execution phase.
@@ -213,7 +212,8 @@ You are the plan-architect. Convert a high-level goal into an execution plan art
    - Scope (what IS being done) and Non-goals (what IS NOT being done)
    - Independently verifiable step sequence in `- [ ]` format
    - Mechanically checkable acceptance criteria
-   - Known risks, unknowns, and plan overrun recovery strategy (if a step exceeds its estimate by >50%, re-assess scope and update the plan status to 'blocked — scope re-assessment needed')
+   - Known risks, unknowns, and plan overrun recovery strategy
+   - **Overrun detection criteria**: (a) a step takes >50% longer than estimated, (b) a step produces unexpected blockers not in the risks section, (c) scope starts creeping beyond stated non-goals. Any of these triggers → update plan status to `blocked`, add annotation with root cause, and re-assess remaining steps before continuing.
 4. **Verify plan quality**: Run through the plan quality checklist (is the goal one sentence? are non-goals stated? is each step independently verifiable? are criteria mechanically checkable? is the decision log ready for recording? are risks identified?). If any item fails, fix before persisting.
 5. **Persist**: Create the plan file under `docs/exec-plans/active/` with a kebab-case filename, following the `references/exec-plan-template.md` template.
 6. **Delivery advice**: Suggest which agent should execute the plan next and which steps require human confirmation first.
@@ -223,9 +223,9 @@ You are the plan-architect. Convert a high-level goal into an execution plan art
 - **Plan only, no code**: Don't pre-write large implementation code in the plan. On violation, remove pre-written code and keep only the skeleton and acceptance criteria.
 - **Acceptance criteria mechanically verifiable**: Write "tests pass and coverage >= 80%", not "看起来不错". On violation, reject and require redefinition with machine-checkable conditions.
 - **Don't decide for the user**: When the goal is ambiguous, list "questions to clarify" rather than making assumptions. On violation, withdraw assumptions and ask clarifying questions.
-- **Decision log records only choices**: Don't pad entries where there was no disagreement. On violation, remove padded decision entries.
-- **Single path persistence**: All exec-plan files go under `docs/exec-plans/active/` and move to `completed/` when done. On violation, revert to the correct path.
-- **Verify plan quality before persisting**: Run the quality checklist before creating the file. On violation, fix checklist failures before persisting.
+- **Decision log records only choices**: Don't pad entries where there was no disagreement. On violation → list which entries are padded (no alternatives considered, no "why" recorded), delete them, and re-output the log with only genuine decision points.
+- **Single path persistence**: All exec-plan files go under `docs/exec-plans/active/` and move to `completed/` when done. On violation → move the file to the correct directory, update any references to the old path, and confirm the move with `ls` verification.
+- **Verify plan quality before persisting**: Run the quality checklist before creating the file. On violation → re-run each checklist item, report which items failed and why, fix each failure, then re-verify all 6 items pass before persisting.
 - **Plan overrun must be annotated**: When a step takes >50% longer than estimated, must update the plan status and add a 'blocked' annotation with re-assessment notes. On violation: stop execution, add the annotation, and re-assess remaining steps.
 
 ### Output Specification
@@ -238,4 +238,4 @@ You are the plan-architect. Convert a high-level goal into an execution plan art
 - **Delivery advice**: After the plan file is created, output suggestions for which agent should execute next and which steps need human confirmation.
 
 ---
-Last updated: 2026-07-07 (Change: Agent Prompt — plan overrun recovery in Execution Flow + overrun Constraint)
+Last updated: 2026-07-10 (Change: Example 5 added for mid-execution failure recovery + overrun detection criteria)

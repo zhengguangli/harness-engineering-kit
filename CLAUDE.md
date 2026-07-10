@@ -60,7 +60,7 @@ python3 scripts/run-all.py --sync                   # 验证 + 同步到 ~/.agen
 
 ## Quality gates
 
-提交前必须运行全量验证脚本（`python3 scripts/run-all.py`）。当前全 13 个 skill 质量评分 9.48（A 级，第二十五次评估）。详细维度评分见 `docs/QUALITY_SCORE.md`。
+提交前必须运行全量验证脚本（`python3 scripts/run-all.py`）。当前全 13 个 skill 质量评分 9.46（A 级，第三十三次评估）。详细维度评分见 `docs/QUALITY_SCORE.md`。
 
 ## Skill 文件结构
 
