@@ -101,10 +101,10 @@ Generate a complete, ready-to-use prompt. Do not wrap in markdown code blocks (u
 
 ## Hard Constraints
 
-- **Number of steps must be ≤ 7**: When Execution Chain steps exceed 7, they must be split into sub-prompts or merged. Violation means reject and redesign.
-- **Number of steps recommended ≥ 3**: Single-step tasks (1-2 steps) are simple scenarios that can be stated in one sentence. Do not force the six-block structure; output a streamlined version. When violated, remove excess blocks and keep only necessary structure.
-- **Each constraint must include "what happens on violation"**: The Constraints section must not contain rules without consequences. Any entry lacking a violation consequence must be supplemented before passing.
-- **Examples and Constraints must not contradict**: If they conflict, the Examples behavior takes precedence, and the Constraints wording must be corrected at the same time. Any unresolved contradiction must be flagged as a blocking item during self-check.
+1. **Number of steps must be ≤ 7**: When Execution Chain steps exceed 7, they must be split into sub-prompts or merged. Violation means reject and redesign.
+2. **Number of steps recommended ≥ 3**: Single-step tasks (1-2 steps) are simple scenarios that can be stated in one sentence. Do not force the six-block structure; output a streamlined version. Violation (six-block structure applied to a 1-2 step task) → strip the unused blocks, keep only Role / Context / Execution / Output, and re-check that no constraint block was lost in the trimming.
+3. **Each constraint must include "what happens on violation"**: The Constraints section must not contain rules without consequences. Any entry lacking a violation consequence must be supplemented before passing.
+4. **Examples and Constraints must not contradict**: If they conflict, the Examples behavior takes precedence, and the Constraints wording must be corrected at the same time. Any unresolved contradiction must be flagged as a blocking item during self-check.
 
 ## Examples
 
@@ -135,20 +135,6 @@ Generate a complete, ready-to-use prompt. Do not wrap in markdown code blocks (u
 - If the user's task is simple, do not force all six blocks — evaluate and output a prompt with appropriate complexity.
 - If you find the user's need is not prompt optimization but a tool call, be upfront about it.
 
-## Common Pitfalls
-
-- **Only including happy path examples**: LLM behavior on edge cases becomes unpredictable; always cover edge cases.
-- **Examples and rules contradict**: LLMs typically follow examples over rules; when in conflict, behavior biases toward the examples.
-- **Too many constraints**: More than 8 constraints actually cause more violations; select only the critical ones.
-- **Over-engineering**: Simple tasks do not need the full six-block structure; adding unnecessary content for form's sake only wastes tokens.
-
-## Best Practices
-
-- Role and Constraints have the greatest impact on behavior; write these two first.
-- Simple tasks (1-2 steps) do not need the full six-block structure; output a streamlined version.
-- Examples should cover at least standard + edge case; avoid only including happy path.
-- Keep constraints to no more than 8; select only critical ones — too many lead to more violations.
-
 ## Edge Case Handling
 
 > For general edge cases, see `references/common-edge-cases.md`. The following only lists edge cases specific to this skill.
@@ -175,6 +161,20 @@ Generate a complete, ready-to-use prompt. Do not wrap in markdown code blocks (u
 ### Requirement Splitting
 **Scenario**: User's requirements contain multiple independent optimization goals
 **Handling**: Suggest splitting into multiple independent prompts, each focused on one goal, to avoid over-complicating a single prompt
+
+## Common Pitfalls
+
+- **Only including happy path examples**: LLM behavior on edge cases becomes unpredictable; always cover edge cases.
+- **Examples and rules contradict**: LLMs typically follow examples over rules; when in conflict, behavior biases toward the examples.
+- **Too many constraints**: More than 8 constraints actually cause more violations; select only the critical ones.
+- **Over-engineering**: Simple tasks do not need the full six-block structure; adding unnecessary content for form's sake only wastes tokens.
+
+## Best Practices
+
+- Role and Constraints have the greatest impact on behavior; write these two first.
+- Simple tasks (1-2 steps) do not need the full six-block structure; output a streamlined version.
+- Examples should cover at least standard + edge case; avoid only including happy path.
+- Keep constraints to no more than 8; select only critical ones — too many lead to more violations.
 
 ## Related Skills
 - input      **harness-project-intake**: Receives output (project context information) as input for prompt optimization
@@ -233,4 +233,4 @@ You are the "Prompt Engineer" (prompt-optimizer). Transform the user's rough des
 - If the user requests a comparison, include a before/after diff explanation.
 
 ---
-Last updated: 2026-07-10 (Change: boundary case supplements + 2 new examples + complex/ambiguous requirement handling + requirement splitting + Agent Prompt step 2.5)
+Last updated: 2026-09-23 (Change: Edge Case Handling moved before Common Pitfalls to match canonical section order; step-count constraint given an explicit violation consequence)

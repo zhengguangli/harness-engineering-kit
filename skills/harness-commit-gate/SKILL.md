@@ -108,9 +108,9 @@ For detailed execution steps, see `## Agent 提示词 → 执行流程`. Below i
 
 ## Hard Constraints
 
-- **Test failure must block the commit**: When any test, build, or type check fails, the commit flow must immediately abort and must not proceed. Commits violating this constraint will be rejected until all checks pass.
-- **Commit message length limit**: The commit message must be ≤ 72 characters. Messages exceeding this limit will be rejected and a compliant version must be regenerated.
-- **allowed-tools coverage integrity**: The allowed-tools field must include all commands mentioned in the methodology (git, npm/bun/cargo, etc.). Missing tool declarations will prevent the corresponding commands from executing, blocking the quality gate flow.
+1. **Test failure must block the commit**: When any test, build, or type check fails, the commit flow must immediately abort and must not proceed. Commits violating this constraint will be rejected until all checks pass.
+2. **Commit message length limit**: The commit message must be ≤ 72 characters. Messages exceeding this limit will be rejected and a compliant version must be regenerated.
+3. **allowed-tools coverage integrity**: The allowed-tools field must include all commands mentioned in the methodology (git, npm/bun/cargo, etc.). Violation → the command is refused by the platform and the gate silently skips that check; before running the gate, diff the methodology's command list against allowed-tools and add every missing entry.
 
 ## Examples
 
@@ -254,4 +254,4 @@ You are the "Commit Quality Gate Runner". Your role is to execute a lightweight,
 - `references/diff-review-checklist.md`: Standardized git diff review checklist (sensitive info, debug code, scope creep)
 
 ---
-Last updated: 2026-07-10 (Change: Agent section heading aligned with frontmatter agent field 'commit-gate-runner')
+Last updated: 2026-09-23 (Change: Hard Constraints normalised to numbered list; allowed-tools constraint given an explicit violation consequence)

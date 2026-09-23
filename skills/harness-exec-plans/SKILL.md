@@ -93,9 +93,9 @@ If item 1 fails, go back to the user to confirm the goal before proceeding. For 
 
 ## Hard Constraints
 
-- **Acceptance criteria must be mechanically verifiable**: Conditions that cannot be auto-verified are not allowed. Violation → reject the plan, list the non-verifiable criteria, and require the author to rewrite each as a script/command/screenshot-checkable condition before re-submission.
-- **Single-agent editing of exec-plan files**: Only one agent may edit an exec-plan file at a time (owner noted at top of file). Violation (concurrent editing) → discard the later agent's edits, restore to the last committed version, and require explicit handoff coordination before the second agent proceeds.
-- **Step granularity must be self-verifiable within one PR**: Each step must be small enough to complete and verify in a single PR. Violation → reject the step, provide a split suggestion showing how to break it into 2-3 independently verifiable sub-steps, and require re-submission.
+1. **Acceptance criteria must be mechanically verifiable**: Conditions that cannot be auto-verified are not allowed. Violation → reject the plan, list the non-verifiable criteria, and require the author to rewrite each as a script/command/screenshot-checkable condition before re-submission.
+2. **Single-agent editing of exec-plan files**: Only one agent may edit an exec-plan file at a time (owner noted at top of file). Violation (concurrent editing) → discard the later agent's edits, restore to the last committed version, and require explicit handoff coordination before the second agent proceeds.
+3. **Step granularity must be self-verifiable within one PR**: Each step must be small enough to complete and verify in a single PR. Violation → reject the step, provide a split suggestion showing how to break it into 2-3 independently verifiable sub-steps, and require re-submission.
 
 ## Examples
 
@@ -241,4 +241,4 @@ You are the plan-architect. Convert a high-level goal into an execution plan art
 - **Delivery advice**: After the plan file is created, output suggestions for which agent should execute next and which steps need human confirmation.
 
 ---
-Last updated: 2026-07-10 (Change: Example 5 added for mid-execution failure recovery + overrun detection criteria)
+Last updated: 2026-09-23 (Change: Hard Constraints normalised to numbered list (format consistency)) (Change: Example 5 added for mid-execution failure recovery + overrun detection criteria)

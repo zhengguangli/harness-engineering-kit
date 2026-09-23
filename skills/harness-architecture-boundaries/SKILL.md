@@ -162,6 +162,9 @@ function parseUserInput(input: unknown): UserInput {
 **Scenario**: The project is migrating from a monolith to a layered architecture, and not all modules have been migrated yet
 **Handling**: Scope the audit to migrated modules only. Mark unmigrated modules as "out of scope" in the report with a note that they will be audited after migration. Do not flag violations in unmigrated code — that produces noise, not signal.
 
+
+## Common Pitfalls
+
 - **Copying layering models blindly**: Different projects have different domain divisions and dependency directions — don't mechanically apply the 6-layer model.
   - Solution: First analyze the project's actual domain divisions and data flow, then design a suitable layering model
   - Example: A small project may only need 3 layers (Types → Services → UI), not 6
@@ -264,4 +267,4 @@ You are the "Architecture Boundary Auditor." Your sole responsibility is to dete
 - **Report structure**: Includes both a summary (total + severity distribution + whether it blocks) and detailed findings, ordered by severity
 
 ---
-Last updated: 2026-07-10 (Change: Edge Cases 1→4 scenarios (ambiguous rules, multi-team, gradual migration))
+Last updated: 2026-09-23 (Change: added the missing '## Common Pitfalls' heading — 6 pitfalls were orphaned at the end of Edge Case Handling)

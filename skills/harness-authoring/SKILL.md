@@ -131,15 +131,6 @@ When the body approaches 500 lines, split content into `references/` sub-files, 
 - **Avoid capability overlap**: Check existing capabilities before adding new ones; merge or define boundaries if overlap exists.
 - **Canonical version**: `## Agent 提示词` is the single entry point for modifications.
 - **Agent prompt and skill body are co-located**: Maintaining both in a single `SKILL.md` avoids the drift problem of separate agent prompt files — edit once, synchronize automatically.
-
-## Related Templates
-
-- `references/scaffold-templates.md`: Scaffolding templates for new skills and agents
-- `references/skill-design-patterns.md`: Skill design patterns reference
-- `references/subagent-design-patterns.md`: Subagent design patterns reference
-- `references/context-budget-management-guide.md`: Context budget management guidelines
-- `references/common-edge-cases.md`: General edge case handling guide
-
 ## Edge Case Handling
 
 > For general edge cases, see `references/common-edge-cases.md`. The following list only covers edge cases specific to this skill.
@@ -251,7 +242,7 @@ You are the "Skill Scaffolder", responsible for generating complete file skeleto
 - output     **harness-skill-quality-assessor**: After authoring a new skill, hand off to the assessor to score it
 - see-also   **harness-commit-gate**: New skills must pass the commit gate before merge
 
-- Downstream **all other skills**: This skill's output (new skill templates and specifications) is passed downstream as scaffolding
+- output     **all other skills**: This skill's output (new skill templates and specifications) is passed downstream as scaffolding
 
 ## Related Templates
 
@@ -262,4 +253,4 @@ You are the "Skill Scaffolder", responsible for generating complete file skeleto
 - `references/common-edge-cases.md`: General edge case handling guide
 
 ---
-Last updated: 2026-07-10 (Change: Edge Cases 4→6 scenarios + Quick Decision Table for skill vs subagent)
+Last updated: 2026-09-23 (Change: removed a verbatim-duplicated '## Related Templates' block; normalised a legacy 'Downstream' label in Related Skills)

@@ -88,9 +88,9 @@ Always output the structured card below — never output raw file content:
 
 ## Hard Constraints
 
-- **Do NOT fabricate information**: The card must not contain any fabricated content (e.g., guessed versions or assumed frameworks). If the verification-loop finds fabricated information, reject it and require re-collection. If a dimension truly cannot be obtained, write "Not found" or "Not configured".
-- **Information collection MUST cover package.json / README / entry files**: If any of these three is missing, annotate "Incomplete information" in the corresponding card dimension. Do not skip or fill with guesses.
-- **Fallback when no package manifest exists**: When none of `package.json` / `Cargo.toml` / `go.mod` / `pyproject.toml` exist, run `ls` to observe file extensions and infer the language, annotating "Inferred (no package manifest)" in the card.
+1. **Do NOT fabricate information**: The card must not contain any fabricated content (e.g., guessed versions or assumed frameworks). If the verification-loop finds fabricated information, reject it and require re-collection. If a dimension truly cannot be obtained, write "Not found" or "Not configured".
+2. **Information collection MUST cover package.json / README / entry files**: If any of these three is missing, annotate "Incomplete information" in the corresponding card dimension. Violation (a dimension silently left blank or filled with a guess) → reject the card, mark the affected dimension "Incomplete information", and re-run collection for that dimension only.
+3. **Fallback when no package manifest exists**: When none of `package.json` / `Cargo.toml` / `go.mod` / `pyproject.toml` exist, run `ls` to observe file extensions and infer the language, annotating "Inferred (no package manifest)" in the card. Violation (language asserted without the annotation) → reject the card, downgrade the language field to "Inferred (no package manifest)", and re-verify the inference against at least two file extensions.
 
 ## Examples
 
@@ -250,4 +250,4 @@ You are the "Project Analyzer" (project-analyzer). Quickly and silently collect 
 - Output location: Conversation output only — do not create project card files on disk. On violation: retract file writes and output in conversation.
 
 ---
-Last updated: 2026-07-10 (Change: Edge Cases expanded to 7 scenarios, Agent Constraints expanded to 7 with violation consequences)
+Last updated: 2026-09-23 (Change: Hard Constraints normalised to numbered list; two constraints given explicit violation consequences)

@@ -71,11 +71,11 @@ Playwright and Puppeteer are two mainstream browser automation tools. In this sk
 5. **Capability gaps**: If the project lacks necessary observability capabilities, record the gap itself as a to-be-fixed "environment deficiency."
 
 ## Hard Constraints
-- **Conclusions without supporting evidence must not be attached to a PR**: Violations will be rejected by verification-loop, requiring supplemental verification evidence before resubmission.
-- **Browser screenshots must include a timestamp and URL**: Screenshots lacking metadata are considered invalid evidence and will be rejected by verification-loop.
-- **Acceptance criteria must be machine-checkable**: Subjective criteria (e.g., "looks good", "feels fast") are not allowed. Violation → reject the criteria and require rewrite with measurable conditions (e.g., "P99 < 800ms", "screenshot matches design within 5% pixel diff").
-- **Observability verification must use structured logs**: Free-text logs are not queryable or aggregatable. Violation → report the gap and recommend converting to structured JSON logs before verification can proceed.
-- **Verification type must be correctly distinguished**: UI verification, performance verification, and reliability verification must not be conflated. Violation → reclassify the verification type and re-run with the correct method.
+1. **Conclusions without supporting evidence must not be attached to a PR**: Violations will be rejected by verification-loop, requiring supplemental verification evidence before resubmission.
+2. **Browser screenshots must include a timestamp and URL**: Screenshots lacking metadata are considered invalid evidence and will be rejected by verification-loop.
+3. **Acceptance criteria must be machine-checkable**: Subjective criteria (e.g., "looks good", "feels fast") are not allowed. Violation → reject the criteria and require rewrite with measurable conditions (e.g., "P99 < 800ms", "screenshot matches design within 5% pixel diff").
+4. **Observability verification must use structured logs**: Free-text logs are not queryable or aggregatable. Violation → report the gap and recommend converting to structured JSON logs before verification can proceed.
+5. **Verification type must be correctly distinguished**: UI verification, performance verification, and reliability verification must not be conflated. Violation → reclassify the verification type and re-run with the correct method.
 
 ## Examples
 
@@ -205,4 +205,4 @@ Produces verification evidence based on real runtime signals (browser rendering,
 - Output primarily in conversation — if archiving is needed, attach screenshots and query results in the PR description or exec-plan acceptance records, not as standalone files.
 
 ---
-Last updated: 2026-07-10 (Change: Hard Constraints 2→5, Examples 2→4, Related Skills 2→4, Related Templates 2→7)
+Last updated: 2026-09-23 (Change: Hard Constraints normalised to numbered list (format consistency)) (Change: Hard Constraints 2→5, Examples 2→4, Related Skills 2→4, Related Templates 2→7)

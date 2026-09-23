@@ -112,9 +112,9 @@ Failures are written as agent-friendly repair instructions so whoever finds them
 
 ## Hard Constraints
 
-- **CLAUDE.md ≤ 100 lines**: Violation → must be slimmed before merging.
-- **docs/ broken-link rate = 0**: Violation → blocks merge.
-- **Every docs/ file must have a metadata header**: Violation → doc-gardener marks as UNKNOWN.
+1. **CLAUDE.md ≤ 100 lines**: Violation → must be slimmed before merging.
+2. **docs/ broken-link rate = 0**: Violation → blocks merge.
+3. **Every docs/ file must have a metadata header**: Violation → doc-gardener marks as UNKNOWN.
 
 ## Examples
 
@@ -264,4 +264,4 @@ Execute the following steps strictly in order, using the minimum number of tool 
 - **Best practices**: Provide best practices for knowledge base management, document maintenance, and directory structure.
 
 ---
-Last updated: 2026-07-07 (Change: Agent Prompt — severity rating Capability + Execution Flow Step 5 enhanced)
+Last updated: 2026-09-23 (Change: Hard Constraints normalised to numbered list (format consistency)) (Change: Agent Prompt — severity rating Capability + Execution Flow Step 5 enhanced)
