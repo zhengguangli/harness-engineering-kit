@@ -1,5 +1,79 @@
 # Skills 质量评估报告 (Batch Evaluation)
 
+## 第 34 次评估（2026-09-23）— 机械指标审计轮次
+
+**评估模式**: 机械检查点审计（非主观加权评分）
+**评估目标**: 全 13 个 skill — 对 rubric 中可客观判定的检查点做全量机械审计
+
+### 为什么不复算加权分
+
+第 1-33 轮的 9.xx 分是评估者按 8 维度 rubric **人工打分**的产物。该分数依赖评估者对
+"clarity"、"executability"、"user experience" 等维度的主观判断，无法被机械复现。
+本轮若给出一个"看起来可比"的平均分，等于编造数据。因此本轮只报告可客观判定的结果。
+
+第 33 次的等级分布（5 A+ / 8 A，平均 9.46）**原样保留为最后一次主观评估的结果**，
+未在本轮被修改或覆盖。如需新的 A+ 判定，必须由 harness-skill-quality-assessor
+按 rubric 重新人工执行。
+
+### 机械检查点结果：13/13 全绿
+
+| 检查点 | 通过 |
+|---|---|
+| frontmatter 必填字段完整（name / description / when_to_use / compatibility / context / agent / allowed-tools / depends_on） | 13/13 |
+| metadata.category 存在 | 13/13 |
+| 10 个必需章节齐全（Core Principles / When to Use / When Not to Use / Methodology / Key Points / Common Pitfalls / Edge Case Handling / Hard Constraints / Examples / Best Practices） | 13/13 |
+| Hard Constraints 为编号列表 | 13/13 |
+| Hard Constraints 每条含 Violation 后果 | 13/13 |
+| Agent 提示词 6 个子节齐全（Skip Conditions / Role Definition / Core Capabilities / Execution Flow / Constraints / Output Specification） | 13/13 |
+| Examples ≥ 3 | 13/13 |
+| references/common-edge-cases.md 存在 | 13/13 |
+| Edge Case Handling 场景 ≥ 3 | 13/13 |
+| Last updated ≤ 90 天 | 13/13 |
+| automated_check_script.py 存在且可执行 | 13/13 |
+| `python3 scripts/run-all.py` 四阶段全绿（frontmatter / regression 48 / agent prompt / deps） | 13/13 |
+
+### 本轮修复的结构性缺陷
+
+全部由机械审计发现，非人工浏览：
+
+| # | 缺陷 | 影响 skill | 修复 |
+|---|---|---|---|
+| 1 | Hard Constraints 格式分裂为 5 编号 / 8 bullet | 8 个 | 统一为编号列表 |
+| 2 | 缺 `## Common Pitfalls` 标题，6 条要点 orphaned 在 Edge Case Handling 末尾 | architecture-boundaries | 补标题 |
+| 3 | `## Related Templates` 整块逐字重复 | authoring | 删除错位的那一份 |
+| 4 | Edge Case Handling 排在 Best Practices 之后，顺序错位 | prompt-optimizer | 移到 Common Pitfalls 之前 |
+| 5 | 4 处硬约束只有规则没有 Violation 后果 | commit-gate ×1、project-intake ×2、prompt-optimizer ×1 | 补齐后果描述 |
+| 6 | 缺 `## Cross-Skill Handoff Points`（第 33 次评估遗留的 MEDIUM 问题） | exec-plans | 补章节 |
+
+### 新增机械强制（TD-001 关闭）
+
+- `depends_on` frontmatter 契约：只表达真实数据依赖，共 14 条边，构成干净 DAG
+- `scripts/validate_skill_dependencies.py`：环检测 / 向下流动 / Meta 层隔离 / 引用有效性 / 跨 skill 路径存在性
+- 接入 `run-all.py` 第四阶段，CI 自动继承
+- `tests/dependencies/test_dependency_validation.py`：18 个标准库 unittest 用例
+
+### 当前依赖图（机械校验通过）
+
+```
+L0  project-intake            → (无)
+L1  bootstrap                 → project-intake
+L2  repo-map                  → bootstrap, project-intake
+L2  architecture-boundaries   → project-intake, bootstrap
+L2  golden-principles         → project-intake
+L2  prompt-optimizer          → project-intake
+L3  exec-plans                → bootstrap
+L4  verification-loop         → exec-plans, architecture-boundaries
+L4  observability-and-browser → exec-plans
+L5  commit-gate               → verification-loop, observability-and-browser, exec-plans
+Meta orchestration / authoring / skill-quality-assessor → (无)
+```
+
+零循环，全部向下流动。
+
+---
+
+## 第 33 次评估（2026-07-10）— 最后一次主观加权评分
+
 **评估日期**: 2026-07-10
 **评估模式**: 批量评估（第 33 次）
 **评估目标**: 全 13 个 skill — 全量八维度质量评估
@@ -463,4 +537,4 @@ exec-plans 的 Related Skills 和 Examples 中包含大量 handoff 相关内容�
 
 ---
 
-Last updated: 2026-07-10（第 33 次批量评估）
+Last updated: 2026-09-23 (Change: 34th evaluation — mechanical checkpoint audit, 6 structural defects fixed, TD-001 closed)

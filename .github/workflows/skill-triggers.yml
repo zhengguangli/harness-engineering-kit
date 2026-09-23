@@ -9,13 +9,15 @@ jobs:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
-      - name: Ensure PR source is developer branch
+      - name: Ensure PR source is an integration branch
         run: |
           head="${{ github.head_ref }}"
-          if [ "$head" != "developer" ]; then
-            echo "::error::PR must be opened from developer branch (current: $head)"
-            exit 1
-          fi
+          # Gitflow: work happens on feature/*, which merges into develop,
+          # which merges into main. Direct feature/* -> main PRs are rejected.
+          case "$head" in
+            develop|main|release/*) ;;
+            *) echo "::error::PR must come from develop, main or release/* (current: $head)"; exit 1 ;;
+          esac
   validate:
     runs-on: ubuntu-latest
     steps:

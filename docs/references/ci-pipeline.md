@@ -9,4 +9,4 @@ PR → main:        确保 source 为 develop 分支 + python3 scripts/run-all.p
 
 ---
 
-Last updated: 2026-07-06
+Last updated: 2026-09-23 (Change: refreshed freshness stamp; content unchanged)

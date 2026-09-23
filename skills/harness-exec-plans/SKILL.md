@@ -124,6 +124,18 @@ If item 1 fails, go back to the user to confirm the goal before proceeding. For 
 - Continuously update progress; don't backfill everything at the end.
 - After updating the decision log, tag each entry with the agent-id or author who made the decision — this adds traceability across handoffs and prevents repeated explanation in subsequent sessions.
 
+
+## Cross-Skill Handoff Points
+
+| Direction | Skill | Deliverable | Handoff mechanism | When to skip |
+|---|---|---|---|---|
+| input | `harness-bootstrap` | `docs/exec-plans/active/` + `docs/exec-plans/completed/` directories | Plan files are written into the directory structure bootstrap created | Project already has an exec-plans directory — verify it exists with `ls` and proceed |
+| output | `harness-verification-loop` | The exec-plan file itself (goals, steps, acceptance criteria) | Pass the plan file path; verification-loop walks it step by step | Change is small enough to verify inline with no persisted plan |
+| routes-to | `harness-commit-gate` | Completed plan with all acceptance criteria met | Hand off after the final step is verified; commit-gate does not re-verify passed criteria | Plan abandoned or superseded — record the reason in the plan's decision log |
+| routes-to | `harness-orchestration` | Routing decision identifying a large multi-step task | Orchestration invokes this skill when a task needs persistence across sessions | User already asked for a plan directly — skip routing |
+
+**Error handling**: If the upstream `docs/exec-plans/` directory is missing, do not create the whole harness skeleton — report the gap and either ask the user to run `harness-bootstrap` or create only the two directories. If a downstream skill reports the plan is unverifiable, rewrite the offending acceptance criteria rather than relaxing them.
+
 ## Edge Case Handling
 
 > For general edge cases (goal clarification, etc.), see `references/common-edge-cases.md`. Below are edge cases specific to this skill.

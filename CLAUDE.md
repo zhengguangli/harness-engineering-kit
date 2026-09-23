@@ -62,7 +62,7 @@ python3 scripts/run-all.py --sync                   # 验证 + 同步到 ~/.agen
 
 ## Quality gates
 
-提交前必须运行全量验证脚本（`python3 scripts/run-all.py`，四阶段：frontmatter / 触发回归 / Agent Prompt / 依赖校验）。当前全 13 个 skill 质量评分 9.46（A 级，第三十三次评估）。详细维度评分见 `docs/QUALITY_SCORE.md`。
+提交前必须运行全量验证脚本（`python3 scripts/run-all.py`，四阶段：frontmatter / 触发回归 / Agent Prompt / 依赖校验）。最后一次主观加权评分为第 33 次（2026-07-10，平均 9.46，5 A+ / 8 A）；第 34 次（2026-09-23）为机械检查点审计，13/13 全绿。详见 `docs/QUALITY_SCORE.md`。
 
 ## Skill 文件结构
 
@@ -95,4 +95,4 @@ skills/<name>/
 
 ---
 
-最后更新: 2026-09-23（变更：TD-001 关闭 — 新增 `depends_on` frontmatter 契约、`scripts/validate_skill_dependencies.py` 第四阶段校验、`tests/dependencies/` 18 个回归用例）
+最后更新: 2026-09-23（变更：TD-001 关闭 — `depends_on` 契约 + 第四阶段依赖校验 + 18 个回归用例；第 34 次机械审计修复 6 类结构性缺陷；exec-plans 补齐 Cross-Skill Handoff）

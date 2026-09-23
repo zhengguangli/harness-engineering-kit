@@ -15,7 +15,7 @@
 
 | 领域 | frontmatter 合规 | 触发回归 | 关键词一致性 | 文档新鲜度 | 最近评估日期 |
 |---|---|---|---|---|---|
-| skills (13个) | 13/13 (100%) ✅ | 48/48 (100%) ✅ | 13/13 (100%) ✅ | ✅ 7日内更新 | 2026-07-10 (三十三次) |
+| skills (13个) | 13/13 (100%) ✅ | 48/48 (100%) ✅ | 13/13 (100%) ✅ | ✅ 当日更新 | 2026-09-23 (三十四次) |
 | scripts | — | — | — | ✅ 7日内更新 | 2026-07-03 |
 | tests | — | — | — | ✅ 7日内更新 | 2026-07-03 |
 
@@ -111,3 +111,29 @@
 - 平均分 **低于 9.30** → 触发季度审计（说明出现内容退化）
 - 出现 **MEDIUM+ 级别问题** → 立即启动修复，优先级高于新功能
 - 参考文件总数 **低于 75** → 检查是否有文件被误删
+
+2026-09-23 (三十四次): **机械指标审计轮次**。本轮不再复算主观加权分——第 1-33 轮的 9.xx 分是评估者按 8 维度 rubric 人工打分，无法被机械复现，强行给一个"可比数字"等于编造。因此本轮改为对 rubric 中**可客观判定**的检查点做全量机械审计，结果 13/13 全绿：
+
+| 检查点 | 结果 |
+|---|---|
+| frontmatter 必填字段完整（name/description/when_to_use/compatibility/context/agent/allowed-tools/depends_on） | 13/13 |
+| metadata.category 存在 | 13/13 |
+| 10 个必需章节齐全 | 13/13 |
+| Hard Constraints 为编号列表且每条含 Violation 后果 | 13/13 |
+| Agent 提示词 6 个子节齐全（Skip/Role/Capabilities/Flow/Constraints/Output） | 13/13 |
+| Examples ≥ 3 | 13/13 |
+| references/common-edge-cases.md 存在 | 13/13 |
+| Edge Case Handling 场景 ≥ 3 | 13/13 |
+| Last updated ≤ 90 天 | 13/13 |
+| automated_check_script.py 存在且可执行 | 13/13 |
+
+本轮修复的结构性缺陷（均由机械审计发现，非人工浏览）：
+1. Hard Constraints 格式分裂为 5 编号 / 8 bullet，已统一为编号列表
+2. harness-architecture-boundaries 缺 `## Common Pitfalls` 标题——6 条要点 orphaned 在 Edge Case Handling 末尾
+3. harness-authoring 的 `## Related Templates` 整块重复
+4. harness-prompt-optimizer 的 Edge Case Handling 排在 Best Practices 之后，顺序错位
+5. 4 处硬约束只有规则没有 Violation 后果（commit-gate ×1、project-intake ×2、prompt-optimizer ×1）
+
+新增机械强制：`depends_on` frontmatter 契约 + `scripts/validate_skill_dependencies.py`（环检测/向下流动/Meta 隔离/引用有效性/跨 skill 路径存在性），TD-001 关闭。
+
+**关于 A+ 数量的说明**：第 33 次记录为 5 A+ / 8 A。本轮不做主观重评，因此不更新该计数——它仍是第 33 次评估的结果，不是本轮的。若需要新的 A+ 判定，需由 harness-skill-quality-assessor 按 rubric 人工执行。

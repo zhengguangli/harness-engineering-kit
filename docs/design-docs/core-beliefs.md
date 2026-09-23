@@ -38,4 +38,4 @@ Defines the agent-first operating principles of the harness-engineering-kit. The
   ```
 
 ---
-Last updated: 2026-07-06
+最后更新: 2026-09-23（复核：内容未变更，仅刷新新鲜度戳）
