@@ -8,6 +8,9 @@ when_to_use: |
 context: fork
 agent: doc-gardener
 compatibility: claude-code
+depends_on:
+  - harness-bootstrap
+  - harness-project-intake
 allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *)
 metadata:
   category: knowledge
@@ -180,15 +183,12 @@ Failures are written as agent-friendly repair instructions so whoever finds them
 - **Redundant entry files**: Creating duplicate entry files for multiple platforms simultaneously — only create the one for your own platform.
 
 ## Related Skills
+- input      **harness-bootstrap**: Consumes the initialized CLAUDE.md + docs/ skeleton for validation
+- input      **harness-project-intake**: Consumes the structured project card (tech stack, architecture, entry points)
+- see-also   **harness-architecture-boundaries**: ARCHITECTURE.md domain boundaries are written by boundary-auditor; repo-map only checks the file exists and is reachable
+- see-also   **harness-golden-principles**: QUALITY_SCORE.md is generated during initialization and read by the golden-principles scanner
+- see-also   **harness-prompt-optimizer**: When CLAUDE.md content needs prompt optimization rather than restructuring
 
-| Direction | Skill | Deliverable | Handoff mechanism | When to skip |
-|-----------|-------|-------------|-------------------|-------------|
-| Upstream | **harness-bootstrap** | Initialized CLAUDE.md + docs/ skeleton | Skeleton files passed directly to doc-gardener for validation | Already have a docs/ structure — skip bootstrap, go directly to doc-gardener audit |
-| Upstream | **harness-project-intake** | Structured project card (tech stack, architecture, entry points) | Card fields inform doc-gardener's ARCHITECTURE.md coverage check | Project already analyzed — use existing card |
-| Downstream | **all skills** | Knowledge base structure and docs/ documentation | Caller retrieves context from docs/ for task execution | — |
-| Downstream | **harness-architecture-boundaries** | ARCHITECTURE.md domain boundaries | Generate ARCHITECTURE.md during initialization; later the boundary-auditor reads it for layer validation | Small project with no layering |
-| Downstream | **harness-golden-principles** | QUALITY_SCORE.md quality matrix | Generate during initialization; golden-principles scanner reads it for deviation scoring | No quality rules yet |
-| Cross-reference | **harness-prompt-optimizer** | When CLAUDE.md content needs prompt optimization rather than restructuring | | |
 
 ## Related Templates
 

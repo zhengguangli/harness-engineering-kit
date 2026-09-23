@@ -8,6 +8,8 @@ when_to_use: |
 context: fork
 agent: prompt-optimizer
 compatibility: claude-code
+depends_on:
+  - harness-project-intake
 allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *)
 metadata:
   category: prompt-engineering
@@ -175,12 +177,10 @@ Generate a complete, ready-to-use prompt. Do not wrap in markdown code blocks (u
 **Handling**: Suggest splitting into multiple independent prompts, each focused on one goal, to avoid over-complicating a single prompt
 
 ## Related Skills
+- input      **harness-project-intake**: Receives output (project context information) as input for prompt optimization
+- see-also   **harness-repo-map**: Knowledge base information is contextual reference; also the right skill when the issue is CLAUDE.md bloat rather than prompt quality
 
-- Upstream **harness-project-intake**: Receives output (project context information) as input for prompt optimization
-- Upstream **harness-repo-map**: Receives output (knowledge base information) as contextual reference for prompt optimization
 - Downstream **All skills needing structured prompts**: Output from this skill (optimized prompt text) is passed downstream for execution
-- `harness-repo-map`: When the issue is CLAUDE.md bloat rather than prompt quality
-- `harness-project-intake`: When project context is needed to write an effective prompt
 
 ## Related Templates
 

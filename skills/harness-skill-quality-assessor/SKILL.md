@@ -8,6 +8,7 @@ when_to_use: |
 context: fork
 agent: skill-quality-assessor
 compatibility: claude-code
+depends_on: []
 allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *) Bash(bc *) Bash(sort *) Bash(uniq *) Bash(cut *) Bash(tr *) Bash(paste *)
 metadata:
   category: quality-assurance
@@ -163,10 +164,12 @@ Select a mode based on evaluation goals and available time:
 - **Over-reliance on reference skill**: Automatically giving high scores because the reference skill scores high, or penalizing a skill for not matching the reference on every metric. Each skill should be scored on its own merits; the reference is a calibration tool, not a mandatory template.
 
 ## Related Skills
+- routes-to  **harness-orchestration**: Orchestration routes batch evaluation work here
+- see-also   **harness-authoring**: Improvement directions identified by assessment are implemented following authoring guidance
+- see-also   **harness-repo-map**: Evaluation reports are stored in docs/, whose health repo-map maintains
+- see-also   **harness-commit-gate**: Assessment findings feed the pre-commit gate
+- see-also   **harness-prompt-optimizer**: Prompt quality findings overlap with the optimizer's domain
 
-- `harness-orchestration`: Upstream. Orchestration routes to this skill for batch evaluation.
-- `harness-authoring`: Downstream. Improvement directions identified by quality assessment are guided by authoring on how to fix.
-- `harness-repo-map`: Downstream. Evaluation reports are stored in docs/, with repo-map maintaining their health.
 
 ## Related Templates
 

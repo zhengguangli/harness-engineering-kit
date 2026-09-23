@@ -10,6 +10,10 @@ context: fork
 allowed-tools: Bash(git *) Bash(npm *) Bash(bun *) Bash(cargo *) Bash(vitest *) Bash(tsc *) Bash(bunx *) Bash(make *) Bash(just *)
 agent: commit-gate-runner
 compatibility: claude-code
+depends_on:
+  - harness-verification-loop
+  - harness-observability-and-browser
+  - harness-exec-plans
 metadata:
   category: workflow
 ---
@@ -176,11 +180,11 @@ For detailed execution steps, see `## Agent 提示词 → 执行流程`. Below i
 - When committing AI-assisted or paired work, append a `Co-Authored-By: Name <email>` trailer below the message body to credit all contributors.
 
 ## Related Skills
+- input      **harness-verification-loop**: After verification-loop completes checks, hand off to commit-gate; commit-gate does not re-run already-passed checks
+- input      **harness-observability-and-browser**: Verified changes proceed to commit
+- input      **harness-exec-plans**: After the execution plan completes, proceed through verification-loop to commit
+- see-also   **harness-golden-principles**: Golden principle rules may inform commit message conventions — advisory only
 
-- `harness-verification-loop`: Upstream. After verification-loop completes checks, hand off to commit-gate; commit-gate does not re-run already-passed checks.
-- `harness-observability-and-browser`: Upstream. Verified changes proceed to commit.
-- `harness-exec-plans`: Upstream. After the execution plan completes, proceed through verification-loop to commit.
-- `harness-golden-principles`: Golden principle rules may inform commit message conventions
 
 ## Agent 提示词
 

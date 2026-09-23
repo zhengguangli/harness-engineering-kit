@@ -8,6 +8,7 @@ when_to_use: |
 context: fork
 agent: orchestrator
 compatibility: claude-code
+depends_on: []
 allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *)
 metadata:
   category: routing
@@ -324,10 +325,18 @@ Read-only routing advisor that recommends the correct skill combination and exec
 ```
 
 ## Related Skills
+- routes-to  **harness-project-intake**: Route here when the goal is understanding an unfamiliar project
+- routes-to  **harness-bootstrap**: Route here when the goal is initializing a harness structure
+- routes-to  **harness-repo-map**: Route here when the goal is validating or restructuring CLAUDE.md/docs
+- routes-to  **harness-golden-principles**: Route here when the goal is encoding team taste into mechanical rules
+- routes-to  **harness-prompt-optimizer**: Route here when the goal is improving prompt quality
+- routes-to  **harness-exec-plans**: Route here when a large task needs a persisted execution plan
+- routes-to  **harness-commit-gate**: Route here when the work is done and ready to commit
+- routes-to  **harness-authoring**: Route here when the user wants to extend the harness system with new skills
+- routes-to  **harness-skill-quality-assessor**: Route here for batch skill quality evaluation
 
 - Upstream **None**: This skill is a meta-layer routing entry, does not depend on outputs from other skills
 - Downstream **project-intake / exec-plans / authoring / golden-principles / prompt-optimizer**: This skill routes to the corresponding skill based on the user's goal
-- `harness-authoring`: When the user wants to extend the harness system with new skills
 
 ## Related Templates
 

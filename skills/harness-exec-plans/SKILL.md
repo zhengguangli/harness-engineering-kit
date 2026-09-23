@@ -8,6 +8,8 @@ when_to_use: |
 context: fork
 agent: plan-architect
 compatibility: claude-code
+depends_on:
+  - harness-bootstrap
 allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *)
 metadata:
   category: planning
@@ -162,10 +164,11 @@ If item 1 fails, go back to the user to confirm the goal before proceeding. For 
 - For plans involving external dependencies or third-party services (APIs, databases, secrets), create a dedicated "External Dependencies" subsection documenting required access, rate limits, and service-level constraints — prevents execution-time surprises and blocking.
 
 ## Related Skills
+- input      **harness-bootstrap**: Depends on the docs/exec-plans/ directory structure created during initialization
+- routes-to  **harness-orchestration**: Orchestration identifies large tasks and routes them here for a persisted execution plan
+- output     **harness-verification-loop**: Execution plan files (goals, steps, acceptance criteria) are consumed step-by-step by the verification loop
+- routes-to  **harness-commit-gate**: After plan execution completes, hand off to commit-gate for the final gate
 
-- Upstream **harness-orchestration**: Receives output (large task identification) as a trigger signal for needing a persisted execution plan.
-- Downstream **harness-verification-loop**: This skill's output (execution plan files) is passed downstream for step-by-step verification.
-- `harness-commit-gate`: Downstream. After plan execution completes, commit via commit-gate
 
 ## Related Templates
 

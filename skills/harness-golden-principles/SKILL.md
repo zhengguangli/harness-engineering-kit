@@ -8,6 +8,8 @@ when_to_use: |
 context: fork
 agent: entropy-collector
 compatibility: claude-code
+depends_on:
+  - harness-project-intake
 allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *)
 metadata:
   category: quality
@@ -135,10 +137,10 @@ Don't confuse them: taste preferences should not be CI hard blocks (they slow th
 - For each new golden principle, link it to a specific code location (file:line) of the review comment or bug report that inspired it, so future readers understand the real-world context without rediscovering it.
 
 ## Related Skills
+- input      **harness-project-intake**: Receives output (project code pattern analysis) as input for distilling golden principles
+- see-also   **harness-architecture-boundaries**: Architecture boundary context helps distinguish invariants from style preferences; both are Layer 2 and run in parallel
+- see-also   **harness-commit-gate**: Golden principle rulesets may inform commit message conventions — advisory, not an input contract
 
-- Upstream **harness-project-intake**: Receives output (project code pattern analysis) as input for distilling golden principles
-- Upstream **harness-architecture-boundaries**: Receives output (architecture boundary context) as a basis for distinguishing invariants from style preferences
-- Downstream **harness-commit-gate**: This skill's output (golden principle ruleset) is passed downstream for quality gate checks
 
 ## Related Templates
 

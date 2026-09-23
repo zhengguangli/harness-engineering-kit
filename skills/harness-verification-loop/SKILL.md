@@ -10,6 +10,9 @@ context: fork
 agent: verification-loop-runner
 allowed-tools: Bash(git *) Bash(npm *) Bash(bun *) Bash(cargo *) Bash(vitest *) Bash(tsc *) Bash(bunx *) Bash(make *) Bash(just *)
 compatibility: claude-code
+depends_on:
+  - harness-exec-plans
+  - harness-architecture-boundaries
 metadata:
   category: workflow
 ---
@@ -170,11 +173,11 @@ When a project lacks full test infrastructure, the following minimum feedback si
 - **No-test project transition**: If the project has no test infrastructure, first create a simple smoke test (verify core functionality runs without errors) as the minimum feedback signal for verification-loop. Recommend using `harness-bootstrap` for automatic setup.
 
 ## Related Skills
+- input      **harness-exec-plans**: Receives exec-plan (goals + steps + acceptance criteria) as input to the verification loop
+- input      **harness-architecture-boundaries**: Receives architecture rules as self-check items
+- routes-to  **harness-observability-and-browser**: Delegates verification when runtime signals are needed
+- output     **harness-commit-gate**: After verification passes, transitions to commit-gate; commit-gate does not re-run checks that already passed
 
-- Upstream **harness-exec-plans**: Receives exec-plan (goals + steps + acceptance criteria) as input to the verification loop
-- Upstream **harness-architecture-boundaries**: Receives architecture rules as self-check items
-- Downstream **harness-commit-gate**: After verification passes, transitions to commit-gate; commit-gate does not re-run checks that already passed
-- Downstream **harness-observability-and-browser**: Delegates verification when runtime signals are needed
 
 ## Related Templates
 

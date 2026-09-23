@@ -8,6 +8,8 @@ when_to_use: |
 context: fork
 agent: qa-verifier
 compatibility: claude-code
+depends_on:
+  - harness-exec-plans
 allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *) Bash(npx *)
 metadata:
   category: verification
@@ -133,11 +135,11 @@ Playwright and Puppeteer are two mainstream browser automation tools. In this sk
 - When embedding screenshots in PR descriptions, use `<details><summary>Before / After</summary>![screenshot]</details>` to collapse them and avoid overly long PR bodies.
 
 ## Related Skills
+- input      **harness-exec-plans**: Execution plan acceptance criteria may require observability/browser verification evidence
+- routes-to  **harness-verification-loop**: Acts as a feedback sensor invoked by the verification loop; not an independent workflow node
+- see-also   **harness-golden-principles**: Observability patterns (structured logs, metric naming) can be encoded as golden principles for consistent instrumentation
+- output     **harness-commit-gate**: Verification result evidence is passed downstream as the basis for quality gate pass
 
-- Upstream **harness-verification-loop**: Receives outputs (verification cycle trigger signals) as the trigger for runtime verification
-- Upstream **harness-exec-plans**: Execution plan acceptance criteria may require observability/browser verification evidence
-- Downstream **harness-commit-gate**: This skill's outputs (verification result evidence) are passed downstream as the basis for quality gate pass
-- Peer **harness-golden-principles**: Observability patterns (structured logs, metric naming) can be encoded as golden principles for consistent instrumentation
 
 ## Related Templates
 

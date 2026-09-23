@@ -8,6 +8,7 @@ when_to_use: |
 context: fork
 agent: skill-scaffolder
 compatibility: claude-code
+depends_on: []
 allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *)
 metadata:
   category: meta
@@ -246,10 +247,11 @@ You are the "Skill Scaffolder", responsible for generating complete file skeleto
 - **Overlap check results**: If overlap is found, output merge/boundary suggestions.
 
 ## Related Skills
+- routes-to  **harness-orchestration**: Receives orchestration decisions as trigger signals for when to create a new skill
+- output     **harness-skill-quality-assessor**: After authoring a new skill, hand off to the assessor to score it
+- see-also   **harness-commit-gate**: New skills must pass the commit gate before merge
 
-- Upstream **harness-orchestration**: Receives output (orchestration decisions) as trigger signals for when to create a new skill
 - Downstream **all other skills**: This skill's output (new skill templates and specifications) is passed downstream as scaffolding
-- `harness-skill-quality-assessor`: After authoring a new skill, assess its quality
 
 ## Related Templates
 

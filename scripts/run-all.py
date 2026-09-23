@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """
-全量验证流水线：执行 frontmatter 校验 → 关键词回归测试 → agent prompt 存在性检查。
+全量验证流水线：frontmatter 校验 → 关键词回归测试 → agent prompt 存在性检查 → 依赖方向校验。
 
 Usage:
-    python3 scripts/run-all.py                                # 全量（三阶段依次执行）
+    python3 scripts/run-all.py                                # 全量（四阶段依次执行）
     python3 scripts/run-all.py --run-type check               # 仅 frontmatter 校验
     python3 scripts/run-all.py --run-type regression          # 仅关键词回归
     python3 scripts/run-all.py --run-type regression --json   # 回归 JSON 报告
     python3 scripts/run-all.py --run-type prompt              # 仅 agent prompt 检查
+    python3 scripts/run-all.py --run-type deps                # 仅依赖方向/循环依赖校验
     python3 scripts/run-all.py --sync                         # 全量 + 同步到 ~/.agents/skills/ (并维护 ~/.claude/skills 软链接)
 """
 
@@ -67,8 +68,8 @@ def sync():
 
 def main():
     parser = argparse.ArgumentParser(description="Harness 全量验证流水线")
-    parser.add_argument("--run-type", choices=["check", "regression", "prompt"],
-                        help="指定运行阶段: check/regression/prompt")
+    parser.add_argument("--run-type", choices=["check", "regression", "prompt", "deps"],
+                        help="指定运行阶段: check/regression/prompt/deps")
     parser.add_argument("--json", action="store_true",
                         help="回归测试输出 JSON 报告")
     parser.add_argument("--sync", action="store_true",
@@ -80,6 +81,7 @@ def main():
     run_check = not args.run_type or args.run_type == "check"
     run_regression = not args.run_type or args.run_type == "regression"
     run_prompt = not args.run_type or args.run_type == "prompt"
+    run_deps = not args.run_type or args.run_type == "deps"
     reg_args = ["--json"] if args.json else []
 
     print("=" * 60)
@@ -104,6 +106,12 @@ def main():
     if run_prompt:
         print(">>> Agent Prompt 存在性检查")
         if run_script("validate_agent_prompt_sync.py") != 0:
+            exit_code = 1
+        print()
+
+    if run_deps:
+        print(">>> Skill 依赖方向与循环依赖校验")
+        if run_script("validate_skill_dependencies.py") != 0:
             exit_code = 1
         print()
 

@@ -8,6 +8,9 @@ when_to_use: |
 context: fork
 agent: boundary-auditor
 compatibility: claude-code
+depends_on:
+  - harness-project-intake
+  - harness-bootstrap
 allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *)
 metadata:
   category: architecture
@@ -190,11 +193,11 @@ function parseUserInput(input: unknown): UserInput {
 **Handling**: Analyze project domain divisions and data flow → Confirm dependency direction and cross-cutting concern entry points with the user → Write to `ARCHITECTURE.md` → Hand off to boundary-auditor for verification
 
 ## Related Skills
+- input      **harness-project-intake**: Consumes its output (project information analysis) as input for architecture boundary analysis
+- input      **harness-bootstrap**: Consumes its output (initialization skeleton) as input for architecture boundary setup
+- see-also   **harness-golden-principles**: Style preference classification criteria feed periodic cleanup; the two skills run in parallel, neither consumes the other's output
+- output     **harness-verification-loop**: Architecture rule documentation is consumed as self-check items by the verification loop
 
-- Upstream **harness-project-intake**: Consumes its output (project information analysis) as input for architecture boundary analysis
-- Upstream **harness-bootstrap**: Consumes its output (initialization skeleton) as input for architecture boundary setup
-- Downstream **harness-golden-principles**: This skill's output (style preference classification criteria) is passed downstream for periodic cleanup
-- Downstream **harness-verification-loop**: This skill's output (architecture rule documentation) is passed downstream for verification
 
 ## Related Templates
 

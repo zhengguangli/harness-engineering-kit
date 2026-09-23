@@ -9,6 +9,8 @@ disable-model-invocation: true
 context: fork
 agent: harness-bootstrap
 compatibility: claude-code
+depends_on:
+  - harness-project-intake
 allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *) Write(*) Edit(*)
 metadata:
   category: workflow
@@ -162,13 +164,13 @@ If any item fails, return to the corresponding step to fix before committing.
 **Action**: Read both sub-package configs (package.json, go.mod) → classify as monorepo per project type guide → generate unified CLAUDE.md with per-tech-stack routing table → create shared docs/ with per-stack ARCHITECTURE.md sections → append .gitignore rules for both Node.js and Go → output multi-package creation manifest
 
 ## Related Skills
+- input      **harness-project-intake**: Runs the intake analysis flow as step 1 to learn the tech stack, structure and existing docs
+- see-also   **harness-architecture-boundaries**: Canonical ARCHITECTURE.md template lives in its references/ (provenance pointer only — bootstrap writes skeletons, it does not consume boundary output)
+- see-also   **harness-golden-principles**: Canonical QUALITY_SCORE.md template lives in its references/ (provenance pointer only)
+- routes-to  **harness-repo-map**: Delegate when the task is restructuring an existing CLAUDE.md/docs rather than full initialization
+- output     **harness-exec-plans**: Creates the docs/exec-plans/ directory that exec-plans writes into
+- routes-to  **harness-orchestration**: Orchestration routes users here when greenfield initialization is needed
 
-- Upstream **harness-architecture-boundaries**: Provides architecture rules that inform the docs/ skeleton structure
-- Upstream **harness-golden-principles**: Provides golden principle templates to seed the initial docs/ quality baseline
-- `harness-project-intake`: Analyze the project before initialization (step 1 dependency — mandatory upstream)
-- `harness-repo-map`: Maintain the health of CLAUDE.md and docs/ after initialization (post-init validation partner)
-- `harness-exec-plans`: Downstream — after bootstrap, use exec-plans to track any follow-up refinement work
-- `harness-orchestration`: Upstream — routes users to bootstrap when greenfield initialization is needed
 
 ## Related Templates
 

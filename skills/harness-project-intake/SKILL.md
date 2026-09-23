@@ -8,6 +8,7 @@ when_to_use: |
 context: fork
 agent: project-analyzer
 compatibility: claude-code
+depends_on: []
 allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *)
 metadata:
   category: analysis
@@ -173,10 +174,10 @@ Always output the structured card below — never output raw file content:
   - Solution: Collection MUST cover package.json/README/entry files; if any is missing, annotate "Incomplete information" in the corresponding dimension.
 
 ## Related Skills
+- routes-to  **harness-bootstrap**: This skill's output (project card) is passed downstream for skeleton setup
+- routes-to  **harness-golden-principles**: Project analysis results inform which golden principles apply
 
 - Upstream **None**: This skill is the Layer 0 entry point; it does not depend on output from other skills.
-- Downstream **harness-bootstrap**: This skill's output (project card) is passed downstream for skeleton setup.
-- Downstream **harness-golden-principles**: Project analysis results inform which golden principles apply
 
 ## Related Templates
 
