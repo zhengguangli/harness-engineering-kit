@@ -77,7 +77,7 @@ skills/<name>/
 ## Testing
 
 测试分两处：
-- `tests/triggers/cases.json`（48 个触发回归用例）。关键词映射在 `scripts/run_trigger_regression.py` 的 `SKILL_KW` 字典。新增 skill 时必须同时更新关键词映射和测试用例。
+- `tests/triggers/cases.json`（触发回归用例，数量由 `run-all.py` 动态读出，当前 51）。关键词映射在 `scripts/run_trigger_regression.py` 的 `SKILL_KW` 字典。新增 skill 时必须同时更新关键词映射和测试用例。
 - `tests/dependencies/test_dependency_validation.py`（依赖校验，标准库 unittest）。新增 skill 时必须同时在 `scripts/validate_skill_dependencies.py` 的 `LAYERS`/`META_LAYER` 登记层级，否则该用例会失败。
 - `tests/scripts/test_validation_scripts.py`（校验脚本自身的行为，含关键词重复检测、每个 skill 至少一条回归用例等不变量）。
 

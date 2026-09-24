@@ -85,7 +85,7 @@ Skill 不直接"调用" Agent。主对话根据 Skill 的指导决定何时 spaw
 ④ 验收通过 → 完成
 ```
 
-### 12 个 Skill 的触发场景
+### 13 个 Skill 的触发场景
 
 | Skill | 触发时 | spawn 的 Agent |
 |---|---|---|
@@ -96,7 +96,8 @@ Skill 不直接"调用" Agent。主对话根据 Skill 的指导决定何时 spaw
 | harness-observability-and-browser | 需要 UI 或性能验证 | qa-verifier |
 | harness-golden-principles | 周期性代码质量清扫 | entropy-collector |
 | harness-authoring | 创建新的 skill 或 agent | skill-scaffolder |
-| harness-bootstrap | 新项目首次初始化 harness 结构 | harness-bootstrapper |
+| harness-skill-quality-assessor | 评估 skill 质量、审计 skills 规范 | skill-quality-assessor |
+| harness-bootstrap | 新项目首次初始化 harness 结构 | harness-bootstrap |
 | harness-commit-gate | 提交代码前质量门检查 | commit-gate-runner |
 | harness-orchestration | 多 skill 组合路由决策（只读路由顾问） | （纯知识型，主对话直接执行，无需 spawn 独立 agent） |
 | harness-project-intake | 分析项目产出结构化卡片 | project-analyzer |
@@ -346,7 +347,7 @@ python3 tests/dependencies/test_dependency_validation.py  # 18 个回归用例
 
 ## 自然语言触发速查表
 
-12 个 skill 的典型触发场景（每个 skill 1-2 个最常见说法）：
+13 个 skill 的典型触发场景（每个 skill 1-2 个最常见说法）：
 
 | Skill | 典型触发 |
 |---|---|
