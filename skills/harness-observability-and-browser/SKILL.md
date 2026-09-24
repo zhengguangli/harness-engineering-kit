@@ -119,6 +119,14 @@ Playwright and Puppeteer are two mainstream browser automation tools. In this sk
 **Scenario**: Need to verify mobile page rendering and interaction
 **Handling**: Use Playwright's mobile emulation or real device testing (e.g., BrowserStack, Sauce Labs)
 
+### Browser Tool Version Mismatch
+**Scenario**: The installed browser/driver version does not match the version the automation library expects, so every navigation fails with a protocol error
+**Handling**: Report the exact mismatch (library version vs. browser version) as the finding — do not attempt to verify UI behaviour until it is resolved. Recommend pinning both versions in the project's dev dependencies so CI and local runs agree.
+
+### Multi-Tab / Multi-Window Verification
+**Scenario**: The flow under test spans several tabs (e.g., OAuth popup, payment redirect, "open in new tab" links)
+**Handling**: Enumerate the expected tab sequence up front, drive each tab explicitly, and record which tab each screenshot came from. A screenshot with no tab context is not valid evidence — re-run with explicit tab labelling rather than attaching an ambiguous capture.
+
 ## Common Pitfalls
 - **Reading code to guess runtime behavior**: Just because code has a try-catch doesn't mean the exception is actually being caught — check the logs.
 - **Free-text logs**: Not queryable, not aggregatable — must use structured logs.
@@ -205,4 +213,4 @@ Produces verification evidence based on real runtime signals (browser rendering,
 - Output primarily in conversation — if archiving is needed, attach screenshots and query results in the PR description or exec-plan acceptance records, not as standalone files.
 
 ---
-Last updated: 2026-09-23 (Change: Hard Constraints normalised to numbered list (format consistency)) (Change: Hard Constraints 2→5, Examples 2→4, Related Skills 2→4, Related Templates 2→7)
+Last updated: 2026-09-24 (Change: Edge Cases 3→5 — added browser tool version mismatch and multi-tab/multi-window verification; addresses round-33 LOW #8)

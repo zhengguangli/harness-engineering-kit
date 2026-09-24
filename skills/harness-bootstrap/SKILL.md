@@ -141,6 +141,16 @@ If any item fails, return to the corresponding step to fix before committing.
 **Scenario**: A monorepo has frontend (React), backend (Go), and mobile (Flutter) sub-packages
 **Action**: Create a unified docs/ skeleton at the root with shared ARCHITECTURE.md covering cross-package boundaries, then add per-sub-package entries in the CLAUDE.md routing table. Append `.gitignore` rules for all tech stacks. Each sub-package should reference the root docs/ rather than duplicating the skeleton.
 
+### Partial Harness Present but Stale
+
+**Scenario**: CLAUDE.md and docs/ both exist, but routing links are broken, dates are months old, and `.gitignore` is missing entries for the current tech stack.
+**Action**: Do not reinitialize from scratch. Audit the existing structure against the 6-item post-initialization checklist, then incrementally repair only the failing items — fix broken routing targets, refresh the "last updated" dates, append the missing `.gitignore` rules. Output a manifest that separates "repaired" from "created" so the user can see what already existed.
+
+### Harness Present but Wrong Shape
+
+**Scenario**: CLAUDE.md exists but has become an encyclopedia (500+ lines of project knowledge) instead of a map.
+**Action**: This is restructuring, not initialization — delegate to `harness-repo-map` per the Skip Conditions. Do not overwrite CLAUDE.md with a fresh skeleton; that would destroy content the user wrote.
+
 ## Common Pitfalls
 
 - **Over-initialization**: Generating a large number of empty skeleton files, increasing subsequent maintenance burden.
@@ -255,4 +265,4 @@ You are the "Harness Initialization Artisan." Your responsibility is to generate
 - **Project type classification**: State the detected project type and the initialization scope applied
 
 ---
-Last updated: 2026-07-10 (Change: Output Specification expanded with creation manifest format example)
+Last updated: 2026-09-24 (Change: Edge Cases 3→5 — added stale-partial-harness repair and wrong-shape delegation; addresses round-33 LOW #9)

@@ -70,6 +70,27 @@ Meta orchestration / authoring / skill-quality-assessor → (无)
 
 零循环，全部向下流动。
 
+### 对第 33 次 12 条 LOW 的逐条复验
+
+第 33 次报告列出的 LOW 项未随时间更新，其中多条已被后续轮次解决或已不成立。逐条复验结果：
+
+| # | 第 33 次描述 | 复验结论 |
+|---|---|---|
+| 1 | assessor 补充"评估结果反哺 authoring"路径 | **已解决** — Best Practices 末条已写明将 HIGH/CRITICAL 发现反馈给 authoring 并建短改进计划 |
+| 2 | assessor Best Practices 与 Core Principles 有 2 条重叠 | **报告过期** — 现有 4 条原则与 5 条实践零重叠，该重叠在当前内容中不存在 |
+| 3 | assessor Methodology 两节合并为统一流程图 | 未处理，需人工判断 |
+| 4 | verification-loop 补"exec-plan 不存在时的降级策略" | **已解决** — 全文 12 处 exec-plan 引用，含缺失时的处理 |
+| 5 | commit-gate 与 verification-loop 职责边界示例 | 未处理，需人工判断 |
+| 6 | architecture-boundaries 与 golden-principles 职责边界示例 | 未处理，需人工判断 |
+| 7 | orchestration 新 skill 加入后的路由更新 | 未处理，需人工判断 |
+| 8 | observability Edge Cases 仅 3 个 | **本轮已修复** — 补"浏览器工具版本不兼容"、"多标签页验证"，3→5 |
+| 9 | bootstrap Edge Cases 仅 3 个 | **本轮已修复** — 补"Partial Harness Present but Stale"、"Harness Present but Wrong Shape"，3→5 |
+| 10 | golden-principles 生命周期管理 | **已解决** — Core Principles 已含生命周期相关内容 |
+| 11 | project-intake Usability 全库最低（9.3） | 主观分，机械审计无法复核 |
+| 12 | project-intake Examples 仅 3 个 | **本轮已修复** — 补"微服务架构"、"CLI 工具"两例，3→5 |
+
+剩余 4 条（#3/#5/#6/#7）需人工判断内容质量，# 11 条需主观重评。均不在机械审计能力范围内。
+
 ---
 
 ## 第 33 次评估（2026-07-10）— 最后一次主观加权评分

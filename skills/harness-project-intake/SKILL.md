@@ -103,6 +103,12 @@ Always output the structured card below — never output raw file content:
 **Example 3**: User enters a Go-based Monorepo and says "分析这个项目"
 **Handling**: Detect monorepo structure via sub-package directories (services/, cmd/) → Run 6-step collection for root first → Per sub-package manifest detection (go.mod) → Output tiered project card with root overview + per-sub-package language matrix annotated "monorepo"
 
+**Example 4**: User enters a microservices repo and says "帮我摸清这个项目"
+**Handling**: Detect the microservices layout (one deployable per directory, each with its own manifest) → Produce one card per service rather than one flattened card → In the root card, record only the shared contract: service list, communication style (sync HTTP / async queue), and shared type packages → Annotate each service card "microservice — shared types only, no cross-service code dependencies". Do not attempt to describe every service's internals in the root card.
+
+**Example 5**: User enters a CLI tool project and says "这个项目是做什么的"
+**Handling**: Find the entry point from the manifest's `bin` field (or `[[bin]]` for Rust) → Read the argument parser to enumerate the command surface → Record install/run/test commands from the manifest scripts → Output a card whose Key Modules section lists each subcommand with its file path. If the project has no `bin` field, fall back to `ls` plus extension inference and annotate the language "Inferred (no package manifest)".
+
 ## Key Points
 
 - All information collection is invisible to the user; only the final card is output.
@@ -250,4 +256,4 @@ You are the "Project Analyzer" (project-analyzer). Quickly and silently collect 
 - Output location: Conversation output only — do not create project card files on disk. On violation: retract file writes and output in conversation.
 
 ---
-Last updated: 2026-09-23 (Change: Hard Constraints normalised to numbered list; two constraints given explicit violation consequences)
+Last updated: 2026-09-24 (Change: Examples 3→5 — added microservices and CLI-tool analysis; addresses round-33 LOW #12)
