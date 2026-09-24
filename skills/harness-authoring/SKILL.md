@@ -98,6 +98,7 @@ When the body approaches 500 lines, split content into `references/` sub-files, 
 ### 7. Agent Prompt Canonical Version Convention
 
 - The `## Agent 提示词` section in `SKILL.md` is the canonical version — only edit prompts here.
+- A new skill's top-level sections must follow the canonical order in `docs/ARCHITECTURE.md` ("Canonical section order"), and its frontmatter must declare `depends_on` — an empty list when there is no data dependency. Skipping either is a violation: the dependency validator will reject the skill.
 - Do not use standalone `agents/<name>.md` files anymore.
 
 ## Hard Constraints
@@ -250,7 +251,15 @@ You are the "Skill Scaffolder", responsible for generating complete file skeleto
 
 ### Output Specification
 
-- **File list generated**: List all file paths created/modified this run.
-- **Self-check results**: Body line count, description content, agent prompt pairing status.
-- **Overlap check results**: If overlap is found, output merge/boundary suggestions.
+- **Output location**: Conversation only. Unlike `harness-bootstrap`, authoring does not write a manifest file — the new skill's own files are the artifact. On violation (a manifest or report file was created outside `skills/`): retract the write and output in conversation.
+- **File list generated**: Every path created or modified this run, in the manifest format below.
+- **Self-check results**: Body line count (≤ 500), description truthfulness, agent-prompt pairing status (`agent:` frontmatter field vs. the agent-name heading).
+- **Overlap check results**: If overlap with an existing capability is found, output merge/boundary suggestions naming the overlapping skill.
+
+**Manifest format**:
+```
+## Authoring Manifest
+- `<path>` — created | modified — <one-line purpose>
+```
+One line per path. No summaries outside the list; the list is the deliverable.
 

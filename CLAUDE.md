@@ -80,6 +80,9 @@ skills/<name>/
 - `tests/triggers/cases.json`（**回归门控集**，必须全绿）。关键词映射在 `scripts/run_trigger_regression.py` 的 `SKILL_KW` 字典。新增 skill 时必须同时更新关键词映射和测试用例。
 - `tests/triggers/cases.diagnostic.json`（**契约派生测量集**，从各 skill 的 `when_to_use` 生成）。**不是门禁**——它存在的目的是产出真实准确率。把它设为门禁会迫使对着测量集调关键词，即过拟合。
 - `scripts/evaluate_trigger_discrimination.py` — 触发判别力**测量**工具（准确率/混淆对/分差/Wilson 置信区间），不产出综合分。
+- `scripts/audit_output_specs.py` — 输出规格可执行性审计：每个 skill 承诺的产出是否有具体路径/格式/字段。
+- `scripts/audit_task_coverage.py` — 任务集覆盖审计：`tests/tasks/tasks.json` 的 55 条验收标准是否都有 SKILL.md 依据。
+- `tests/tasks/tasks.json` — 13 个代表性任务 + 55 条机械可验证验收标准，供后续 A/B 实验使用。
 - `scripts/compare_matchers.py` — 匹配机制对比实验（固定子串 vs 字符 n-gram TF-IDF）。
 - `tests/dependencies/test_dependency_validation.py`（依赖校验，标准库 unittest）。新增 skill 时必须同时在 `scripts/validate_skill_dependencies.py` 的 `LAYERS`/`META_LAYER` 登记层级，否则该用例会失败。
 - `tests/scripts/test_validation_scripts.py`（校验脚本自身的行为，含关键词重复检测、每个 skill 至少一条回归用例等不变量）。

@@ -1,0 +1,191 @@
+[
+  {
+    "id": "task-arch-01",
+    "skill": "harness-architecture-boundaries",
+    "request": "这个项目的 Service 层直接 import 了 Repository 层的实现，帮我查一下架构边界",
+    "expected_artifacts": [
+      {"kind": "file", "path": "docs/quality-reports/architecture-boundaries-audit.md", "required": true}
+    ],
+    "acceptance_criteria": [
+      "report title is '## Architecture Boundary Audit Report'",
+      "every finding has file path + line number + violated rule + impact + suggested fix",
+      "findings grouped by severity (CRITICAL first), then by file path",
+      "no file is modified (boundary-auditor is read-only)",
+      "does not contain the phrase 'I have fixed this'"
+    ]
+  },
+  {
+    "id": "task-authoring-01",
+    "skill": "harness-authoring",
+    "request": "我想给 harness 加一个能做依赖许可证检查的新 skill",
+    "expected_artifacts": [
+      {"kind": "conversation", "required": true}
+    ],
+    "acceptance_criteria": [
+      "overlap check runs before any file is created",
+      "outputs an Authoring Manifest listing every created/modified path",
+      "new SKILL.md has all 10 required sections in canonical order",
+      "new SKILL.md declares depends_on (empty list if none)",
+      "no manifest file is written to disk"
+    ]
+  },
+  {
+    "id": "task-bootstrap-01",
+    "skill": "harness-bootstrap",
+    "request": "这是个全新的 Node.js 项目，帮我初始化 harness",
+    "expected_artifacts": [
+      {"kind": "file", "path": "CLAUDE.md", "required": true},
+      {"kind": "file", "path": "docs/ARCHITECTURE.md", "required": true},
+      {"kind": "file", "path": "docs/QUALITY_SCORE.md", "required": true},
+      {"kind": "file", "path": ".gitignore", "required": false}
+    ],
+    "acceptance_criteria": [
+      "CLAUDE.md is <= 100 lines",
+      "every docs/ file has a 'last updated' date at the bottom",
+      "a Creation Manifest listing all created/modified files is output",
+      "project type is classified before scope is chosen",
+      "no existing business code, test or config file is modified"
+    ]
+  },
+  {
+    "id": "task-commit-01",
+    "skill": "harness-commit-gate",
+    "request": "我改完了，帮我提交",
+    "expected_artifacts": [
+      {"kind": "conversation", "required": true}
+    ],
+    "acceptance_criteria": [
+      "commit message <= 72 characters",
+      "diff is reviewed before commit",
+      "relevant tests/build run and their pass/fail is reported",
+      "no report file is persisted to disk",
+      "commit is blocked and reported if any check fails"
+    ]
+  },
+  {
+    "id": "task-plan-01",
+    "skill": "harness-exec-plans",
+    "request": "要把订单模块拆成独立服务，估计要好几天，可能跨多个会话",
+    "expected_artifacts": [
+      {"kind": "file", "path": "docs/exec-plans/active/<plan-id>.md", "required": true}
+    ],
+    "acceptance_criteria": [
+      "plan file follows references/exec-plan-template.md with all core fields",
+      "every acceptance criterion is mechanically verifiable",
+      "each step is completable and verifiable within one PR",
+      "decision log records only where a real choice was made",
+      "no implementation code is pre-written in the plan"
+    ]
+  },
+  {
+    "id": "task-golden-01",
+    "skill": "harness-golden-principles",
+    "request": "AI 写的代码风格越来越乱，帮我建立规则并定期清扫",
+    "expected_artifacts": [
+      {"kind": "file", "path": "docs/quality-reports/golden-principles-scan.md", "required": true}
+    ],
+    "acceptance_criteria": [
+      "every deviation includes location, principle reference, risk level, fix recommendation",
+      "no file is modified (scanner is read-only)",
+      "structural architecture violations are attributed to boundary-auditor, not fixed here"
+    ]
+  },
+  {
+    "id": "task-observability-01",
+    "skill": "harness-observability-and-browser",
+    "request": "修复了 checkout 流程，帮我验证用户旅程是否正常",
+    "expected_artifacts": [
+      {"kind": "conversation", "required": true}
+    ],
+    "acceptance_criteria": [
+      "evidence presented as before/after pairs",
+      "conclusion is 'yes/no + evidence link + timestamp'",
+      "screenshots carry a timestamp and URL",
+      "no standalone evidence file is created"
+    ]
+  },
+  {
+    "id": "task-orchestration-01",
+    "skill": "harness-orchestration",
+    "request": "我该用哪些 skill？想给这个老项目建立 harness",
+    "expected_artifacts": [
+      {"kind": "conversation", "required": true}
+    ],
+    "acceptance_criteria": [
+      "recommendation names skills in execution order with reasons",
+      "states which standard workflow (1-5) it maps to",
+      "states which steps can be skipped and why",
+      "no file is created"
+    ]
+  },
+  {
+    "id": "task-intake-01",
+    "skill": "harness-project-intake",
+    "request": "刚进入这个项目，帮我分析一下",
+    "expected_artifacts": [
+      {"kind": "conversation", "required": true}
+    ],
+    "acceptance_criteria": [
+      "output is a project card covering all 5 dimensions",
+      "no fabricated information; unknowns marked 'Not found'",
+      "no project card file is written to disk",
+      "intermediate tool output is not shown to the user"
+    ]
+  },
+  {
+    "id": "task-prompt-01",
+    "skill": "harness-prompt-optimizer",
+    "request": "帮我优化这个 prompt：你是一个代码审查员，请审查代码",
+    "expected_artifacts": [
+      {"kind": "conversation", "required": true}
+    ],
+    "acceptance_criteria": [
+      "output is a structured prompt with Role/Context/Variables/Execution/Constraints/Output",
+      "execution chain has 3-7 steps",
+      "every constraint states what happens on violation",
+      "output is plain text, not a file"
+    ]
+  },
+  {
+    "id": "task-repomap-01",
+    "skill": "harness-repo-map",
+    "request": "CLAUDE.md 已经 300 行了，帮我瘦身成地图",
+    "expected_artifacts": [
+      {"kind": "conversation", "required": true}
+    ],
+    "acceptance_criteria": [
+      "findings include location, severity and a specific repair suggestion",
+      "findings ordered HIGH -> MEDIUM -> LOW",
+      "unrelated changes are not mixed into one suggestion",
+      "target CLAUDE.md is <= 100 lines after restructuring"
+    ]
+  },
+  {
+    "id": "task-verification-01",
+    "skill": "harness-verification-loop",
+    "request": "把这个改动推进到可合并状态，测试现在挂着",
+    "expected_artifacts": [
+      {"kind": "conversation", "required": true}
+    ],
+    "acceptance_criteria": [
+      "each acceptance criterion gets an explicit pass/fail",
+      "iteration log records total rounds and key changes per round",
+      "stuck detection triggers after 2 identical rounds",
+      "escalates to human rather than looping forever at the 8-round cap"
+    ]
+  },
+  {
+    "id": "task-assessor-01",
+    "skill": "harness-skill-quality-assessor",
+    "request": "评估一下 harness-commit-gate 的质量",
+    "expected_artifacts": [
+      {"kind": "file", "path": "docs/quality-reports/skills-quality-assessment.md", "required": true},
+      {"kind": "file", "path": "docs/QUALITY_SCORE.md", "required": false}
+    ],
+    "acceptance_criteria": [
+      "all 8 dimensions scored with a one-sentence rationale each",
+      "issue list labels severity CRITICAL/HIGH/MEDIUM/LOW",
+      "no skill file is modified (assessment is read-only)"
+    ]
+  }
+]
