@@ -21,30 +21,38 @@ REPORT_FILE = os.path.join(ROOT_DIR, "tests/triggers/report.json")
 
 # Keyword mappings (replicating SKILL_KW associative array from bash)
 SKILL_KW = {
-    "harness-architecture-boundaries": "分层架构 循环依赖 层间越界 lint 规则 依赖方向 架构腐化",
-    "harness-authoring": "怎么写一个好的 SKILL.md 给 harness 添新能力 skill 还是 subagent 瘦身",
+    "harness-architecture-boundaries": "分层架构 循环依赖 层间越界 lint+规则 依赖方向 架构腐化",
+    "harness-authoring": "怎么写一个好的 SKILL.md harness 添新能力 skill 还是 subagent 瘦身",
     "harness-bootstrap": "init harness 为这个项目初始化 CLAUDE.md docs/ 骨架 CI 模板",
     "harness-commit-gate": "提交代码 commit git 修复，提交代码 代码提交",
     "harness-exec-plans": "先做个计划 改动比较大 落盘 跨多个会话 跨多窗口 接力 上一轮试过什么",
     "harness-golden-principles": "周期性扫描 模式漂移 黄金原则 品味编码 重复模式",
     "harness-observability-and-browser": "复现 UI bug P99 截图 浏览器 验证",
-    "harness-orchestration": "我该用哪些 skill 多 协作 不确定先后顺序 不确定先做什么后做什么 路由",
+    "harness-orchestration": "我该用哪些 skill 协作 不确定先后顺序 不确定先做什么后做什么 路由",
     "harness-project-intake": "分析当前项目 项目概览 README 这个项目是做什么的 项目卡片",
     "harness-prompt-optimizer": "优化这个 prompt 效果不好 system",
     "harness-repo-map": "CLAUDE.md 瘦身 断链 过期 从零搭建 docs 渐进式披露",
     "harness-verification-loop": "可合并 自验证循环 测试失败 循环迭代 实现→自检→测试→评审→修复 迭代",
-    "harness-skill-quality-assessor": "评估skill质量 skills质量审计 优化skills skill质量怎么样 检查skills规范 skill 质量 skills 质量评估 审计",
+    "harness-skill-quality-assessor": "评估skill质量 skills质量审计 优化skills skill质量怎么样 检查skills规范 skill+质量 skills+质量评估 skills+审计",
 }
 
 
 def match_count(skill, text):
-    """Count how many keywords from SKILL_KW[skill] appear in text."""
+    """Count how many keywords from SKILL_KW[skill] appear in text.
+
+    Keywords are space-separated. A '+' inside a keyword means "all parts must
+    co-occur", so 'lint+规则' matches only when both 'lint' and '规则' are
+    present. Without this, a phrase like 'lint 规则' splits into two independent
+    tokens and the generic fragment ('规则') matches on its own, producing false
+    positives on unrelated input.
+    """
     kw = SKILL_KW.get(skill, "")
     if not kw:
         return 0
     count = 0
     for word in kw.split():
-        if word in text:
+        parts = word.split("+")
+        if all(part in text for part in parts):
             count += 1
     return count
 

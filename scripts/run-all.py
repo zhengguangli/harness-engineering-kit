@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-全量验证流水线：frontmatter 校验 → 关键词回归测试 → agent prompt 存在性检查 → 依赖方向校验 → 单元测试。
+全量验证流水线：frontmatter 校验 → 关键词回归测试 → agent prompt 存在性检查 → 依赖方向校验 → 单元测试 → 输出规格与任务集覆盖审计。
 
 Usage:
     python3 scripts/run-all.py                                # 全量（四阶段依次执行）
@@ -10,6 +10,7 @@ Usage:
     python3 scripts/run-all.py --run-type prompt              # 仅 agent prompt 检查
     python3 scripts/run-all.py --run-type deps                # 仅依赖方向/循环依赖校验
     python3 scripts/run-all.py --run-type tests               # 仅单元测试（tests/ 下全部）
+    python3 scripts/run-all.py --run-type audit               # 仅输出规格可执行性审计
     python3 scripts/run-all.py --sync                         # 全量 + 同步到 ~/.agents/skills/ (并维护 ~/.claude/skills 软链接)
 """
 
@@ -70,7 +71,7 @@ def sync():
 
 def main():
     parser = argparse.ArgumentParser(description="Harness 全量验证流水线")
-    parser.add_argument("--run-type", choices=["check", "regression", "prompt", "deps", "tests"],
+    parser.add_argument("--run-type", choices=["check", "regression", "prompt", "deps", "tests", "audit"],
                         help="指定运行阶段: check/regression/prompt/deps")
     parser.add_argument("--json", action="store_true",
                         help="回归测试输出 JSON 报告")
@@ -85,6 +86,7 @@ def main():
     run_prompt = not args.run_type or args.run_type == "prompt"
     run_deps = not args.run_type or args.run_type == "deps"
     run_tests = not args.run_type or args.run_type == "tests"
+    run_audit = not args.run_type or args.run_type == "audit"
     reg_args = ["--json"] if args.json else []
 
     print("=" * 60)
@@ -141,6 +143,16 @@ def main():
                 exit_code = 1
             else:
                 print(f"  [OK] {rel}")
+        print()
+
+    if run_audit:
+        print(">>> 输出规格可执行性审计")
+        if run_script("audit_output_specs.py") != 0:
+            exit_code = 1
+        print()
+        print(">>> 任务集覆盖审计")
+        if run_script("audit_task_coverage.py") != 0:
+            exit_code = 1
         print()
 
     if exit_code == 0:

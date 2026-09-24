@@ -1,0 +1,1079 @@
+[
+  {
+    "input": "这个项目出现循环依赖了，帮我查一下",
+    "expected_primary_skill": "harness-architecture-boundaries",
+    "expected_candidates": [
+      "harness-architecture-boundaries"
+    ],
+    "tags": [
+      "arch",
+      "verbatim"
+    ],
+    "id": "arch-g01"
+  },
+  {
+    "input": "有层间越界的调用，帮我建立架构约束",
+    "expected_primary_skill": "harness-architecture-boundaries",
+    "expected_candidates": [
+      "harness-architecture-boundaries"
+    ],
+    "tags": [
+      "arch",
+      "verbatim"
+    ],
+    "id": "arch-g02"
+  },
+  {
+    "input": "代码架构腐化严重，模块之间依赖混乱，怎么组织代码结构",
+    "expected_primary_skill": "harness-architecture-boundaries",
+    "expected_candidates": [
+      "harness-architecture-boundaries"
+    ],
+    "tags": [
+      "arch",
+      "paraphrase"
+    ],
+    "id": "arch-g03"
+  },
+  {
+    "input": "帮我设计一套依赖方向规则，让上层不能反向依赖下层",
+    "expected_primary_skill": "harness-architecture-boundaries",
+    "expected_candidates": [
+      "harness-architecture-boundaries"
+    ],
+    "tags": [
+      "arch",
+      "paraphrase"
+    ],
+    "id": "arch-g04"
+  },
+  {
+    "input": "我想给项目加一个 lint 规则，禁止跨层 import",
+    "expected_primary_skill": "harness-architecture-boundaries",
+    "expected_candidates": [
+      "harness-architecture-boundaries"
+    ],
+    "tags": [
+      "arch",
+      "golden",
+      "paraphrase"
+    ],
+    "forbidden_skills": [
+      "harness-golden-principles"
+    ],
+    "id": "arch-g05"
+  },
+  {
+    "input": "这个项目的命名风格不统一，帮我统一下命名规范",
+    "expected_primary_skill": "none",
+    "expected_candidates": [],
+    "tags": [
+      "negative",
+      "style",
+      "verbatim"
+    ],
+    "forbidden_skills": [
+      "harness-architecture-boundaries"
+    ],
+    "id": "negative-g01"
+  },
+  {
+    "input": "怎么写一个好的 SKILL.md",
+    "expected_primary_skill": "harness-authoring",
+    "expected_candidates": [
+      "harness-authoring"
+    ],
+    "tags": [
+      "authoring",
+      "verbatim"
+    ],
+    "id": "authoring-g01"
+  },
+  {
+    "input": "这应该做成 skill 还是 subagent",
+    "expected_primary_skill": "harness-authoring",
+    "expected_candidates": [
+      "harness-authoring"
+    ],
+    "tags": [
+      "authoring",
+      "verbatim"
+    ],
+    "id": "authoring-g02"
+  },
+  {
+    "input": "我想给 harness 工具集添加一个新能力",
+    "expected_primary_skill": "harness-authoring",
+    "expected_candidates": [
+      "harness-authoring"
+    ],
+    "tags": [
+      "authoring",
+      "paraphrase"
+    ],
+    "id": "authoring-g03"
+  },
+  {
+    "input": "这个 skill 越写越臃肿了，需要拆 references",
+    "expected_primary_skill": "harness-authoring",
+    "expected_candidates": [
+      "harness-authoring"
+    ],
+    "tags": [
+      "authoring",
+      "paraphrase"
+    ],
+    "id": "authoring-g04"
+  },
+  {
+    "input": "新建能力之前怎么检查跟已有能力有没有重叠",
+    "expected_primary_skill": "harness-authoring",
+    "expected_candidates": [
+      "harness-authoring"
+    ],
+    "tags": [
+      "authoring",
+      "paraphrase"
+    ],
+    "id": "authoring-g05"
+  },
+  {
+    "input": "帮我写一个独立的 CLI 小工具，跟 harness 没关系",
+    "expected_primary_skill": "none",
+    "expected_candidates": [],
+    "tags": [
+      "negative",
+      "authoring",
+      "verbatim"
+    ],
+    "forbidden_skills": [
+      "harness-authoring"
+    ],
+    "id": "negative-g02"
+  },
+  {
+    "input": "init harness",
+    "expected_primary_skill": "harness-bootstrap",
+    "expected_candidates": [
+      "harness-bootstrap"
+    ],
+    "tags": [
+      "bootstrap",
+      "verbatim"
+    ],
+    "id": "bootstrap-g01"
+  },
+  {
+    "input": "为这个项目初始化 harness",
+    "expected_primary_skill": "harness-bootstrap",
+    "expected_candidates": [
+      "harness-bootstrap"
+    ],
+    "tags": [
+      "bootstrap",
+      "verbatim"
+    ],
+    "id": "bootstrap-g02"
+  },
+  {
+    "input": "新项目想用 harness 方法论管理 agent 协作，怎么开始",
+    "expected_primary_skill": "harness-bootstrap",
+    "expected_candidates": [
+      "harness-bootstrap"
+    ],
+    "tags": [
+      "bootstrap",
+      "paraphrase"
+    ],
+    "id": "bootstrap-g03"
+  },
+  {
+    "input": "这项目还没有 CLAUDE.md 和 docs 结构，先搭个骨架",
+    "expected_primary_skill": "harness-bootstrap",
+    "expected_candidates": [
+      "harness-bootstrap"
+    ],
+    "tags": [
+      "bootstrap",
+      "paraphrase"
+    ],
+    "id": "bootstrap-g04"
+  },
+  {
+    "input": "帮我设计一套 harness 规范，包括 CI 模板",
+    "expected_primary_skill": "harness-bootstrap",
+    "expected_candidates": [
+      "harness-bootstrap"
+    ],
+    "tags": [
+      "bootstrap",
+      "paraphrase"
+    ],
+    "id": "bootstrap-g05"
+  },
+  {
+    "input": "项目已经有完整的 harness 结构，我只想重构 CLAUDE.md",
+    "expected_primary_skill": "none",
+    "expected_candidates": [],
+    "tags": [
+      "negative",
+      "bootstrap",
+      "repo-map",
+      "verbatim"
+    ],
+    "forbidden_skills": [
+      "harness-bootstrap"
+    ],
+    "id": "negative-g03"
+  },
+  {
+    "input": "帮我提交代码",
+    "expected_primary_skill": "harness-commit-gate",
+    "expected_candidates": [
+      "harness-commit-gate"
+    ],
+    "tags": [
+      "commit",
+      "verbatim"
+    ],
+    "id": "commit-g01"
+  },
+  {
+    "input": "git commit 一下",
+    "expected_primary_skill": "harness-commit-gate",
+    "expected_candidates": [
+      "harness-commit-gate"
+    ],
+    "tags": [
+      "commit",
+      "verbatim"
+    ],
+    "id": "commit-g02"
+  },
+  {
+    "input": "代码改完了，准备提交，帮我过一遍质量门",
+    "expected_primary_skill": "harness-commit-gate",
+    "expected_candidates": [
+      "harness-commit-gate"
+    ],
+    "tags": [
+      "commit",
+      "paraphrase"
+    ],
+    "id": "commit-g03"
+  },
+  {
+    "input": "提交之前帮我检查有没有敏感信息泄露",
+    "expected_primary_skill": "harness-commit-gate",
+    "expected_candidates": [
+      "harness-commit-gate"
+    ],
+    "tags": [
+      "commit",
+      "paraphrase"
+    ],
+    "id": "commit-g04"
+  },
+  {
+    "input": "verification-loop 已经跑完了，现在可以提交了",
+    "expected_primary_skill": "harness-commit-gate",
+    "expected_candidates": [
+      "harness-commit-gate"
+    ],
+    "tags": [
+      "commit",
+      "paraphrase"
+    ],
+    "id": "commit-g05"
+  },
+  {
+    "input": "帮我调研一下这个项目的技术选型，不用改代码",
+    "expected_primary_skill": "none",
+    "expected_candidates": [],
+    "tags": [
+      "negative",
+      "commit",
+      "verbatim"
+    ],
+    "forbidden_skills": [
+      "harness-commit-gate"
+    ],
+    "id": "negative-g04"
+  },
+  {
+    "input": "先做个计划",
+    "expected_primary_skill": "harness-exec-plans",
+    "expected_candidates": [
+      "harness-exec-plans"
+    ],
+    "tags": [
+      "plan",
+      "verbatim"
+    ],
+    "id": "plan-g01"
+  },
+  {
+    "input": "这个改动比较大，需要落盘",
+    "expected_primary_skill": "harness-exec-plans",
+    "expected_candidates": [
+      "harness-exec-plans"
+    ],
+    "tags": [
+      "plan",
+      "verbatim"
+    ],
+    "id": "plan-g02"
+  },
+  {
+    "input": "任务可能要跨多个会话才能做完，需要接力",
+    "expected_primary_skill": "harness-exec-plans",
+    "expected_candidates": [
+      "harness-exec-plans"
+    ],
+    "tags": [
+      "plan",
+      "paraphrase"
+    ],
+    "id": "plan-g03"
+  },
+  {
+    "input": "多人协作完成这个重构，需要明确每一步的验收标准",
+    "expected_primary_skill": "harness-exec-plans",
+    "expected_candidates": [
+      "harness-exec-plans"
+    ],
+    "tags": [
+      "plan",
+      "paraphrase"
+    ],
+    "id": "plan-g04"
+  },
+  {
+    "input": "上一轮试过什么、为什么放弃的，需要记录下来",
+    "expected_primary_skill": "harness-exec-plans",
+    "expected_candidates": [
+      "harness-exec-plans"
+    ],
+    "tags": [
+      "plan",
+      "paraphrase"
+    ],
+    "id": "plan-g05"
+  },
+  {
+    "input": "就改一个配置文件的小字段，一次就能做完",
+    "expected_primary_skill": "none",
+    "expected_candidates": [],
+    "tags": [
+      "negative",
+      "plan",
+      "verbatim"
+    ],
+    "forbidden_skills": [
+      "harness-exec-plans"
+    ],
+    "id": "negative-g05"
+  },
+  {
+    "input": "想把人类品味编码为机械化规则",
+    "expected_primary_skill": "harness-golden-principles",
+    "expected_candidates": [
+      "harness-golden-principles"
+    ],
+    "tags": [
+      "golden",
+      "verbatim"
+    ],
+    "id": "golden-g01"
+  },
+  {
+    "input": "治理 AI 生成代码的重复模式",
+    "expected_primary_skill": "harness-golden-principles",
+    "expected_candidates": [
+      "harness-golden-principles"
+    ],
+    "tags": [
+      "golden",
+      "verbatim"
+    ],
+    "id": "golden-g02"
+  },
+  {
+    "input": "建立周期性的代码扫描机制，清理 AI 写的代码风格不统一",
+    "expected_primary_skill": "harness-golden-principles",
+    "expected_candidates": [
+      "harness-golden-principles"
+    ],
+    "tags": [
+      "golden",
+      "paraphrase"
+    ],
+    "id": "golden-g03"
+  },
+  {
+    "input": "review 里反复出现同类反馈，想把它变成自动检查",
+    "expected_primary_skill": "harness-golden-principles",
+    "expected_candidates": [
+      "harness-golden-principles"
+    ],
+    "tags": [
+      "golden",
+      "paraphrase"
+    ],
+    "id": "golden-g04"
+  },
+  {
+    "input": "怎么让代码库的风格统一起来，不要每次人工打扫",
+    "expected_primary_skill": "harness-golden-principles",
+    "expected_candidates": [
+      "harness-golden-principles"
+    ],
+    "tags": [
+      "golden",
+      "paraphrase"
+    ],
+    "id": "golden-g05"
+  },
+  {
+    "input": "我需要的是结构性的架构约束，不是风格偏好",
+    "expected_primary_skill": "none",
+    "expected_candidates": [],
+    "tags": [
+      "negative",
+      "golden",
+      "arch",
+      "verbatim"
+    ],
+    "forbidden_skills": [
+      "harness-golden-principles"
+    ],
+    "id": "negative-g06"
+  },
+  {
+    "input": "需要复现这个 UI bug",
+    "expected_primary_skill": "harness-observability-and-browser",
+    "expected_candidates": [
+      "harness-observability-and-browser"
+    ],
+    "tags": [
+      "observability",
+      "verbatim"
+    ],
+    "id": "observability-g01"
+  },
+  {
+    "input": "确认一下 P99 延迟是否达标",
+    "expected_primary_skill": "harness-observability-and-browser",
+    "expected_candidates": [
+      "harness-observability-and-browser"
+    ],
+    "tags": [
+      "observability",
+      "verbatim"
+    ],
+    "id": "observability-g02"
+  },
+  {
+    "input": "改动影响用户可见行为，需要截图作为证据",
+    "expected_primary_skill": "harness-observability-and-browser",
+    "expected_candidates": [
+      "harness-observability-and-browser"
+    ],
+    "tags": [
+      "observability",
+      "paraphrase"
+    ],
+    "id": "observability-g03"
+  },
+  {
+    "input": "verification-loop 跑完了但缺真实运行时信号",
+    "expected_primary_skill": "harness-observability-and-browser",
+    "expected_candidates": [
+      "harness-observability-and-browser"
+    ],
+    "tags": [
+      "observability",
+      "paraphrase"
+    ],
+    "id": "observability-g04"
+  },
+  {
+    "input": "修复声称修好了，但附不出证据，帮我验证用户旅程",
+    "expected_primary_skill": "harness-observability-and-browser",
+    "expected_candidates": [
+      "harness-observability-and-browser"
+    ],
+    "tags": [
+      "observability",
+      "paraphrase"
+    ],
+    "id": "observability-g05"
+  },
+  {
+    "input": "这次只改了文档和配置，不需要浏览器验证",
+    "expected_primary_skill": "none",
+    "expected_candidates": [],
+    "tags": [
+      "negative",
+      "observability",
+      "verbatim"
+    ],
+    "forbidden_skills": [
+      "harness-observability-and-browser"
+    ],
+    "id": "negative-g07"
+  },
+  {
+    "input": "我该用哪些 skill",
+    "expected_primary_skill": "harness-orchestration",
+    "expected_candidates": [
+      "harness-orchestration"
+    ],
+    "tags": [
+      "orchestration",
+      "verbatim"
+    ],
+    "id": "orchestration-g01"
+  },
+  {
+    "input": "这些 skill 怎么组合，工作流怎么走",
+    "expected_primary_skill": "harness-orchestration",
+    "expected_candidates": [
+      "harness-orchestration"
+    ],
+    "tags": [
+      "orchestration",
+      "verbatim"
+    ],
+    "id": "orchestration-g02"
+  },
+  {
+    "input": "进入一个新项目，不确定先后顺序，不知道先做什么",
+    "expected_primary_skill": "harness-orchestration",
+    "expected_candidates": [
+      "harness-orchestration"
+    ],
+    "tags": [
+      "orchestration",
+      "paraphrase"
+    ],
+    "id": "orchestration-g03"
+  },
+  {
+    "input": "复杂任务需要规划多个 skill 协作的流程",
+    "expected_primary_skill": "harness-orchestration",
+    "expected_candidates": [
+      "harness-orchestration"
+    ],
+    "tags": [
+      "orchestration",
+      "paraphrase"
+    ],
+    "id": "orchestration-g04"
+  },
+  {
+    "input": "我知道要用 commit-gate，直接帮我提交",
+    "expected_primary_skill": "none",
+    "expected_candidates": [],
+    "tags": [
+      "negative",
+      "orchestration",
+      "commit",
+      "verbatim"
+    ],
+    "forbidden_skills": [
+      "harness-orchestration"
+    ],
+    "id": "negative-g08"
+  },
+  {
+    "input": "分析当前项目",
+    "expected_primary_skill": "harness-project-intake",
+    "expected_candidates": [
+      "harness-project-intake"
+    ],
+    "tags": [
+      "intake",
+      "verbatim"
+    ],
+    "id": "intake-g01"
+  },
+  {
+    "input": "这个项目是做什么的",
+    "expected_primary_skill": "harness-project-intake",
+    "expected_candidates": [
+      "harness-project-intake"
+    ],
+    "tags": [
+      "intake",
+      "verbatim"
+    ],
+    "id": "intake-g02"
+  },
+  {
+    "input": "刚进入一个新项目目录，帮我看看用的什么技术栈",
+    "expected_primary_skill": "harness-project-intake",
+    "expected_candidates": [
+      "harness-project-intake"
+    ],
+    "tags": [
+      "intake",
+      "paraphrase"
+    ],
+    "id": "intake-g03"
+  },
+  {
+    "input": "读一下 README 给我个摘要，不用贴原文",
+    "expected_primary_skill": "harness-project-intake",
+    "expected_candidates": [
+      "harness-project-intake"
+    ],
+    "tags": [
+      "intake",
+      "paraphrase"
+    ],
+    "id": "intake-g04"
+  },
+  {
+    "input": "项目概览说一下，包括关键模块和入口",
+    "expected_primary_skill": "harness-project-intake",
+    "expected_candidates": [
+      "harness-project-intake"
+    ],
+    "tags": [
+      "intake",
+      "paraphrase"
+    ],
+    "id": "intake-g05"
+  },
+  {
+    "input": "我只要 package.json 的内容，cat 一下就行",
+    "expected_primary_skill": "none",
+    "expected_candidates": [],
+    "tags": [
+      "negative",
+      "intake",
+      "verbatim"
+    ],
+    "forbidden_skills": [
+      "harness-project-intake"
+    ],
+    "id": "negative-g09"
+  },
+  {
+    "input": "帮我优化一下这个 prompt",
+    "expected_primary_skill": "harness-prompt-optimizer",
+    "expected_candidates": [
+      "harness-prompt-optimizer"
+    ],
+    "tags": [
+      "prompt",
+      "verbatim"
+    ],
+    "id": "prompt-g01"
+  },
+  {
+    "input": "这个 prompt 效果不好",
+    "expected_primary_skill": "harness-prompt-optimizer",
+    "expected_candidates": [
+      "harness-prompt-optimizer"
+    ],
+    "tags": [
+      "prompt",
+      "verbatim"
+    ],
+    "id": "prompt-g02"
+  },
+  {
+    "input": "我需要一个 system prompt，让 AI 稳定地做代码审查",
+    "expected_primary_skill": "harness-prompt-optimizer",
+    "expected_candidates": [
+      "harness-prompt-optimizer"
+    ],
+    "tags": [
+      "prompt",
+      "paraphrase"
+    ],
+    "id": "prompt-g03"
+  },
+  {
+    "input": "怎么让 AI 做好 XXX，帮我写个提示词",
+    "expected_primary_skill": "harness-prompt-optimizer",
+    "expected_candidates": [
+      "harness-prompt-optimizer"
+    ],
+    "tags": [
+      "prompt",
+      "paraphrase"
+    ],
+    "id": "prompt-g04"
+  },
+  {
+    "input": "我贴段 prompt 你看看有什么问题",
+    "expected_primary_skill": "harness-prompt-optimizer",
+    "expected_candidates": [
+      "harness-prompt-optimizer"
+    ],
+    "tags": [
+      "prompt",
+      "paraphrase"
+    ],
+    "id": "prompt-g05"
+  },
+  {
+    "input": "帮我实现一个用户登录功能，要代码",
+    "expected_primary_skill": "none",
+    "expected_candidates": [],
+    "tags": [
+      "negative",
+      "prompt",
+      "verbatim"
+    ],
+    "forbidden_skills": [
+      "harness-prompt-optimizer"
+    ],
+    "id": "negative-g10"
+  },
+  {
+    "input": "CLAUDE.md 需要瘦身",
+    "expected_primary_skill": "harness-repo-map",
+    "expected_candidates": [
+      "harness-repo-map"
+    ],
+    "tags": [
+      "repo-map",
+      "verbatim"
+    ],
+    "id": "repo-map-g01"
+  },
+  {
+    "input": "需要审计文档是否过期",
+    "expected_primary_skill": "harness-repo-map",
+    "expected_candidates": [
+      "harness-repo-map"
+    ],
+    "tags": [
+      "repo-map",
+      "verbatim"
+    ],
+    "id": "repo-map-g02"
+  },
+  {
+    "input": "agent 缺乏项目背景，docs 目录结构也混乱",
+    "expected_primary_skill": "harness-repo-map",
+    "expected_candidates": [
+      "harness-repo-map"
+    ],
+    "tags": [
+      "repo-map",
+      "paraphrase"
+    ],
+    "id": "repo-map-g03"
+  },
+  {
+    "input": "为渐进式披露设计一套目录层级",
+    "expected_primary_skill": "harness-repo-map",
+    "expected_candidates": [
+      "harness-repo-map"
+    ],
+    "tags": [
+      "repo-map",
+      "paraphrase"
+    ],
+    "id": "repo-map-g04"
+  },
+  {
+    "input": "文档和代码行为脱节了，需要校验一致性",
+    "expected_primary_skill": "harness-repo-map",
+    "expected_candidates": [
+      "harness-repo-map"
+    ],
+    "tags": [
+      "repo-map",
+      "paraphrase"
+    ],
+    "id": "repo-map-g05"
+  },
+  {
+    "input": "项目需要从零全面初始化 harness 结构，帮我搭起来",
+    "expected_primary_skill": "none",
+    "expected_candidates": [],
+    "tags": [
+      "negative",
+      "repo-map",
+      "bootstrap",
+      "verbatim"
+    ],
+    "forbidden_skills": [
+      "harness-repo-map"
+    ],
+    "id": "negative-g11"
+  },
+  {
+    "input": "评估 skill 质量",
+    "expected_primary_skill": "harness-skill-quality-assessor",
+    "expected_candidates": [
+      "harness-skill-quality-assessor"
+    ],
+    "tags": [
+      "assessor",
+      "verbatim"
+    ],
+    "id": "assessor-g01"
+  },
+  {
+    "input": "检查 skills 是否符合规范",
+    "expected_primary_skill": "harness-skill-quality-assessor",
+    "expected_candidates": [
+      "harness-skill-quality-assessor"
+    ],
+    "tags": [
+      "assessor",
+      "verbatim"
+    ],
+    "id": "assessor-g02"
+  },
+  {
+    "input": "刚创建了一个新 skill，想验证一下质量",
+    "expected_primary_skill": "harness-skill-quality-assessor",
+    "expected_candidates": [
+      "harness-skill-quality-assessor"
+    ],
+    "tags": [
+      "assessor",
+      "paraphrase"
+    ],
+    "id": "assessor-g03"
+  },
+  {
+    "input": "skills 质量参差不齐，需要统一标准审计一遍",
+    "expected_primary_skill": "harness-skill-quality-assessor",
+    "expected_candidates": [
+      "harness-skill-quality-assessor"
+    ],
+    "tags": [
+      "assessor",
+      "paraphrase"
+    ],
+    "id": "assessor-g04"
+  },
+  {
+    "input": "准备发布前做一次质量检查",
+    "expected_primary_skill": "harness-skill-quality-assessor",
+    "expected_candidates": [
+      "harness-skill-quality-assessor"
+    ],
+    "tags": [
+      "assessor",
+      "paraphrase"
+    ],
+    "id": "assessor-g05"
+  },
+  {
+    "input": "我就想了解某个 skill 怎么用，不用评估质量",
+    "expected_primary_skill": "none",
+    "expected_candidates": [],
+    "tags": [
+      "negative",
+      "assessor",
+      "verbatim"
+    ],
+    "forbidden_skills": [
+      "harness-skill-quality-assessor"
+    ],
+    "id": "negative-g12"
+  },
+  {
+    "input": "把这个改动推进到可合并状态",
+    "expected_primary_skill": "harness-verification-loop",
+    "expected_candidates": [
+      "harness-verification-loop"
+    ],
+    "tags": [
+      "verification",
+      "verbatim"
+    ],
+    "id": "verification-g01"
+  },
+  {
+    "input": "修复测试失败",
+    "expected_primary_skill": "harness-verification-loop",
+    "expected_candidates": [
+      "harness-verification-loop"
+    ],
+    "tags": [
+      "verification",
+      "verbatim"
+    ],
+    "id": "verification-g02"
+  },
+  {
+    "input": "这个任务反复失败，需要循环迭代直到收敛",
+    "expected_primary_skill": "harness-verification-loop",
+    "expected_candidates": [
+      "harness-verification-loop"
+    ],
+    "tags": [
+      "verification",
+      "paraphrase"
+    ],
+    "id": "verification-g03"
+  },
+  {
+    "input": "帮我建立提交前的自检流程，确保代码能合并",
+    "expected_primary_skill": "harness-verification-loop",
+    "expected_candidates": [
+      "harness-verification-loop"
+    ],
+    "tags": [
+      "verification",
+      "paraphrase"
+    ],
+    "id": "verification-g04"
+  },
+  {
+    "input": "改动需要多轮测试和修复才能达标",
+    "expected_primary_skill": "harness-verification-loop",
+    "expected_candidates": [
+      "harness-verification-loop"
+    ],
+    "tags": [
+      "verification",
+      "paraphrase"
+    ],
+    "id": "verification-g05"
+  },
+  {
+    "input": "就是个 typo 拼写错误，直接改掉提交",
+    "expected_primary_skill": "none",
+    "expected_candidates": [],
+    "tags": [
+      "negative",
+      "verification",
+      "commit",
+      "verbatim"
+    ],
+    "forbidden_skills": [
+      "harness-verification-loop"
+    ],
+    "id": "negative-g13"
+  },
+  {
+    "input": "代码里重复模式太多，需要建立 lint 规则和品味编码",
+    "expected_primary_skill": "harness-golden-principles",
+    "expected_candidates": [
+      "harness-golden-principles",
+      "harness-architecture-boundaries"
+    ],
+    "tags": [
+      "golden",
+      "arch",
+      "ambiguous",
+      "ambiguous"
+    ],
+    "id": "golden-g06"
+  },
+  {
+    "input": "模块间依赖混乱，还老出现同样的坏味道",
+    "expected_primary_skill": "harness-architecture-boundaries",
+    "expected_candidates": [
+      "harness-architecture-boundaries",
+      "harness-golden-principles"
+    ],
+    "tags": [
+      "golden",
+      "arch",
+      "ambiguous",
+      "ambiguous"
+    ],
+    "id": "arch-g06"
+  },
+  {
+    "input": "今天天气怎么样",
+    "expected_primary_skill": "none",
+    "expected_candidates": [],
+    "tags": [
+      "negative",
+      "domain"
+    ],
+    "forbidden_skills": [],
+    "id": "negative-g14"
+  },
+  {
+    "input": "帮我写一个 React 组件",
+    "expected_primary_skill": "none",
+    "expected_candidates": [],
+    "tags": [
+      "negative",
+      "domain"
+    ],
+    "forbidden_skills": [],
+    "id": "negative-g15"
+  },
+  {
+    "input": "这个 API 怎么调用",
+    "expected_primary_skill": "none",
+    "expected_candidates": [],
+    "tags": [
+      "negative",
+      "domain"
+    ],
+    "forbidden_skills": [],
+    "id": "negative-g16"
+  },
+  {
+    "input": "解释一下这段代码的含义",
+    "expected_primary_skill": "none",
+    "expected_candidates": [],
+    "tags": [
+      "negative",
+      "domain"
+    ],
+    "forbidden_skills": [],
+    "id": "negative-g17"
+  },
+  {
+    "input": "帮我写单元测试",
+    "expected_primary_skill": "none",
+    "expected_candidates": [],
+    "tags": [
+      "negative",
+      "domain"
+    ],
+    "forbidden_skills": [],
+    "id": "negative-g18"
+  },
+  {
+    "input": "1+1 等于几",
+    "expected_primary_skill": "none",
+    "expected_candidates": [],
+    "tags": [
+      "negative",
+      "domain"
+    ],
+    "forbidden_skills": [],
+    "id": "negative-g19"
+  },
+  {
+    "input": "推荐几本架构方面的书",
+    "expected_primary_skill": "none",
+    "expected_candidates": [],
+    "tags": [
+      "negative",
+      "domain"
+    ],
+    "forbidden_skills": [],
+    "id": "negative-g20"
+  },
+  {
+    "input": "帮我把这段中文翻译成英文",
+    "expected_primary_skill": "none",
+    "expected_candidates": [],
+    "tags": [
+      "negative",
+      "domain"
+    ],
+    "forbidden_skills": [],
+    "id": "negative-g21"
+  }
+]

@@ -203,5 +203,122 @@ class RealRepoGuards(unittest.TestCase):
         self.assertEqual(code, 0, buf.getvalue())
 
 
+class TriggerContractConsistencyTests(unittest.TestCase):
+    """SKILL_KW and when_to_use are two representations of the same intent.
+
+    They are maintained by hand in different files and nothing kept them in
+    sync, so they drifted. Measured on 2026-09-24: 9 skills had keywords absent
+    from their own when_to_use, and golden-principles had 5 of 6 explicit
+    trigger phrases with no keyword coverage at all.
+
+    These tests act as a ratchet: they record the current drift as a baseline
+    and fail if it gets worse. Tightening the baseline is a deliberate act.
+    """
+    BASELINE_ORPHAN_KEYWORDS = 19   # keywords with no basis in when_to_use
+    BASELINE_UNCOVERED_PHRASES = 13  # explicit trigger phrases with no keyword
+
+    @staticmethod
+    def _when_to_use(skill):
+        import re
+        txt = open(os.path.join(REAL_SKILLS, skill, "SKILL.md"), encoding="utf-8").read()
+        m = re.search(r"^when_to_use:\s*\|\s*$(.*?)^(?:\w[\w-]*:|---)",
+                      txt, re.M | re.S)
+        return m.group(1) if m else ""
+
+    def _orphan_keywords(self):
+        out = []
+        for skill, kw in rtr.SKILL_KW.items():
+            wt = self._when_to_use(skill)
+            for w in kw.split():
+                if not any(p in wt for p in w.split("+")):
+                    out.append((skill, w))
+        return out
+
+    def _uncovered_phrases(self):
+        import re
+        out = []
+        for skill in rtr.SKILL_KW:
+            wt = self._when_to_use(skill)
+            m = re.search(r"显式触发：([^\n]*)", wt)
+            if not m:
+                continue
+            phrases = [p.strip().strip("\"'") for p in re.split(r"[、，,]", m.group(1))
+                       if p.strip()]
+            for p in phrases:
+                if not any(all(x in p for x in w.split("+"))
+                           for w in rtr.SKILL_KW[skill].split()):
+                    out.append((skill, p))
+        return out
+
+    def test_orphan_keywords_do_not_increase(self):
+        found = self._orphan_keywords()
+        self.assertLessEqual(
+            len(found), self.BASELINE_ORPHAN_KEYWORDS,
+            f"{len(found)} keywords have no basis in when_to_use "
+            f"(baseline {self.BASELINE_ORPHAN_KEYWORDS}): {found}")
+
+    def test_uncovered_trigger_phrases_do_not_increase(self):
+        found = self._uncovered_phrases()
+        self.assertLessEqual(
+            len(found), self.BASELINE_UNCOVERED_PHRASES,
+            f"{len(found)} explicit trigger phrases have no keyword "
+            f"(baseline {self.BASELINE_UNCOVERED_PHRASES}): {found}")
+
+    def test_reports_current_drift(self):
+        """Informational: prints the drift so it is visible in test output."""
+        o = self._orphan_keywords()
+        u = self._uncovered_phrases()
+        print(f"\n    orphan keywords: {len(o)}  "
+              f"uncovered trigger phrases: {len(u)}")
+        for skill, w in o:
+            print(f"      orphan keyword  {skill}: '{w}'")
+        for skill, p in u:
+            print(f"      uncovered phrase {skill}: '{p}'")
+
+
+class TaskCoverageMappingTests(unittest.TestCase):
+    """REQUIRES in scripts/audit_task_coverage.py is a THIRD representation of
+    trigger intent (after when_to_use and SKILL_KW), so it needs the same
+    anti-drift guard the other two got.
+
+    Two failure modes are checked:
+      - dead patterns: keys no acceptance criterion ever references
+      - orphan criteria: criteria no pattern can match, which silently pass
+        through the checker's only remaining guard
+    """
+    BASELINE_DEAD_PATTERNS = 0
+    BASELINE_UNMAPPED_CRITERIA = 0
+
+    def _load(self):
+        sys.path.insert(0, SCRIPTS_DIR)
+        import audit_task_coverage as atc
+        import json
+        tasks = json.load(open(os.path.join(REPO_ROOT, "tests", "tasks", "tasks.json"),
+                               encoding="utf-8"))
+        crits = [c for t in tasks for c in t["acceptance_criteria"]]
+        return atc, crits
+
+    def test_no_dead_patterns(self):
+        atc, crits = self._load()
+        blob = " ".join(crits).lower()
+        dead = [k for k in atc.REQUIRES if k.lower() not in blob]
+        self.assertEqual(dead, [],
+                         f"{len(dead)} REQUIRES patterns are never referenced by any "
+                         f"acceptance criterion: {dead}")
+
+    def test_every_criterion_maps_to_a_pattern(self):
+        """A criterion that matches no REQUIRES key falls through to the
+        checker's only remaining logic. If that logic is ever removed the
+        criterion would be silently reported as covered."""
+        atc, crits = self._load()
+        unmapped = []
+        for c in crits:
+            if not any(k.lower() in c.lower() for k in atc.REQUIRES):
+                unmapped.append(c)
+        self.assertEqual(unmapped, [],
+                         f"{len(unmapped)} criteria match no REQUIRES key and rely on "
+                         f"fallback logic: {unmapped}")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
