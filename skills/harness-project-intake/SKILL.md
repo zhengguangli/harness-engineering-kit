@@ -179,6 +179,14 @@ Always output the structured card below — never output raw file content:
 - **Incomplete information collection**: Not covering package.json/README/entry files.
   - Solution: Collection MUST cover package.json/README/entry files; if any is missing, annotate "Incomplete information" in the corresponding dimension.
 
+## Best Practices
+
+- Before collecting, run `ls -la | head -20` to quickly determine the project type (single package / Monorepo / single-file script), then decide collection depth.
+- When detecting package manifests in step 2, use `ls` wildcards (`package.json`, `Cargo.toml`, `go.mod`) to avoid `cat` on each file individually.
+- For Monorepo, only list the sub-package language matrix on first pass — do not recursively analyze each sub-package's deep modules.
+- After outputting the card, leave a closing note: "Analysis is based on current workspace state; dependencies and configuration may change subsequently" to manage expectations.
+- When the project has no README, check for alternative documentation entry points (docs/, CONTRIBUTING.md, ARCHITECTURE.md, wiki URLs in package.json comments) before marking the description as "Not found".
+
 ## Related Skills
 - routes-to  **harness-bootstrap**: This skill's output (project card) is passed downstream for skeleton setup
 - routes-to  **harness-golden-principles**: Project analysis results inform which golden principles apply
@@ -192,14 +200,6 @@ Always output the structured card below — never output raw file content:
 - `references/project-structures.md`: Project structure analysis and entry file identification per language
 - `references/tech-stack-detection.md`: Framework, runtime, and deployment target detection rules per language
 - `references/activity-analysis.md`: Activity analysis commands and rating criteria per language
-
-## Best Practices
-
-- Before collecting, run `ls -la | head -20` to quickly determine the project type (single package / Monorepo / single-file script), then decide collection depth.
-- When detecting package manifests in step 2, use `ls` wildcards (`package.json`, `Cargo.toml`, `go.mod`) to avoid `cat` on each file individually.
-- For Monorepo, only list the sub-package language matrix on first pass — do not recursively analyze each sub-package's deep modules.
-- After outputting the card, leave a closing note: "Analysis is based on current workspace state; dependencies and configuration may change subsequently" to manage expectations.
-- When the project has no README, check for alternative documentation entry points (docs/, CONTRIBUTING.md, ARCHITECTURE.md, wiki URLs in package.json comments) before marking the description as "Not found".
 
 ## Agent 提示词
 

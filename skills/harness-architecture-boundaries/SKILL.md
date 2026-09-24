@@ -130,6 +130,20 @@ function parseUserInput(input: unknown): UserInput {
 4. **Every violation must include an actionable fix suggestion**: Each finding in the report must contain a specific fix direction (code example + steps), not just "there's a problem here." Violations are rejected and regenerated.
 5. **Severity must be accurately classified**: CRITICAL (circular dependency/boundary violation, blocks merge) / HIGH (scattered cross-cutting concerns) / MEDIUM (ambiguous style) / LOW (leave for periodic cleanup). Violations are reclassified before output.
 
+## Examples
+
+**Example 1**: User says "这个项目的 Service 层不应该直接 import Repository 层实现"
+**Handling**: Read `ARCHITECTURE.md` to confirm dependency direction rules → Use Grep to search for cross-layer imports → Find violations → Produce a report with file line numbers and fix suggestions
+
+**Example 2**: User says "检查是否有循环依赖"
+**Handling**: Read architecture rules → Search for inter-module import statements → Generate a dependency graph → Mark circular dependency paths → Produce fix suggestions (redesign interfaces or split modules)
+
+**Example 3**: User says "帮我设计分层架构"
+**Handling**: Analyze project domain divisions and data flow → Confirm dependency direction and cross-cutting concern entry points with the user → Write to `ARCHITECTURE.md` → Hand off to boundary-auditor for verification
+
+**Example 4**: User says "这个项目的文件命名和 import 顺序太乱了，能不能定个规矩"
+**Handling**: This is the boundary case with `harness-golden-principles`. Test each complaint against one question — *does violating it break a structural invariant?* Naming style and import ordering do not: they are taste, they degrade gracefully, and no module boundary is violated by ignoring them. So classify as style preference and hand off to golden-principles, which encodes taste as periodically-swept rules. Only route back here if a complaint turns out to mask a real boundary problem (e.g., "import order" is actually "service layer importing repository implementations").
+
 ## Key Points
 
 - **Constrain invariants, not implementation details**: Strictly enforce module dependency direction and data boundary forms; do not constrain specific function writing style, library choices, or variable naming.
@@ -184,16 +198,12 @@ function parseUserInput(input: unknown): UserInput {
   - Solution: Periodically audit architecture rules and adjust the layering model as the project changes
   - Example: After significant project growth, you may need to evolve from 3 layers to 6 layers
 
-## Examples
+## Best Practices
 
-**Example 1**: User says "这个项目的 Service 层不应该直接 import Repository 层实现"
-**Handling**: Read `ARCHITECTURE.md` to confirm dependency direction rules → Use Grep to search for cross-layer imports → Find violations → Produce a report with file line numbers and fix suggestions
-
-**Example 2**: User says "检查是否有循环依赖"
-**Handling**: Read architecture rules → Search for inter-module import statements → Generate a dependency graph → Mark circular dependency paths → Produce fix suggestions (redesign interfaces or split modules)
-
-**Example 3**: User says "帮我设计分层架构"
-**Handling**: Analyze project domain divisions and data flow → Confirm dependency direction and cross-cutting concern entry points with the user → Write to `ARCHITECTURE.md` → Hand off to boundary-auditor for verification
+- Start with 3 layers (Types → Services → UI) when first defining a layered architecture, and expand gradually as the project grows — don't begin with a 6-layer model.
+- Review dependency direction every time a new module is added — the new module's responsibilities should naturally belong to a specific layer, not be forced into an existing one.
+- Group audit reports by severity, with each CRITICAL/HIGH finding including a "Before/After" code comparison to lower the fix barrier.
+- Export cross-cutting concern Providers entry points through a unified `providers/index.ts` file; prohibit direct sub-module references from arbitrary layers.
 
 ## Related Skills
 - input      **harness-project-intake**: Consumes its output (project information analysis) as input for architecture boundary analysis
@@ -207,13 +217,6 @@ function parseUserInput(input: unknown): UserInput {
 - `references/architecture-template.md`: ARCHITECTURE.md architecture document template
 - `references/check-pattern-template.md`: Architecture check pattern template (reference for boundary-auditor)
 - `references/e2e-architecture-audit-example.md`: End-to-end full example (Node.js e-commerce platform architecture audit, including project analysis → boundary identification → rule generation → verification — the complete workflow)
-
-## Best Practices
-
-- Start with 3 layers (Types → Services → UI) when first defining a layered architecture, and expand gradually as the project grows — don't begin with a 6-layer model.
-- Review dependency direction every time a new module is added — the new module's responsibilities should naturally belong to a specific layer, not be forced into an existing one.
-- Group audit reports by severity, with each CRITICAL/HIGH finding including a "Before/After" code comparison to lower the fix barrier.
-- Export cross-cutting concern Providers entry points through a unified `providers/index.ts` file; prohibit direct sub-module references from arbitrary layers.
 
 ## Agent 提示词
 
@@ -267,4 +270,4 @@ You are the "Architecture Boundary Auditor." Your sole responsibility is to dete
 - **Report structure**: Includes both a summary (total + severity distribution + whether it blocks) and detailed findings, ordered by severity
 
 ---
-Last updated: 2026-09-23 (Change: added the missing '## Common Pitfalls' heading — 6 pitfalls were orphaned at the end of Edge Case Handling)
+Last updated: 2026-09-24 (Change: added Example 4 drawing the architecture-boundaries vs golden-principles responsibility boundary; round-33 LOW #6)

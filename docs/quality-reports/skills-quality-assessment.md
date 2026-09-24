@@ -78,18 +78,18 @@ Meta orchestration / authoring / skill-quality-assessor → (无)
 |---|---|---|
 | 1 | assessor 补充"评估结果反哺 authoring"路径 | **已解决** — Best Practices 末条已写明将 HIGH/CRITICAL 发现反馈给 authoring 并建短改进计划 |
 | 2 | assessor Best Practices 与 Core Principles 有 2 条重叠 | **报告过期** — 现有 4 条原则与 5 条实践零重叠，该重叠在当前内容中不存在 |
-| 3 | assessor Methodology 两节合并为统一流程图 | 未处理，需人工判断 |
+| 3 | Methodology 两节合并为统一流程图（harness-repo-map） | **本轮已修复** — Initialization Steps 与 Procedure 合并为 Unified Procedure，单分支点；同时修复 quick-reference 表被截断的一行 |
 | 4 | verification-loop 补"exec-plan 不存在时的降级策略" | **已解决** — 全文 12 处 exec-plan 引用，含缺失时的处理 |
-| 5 | commit-gate 与 verification-loop 职责边界示例 | 未处理，需人工判断 |
-| 6 | architecture-boundaries 与 golden-principles 职责边界示例 | 未处理，需人工判断 |
-| 7 | orchestration 新 skill 加入后的路由更新 | 未处理，需人工判断 |
+| 5 | commit-gate 与 verification-loop 职责边界示例 | **本轮已修复** — 新增 Example 5，明确 commit-gate 不进入迭代循环 |
+| 6 | architecture-boundaries 与 golden-principles 职责边界示例 | **本轮已修复** — 新增 Example 4，给出一个判定问句：违反它是否破坏结构不变量 |
+| 7 | orchestration 新 skill 加入后的路由更新 | **本轮已修复** — Best Practices 新增四项同步清单（when_to_use / LAYERS / ARCHITECTURE.md / SKILL_KW+cases） |
 | 8 | observability Edge Cases 仅 3 个 | **本轮已修复** — 补"浏览器工具版本不兼容"、"多标签页验证"，3→5 |
 | 9 | bootstrap Edge Cases 仅 3 个 | **本轮已修复** — 补"Partial Harness Present but Stale"、"Harness Present but Wrong Shape"，3→5 |
 | 10 | golden-principles 生命周期管理 | **已解决** — Core Principles 已含生命周期相关内容 |
 | 11 | project-intake Usability 全库最低（9.3） | 主观分，机械审计无法复核 |
 | 12 | project-intake Examples 仅 3 个 | **本轮已修复** — 补"微服务架构"、"CLI 工具"两例，3→5 |
 
-剩余 4 条（#3/#5/#6/#7）需人工判断内容质量，# 11 条需主观重评。均不在机械审计能力范围内。
+第 33 次 12 条 LOW 现已全部处置：4 条早已解决、1 条已不成立、7 条本轮修复。仅剩 #11（project-intake Usability 主观分 9.3）需人工重评。
 
 ---
 

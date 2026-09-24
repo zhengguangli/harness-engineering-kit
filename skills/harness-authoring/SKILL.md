@@ -185,6 +185,23 @@ When the body approaches 500 lines, split content into `references/` sub-files, 
 - When checking overlap, besides file name scanning, use grep to search for verb phrases in the `description` field, flagging synonym combinations as potential overlaps.
 - When splitting a bloated skill, move complete sections (not partial paragraphs) to `references/` — each reference file should cover a unified topic, making it easy for the agent to load what it needs on demand without reading adjacent irrelevant content.
 
+## Related Skills
+- routes-to  **harness-orchestration**: Receives orchestration decisions as trigger signals for when to create a new skill
+- output     **harness-skill-quality-assessor**: After authoring a new skill, hand off to the assessor to score it
+- see-also   **harness-commit-gate**: New skills must pass the commit gate before merge
+
+- output     **all other skills**: This skill's output (new skill templates and specifications) is passed downstream as scaffolding
+
+## Related Templates
+
+- `references/scaffold-templates.md`: Scaffolding templates for new skills and agents
+- `references/skill-design-patterns.md`: Skill design patterns reference
+- `references/subagent-design-patterns.md`: Subagent design patterns reference
+- `references/context-budget-management-guide.md`: Context budget management guidelines
+- `references/common-edge-cases.md`: General edge case handling guide
+
+---
+Last updated: 2026-09-23 (Change: removed a verbatim-duplicated '## Related Templates' block; normalised a legacy 'Downstream' label in Related Skills)
 ## Agent 提示词
 
 ## Skill Scaffolder
@@ -237,20 +254,3 @@ You are the "Skill Scaffolder", responsible for generating complete file skeleto
 - **Self-check results**: Body line count, description content, agent prompt pairing status.
 - **Overlap check results**: If overlap is found, output merge/boundary suggestions.
 
-## Related Skills
-- routes-to  **harness-orchestration**: Receives orchestration decisions as trigger signals for when to create a new skill
-- output     **harness-skill-quality-assessor**: After authoring a new skill, hand off to the assessor to score it
-- see-also   **harness-commit-gate**: New skills must pass the commit gate before merge
-
-- output     **all other skills**: This skill's output (new skill templates and specifications) is passed downstream as scaffolding
-
-## Related Templates
-
-- `references/scaffold-templates.md`: Scaffolding templates for new skills and agents
-- `references/skill-design-patterns.md`: Skill design patterns reference
-- `references/subagent-design-patterns.md`: Subagent design patterns reference
-- `references/context-budget-management-guide.md`: Context budget management guidelines
-- `references/common-edge-cases.md`: General edge case handling guide
-
----
-Last updated: 2026-09-23 (Change: removed a verbatim-duplicated '## Related Templates' block; normalised a legacy 'Downstream' label in Related Skills)

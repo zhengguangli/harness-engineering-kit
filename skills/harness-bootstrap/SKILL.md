@@ -108,6 +108,20 @@ If any item fails, return to the corresponding step to fix before committing.
 3. **Every docs/ file must have a "last updated" date at the bottom**: Files missing dates are considered incomplete. Violation → add the date and resubmit.
 4. **Must respect existing content**: When the project already has CLAUDE.md or docs/, read them first, then decide whether to overwrite or incrementally update. Blind overwriting is prohibited. Violation → revert the operation and re-read existing content.
 
+## Examples
+
+**Example 1**: The user says "为这个新项目初始化 harness"
+**Action**: Run project-intake to analyze the project → confirm initialization scope with the user → generate CLAUDE.md (routing table + hard constraints) → create docs/ skeleton files → update .gitignore → output creation manifest
+
+**Example 2**: The project already has partial harness structure, the user says "补充缺少的部分"
+**Action**: Read existing CLAUDE.md and docs/ → compare against the minimum viable set → list existing and missing content → ask whether to overwrite or incrementally update → incrementally supplement missing parts → output modification manifest
+
+**Example 3**: User says "这是个 Python 单文件脚本项目，轻量化初始化就好"
+**Action**: Classify as single-file script per the project type tailoring guide → generate simplified CLAUDE.md (minimal routing table + workflow tips) → create only `docs/ARCHITECTURE.md` → skip design-docs and exec-plans → update `.gitignore` with Python-specific rules → output creation manifest
+
+**Example 4**: User says "项目是 monorepo，有前端和后端两个子包"
+**Action**: Read both sub-package configs (package.json, go.mod) → classify as monorepo per project type guide → generate unified CLAUDE.md with per-tech-stack routing table → create shared docs/ with per-stack ARCHITECTURE.md sections → append .gitignore rules for both Node.js and Go → output multi-package creation manifest
+
 ## Key Points
 
 - **Better less but precise**: When unsure if something is needed, don't create it yet — leave placeholder entries in the CLAUDE.md routing table.
@@ -159,19 +173,13 @@ If any item fails, return to the corresponding step to fix before committing.
 - **CLAUDE.md bloat**: Cramming all knowledge into CLAUDE.md, making the file too large and hard to maintain.
 - **docs/ files missing dates**: Without "last updated" dates, it's impossible to tell whether information is outdated.
 
-## Examples
+## Best Practices
 
-**Example 1**: The user says "为这个新项目初始化 harness"
-**Action**: Run project-intake to analyze the project → confirm initialization scope with the user → generate CLAUDE.md (routing table + hard constraints) → create docs/ skeleton files → update .gitignore → output creation manifest
-
-**Example 2**: The project already has partial harness structure, the user says "补充缺少的部分"
-**Action**: Read existing CLAUDE.md and docs/ → compare against the minimum viable set → list existing and missing content → ask whether to overwrite or incrementally update → incrementally supplement missing parts → output modification manifest
-
-**Example 3**: User says "这是个 Python 单文件脚本项目，轻量化初始化就好"
-**Action**: Classify as single-file script per the project type tailoring guide → generate simplified CLAUDE.md (minimal routing table + workflow tips) → create only `docs/ARCHITECTURE.md` → skip design-docs and exec-plans → update `.gitignore` with Python-specific rules → output creation manifest
-
-**Example 4**: User says "项目是 monorepo，有前端和后端两个子包"
-**Action**: Read both sub-package configs (package.json, go.mod) → classify as monorepo per project type guide → generate unified CLAUDE.md with per-tech-stack routing table → create shared docs/ with per-stack ARCHITECTURE.md sections → append .gitignore rules for both Node.js and Go → output multi-package creation manifest
+- Immediately after initialization, run `harness-repo-map` to validate the documentation structure, preventing missing required files during skeleton creation.
+- Generated CLAUDE.md routing table entries should point to specific file paths (e.g., `docs/ARCHITECTURE.md`), not just directory names.
+- For multi-tech-stack projects, partition CLAUDE.md by tech stack. Reference `references/gitignore-templates.md` to append .gitignore rules for each stack.
+- Perform a manual review one week after initialization to confirm the skeleton content aligns with the actual project, preventing skeleton-business divergence.
+- Before generating CLAUDE.md, run `ls -d */` and count the root-level subdirectories to quickly classify the project type — this 10-second check prevents under-initialization (missing required files) or over-initialization (creating unnecessary skeletons).
 
 ## Related Skills
 - input      **harness-project-intake**: Runs the intake analysis flow as step 1 to learn the tech stack, structure and existing docs
@@ -190,14 +198,6 @@ If any item fails, return to the corresponding step to fix before committing.
 - `references/docs-skeleton-by-stack.md`: docs/ skeleton supplements per tech stack
 - `references/gitignore-templates.md`: .gitignore templates per tech stack (Node.js/Python/Go/Rust/Java/PHP/Ruby/C#/Dart/Elixir)
 - `references/init-workflows.md`: Initialization workflows and additional steps per tech stack
-
-## Best Practices
-
-- Immediately after initialization, run `harness-repo-map` to validate the documentation structure, preventing missing required files during skeleton creation.
-- Generated CLAUDE.md routing table entries should point to specific file paths (e.g., `docs/ARCHITECTURE.md`), not just directory names.
-- For multi-tech-stack projects, partition CLAUDE.md by tech stack. Reference `references/gitignore-templates.md` to append .gitignore rules for each stack.
-- Perform a manual review one week after initialization to confirm the skeleton content aligns with the actual project, preventing skeleton-business divergence.
-- Before generating CLAUDE.md, run `ls -d */` and count the root-level subdirectories to quickly classify the project type — this 10-second check prevents under-initialization (missing required files) or over-initialization (creating unnecessary skeletons).
 
 ## Agent 提示词
 

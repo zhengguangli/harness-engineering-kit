@@ -62,6 +62,37 @@ in the human-readable `## Related Skills` section, which is not used to build th
 isolation, `depends_on` targets exist, and cross-skill `../harness-*/references/*` paths
 resolve. Related Skills entries lacking any of the four labels raise a WARN.
 
+### Canonical section order
+
+Every `SKILL.md` uses this top-level order. Sections 4-10 may be omitted by a skill that
+genuinely has nothing to say, but must never be reordered:
+
+```
+1.  Core Principles
+2.  When to Use
+3.  When Not to Use
+4.  Methodology                (+ optional skill-specific subsections)
+5.  Hard Constraints
+6.  Examples
+7.  Key Points
+8.  Edge Case Handling
+9.  Common Pitfalls
+10. Best Practices
+11. Related Skills
+12. Related Templates
+13. Agent 提示词               (+ agent name heading + its 6 sub-sections)
+```
+
+Skill-specific sections that do not fit the list above (`Workflow`, `Project Card`,
+`Five Standard Workflows`, `Cross-Skill Handoff Points`, `FAQ / Troubleshooting`,
+`Routing Recommendation`, `Golden Principles vs Architecture Boundaries`) go immediately
+after the section they elaborate — typically after `Methodology`.
+
+The order is the modal position across the 13 skills, not an arbitrary preference. Two
+rules make it enforceable: `Hard Constraints` always precedes `Examples`, and
+`Related Skills` / `Related Templates` always sit between `Best Practices` and
+`Agent 提示词`.
+
 ## Internal Structure of Each Skill
 
 ```
@@ -125,4 +156,4 @@ Key lessons from the full A+-grade optimization:
 See `docs/QUALITY_SCORE.md` for detailed lessons.
 
 ---
-Last updated: 2026-09-23 (Change: TD-001 closed — depends_on contract added and dependency direction now mechanically enforced by scripts/validate_skill_dependencies.py)
+Last updated: 2026-09-24 (Change: added the canonical SKILL.md section order, derived from the modal position across all 13 skills)

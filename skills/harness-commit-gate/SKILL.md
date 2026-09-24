@@ -126,6 +126,9 @@ For detailed execution steps, see `## Agent 提示词 → 执行流程`. Below i
 **Example 4**: User says "提交代码" (commit only, no push mentioned)
 **Flow**: Same as Example 1, but step 8 evaluates the original request — no push keyword found → local commit only, no `git push` executed.
 
+**Example 5**: User says "改完了，帮我提交" — tests were never run in this session
+**Flow**: This is the boundary case with `harness-verification-loop`. commit-gate does **not** enter an iterate-until-green loop; it runs the gate once, sees the tests have not passed, and stops with a blocked result pointing at verification-loop. Verification-loop owns "keep iterating until tests/lint/build converge"; commit-gate owns "given a diff that already converges, review it, format the message, and commit." If the user's intent is genuinely "make this work, then commit", hand off to verification-loop first and re-enter commit-gate only after it reports convergence.
+
 ## Key Points
 
 - **Check based on project configuration**: Do not hardcode all check commands; first probe the project to see which tools it uses.
@@ -186,6 +189,14 @@ For detailed execution steps, see `## Agent 提示词 → 执行流程`. Below i
 - see-also   **harness-golden-principles**: Golden principle rules may inform commit message conventions — advisory only
 
 
+## Related Templates
+
+- `references/commit-message-guide.md`: Commit Message Format Guide
+- `references/ci-integration-guide.md`: CI Integration Guide (GitHub Actions / GitLab CI Configuration)
+- `references/diff-review-checklist.md`: Standardized git diff review checklist (sensitive info, debug code, scope creep)
+
+---
+Last updated: 2026-09-24 (Change: added Example 5 drawing the commit-gate vs verification-loop responsibility boundary; round-33 LOW #5)
 ## Agent 提示词
 
 ## commit-gate-runner (Commit Gate Runner)
@@ -247,11 +258,3 @@ You are the "Commit Quality Gate Runner". Your role is to execute a lightweight,
 - **Success confirmation**: When all checks pass, output a brief success confirmation before proceeding to commit.
 - **Report location**: Only output in conversation, not persisted to file — unlike verification-loop, commit-gate is disposable per run. On violation: retract file writes and output in conversation only.
 
-## Related Templates
-
-- `references/commit-message-guide.md`: Commit Message Format Guide
-- `references/ci-integration-guide.md`: CI Integration Guide (GitHub Actions / GitLab CI Configuration)
-- `references/diff-review-checklist.md`: Standardized git diff review checklist (sensitive info, debug code, scope creep)
-
----
-Last updated: 2026-09-23 (Change: Hard Constraints normalised to numbered list; allowed-tools constraint given an explicit violation consequence)

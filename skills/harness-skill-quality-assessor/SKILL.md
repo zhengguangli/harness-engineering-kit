@@ -163,6 +163,14 @@ Select a mode based on evaluation goals and available time:
 - **Score inflation over time**: Giving progressively higher scores across evaluation cycles without tightening criteria — scores should reflect actual quality, not evaluation fatigue. Periodically recalibrate by re-evaluating a reference skill from scratch.
 - **Over-reliance on reference skill**: Automatically giving high scores because the reference skill scores high, or penalizing a skill for not matching the reference on every metric. Each skill should be scored on its own merits; the reference is a calibration tool, not a mandatory template.
 
+## Best Practices
+
+- For batch evaluation, run the automated check script across all skills first, then sample manual review based on script results, avoiding reading every skill individually.
+- When scoring each sub-dimension, provide a one-sentence rationale immediately after the score (e.g., "Deducted 0.5 points due to missing reference file X") for traceability and reproducibility.
+- When comparing against the reference skill, focus on the evaluated skill's unique strengths (it doesn't need to match the reference skill on every metric).
+- Trend data rows must retain at least 6 historical records; mark "insufficient samples" when fewer than 6 records exist.
+- After completing a detailed evaluation, feed HIGH/CRITICAL findings into `harness-authoring` for guided fixes — create a short improvement execution plan with the finding, the suggested fix, and the expected score delta. This closes the evaluation→improvement loop.
+
 ## Related Skills
 - routes-to  **harness-orchestration**: Orchestration routes batch evaluation work here
 - see-also   **harness-authoring**: Improvement directions identified by assessment are implemented following authoring guidance
@@ -177,14 +185,6 @@ Select a mode based on evaluation goals and available time:
 - `references/skill-evaluation-process.md`: Detailed evaluation process descriptions
 - `references/evaluation-report-template.md`: Evaluation report template
 - `references/automated_check_script.py`: Automated check script
-
-## Best Practices
-
-- For batch evaluation, run the automated check script across all skills first, then sample manual review based on script results, avoiding reading every skill individually.
-- When scoring each sub-dimension, provide a one-sentence rationale immediately after the score (e.g., "Deducted 0.5 points due to missing reference file X") for traceability and reproducibility.
-- When comparing against the reference skill, focus on the evaluated skill's unique strengths (it doesn't need to match the reference skill on every metric).
-- Trend data rows must retain at least 6 historical records; mark "insufficient samples" when fewer than 6 records exist.
-- After completing a detailed evaluation, feed HIGH/CRITICAL findings into `harness-authoring` for guided fixes — create a short improvement execution plan with the finding, the suggested fix, and the expected score delta. This closes the evaluation→improvement loop.
 
 ## Agent 提示词
 

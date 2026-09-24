@@ -41,8 +41,8 @@ metadata:
 ## Methodology
 
 **Entry decision**: This skill has two entry paths depending on current state:
-- **No CLAUDE.md or docs/ yet** → Follow the *Initialization Steps* below to create the docs/ skeleton from scratch.
-- **Existing CLAUDE.md > 100 lines or docs/ chaotic** → Follow the *Procedure* below to restructure and slim down.
+- **No CLAUDE.md or docs/ yet** → Follow the *Unified Procedure* below, branch A, to create the docs/ skeleton from scratch.
+- **Existing CLAUDE.md > 100 lines or docs/ chaotic** → Follow the *Unified Procedure* below, branch B, to restructure and slim down.
 
 If neither condition applies (small project, just need a quick document update), skip this skill entirely.
 
@@ -54,7 +54,7 @@ If neither condition applies (small project, just need a quick document update),
 | docs/ has files but no index | Missing navigation structure | Create index files from templates |
 | ARCHITECTURE.md references deleted modules | Stale architecture docs | Update ARCHITECTURE.md, re-validate references |
 | Broken links found in docs | Link rot | Fix each link, run `find docs -name '*.md' -exec grep -l '\\](' {} \\;` to confirm |
-| No CLAUDE.md at all | Greenfield project | Follow Initialization Steps
+| No CLAUDE.md at all | Greenfield project | Follow the Unified Procedure, branch A |
 
 ### Target Directory Skeleton
 
@@ -80,24 +80,26 @@ Not every project needs all subdirectories — trim as needed. But the directory
 
 The 4 core rules for writing CLAUDE.md (length, scope, change frequency, verifiability) are detailed in Appendix B of `references/claude-md-map-template.md`.
 
-### Initialization Steps (first-time docs/ skeleton setup)
+### Unified Procedure
 
-1. Create the entry file (refer to `references/claude-md-map-template.md`) — only create the one for your own platform.
-2. Create `docs/ARCHITECTURE.md` (refer to `../harness-architecture-boundaries/references/architecture-template.md`) and `docs/QUALITY_SCORE.md` (refer to `../harness-golden-principles/references/quality-score-template.md`). These two files belong under `docs/`, not the root directory.
-3. Create empty directories as needed: `docs/design-docs/`, `docs/exec-plans/active/`, `docs/exec-plans/completed/`, `docs/generated/`, `docs/product-specs/`, `docs/references/`.
-4. Create corresponding index files from the templates in the `references/` subdirectory: `docs/design-docs/index.md`, `docs/design-docs/core-beliefs.md`, `docs/product-specs/index.md`, `docs/exec-plans/tech-debt-tracker.md`.
-5. Fill in template placeholders (domain names, code paths, dates, etc.) according to the project's actual situation.
-6. Document validation is performed inline by the `doc-gardener` agent within its workflow — no need to generate a separate standalone script.
-7. Write at the top of the entry file: "This file is a map, not an encyclopedia; for in-depth information, see docs/."
+The two former entry paths (*Initialization Steps* and *Procedure*) shared three of their
+steps and differed only in how the skeleton gets populated. They are now one flow with a
+single branch point.
 
-### Procedure (setting up or restructuring the knowledge base)
-
-1. **Assess the current state**: How long is the existing CLAUDE.md/README? Is it a map or an encyclopedia? Does `docs/` exist? Does it have structure?
-2. **Design the directory skeleton**: Refer to the template above — only create subdirectories the project actually needs.
-3. **Split and migrate**: Break encyclopedia-style CLAUDE.md content into `docs/*.md` files by topic, then rewrite CLAUDE.md as a pointer table.
-4. **Add metadata**: For each migrated document, add "what this is about and when to read it."
-5. **Set up validation**: The `doc-gardener` agent performs document validation inline within its workflow (broken-link detection, freshness checks, coverage checks, structure checks) — no need to generate a separate standalone script.
-6. **Write the map disclaimer**: At the top of the entry file, write "This file is a map, not an encyclopedia; for in-depth information, see docs/."
+1. **Assess the current state** (both branches): How long is the existing CLAUDE.md/README? Is it a map or an encyclopedia? Does `docs/` exist? Does it have structure? The answer selects branch A or B in step 3.
+2. **Design the directory skeleton** (both branches): Refer to the template above — only create subdirectories the project actually needs. Record the structure in CLAUDE.md so a first-time agent knows what categories of files the information is distributed across.
+3. **Populate the skeleton** — branch on the assessment from step 1:
+   - **Branch A (greenfield — no CLAUDE.md or docs/ yet)**:
+     1. Create the entry file (refer to `references/claude-md-map-template.md`) — only create the one for your own platform.
+     2. Create `docs/ARCHITECTURE.md` (refer to `../harness-architecture-boundaries/references/architecture-template.md`) and `docs/QUALITY_SCORE.md` (refer to `../harness-golden-principles/references/quality-score-template.md`). These two files belong under `docs/`, not the root directory.
+     3. Create empty directories as needed: `docs/design-docs/`, `docs/exec-plans/active/`, `docs/exec-plans/completed/`, `docs/generated/`, `docs/product-specs/`, `docs/references/`.
+     4. Create corresponding index files from the templates in the `references/` subdirectory: `docs/design-docs/index.md`, `docs/design-docs/core-beliefs.md`, `docs/product-specs/index.md`, `docs/exec-plans/tech-debt-tracker.md`.
+     5. Fill in template placeholders (domain names, code paths, dates, etc.) according to the project's actual situation.
+   - **Branch B (restructure — CLAUDE.md > 100 lines or docs/ chaotic)**:
+     1. Split encyclopedia-style CLAUDE.md content into `docs/*.md` files by topic, then rewrite CLAUDE.md as a pointer table.
+     2. For each migrated document, add "what this is about and when to read it" metadata.
+4. **Validate inline** (both branches): The `doc-gardener` agent performs document validation inline within its workflow (broken-link detection, freshness checks, coverage checks, structure checks) — no need to generate a separate standalone script.
+5. **Write the map disclaimer** (both branches): At the top of the entry file, write "This file is a map, not an encyclopedia; for in-depth information, see docs/."
 
 ### Mechanized Validation (executed inline by doc-gardener agent)
 
@@ -182,6 +184,14 @@ Failures are written as agent-friendly repair instructions so whoever finds them
 - **Deleting historical records**: Removing outdated exec-plan decision records — outdated execution records still have historical value.
 - **Redundant entry files**: Creating duplicate entry files for multiple platforms simultaneously — only create the one for your own platform.
 
+## Best Practices
+
+- When splitting CLAUDE.md, group by "which content will be read by the same type of agent" — don't mechanically follow the original file's section order.
+- Each doc type in docs/ (design docs, specs, references) should use an independent preface template to help agents quickly determine whether to read deeper.
+- After migration, keep old CLAUDE.md entries for one collaboration cycle with soft-link comments (`# Originally in CLAUDE.md, moved to docs/xxx.md`), then remove them completely.
+- After fixing broken links, run `find docs -name '*.md' -exec grep -l '\\](' {} \\;` once to confirm no residual broken links remain.
+- When migrating from an external wiki or docs platform (Confluence, Notion, GitBook), batch-convert related pages into one docs/ subdirectory to preserve the original information hierarchy, then link from the CLAUDE.md navigation table.
+
 ## Related Skills
 - input      **harness-bootstrap**: Consumes the initialized CLAUDE.md + docs/ skeleton for validation
 - input      **harness-project-intake**: Consumes the structured project card (tech stack, architecture, entry points)
@@ -198,14 +208,6 @@ Failures are written as agent-friendly repair instructions so whoever finds them
 - `../harness-golden-principles/references/quality-score-template.md`: QUALITY_SCORE.md quality score template (canonical version)
 - `references/automated_check_script.py`: Automation check script
 - `references/e2e-repo-map-example.md`: End-to-end complete example (React project knowledge base restructuring, covering the full workflow from current-state analysis → structure design → document generation → quality validation)
-
-## Best Practices
-
-- When splitting CLAUDE.md, group by "which content will be read by the same type of agent" — don't mechanically follow the original file's section order.
-- Each doc type in docs/ (design docs, specs, references) should use an independent preface template to help agents quickly determine whether to read deeper.
-- After migration, keep old CLAUDE.md entries for one collaboration cycle with soft-link comments (`# Originally in CLAUDE.md, moved to docs/xxx.md`), then remove them completely.
-- After fixing broken links, run `find docs -name '*.md' -exec grep -l '\\](' {} \\;` once to confirm no residual broken links remain.
-- When migrating from an external wiki or docs platform (Confluence, Notion, GitBook), batch-convert related pages into one docs/ subdirectory to preserve the original information hierarchy, then link from the CLAUDE.md navigation table.
 
 ## Agent 提示词
 
@@ -264,4 +266,4 @@ Execute the following steps strictly in order, using the minimum number of tool 
 - **Best practices**: Provide best practices for knowledge base management, document maintenance, and directory structure.
 
 ---
-Last updated: 2026-09-23 (Change: Hard Constraints normalised to numbered list (format consistency)) (Change: Agent Prompt — severity rating Capability + Execution Flow Step 5 enhanced)
+Last updated: 2026-09-24 (Change: merged 'Initialization Steps' and 'Procedure' into a single Unified Procedure with one branch point — they shared 3 of their steps; also fixed a truncated row in the quick-reference table; round-33 LOW #3)
