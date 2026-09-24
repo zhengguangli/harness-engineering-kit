@@ -62,7 +62,7 @@ python3 scripts/run-all.py --sync                   # 验证 + 同步到 ~/.agen
 
 ## Quality gates
 
-提交前必须运行全量验证脚本（`python3 scripts/run-all.py`，四阶段：frontmatter / 触发回归 / Agent Prompt / 依赖校验）。最后一次主观加权评分为第 33 次（2026-07-10，平均 9.46，5 A+ / 8 A）；第 34 次（2026-09-23）为机械检查点审计，13/13 全绿。详见 `docs/QUALITY_SCORE.md`。
+提交前必须运行全量验证脚本（`python3 scripts/run-all.py`，五阶段：frontmatter / 触发回归 / Agent Prompt / 依赖校验 / 单元测试）。最后一次主观加权评分为第 33 次（2026-07-10，平均 9.46，5 A+ / 8 A）；第 34 次（2026-09-23）为机械检查点审计，13/13 全绿。详见 `docs/QUALITY_SCORE.md`。
 
 ## Skill 文件结构
 
@@ -78,9 +78,15 @@ skills/<name>/
 
 测试分两处：
 - `tests/triggers/cases.json`（48 个触发回归用例）。关键词映射在 `scripts/run_trigger_regression.py` 的 `SKILL_KW` 字典。新增 skill 时必须同时更新关键词映射和测试用例。
-- `tests/dependencies/test_dependency_validation.py`（18 个依赖校验用例，标准库 unittest）。新增 skill 时必须同时在 `scripts/validate_skill_dependencies.py` 的 `LAYERS`/`META_LAYER` 登记层级，否则该用例会失败。
+- `tests/dependencies/test_dependency_validation.py`（依赖校验，标准库 unittest）。新增 skill 时必须同时在 `scripts/validate_skill_dependencies.py` 的 `LAYERS`/`META_LAYER` 登记层级，否则该用例会失败。
+- `tests/scripts/test_validation_scripts.py`（校验脚本自身的行为，含关键词重复检测、每个 skill 至少一条回归用例等不变量）。
+
+两者都由 `run-all.py` 第五阶段自动执行，CI 继承——**测试失败即阻断合并**。
 
 ## Development Workflow
+
+**架构级变更必须同步更新 `CHANGELOG.md`**（新增/变更契约或不变式、CI 行为变更、验证方法论变更、核心依赖变更）。
+逐 commit 的流水账不进 CHANGELOG，看 `git log`。格式遵循 `AGENTS.md` §6：Context & Trade-offs / Impact Radius。
 
 修改 skill 后按此顺序操作：
 

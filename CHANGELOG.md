@@ -65,4 +65,27 @@
 
 ---
 
+## [2026-09-24] 校验脚本去重与 CI 门禁修复
+
+- **Context & Trade-offs**: 13 个 skill 级检查脚本各自复制约 110 行相同样板（1512 行，两两相似度
+  0.66-0.92），`scripts/lib/harness_check.py` 存有第三份功能相同但无人 import 的副本，而
+  `QUALITY_SCORE.md` 两轮评估详细描述的 `scripts/skill_automated_check.py` 共享脚本从未存在。
+  同时 12 个脚本打印 `[FAIL]` 却永远 exit 0，使 CI 的 `fail_count` 永不递增、summary 恒显
+  "13/13 passed"。选择"保留并启用 `lib/harness_check.py` 为唯一实现"而非新建模块——它已存在且
+  功能等价，代价是需要把它的 API 对齐 in-skill 版（`read_file` 返回 str 而非 list）。
+- **Impact Radius**:
+  - `scripts/lib/harness_check.py` — 重写为唯一规范实现（249 行）
+  - `skills/*/references/automated_check_script.py` — 12 个瘦身为 1512→564 行（-63%），
+    JSON 输出经逐字节比对验证等价；新增 `sys.exit(checker.exit_code())`
+  - `scripts/run-all.py` — 新增第五阶段 `tests`（**测试失败即阻断**）；回归用例数改为动态读取
+  - `scripts/run_trigger_regression.py` — 全量去重 `SKILL_KW`（重复 token 会虚增匹配数，
+    曾把 `ambiguous-03` 的判定从 WARN 误导为 PASS）；assessor 关键词补充空格容忍变体
+  - `tests/scripts/test_validation_scripts.py` — 新增 18 个用例，覆盖此前零测试的 3 个校验脚本
+  - `tests/triggers/cases.json` — 48→51，补上 assessor 的触发盲区
+  - `skills/harness-skill-quality-assessor/references/automated_check_script.py` —
+    `bidirectional-refs` 检查替换为 `depends-on-consistency`（前者要求双向引用，与分层架构冲突）
+  - 12 个此前未在 `SKILL.md` 登记的 `references/` 文件已全部登记
+
+---
+
 最后更新: 2026-09-24
