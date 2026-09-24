@@ -2,7 +2,7 @@
 name: harness-architecture-boundaries
 description: Design layered architecture, dependency direction, and data boundary rules for repos where agents generate large amounts of code — mechanically enforced via Grep/Bash checks in a boundary-auditor agent. Used for establishing layered architecture, circular dependency issues, cross-layer violations, lint rules, and dependency direction design.
 when_to_use: |
-  显式触发：用户要建立分层架构、出现循环依赖或层间越界、需要设计自定义 lint 规则、设计依赖方向。
+  显式触发：用户要建立分层架构、出现循环依赖或层间越界、需要设计强制依赖方向/层间边界的 lint 规则、设计依赖方向。
   隐式触发：代码已出现架构腐化、模块间依赖混乱、用户问"怎么组织代码结构"、需要定义跨层依赖方向。
   不触发：纯风格偏好类问题（交给 harness-golden-principles）、项目规模极小模块间无明显分层需求、用户明确表示不需要架构约束。
 context: fork

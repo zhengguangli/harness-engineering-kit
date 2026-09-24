@@ -2,7 +2,7 @@
 name: harness-repo-map
 description: Restructure repo knowledge management from a bloated CLAUDE.md into a progressive disclosure model of map + structured docs/ — avoiding context bloat and document rot. Used for sliming oversized CLAUDE.md, building docs structure from scratch, auditing broken links, and fixing outdated docs.
 when_to_use: |
-  显式触发：项目需要从零搭建 CLAUDE.md/docs 结构、现有 CLAUDE.md 膨胀需要瘦身、需要审计文档是否过期、需要为渐进式披露设计目录层级。
+  显式触发：现有 CLAUDE.md 膨胀需要瘦身、需要审计文档是否过期、需要为渐进式披露设计目录层级、CLAUDE.md/docs 已存在但结构混乱需重构。
   隐式触发：用户抱怨 agent 缺乏项目背景、CLAUDE.md 超过 100 行、docs/ 目录结构混乱或缺失、文档与代码行为脱节。
   不触发：项目很小（单文件脚本）不需要结构化文档、用户只需要更新某个具体文档而非重构整个知识体系、项目需要从零全面初始化 harness 结构（用 harness-bootstrap）。
 context: fork
