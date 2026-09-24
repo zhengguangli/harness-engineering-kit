@@ -34,7 +34,6 @@ python3 scripts/run-all.py --sync                   # 验证 + 同步到 ~/.agen
 | 已知但暂不处理的技术债 | `docs/exec-plans/tech-debt-tracker.md` |
 | 产品功能规格 | `docs/product-specs/index.md` |
 | 各 skill 质量评分与趋势追踪 | `docs/QUALITY_SCORE.md` |
-| 黄金原则扫描报告 | `docs/quality-reports/golden-principles-scan.md` |
 | Skills 质量评估报告 | `docs/quality-reports/skills-quality-assessment.md` |
 | 质量报告详情 | `docs/quality-reports/` |
 | 13 个 skill 的方法论正文 + agent 提示词 + 模板 | `skills/` |
@@ -95,4 +94,4 @@ skills/<name>/
 
 ---
 
-最后更新: 2026-09-23（变更：TD-001 关闭 — `depends_on` 契约 + 第四阶段依赖校验 + 18 个回归用例；第 34 次机械审计修复 6 类结构性缺陷；exec-plans 补齐 Cross-Skill Handoff）
+最后更新: 2026-09-24（变更：移除导航表中指向不存在文件的 `golden-principles-scan.md` 行——该路径是 golden-principles 在**目标项目**中的输出位置，不是本仓库的文件，放进导航表是错的）
