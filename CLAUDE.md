@@ -84,6 +84,7 @@ skills/<name>/
 - `scripts/audit_task_coverage.py` — 任务集覆盖审计：`tests/tasks/tasks.json` 的 55 条验收标准是否都有 SKILL.md 依据。
 - `tests/tasks/tasks.json` — 13 个代表性任务 + 55 条机械可验证验收标准，供后续 A/B 实验使用。
 - `scripts/compare_matchers.py` — 匹配机制对比实验（固定子串 vs 字符 n-gram TF-IDF）。
+- `scripts/compare_matchers_holdout.py` — 带训练/留出集划分的阈值实验：阈值只在 gate 集上选，diagnostic 集始终是留出集。结论：TF-IDF 排序显著更优（留出集 97.0% vs 68.2%，McNemar p<0.001），但正负样本分数区间重叠，无阈值能同时兼顾两者。
 - `tests/dependencies/test_dependency_validation.py`（依赖校验，标准库 unittest）。新增 skill 时必须同时在 `scripts/validate_skill_dependencies.py` 的 `LAYERS`/`META_LAYER` 登记层级，否则该用例会失败。
 - `tests/scripts/test_validation_scripts.py`（校验脚本自身的行为，含关键词重复检测、每个 skill 至少一条回归用例等不变量）。
 

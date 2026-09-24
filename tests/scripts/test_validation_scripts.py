@@ -276,5 +276,49 @@ class TriggerContractConsistencyTests(unittest.TestCase):
             print(f"      uncovered phrase {skill}: '{p}'")
 
 
+class TaskCoverageMappingTests(unittest.TestCase):
+    """REQUIRES in scripts/audit_task_coverage.py is a THIRD representation of
+    trigger intent (after when_to_use and SKILL_KW), so it needs the same
+    anti-drift guard the other two got.
+
+    Two failure modes are checked:
+      - dead patterns: keys no acceptance criterion ever references
+      - orphan criteria: criteria no pattern can match, which silently pass
+        through the checker's only remaining guard
+    """
+    BASELINE_DEAD_PATTERNS = 0
+    BASELINE_UNMAPPED_CRITERIA = 0
+
+    def _load(self):
+        sys.path.insert(0, SCRIPTS_DIR)
+        import audit_task_coverage as atc
+        import json
+        tasks = json.load(open(os.path.join(REPO_ROOT, "tests", "tasks", "tasks.json"),
+                               encoding="utf-8"))
+        crits = [c for t in tasks for c in t["acceptance_criteria"]]
+        return atc, crits
+
+    def test_no_dead_patterns(self):
+        atc, crits = self._load()
+        blob = " ".join(crits).lower()
+        dead = [k for k in atc.REQUIRES if k.lower() not in blob]
+        self.assertEqual(dead, [],
+                         f"{len(dead)} REQUIRES patterns are never referenced by any "
+                         f"acceptance criterion: {dead}")
+
+    def test_every_criterion_maps_to_a_pattern(self):
+        """A criterion that matches no REQUIRES key falls through to the
+        checker's only remaining logic. If that logic is ever removed the
+        criterion would be silently reported as covered."""
+        atc, crits = self._load()
+        unmapped = []
+        for c in crits:
+            if not any(k.lower() in c.lower() for k in atc.REQUIRES):
+                unmapped.append(c)
+        self.assertEqual(unmapped, [],
+                         f"{len(unmapped)} criteria match no REQUIRES key and rely on "
+                         f"fallback logic: {unmapped}")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
