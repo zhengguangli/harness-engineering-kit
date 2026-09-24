@@ -88,4 +88,35 @@
 
 ---
 
+## [2026-09-24] 质量测量体系建立（PR #16 / #17 合并）
+
+- **Context & Trade-offs**: 第 1-33 轮的 8 维度加权评分不满足基本测量属性——无外部基准、
+  单一评估者兼作者、13 个 skill 密集分布在 9.42-9.50（极差 0.08 低于评估噪声）、
+  第 28 轮内容零变化而平均分从 9.51 变 9.48。选择"停用加权总分、改用可复现测量"而非
+  "再跑一轮主观评估并只修 content"——后者会继续产出误导决策的假精度数字。
+- **Impact Radius**:
+  - `scripts/evaluate_trigger_discrimination.py` — 新增。产出准确率/混淆对/分差/Wilson 置信区间，
+    **刻意不产出综合分**
+  - `scripts/audit_output_specs.py`、`scripts/audit_task_coverage.py` — 新增，接入 CI 第七阶段
+  - `scripts/compare_matchers.py`、`compare_matchers_holdout.py` — 新增，匹配机制对比实验
+  - `tests/triggers/cases.json` + `cases.diagnostic.json` — 门控集与测量集分离（51 + 87）
+  - `tests/tasks/tasks.json` — 13 任务 / 55 条机械可验证验收标准
+  - `tests/scripts/` — 23 个用例，覆盖此前零测试的 3 个校验脚本
+  - `scripts/run-all.py` — 三阶段 → 七阶段
+  - `docs/exec-plans/active/quality-measurement-program.md` — 新增，记录 13 项已完成 + 4 项待办
+  - `docs/exec-plans/tech-debt-tracker.md` — 新增 TD-006~TD-010
+
+### 关键实测结果
+
+| 指标 | 值 |
+|---|---|
+| 门控集（51）正样本准确率 | 89.1% |
+| 测量集（87）正样本准确率 | 68.2% |
+| 合计（138） | 76.8%，95% CI [70.1%, 85.2%] |
+| TF-IDF 留出集（阈值仅在 gate 上选） | 97.0%，McNemar p < 0.001 vs 子串 |
+
+**门控集虚高 21 个百分点**——它只装了匹配器已能处理的用例，与本次修的退出码 bug 属同一失败形态。
+
+---
+
 最后更新: 2026-09-24

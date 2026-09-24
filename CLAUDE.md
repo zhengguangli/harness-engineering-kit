@@ -30,8 +30,9 @@ python3 scripts/run-all.py --sync                   # 验证 + 同步到 ~/.agen
 | Agent Prompt 内联迁移设计 | `docs/design-docs/agent-prompt-inline-migration.md` |
 | 设计决策详情 | `docs/design-docs/` |
 | 当前执行计划 | `docs/exec-plans/active/` |
+| 质量测量计划（13 项已完成 + 4 项待办 + 决策日志） | `docs/exec-plans/active/quality-measurement-program.md` |
 | Skill Quality Assessor 精炼计划 | `docs/exec-plans/completed/skill-quality-assessor-refinement.md` |
-| 已知但暂不处理的技术债 | `docs/exec-plans/tech-debt-tracker.md` |
+| 已知但暂不处理的技术债（TD-001~TD-010） | `docs/exec-plans/tech-debt-tracker.md` |
 | 产品功能规格 | `docs/product-specs/index.md` |
 | 各 skill 质量评分与趋势追踪 | `docs/QUALITY_SCORE.md` |
 | 架构级变更记录（契约/CI/方法论变更） | `CHANGELOG.md` |
