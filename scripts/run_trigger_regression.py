@@ -22,13 +22,13 @@ REPORT_FILE = os.path.join(ROOT_DIR, "tests/triggers/report.json")
 # Keyword mappings (replicating SKILL_KW associative array from bash)
 SKILL_KW = {
     "harness-architecture-boundaries": "分层架构 循环依赖 层间越界 lint 规则 依赖方向 架构腐化",
-    "harness-authoring": "怎么写一个好的 SKILL.md 给 harness 添新能力 skill 还是 subagent 瘦身",
+    "harness-authoring": "怎么写一个好的 SKILL.md harness 添新能力 skill 还是 subagent 瘦身",
     "harness-bootstrap": "init harness 为这个项目初始化 CLAUDE.md docs/ 骨架 CI 模板",
     "harness-commit-gate": "提交代码 commit git 修复，提交代码 代码提交",
     "harness-exec-plans": "先做个计划 改动比较大 落盘 跨多个会话 跨多窗口 接力 上一轮试过什么",
     "harness-golden-principles": "周期性扫描 模式漂移 黄金原则 品味编码 重复模式",
     "harness-observability-and-browser": "复现 UI bug P99 截图 浏览器 验证",
-    "harness-orchestration": "我该用哪些 skill 多 协作 不确定先后顺序 不确定先做什么后做什么 路由",
+    "harness-orchestration": "我该用哪些 skill 协作 不确定先后顺序 不确定先做什么后做什么 路由",
     "harness-project-intake": "分析当前项目 项目概览 README 这个项目是做什么的 项目卡片",
     "harness-prompt-optimizer": "优化这个 prompt 效果不好 system",
     "harness-repo-map": "CLAUDE.md 瘦身 断链 过期 从零搭建 docs 渐进式披露",
