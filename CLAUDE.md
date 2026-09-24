@@ -34,6 +34,7 @@ python3 scripts/run-all.py --sync                   # 验证 + 同步到 ~/.agen
 | 已知但暂不处理的技术债 | `docs/exec-plans/tech-debt-tracker.md` |
 | 产品功能规格 | `docs/product-specs/index.md` |
 | 各 skill 质量评分与趋势追踪 | `docs/QUALITY_SCORE.md` |
+| 架构级变更记录（契约/CI/方法论变更） | `CHANGELOG.md` |
 | Skills 质量评估报告 | `docs/quality-reports/skills-quality-assessment.md` |
 | 质量报告详情 | `docs/quality-reports/` |
 | 13 个 skill 的方法论正文 + agent 提示词 + 模板 | `skills/` |
