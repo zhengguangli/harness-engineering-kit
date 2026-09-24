@@ -5,11 +5,11 @@ on:
   pull_request:
     branches: [ main ]
 jobs:
-  enforce-developer-flow:
+  enforce-branch-flow:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
-      - name: Ensure PR source is an integration branch
+      - name: Ensure PR source is an integration branch (develop / main / release/*)
         run: |
           head="${{ github.head_ref }}"
           # Gitflow: work happens on feature/*, which merges into develop,
