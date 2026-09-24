@@ -194,6 +194,7 @@ For detailed execution steps, see `## Agent 提示词 → 执行流程`. Below i
 - `references/commit-message-guide.md`: Commit Message Format Guide
 - `references/ci-integration-guide.md`: CI Integration Guide (GitHub Actions / GitLab CI Configuration)
 - `references/diff-review-checklist.md`: Standardized git diff review checklist (sensitive info, debug code, scope creep)
+- `references/common-edge-cases.md`: Common edge cases in commit-gate processing; referenced from Edge Case Handling
 
 ---
 Last updated: 2026-09-24 (Change: added Example 5 drawing the commit-gate vs verification-loop responsibility boundary; round-33 LOW #5)

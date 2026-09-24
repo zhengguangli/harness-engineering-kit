@@ -185,6 +185,8 @@ Select a mode based on evaluation goals and available time:
 - `references/skill-evaluation-process.md`: Detailed evaluation process descriptions
 - `references/evaluation-report-template.md`: Evaluation report template
 - `references/automated_check_script.py`: Automated check script
+- `references/evaluation-examples.md`: Worked examples of a full evaluation (input -> dimension scores -> issue list)
+- `references/common-edge-cases.md`: Common edge cases in assessment work; referenced from Edge Case Handling
 
 ## Agent 提示词
 

@@ -186,6 +186,14 @@ Generate a complete, ready-to-use prompt. Do not wrap in markdown code blocks (u
 
 - `references/prompt-architecture-template.md`: Six-block prompt architecture template (Role / Context / Variables / Execution / Constraints / Output + Examples)
 - `references/common-edge-cases.md`: General edge case handling guide
+- `references/prompt-design-patterns.md`: Prompt design patterns reference
+- `references/six-block-design-notes.md`: Detailed design points for the six blocks in Methodology > Step 2 — SKILL.md carries only the templates themselves
+- `references/execution-chain-design-guide.md`: What an Execution Chain is and how to design one — read when a prompt needs more than 3 steps
+- `references/variable-dictionary-design-guide.md`: How to declare runtime-injected values so the LLM does not assume them
+- `references/domain-specific-patterns.md`: Per-domain prompt design emphasis (common domains)
+- `references/implicit-trigger-patterns.md`: Detailed reference for the frontmatter `when_to_use` field — read when a trigger decision is borderline
+- `references/optimization-examples.md`: Before/after prompt pairs with the rationale for each key change
+- `references/quality-test-cases.md`: Quality assessment test cases for this skill (trigger accuracy and four other dimensions)
 
 ## Agent 提示词
 

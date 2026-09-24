@@ -33,7 +33,7 @@ SKILL_KW = {
     "harness-prompt-optimizer": "优化这个 prompt prompt 效果不好 system prompt",
     "harness-repo-map": "CLAUDE.md 瘦身 断链 过期 从零搭建 docs 渐进式披露",
     "harness-verification-loop": "可合并 自验证循环 测试失败 循环迭代 实现→自检→测试→评审→修复 迭代",
-    "harness-skill-quality-assessor": "评估skill质量 skills质量审计 优化skills skill质量怎么样 检查skills规范",
+    "harness-skill-quality-assessor": "评估skill质量 skills质量审计 优化skills skill质量怎么样 检查skills规范 skill 质量 skills 质量 质量评估 skill 审计 skills 审计",
 }
 
 

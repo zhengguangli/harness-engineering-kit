@@ -188,6 +188,7 @@ If item 1 fails, go back to the user to confirm the goal before proceeding. For 
 - `references/tech-debt-tracker-template.md`: Tech debt tracker template
 - `references/agent-handoff-protocol.md`: Multi-agent handoff protocol
 - `references/common-edge-cases.md`: Common edge case handling guide
+- `references/e2e-exec-plan-example.md`: End-to-end example (e-commerce monolith to microservices order-module extraction) covering plan creation, phase handoff and completion
 
 ## Agent 提示词
 

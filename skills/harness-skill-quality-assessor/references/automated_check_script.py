@@ -21,6 +21,15 @@ ROOT_DIR = os.path.normpath(os.path.join(SCRIPT_DIR, "../../.."))
 SKILLS_DIR = os.environ.get("SKILLS_DIR", os.path.join(ROOT_DIR, "skills"))
 
 
+def extract_depends_on(content):
+    """Return the raw text of the frontmatter depends_on block, or ''."""
+    m = re.search(r"^depends_on:\s*\[([^\]]*)\]", content, re.MULTILINE)
+    if m:
+        return m.group(1)
+    m = re.search(r"^depends_on:\s*$((?:\s+-\s+\S+\s*$)+)", content, re.MULTILINE)
+    return m.group(1) if m else ""
+
+
 def read_file(path):
     """Read file contents; returns empty string on error."""
     try:
@@ -627,23 +636,34 @@ def assess_all():
             "detail": f"Skills missing required sections:{' '.join(missing_map)}"
         })
 
-    # Bidirectional reference check
-    bidir_issues = []
+    # depends_on consistency check.
+    #
+    # Replaces the old 'bidirectional-refs' check, which required every skill
+    # mention to be reciprocated. That is incompatible with the layered
+    # architecture: commit-gate (L5) legitimately consumes project-intake's
+    # output (L0), and forcing project-intake to mention commit-gate back
+    # would create an upward reference. It also reported 19 missing
+    # back-references before any recent change, so it carried no signal.
+    #
+    # The checkable invariant is instead: every '- input **harness-x**:' line in
+    # Related Skills must correspond to a `depends_on` entry, and vice versa.
+    dep_issues = []
     for skill in skills:
         contents = read_file(os.path.join(SKILLS_DIR, skill, "SKILL.md"))
-        refs = set(re.findall(r"harness-[a-z-]+", contents))
-        for ref in refs:
-            if ref in ("harness-", "") or ref == skill:
-                continue
-            ref_contents = read_file(os.path.join(SKILLS_DIR, ref, "SKILL.md"))
-            if ref_contents and skill not in ref_contents:
-                bidir_issues.append(f"[{skill}→{ref}]")
+        declared = set(re.findall(r"harness-[a-z-]+", extract_depends_on(contents)))
+        labelled = set(re.findall(r"^-\s*input\s+\*\*harness-[a-z-]+\*\*",
+                                  contents, re.MULTILINE))
+        labelled = {m.replace("**", "").split()[-1] for m in labelled}
+        for missing in sorted(labelled - declared):
+            dep_issues.append(f"[{skill}: input label {missing} not in depends_on]")
+        for extra in sorted(declared - labelled):
+            dep_issues.append(f"[{skill}: depends_on {extra} has no input label]")
 
-    if bidir_issues:
+    if dep_issues:
         cross_skill_issues.append({
-            "check": "bidirectional-refs",
+            "check": "depends-on-consistency",
             "severity": "WARN",
-            "detail": f"Missing back-references:{' '.join(bidir_issues)}"
+            "detail": f"depends_on vs Related Skills input labels:{' '.join(dep_issues)}"
         })
 
     output = {

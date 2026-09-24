@@ -15,6 +15,7 @@ Usage:
 import subprocess
 import sys
 import os
+import json
 import argparse
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -98,7 +99,14 @@ def main():
         print()
 
     if run_regression:
-        print(">>> 关键词回归测试 (48 cases)")
+        n_cases = 0
+        try:
+            with open(os.path.join(ROOT_DIR, "tests", "triggers", "cases.json"),
+                      encoding="utf-8") as f:
+                n_cases = len(json.load(f))
+        except (OSError, ValueError):
+            pass
+        print(f">>> 关键词回归测试 ({n_cases} cases)")
         if run_script("run_trigger_regression.py", reg_args) != 0:
             exit_code = 1
         print()
