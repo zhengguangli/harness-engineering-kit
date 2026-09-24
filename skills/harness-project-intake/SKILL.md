@@ -8,6 +8,7 @@ when_to_use: |
 context: fork
 agent: project-analyzer
 compatibility: claude-code
+depends_on: []
 allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *)
 metadata:
   category: analysis
@@ -87,9 +88,9 @@ Always output the structured card below — never output raw file content:
 
 ## Hard Constraints
 
-- **Do NOT fabricate information**: The card must not contain any fabricated content (e.g., guessed versions or assumed frameworks). If the verification-loop finds fabricated information, reject it and require re-collection. If a dimension truly cannot be obtained, write "Not found" or "Not configured".
-- **Information collection MUST cover package.json / README / entry files**: If any of these three is missing, annotate "Incomplete information" in the corresponding card dimension. Do not skip or fill with guesses.
-- **Fallback when no package manifest exists**: When none of `package.json` / `Cargo.toml` / `go.mod` / `pyproject.toml` exist, run `ls` to observe file extensions and infer the language, annotating "Inferred (no package manifest)" in the card.
+1. **Do NOT fabricate information**: The card must not contain any fabricated content (e.g., guessed versions or assumed frameworks). If the verification-loop finds fabricated information, reject it and require re-collection. If a dimension truly cannot be obtained, write "Not found" or "Not configured".
+2. **Information collection MUST cover package.json / README / entry files**: If any of these three is missing, annotate "Incomplete information" in the corresponding card dimension. Violation (a dimension silently left blank or filled with a guess) → reject the card, mark the affected dimension "Incomplete information", and re-run collection for that dimension only.
+3. **Fallback when no package manifest exists**: When none of `package.json` / `Cargo.toml` / `go.mod` / `pyproject.toml` exist, run `ls` to observe file extensions and infer the language, annotating "Inferred (no package manifest)" in the card. Violation (language asserted without the annotation) → reject the card, downgrade the language field to "Inferred (no package manifest)", and re-verify the inference against at least two file extensions.
 
 ## Examples
 
@@ -101,6 +102,12 @@ Always output the structured card below — never output raw file content:
 
 **Example 3**: User enters a Go-based Monorepo and says "分析这个项目"
 **Handling**: Detect monorepo structure via sub-package directories (services/, cmd/) → Run 6-step collection for root first → Per sub-package manifest detection (go.mod) → Output tiered project card with root overview + per-sub-package language matrix annotated "monorepo"
+
+**Example 4**: User enters a microservices repo and says "帮我摸清这个项目"
+**Handling**: Detect the microservices layout (one deployable per directory, each with its own manifest) → Produce one card per service rather than one flattened card → In the root card, record only the shared contract: service list, communication style (sync HTTP / async queue), and shared type packages → Annotate each service card "microservice — shared types only, no cross-service code dependencies". Do not attempt to describe every service's internals in the root card.
+
+**Example 5**: User enters a CLI tool project and says "这个项目是做什么的"
+**Handling**: Find the entry point from the manifest's `bin` field (or `[[bin]]` for Rust) → Read the argument parser to enumerate the command surface → Record install/run/test commands from the manifest scripts → Output a card whose Key Modules section lists each subcommand with its file path. If the project has no `bin` field, fall back to `ls` plus extension inference and annotate the language "Inferred (no package manifest)".
 
 ## Key Points
 
@@ -142,6 +149,21 @@ Always output the structured card below — never output raw file content:
 **Scenario**: The project only has a lockfile (package-lock.json, yarn.lock, Cargo.lock, go.sum) without a corresponding package manifest.
 **Handling**: Read the lockfile header to identify the package manager (npm/yarn/pnpm/cargo/go); note "No package manifest found; package manager inferred from lockfile" in the tech stack card. Do not extract dependency versions from the lockfile — list them only if a manifest is found.
 
+### Private / Authenticated Monorepo
+
+**Scenario**: A monorepo where sub-packages reference each other via workspace protocols (e.g., `"@repo/ui": "workspace:*"`), but no root-level package.json exists.
+**Handling**: Detect workspace patterns by scanning for `pnpm-workspace.yaml`, `lerna.json`, or `turbo.json`; use these to map sub-package boundaries even without a root manifest. Annotate "workspace protocol detected" in the card.
+
+### Project with No README and No Manifest
+
+**Scenario**: The project has no README.md, no package manifest, and no lockfile — only source files.
+**Handling**: Infer language from file extensions (`.py` → Python, `.go` → Go, `.rs` → Rust); check for `Makefile`/`Justfile`/`Dockerfile` for build hints; annotate "Inferred (no manifest, no README)" in all affected dimensions. Do not fabricate a project description.
+
+### Generated / Vendored Directory
+
+**Scenario**: The project root contains `node_modules/`, `.venv/`, `vendor/`, or other generated directories that should not be analyzed.
+**Handling**: Skip generated directories in the directory skeleton; note their existence in "Known Constraints" (e.g., "vendored dependencies present"). Do not list generated files as key modules.
+
 ## Common Pitfalls
 
 - **Dumping raw data**: Outputting the full text of `cat README.md` to the user — the user wants conclusions, not process.
@@ -157,11 +179,19 @@ Always output the structured card below — never output raw file content:
 - **Incomplete information collection**: Not covering package.json/README/entry files.
   - Solution: Collection MUST cover package.json/README/entry files; if any is missing, annotate "Incomplete information" in the corresponding dimension.
 
+## Best Practices
+
+- Before collecting, run `ls -la | head -20` to quickly determine the project type (single package / Monorepo / single-file script), then decide collection depth.
+- When detecting package manifests in step 2, use `ls` wildcards (`package.json`, `Cargo.toml`, `go.mod`) to avoid `cat` on each file individually.
+- For Monorepo, only list the sub-package language matrix on first pass — do not recursively analyze each sub-package's deep modules.
+- After outputting the card, leave a closing note: "Analysis is based on current workspace state; dependencies and configuration may change subsequently" to manage expectations.
+- When the project has no README, check for alternative documentation entry points (docs/, CONTRIBUTING.md, ARCHITECTURE.md, wiki URLs in package.json comments) before marking the description as "Not found".
+
 ## Related Skills
+- routes-to  **harness-bootstrap**: This skill's output (project card) is passed downstream for skeleton setup
+- routes-to  **harness-golden-principles**: Project analysis results inform which golden principles apply
 
 - Upstream **None**: This skill is the Layer 0 entry point; it does not depend on output from other skills.
-- Downstream **harness-bootstrap**: This skill's output (project card) is passed downstream for skeleton setup.
-- Downstream **harness-golden-principles**: Project analysis results inform which golden principles apply
 
 ## Related Templates
 
@@ -170,14 +200,6 @@ Always output the structured card below — never output raw file content:
 - `references/project-structures.md`: Project structure analysis and entry file identification per language
 - `references/tech-stack-detection.md`: Framework, runtime, and deployment target detection rules per language
 - `references/activity-analysis.md`: Activity analysis commands and rating criteria per language
-
-## Best Practices
-
-- Before collecting, run `ls -la | head -20` to quickly determine the project type (single package / Monorepo / single-file script), then decide collection depth.
-- When detecting package manifests in step 2, use `ls` wildcards (`package.json`, `Cargo.toml`, `go.mod`) to avoid `cat` on each file individually.
-- For Monorepo, only list the sub-package language matrix on first pass — do not recursively analyze each sub-package's deep modules.
-- After outputting the card, leave a closing note: "Analysis is based on current workspace state; dependencies and configuration may change subsequently" to manage expectations.
-- When the project has no README, check for alternative documentation entry points (docs/, CONTRIBUTING.md, ARCHITECTURE.md, wiki URLs in package.json comments) before marking the description as "Not found".
 
 ## Agent 提示词
 
@@ -217,11 +239,13 @@ You are the "Project Analyzer" (project-analyzer). Quickly and silently collect 
 
 ### Constraints
 
-- **Read-only**: No file writes, deletes, or modifications. No commands that modify the file system such as `npm install`. Revert any violation.
-- **No fabrication**: Write "Not found" or "Not configured" when information is missing; do not guess. Correct violations by replacing with "Not found" and recording the source.
-- **Silent collection**: All collection processes are invisible to the user; only the final card is output. Delete any intermediate output if violated.
-- **Rapid convergence**: Complete 5-dimension collection within 6-8 tool calls. If violated, stop over-exploration and merge similar tool calls.
-- **Monorepo tiered collection**: When sub-package directories are found at the root, collect in tiers — first the global structure, then supplement per sub-package. If violated, retract the global card and re-output in tiered structure.
+- **Read-only**: No file writes, deletes, or modifications. No commands that modify the file system such as `npm install`. Violation → revert any write operation immediately and continue with read-only tools only.
+- **No fabrication**: Write "Not found" or "Not configured" when information is missing; do not guess. Violation → replace fabricated content with "Not found", record what was attempted, and note the gap in "Known Constraints".
+- **Silent collection**: All collection processes are invisible to the user; only the final card is output. Violation → delete any intermediate output that leaked to the user and re-output only the final card.
+- **Rapid convergence**: Complete 5-dimension collection within 6-8 tool calls. Violation → stop over-exploration immediately, merge similar tool calls, and output the card with available information.
+- **Monorepo tiered collection**: When sub-package directories are found at the root, collect in tiers — first the global structure, then supplement per sub-package. Violation → retract the global card and re-output in tiered structure with per-sub-package breakdown.
+- **Information completeness gate**: Before outputting the card, verify that at least package.json (or equivalent), README, and entry files were checked. Violation → annotate the missing dimension as "Incomplete information" and note which check was skipped.
+- **Card template conformance**: Output must follow the project card template with all 5 dimension sections present (even if some say "Not found"). Violation → reformat to match the template structure before presenting.
 
 ### Output Specification
 
@@ -232,4 +256,4 @@ You are the "Project Analyzer" (project-analyzer). Quickly and silently collect 
 - Output location: Conversation output only — do not create project card files on disk. On violation: retract file writes and output in conversation.
 
 ---
-Last updated: 2026-07-07 (Change: Agent Prompt — Monorepo capability enhanced + lockfile detection in Execution Flow)
+Last updated: 2026-09-24 (Change: Examples 3→5 — added microservices and CLI-tool analysis; addresses round-33 LOW #12)

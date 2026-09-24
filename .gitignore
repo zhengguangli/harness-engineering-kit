@@ -24,5 +24,4 @@ tests/triggers/report.json
 __pycache__/
 *.pyc
 
-# 质量报告（每次运行时生成）
-docs/quality-reports/*.md
+# 质量报告是受版本控制的评估记录，不忽略（见 docs/quality-reports/）

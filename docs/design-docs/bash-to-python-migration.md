@@ -36,7 +36,7 @@
 |---|---|---|
 | `scripts/lib/` (新建) | `scripts/lib/__init__.py` + `harness_check.py` | 共享库，仅供主脚本 |
 | `scripts/validate-skill-triggers.sh` | `scripts/validate_skill_triggers.py` | frontmatter 校验 |
-| `scripts/run-trigger-regression.sh` | `scripts/run_trigger_regression.py` | 48 case 回归测试 |
+| `scripts/run-trigger-regression.sh` | `scripts/run_trigger_regression.py` | 回归测试（用例数动态读出） |
 | `scripts/validate-agent-prompt-sync.sh` | `scripts/validate_agent_prompt_sync.py` | Agent 提示词存在性 |
 | `scripts/skill-automated-check.sh` | `scripts/skill_automated_check.py` | 共享检查器（JSON） |
 | `scripts/skill-automation-check.sh` | `scripts/skill_automation_check.py` | 中文检查器（Markdown） |
@@ -44,4 +44,4 @@
 
 ---
 
-最后更新: 2026-07-06
+最后更新: 2026-09-23（复核：内容未变更，仅刷新新鲜度戳）

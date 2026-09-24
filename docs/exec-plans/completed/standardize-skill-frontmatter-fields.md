@@ -2,7 +2,7 @@
 
 - Status: completed
 - Created: 2026-07-06
-- Last updated: 2026-07-06
+- Last updated: 2026-09-23（复核：内容未变更，仅刷新新鲜度戳）
 - Related PR / issue: commit 39c498a
 - Responsible agent / person: harness-exec-plans
 

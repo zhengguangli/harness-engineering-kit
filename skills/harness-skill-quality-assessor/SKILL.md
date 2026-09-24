@@ -8,6 +8,7 @@ when_to_use: |
 context: fork
 agent: skill-quality-assessor
 compatibility: claude-code
+depends_on: []
 allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *) Bash(bc *) Bash(sort *) Bash(uniq *) Bash(cut *) Bash(tr *) Bash(paste *)
 metadata:
   category: quality-assurance
@@ -113,6 +114,12 @@ Select a mode based on evaluation goals and available time:
 **Example 3**: User says "检查所有 skills 是否符合规范"
 **Handling**: Batch evaluation mode → traverse all SKILL.md files → automated script scans everything → sampled manual review (2 out of every 10 skills) → summary report → includes trend comparison and common issue analysis
 
+**Example 4**: User says "这个新 skill 和 prompt-optimizer 比怎么样"
+**Handling**: Detailed evaluation mode → evaluate target skill across 8 dimensions → side-by-side comparison table with prompt-optimizer → identify relative strengths (e.g., more edge cases) and gaps (e.g., fewer examples) → actionable suggestions referencing prompt-optimizer's specific patterns
+
+**Example 5**: User says "上次评估后的改进效果如何"
+**Handling**: Detailed evaluation mode → read previous report from `docs/quality-reports/skills-quality-assessment.md` → re-evaluate the same skill → generate delta report (score changes per dimension, resolved issues, new issues) → update trend data in `docs/QUALITY_SCORE.md`
+
 ## Key Points
 
 - **Unified evaluation criteria**: All skills use the same criteria to ensure comparable results.
@@ -153,19 +160,8 @@ Select a mode based on evaluation goals and available time:
 - **Insufficient automation**: Over-relying on manual evaluation, leading to low efficiency and high subjectivity.
 - **Neglecting user experience**: Focusing only on technical metrics while ignoring learning curve and usability.
 - **Stagnant quality standards**: Not updating quality benchmarks, failing to adapt to new requirements and challenges.
-
-## Related Skills
-
-- `harness-orchestration`: Upstream. Orchestration routes to this skill for batch evaluation.
-- `harness-authoring`: Downstream. Improvement directions identified by quality assessment are guided by authoring on how to fix.
-- `harness-repo-map`: Downstream. Evaluation reports are stored in docs/, with repo-map maintaining their health.
-
-## Related Templates
-
-- `references/skill-quality-dimensions.md`: Detailed evaluation dimension descriptions
-- `references/skill-evaluation-process.md`: Detailed evaluation process descriptions
-- `references/evaluation-report-template.md`: Evaluation report template
-- `references/automated_check_script.py`: Automated check script
+- **Score inflation over time**: Giving progressively higher scores across evaluation cycles without tightening criteria — scores should reflect actual quality, not evaluation fatigue. Periodically recalibrate by re-evaluating a reference skill from scratch.
+- **Over-reliance on reference skill**: Automatically giving high scores because the reference skill scores high, or penalizing a skill for not matching the reference on every metric. Each skill should be scored on its own merits; the reference is a calibration tool, not a mandatory template.
 
 ## Best Practices
 
@@ -173,6 +169,24 @@ Select a mode based on evaluation goals and available time:
 - When scoring each sub-dimension, provide a one-sentence rationale immediately after the score (e.g., "Deducted 0.5 points due to missing reference file X") for traceability and reproducibility.
 - When comparing against the reference skill, focus on the evaluated skill's unique strengths (it doesn't need to match the reference skill on every metric).
 - Trend data rows must retain at least 6 historical records; mark "insufficient samples" when fewer than 6 records exist.
+- After completing a detailed evaluation, feed HIGH/CRITICAL findings into `harness-authoring` for guided fixes — create a short improvement execution plan with the finding, the suggested fix, and the expected score delta. This closes the evaluation→improvement loop.
+
+## Related Skills
+- routes-to  **harness-orchestration**: Orchestration routes batch evaluation work here
+- see-also   **harness-authoring**: Improvement directions identified by assessment are implemented following authoring guidance
+- see-also   **harness-repo-map**: Evaluation reports are stored in docs/, whose health repo-map maintains
+- see-also   **harness-commit-gate**: Assessment findings feed the pre-commit gate
+- see-also   **harness-prompt-optimizer**: Prompt quality findings overlap with the optimizer's domain
+
+
+## Related Templates
+
+- `references/skill-quality-dimensions.md`: Detailed evaluation dimension descriptions
+- `references/skill-evaluation-process.md`: Detailed evaluation process descriptions
+- `references/evaluation-report-template.md`: Evaluation report template
+- `references/automated_check_script.py`: Automated check script
+- `references/evaluation-examples.md`: Worked examples of a full evaluation (input -> dimension scores -> issue list)
+- `references/common-edge-cases.md`: Common edge cases in assessment work; referenced from Edge Case Handling
 
 ## Agent 提示词
 
@@ -242,4 +256,4 @@ You are the "Skill Quality Assessor", specialized in evaluating the quality of s
 - **Best practices**: Provide best practices for evaluation criteria, evaluation process, and improvement suggestions.
 
 ---
-Last updated: 2026-07-06 (Change: scoring script section name sync — Key Takeaways→Key Points)
+Last updated: 2026-07-10 (Change: Examples 3→5, Common Pitfalls +2, Best Practices +1, evaluation standards 7-fix batch)

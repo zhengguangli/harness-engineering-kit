@@ -20,7 +20,20 @@ This directory stores **completed** execution plans — plans whose goals have b
 
 Dates indicate when the plan was finalized or moved to completed status.
 
+## Current Archive
+
+| Plan | Finalized | Outcome |
+|---|---|---|
+| `skill-quality-assessor-refinement.md` | 2026-07-06 | Done — 4 automated checks + 8-dimension pass/fail examples |
+| `skills-audit-2026-07-02.md` | 2026-07-02 | Absorbed into Round 2 |
+| `skills-optimization-2026-07-02-round2.md` | 2026-07-02 | Done — 17 LOW items applied |
+| `standardize-skill-frontmatter-fields.md` | 2026-07-06 | Done — frontmatter fields standardised |
+| `skills-a-plus-push.md` | 2026-09-23 | Partially done — Phase 1/2 achieved; Phase 3/4 abandoned because the bottleneck assumption was disproven |
+
 ## Related Docs
 
 - Active plans: `docs/exec-plans/active/`
 - Tech debt tracker: `docs/exec-plans/tech-debt-tracker.md`
+
+---
+最后更新: 2026-09-23（复核：内容未变更，仅补齐缺失的 last updated 日期戳）

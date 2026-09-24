@@ -15,9 +15,9 @@
 
 | 领域 | frontmatter 合规 | 触发回归 | 关键词一致性 | 文档新鲜度 | 最近评估日期 |
 |---|---|---|---|---|---|
-| skills (13个) | 13/13 (100%) ✅ | 48/48 (100%) ✅ | 13/13 (100%) ✅ | ✅ 7日内更新 | 2026-07-06 (二十二次) |
-| scripts | — | — | — | ✅ 7日内更新 | 2026-07-03 |
-| tests | — | — | — | ✅ 7日内更新 | 2026-07-03 |
+| skills (13个) | 13/13 (100%) ✅ | 51/51 (100%) ✅ | 13/13 (100%) ✅ | ✅ 当日更新 | 2026-09-24 (三十四次) |
+| scripts | — | — | — | ✅ 当日更新 | 2026-09-24 (新增依赖校验脚本) |
+| tests | — | — | — | ✅ 当日更新 | 2026-09-24 (新增 18 个依赖校验用例) |
 
 ## 趋势备注
 
@@ -71,8 +71,24 @@
 
 2026-07-06 (二十五次): 第二十五次批量评估。平均分 **9.48** (A 级，+0.02)。全 9 个 A 级 skill 批量优化验证：全部 9 个 skill 正增长（+0.02 ~ +0.09），但 **A+ 阵营未扩张**（4 A+ / 9 A）。commit-gate (9.49) 最接近 A+ 门槛（差 0.01）。最大增幅：bootstrap (+0.09) due to Examples 2→4；orchestration UX (+0.15) 为单维度最大增幅。Agent 提示词质量 (均 9.39) 仍为 A+ 突破的最大瓶颈（距参考 skill 差 -0.26）。详见 `docs/quality-reports/skills-quality-assessment.md`。
 
+2026-07-07 (二十六次): 第二十六次批量评估。平均分 **9.50** (A 级，+0.02)，**5 A+ / 8 A**。**A+ 阵营首次扩张**——commit-gate 通过 Agent Prompt 增强（push decision Capability + Execution Flow step 8 增强 + new Constraint）从 9.49 突破至 9.51。全 8 个 A 级 skill 均获 Agent Prompt 增强（新 Constraints + Capabilities 扩展 + Execution Flow 增强），评分正增长（+0.01 ~ +0.02）。Agent 提示词质量均分从 9.39 升至 9.44 (+0.05)，为本轮最大增幅维度。repo-map (9.49) 距 A+ 仅差 0.01，为最接近候选。无 CRITICAL/HIGH/MEDIUM 级别问题，第十五次达成"零未解决 MEDIUM+ 问题"状态。详见 `docs/quality-reports/skills-quality-assessment.md`。
+
+2026-07-10 (二十七次): 第二十七次单 skill 详细评估（prompt-optimizer + verification-loop）。平均分 **9.51** (A 级，+0.01)，**6 A+ / 7 A**。**verification-loop 从 9.47 突破至 9.52 成功晋升 A+**——最小反馈信号章节解决"无测试项目无法使用"的根本问题，复杂问题分级+升级时机判断提供明确行为指南。prompt-optimizer (9.55) 持平，优化集中在边界防御（超短/已成熟/迭代多次 prompt 不优化判断 + 复杂需求处理 + 需求拆分）。全 13 个 SKILL.md 完成旧 frontmatter 块清理（移除冗余 slug/displayName/version/summary/license）。无 CRITICAL/HIGH/MEDIUM 级别问题。详见 `docs/quality-reports/skills-quality-assessment.md`。
+
+2026-07-10 (二十八次): 第二十八次批量评估。平均分 **9.48** (A 级，-0.03)，**4 A+ / 9 A**。评分精度微调——将部分维度"上限宽松分"回调至更严格标准，核心内容无退化。全 13 个 SKILL.md 结构完整、内容质量稳定。最高分 skill-quality-assessor (9.55)，最低分 exec-plans (9.43)。8 维度均分 9.45-9.55，无显著薄弱维度。5 个 LOW 优化建议（bootstrap Related Skills 补充、exec-plans Examples 扩充、orchestration 自动化检查增强、observability Hard Constraints 补充、architecture-boundaries 自动化检测脚本）。第十六次达成"零未解决 MEDIUM+ 问题"状态。详见 `docs/quality-reports/skills-quality-assessment.md`。
+
+2026-07-10 (二十九次): 第二十九次批量评估。平均分 **9.50** (A 级，+0.02)，**6 A+ / 7 A**。A+ 阵营从 4→6 扩张——repo-map (9.52) 和 observability-and-browser (9.52) 成功晋升。5 个重点 skill 全部正增长：project-intake (+0.04, Edge Cases 3→7 场景 + Agent Constraints 4→7 项)、bootstrap (+0.02, Related Skills 3→6 项)、orchestration (+0.02, Routing Quality Validation + Hard Constraints 4 项)、architecture-boundaries (+0.02, Agent Prompt 增强)、exec-plans (持平)。可用性维度 (+0.04) 和设计模式维度 (+0.03) 为最大增幅维度。无 CRITICAL/HIGH/MEDIUM 级别问题，第十七次达成"零未解决 MEDIUM+ 问题"状态。详见 `docs/quality-reports/skills-quality-assessment.md`。
+
+2026-07-10 (三十次): 第三十次批量评估（确认评估轮次）。平均分 **9.50** (A 级，持平)，**6 A+ / 7 A**。自第29次评估后 SKILL.md 无新增内容变更，全量验证链通过确认质量未退化。全部8维度评分与第29次完全持平。exec-plans (9.43) 仍为最低分，bootstrap/orchestration (9.46) 交替倒数第二。无 CRITICAL/HIGH/MEDIUM 级别问题，第十八次达成"零未解决 MEDIUM+ 问题"状态。详见 `docs/quality-reports/skills-quality-assessment.md`。
+
+2026-07-10 (三十一次): 第三十一次全量重新评估。平均分 **9.48** (A 级，-0.02)，**6 A+ / 7 A**。重新读取全部13个SKILL.md最新内容逐一手动评审。评分精度微调——部分维度"上限宽松分"回调至更严格标准，核心内容无退化。排名调整：skill-quality-assessor (9.55) 保持最高分，prompt-optimizer (9.54) 紧随其后，repo-map (9.52)/project-intake (9.51)/verification-loop (9.50)/orchestration (9.49) 维持或晋升 A+。commit-gate (9.49)/architecture-boundaries (9.49) 并列 A 级最高。6 个 LOW 优化建议（observability Hard Constraints 偏少、authoring/commit-gate/observability/verification-loop agent 命名一致性、prompt-optimizer Best Practices 去重、architecture-boundaries Edge Cases 扩充）。第十九次达成"零未解决 MEDIUM+ 问题"状态。详见 `docs/quality-reports/skills-quality-assessment.md`。
+
+2026-07-10 (三十二次): 第三十二次批量评估。平均分 **9.49** (A 级，+0.01)，**6 A+ / 7 A**。8 个 skill 完成内容增强（architecture-boundaries Edge Cases 1→4、authoring Edge Cases 5→7、bootstrap Output Specification 扩展、commit-gate heading 对齐、exec-plans Example 5 + overrun detection、golden-principles Edge Cases 3→5 + Example 4、observability Examples 2→4 + Related Skills 2→4、orchestration Hard Constraints + Routing Quality Validation），5 个 skill 持平。等级分布不变（6A+/7A），排名微调：skill-quality-assessor (9.56, +0.01) 保持最高分，authoring (9.46, +0.02) 为最大正增长，observability (9.43, -0.03) 因评分精度微调下降。1 个 MEDIUM 问题（observability Hard Constraints 仅2条，全库最少）。第二十次达成"零未解决 CRITICAL/HIGH 问题"状态。详见 `docs/quality-reports/skills-quality-assessment.md`。
+
+2026-07-10 (三十三次): 第三十三次批量评估。平均分 **9.46** (A 级，-0.03)，**5 A+ / 8 A**。评分精度微调——部分维度"上限宽松分"回调至更严格标准，核心内容无退化。13个 skill 全部有未提交变更（slug frontmatter 清理 + 内容增强 + 自动化检查脚本修复）。关键事件：(1) observability Hard Constraints 2→5（+3条新约束），评分从 9.43 升至 9.46 (+0.03)，但未突破 A+ 门槛；(2) 3 个自动化检查脚本修复缩进 bug（architecture-boundaries/exec-plans/orchestration）；(3) verification-loop 新增 Minimum Feedback Signals + Complex Problem Classification + Escalation Timing Rules；(4) authoring 新增 Quick Decision Table；(5) bootstrap Related Skills 3→6；(6) orchestration 新增 Routing Quality Validation 4项检查。等级分布从 6A+/7A 变为 5A+/8A（commit-gate 晋升 A+，project-intake 降至 A）。最高分 skill-quality-assessor (9.50)，最低分 project-intake (9.42)。1 个 MEDIUM 问题（exec-plans 缺少显式 Cross-Skill Handoff section）。第二十一次达成"零未解决 CRITICAL/HIGH 问题"状态。详见 `docs/quality-reports/skills-quality-assessment.md`。
+
 ---
-最后更新: 2026-07-06（第 25 次）
+最后更新: 2026-07-10（第 33 次）
 
 ## 维护周期（自 2026-07-03 起生效）
 
@@ -95,3 +111,29 @@
 - 平均分 **低于 9.30** → 触发季度审计（说明出现内容退化）
 - 出现 **MEDIUM+ 级别问题** → 立即启动修复，优先级高于新功能
 - 参考文件总数 **低于 75** → 检查是否有文件被误删
+
+2026-09-24 (三十四次): **机械指标审计轮次**。本轮不再复算主观加权分——第 1-33 轮的 9.xx 分是评估者按 8 维度 rubric 人工打分，无法被机械复现，强行给一个"可比数字"等于编造。因此本轮改为对 rubric 中**可客观判定**的检查点做全量机械审计，结果 13/13 全绿：
+
+| 检查点 | 结果 |
+|---|---|
+| frontmatter 必填字段完整（name/description/when_to_use/compatibility/context/agent/allowed-tools/depends_on） | 13/13 |
+| metadata.category 存在 | 13/13 |
+| 10 个必需章节齐全 | 13/13 |
+| Hard Constraints 为编号列表且每条含 Violation 后果 | 13/13 |
+| Agent 提示词 6 个子节齐全（Skip/Role/Capabilities/Flow/Constraints/Output） | 13/13 |
+| Examples ≥ 3 | 13/13 |
+| references/common-edge-cases.md 存在 | 13/13 |
+| Edge Case Handling 场景 ≥ 3 | 13/13 |
+| Last updated ≤ 90 天 | 13/13 |
+| automated_check_script.py 存在且可执行 | 13/13 |
+
+本轮修复的结构性缺陷（均由机械审计发现，非人工浏览）：
+1. Hard Constraints 格式分裂为 5 编号 / 8 bullet，已统一为编号列表
+2. harness-architecture-boundaries 缺 `## Common Pitfalls` 标题——6 条要点 orphaned 在 Edge Case Handling 末尾
+3. harness-authoring 的 `## Related Templates` 整块重复
+4. harness-prompt-optimizer 的 Edge Case Handling 排在 Best Practices 之后，顺序错位
+5. 4 处硬约束只有规则没有 Violation 后果（commit-gate ×1、project-intake ×2、prompt-optimizer ×1）
+
+新增机械强制：`depends_on` frontmatter 契约 + `scripts/validate_skill_dependencies.py`（环检测/向下流动/Meta 隔离/引用有效性/跨 skill 路径存在性），TD-001 关闭。
+
+**关于 A+ 数量的说明**：第 33 次记录为 5 A+ / 8 A。本轮不做主观重评，因此不更新该计数——它仍是第 33 次评估的结果，不是本轮的。若需要新的 A+ 判定，需由 harness-skill-quality-assessor 按 rubric 人工执行。

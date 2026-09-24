@@ -9,6 +9,8 @@ disable-model-invocation: true
 context: fork
 agent: harness-bootstrap
 compatibility: claude-code
+depends_on:
+  - harness-project-intake
 allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *) Write(*) Edit(*)
 metadata:
   category: workflow
@@ -106,6 +108,20 @@ If any item fails, return to the corresponding step to fix before committing.
 3. **Every docs/ file must have a "last updated" date at the bottom**: Files missing dates are considered incomplete. Violation → add the date and resubmit.
 4. **Must respect existing content**: When the project already has CLAUDE.md or docs/, read them first, then decide whether to overwrite or incrementally update. Blind overwriting is prohibited. Violation → revert the operation and re-read existing content.
 
+## Examples
+
+**Example 1**: The user says "为这个新项目初始化 harness"
+**Action**: Run project-intake to analyze the project → confirm initialization scope with the user → generate CLAUDE.md (routing table + hard constraints) → create docs/ skeleton files → update .gitignore → output creation manifest
+
+**Example 2**: The project already has partial harness structure, the user says "补充缺少的部分"
+**Action**: Read existing CLAUDE.md and docs/ → compare against the minimum viable set → list existing and missing content → ask whether to overwrite or incrementally update → incrementally supplement missing parts → output modification manifest
+
+**Example 3**: User says "这是个 Python 单文件脚本项目，轻量化初始化就好"
+**Action**: Classify as single-file script per the project type tailoring guide → generate simplified CLAUDE.md (minimal routing table + workflow tips) → create only `docs/ARCHITECTURE.md` → skip design-docs and exec-plans → update `.gitignore` with Python-specific rules → output creation manifest
+
+**Example 4**: User says "项目是 monorepo，有前端和后端两个子包"
+**Action**: Read both sub-package configs (package.json, go.mod) → classify as monorepo per project type guide → generate unified CLAUDE.md with per-tech-stack routing table → create shared docs/ with per-stack ARCHITECTURE.md sections → append .gitignore rules for both Node.js and Go → output multi-package creation manifest
+
 ## Key Points
 
 - **Better less but precise**: When unsure if something is needed, don't create it yet — leave placeholder entries in the CLAUDE.md routing table.
@@ -139,6 +155,16 @@ If any item fails, return to the corresponding step to fix before committing.
 **Scenario**: A monorepo has frontend (React), backend (Go), and mobile (Flutter) sub-packages
 **Action**: Create a unified docs/ skeleton at the root with shared ARCHITECTURE.md covering cross-package boundaries, then add per-sub-package entries in the CLAUDE.md routing table. Append `.gitignore` rules for all tech stacks. Each sub-package should reference the root docs/ rather than duplicating the skeleton.
 
+### Partial Harness Present but Stale
+
+**Scenario**: CLAUDE.md and docs/ both exist, but routing links are broken, dates are months old, and `.gitignore` is missing entries for the current tech stack.
+**Action**: Do not reinitialize from scratch. Audit the existing structure against the 6-item post-initialization checklist, then incrementally repair only the failing items — fix broken routing targets, refresh the "last updated" dates, append the missing `.gitignore` rules. Output a manifest that separates "repaired" from "created" so the user can see what already existed.
+
+### Harness Present but Wrong Shape
+
+**Scenario**: CLAUDE.md exists but has become an encyclopedia (500+ lines of project knowledge) instead of a map.
+**Action**: This is restructuring, not initialization — delegate to `harness-repo-map` per the Skip Conditions. Do not overwrite CLAUDE.md with a fresh skeleton; that would destroy content the user wrote.
+
 ## Common Pitfalls
 
 - **Over-initialization**: Generating a large number of empty skeleton files, increasing subsequent maintenance burden.
@@ -147,25 +173,22 @@ If any item fails, return to the corresponding step to fix before committing.
 - **CLAUDE.md bloat**: Cramming all knowledge into CLAUDE.md, making the file too large and hard to maintain.
 - **docs/ files missing dates**: Without "last updated" dates, it's impossible to tell whether information is outdated.
 
-## Examples
+## Best Practices
 
-**Example 1**: The user says "为这个新项目初始化 harness"
-**Action**: Run project-intake to analyze the project → confirm initialization scope with the user → generate CLAUDE.md (routing table + hard constraints) → create docs/ skeleton files → update .gitignore → output creation manifest
-
-**Example 2**: The project already has partial harness structure, the user says "补充缺少的部分"
-**Action**: Read existing CLAUDE.md and docs/ → compare against the minimum viable set → list existing and missing content → ask whether to overwrite or incrementally update → incrementally supplement missing parts → output modification manifest
-
-**Example 3**: User says "这是个 Python 单文件脚本项目，轻量化初始化就好"
-**Action**: Classify as single-file script per the project type tailoring guide → generate simplified CLAUDE.md (minimal routing table + workflow tips) → create only `docs/ARCHITECTURE.md` → skip design-docs and exec-plans → update `.gitignore` with Python-specific rules → output creation manifest
-
-**Example 4**: User says "项目是 monorepo，有前端和后端两个子包"
-**Action**: Read both sub-package configs (package.json, go.mod) → classify as monorepo per project type guide → generate unified CLAUDE.md with per-tech-stack routing table → create shared docs/ with per-stack ARCHITECTURE.md sections → append .gitignore rules for both Node.js and Go → output multi-package creation manifest
+- Immediately after initialization, run `harness-repo-map` to validate the documentation structure, preventing missing required files during skeleton creation.
+- Generated CLAUDE.md routing table entries should point to specific file paths (e.g., `docs/ARCHITECTURE.md`), not just directory names.
+- For multi-tech-stack projects, partition CLAUDE.md by tech stack. Reference `references/gitignore-templates.md` to append .gitignore rules for each stack.
+- Perform a manual review one week after initialization to confirm the skeleton content aligns with the actual project, preventing skeleton-business divergence.
+- Before generating CLAUDE.md, run `ls -d */` and count the root-level subdirectories to quickly classify the project type — this 10-second check prevents under-initialization (missing required files) or over-initialization (creating unnecessary skeletons).
 
 ## Related Skills
+- input      **harness-project-intake**: Runs the intake analysis flow as step 1 to learn the tech stack, structure and existing docs
+- see-also   **harness-architecture-boundaries**: Canonical ARCHITECTURE.md template lives in its references/ (provenance pointer only — bootstrap writes skeletons, it does not consume boundary output)
+- see-also   **harness-golden-principles**: Canonical QUALITY_SCORE.md template lives in its references/ (provenance pointer only)
+- routes-to  **harness-repo-map**: Delegate when the task is restructuring an existing CLAUDE.md/docs rather than full initialization
+- output     **harness-exec-plans**: Creates the docs/exec-plans/ directory that exec-plans writes into
+- routes-to  **harness-orchestration**: Orchestration routes users here when greenfield initialization is needed
 
-- Upstream **harness-architecture-boundaries**: Provides architecture rules that inform the docs/ skeleton structure
-- `harness-project-intake`: Analyze the project before initialization (step 1 dependency)
-- `harness-repo-map`: Maintain the health of CLAUDE.md and docs/ after initialization
 
 ## Related Templates
 
@@ -175,14 +198,6 @@ If any item fails, return to the corresponding step to fix before committing.
 - `references/docs-skeleton-by-stack.md`: docs/ skeleton supplements per tech stack
 - `references/gitignore-templates.md`: .gitignore templates per tech stack (Node.js/Python/Go/Rust/Java/PHP/Ruby/C#/Dart/Elixir)
 - `references/init-workflows.md`: Initialization workflows and additional steps per tech stack
-
-## Best Practices
-
-- Immediately after initialization, run `harness-repo-map` to validate the documentation structure, preventing missing required files during skeleton creation.
-- Generated CLAUDE.md routing table entries should point to specific file paths (e.g., `docs/ARCHITECTURE.md`), not just directory names.
-- For multi-tech-stack projects, partition CLAUDE.md by tech stack. Reference `references/gitignore-templates.md` to append .gitignore rules for each stack.
-- Perform a manual review one week after initialization to confirm the skeleton content aligns with the actual project, preventing skeleton-business divergence.
-- Before generating CLAUDE.md, run `ls -d */` and count the root-level subdirectories to quickly classify the project type — this 10-second check prevents under-initialization (missing required files) or over-initialization (creating unnecessary skeletons).
 
 ## Agent 提示词
 
@@ -224,18 +239,30 @@ You are the "Harness Initialization Artisan." Your responsibility is to generate
 
 ### Constraints
 
-- **Write is for new files only**: Prohibited from modifying existing business code, test files, or configuration files. Revert the write operation on violation.
-- **Distinguish project scale**: The initialization scope determined by the project type tailoring guide must not be exceeded. Delete unnecessary files on violation to reduce noise.
-- **Provide specific guidance**: Every step must be actionable, not vague. Supplement specific execution details on violation.
-- **Handle edge cases**: Must handle various edge cases and provide best practices. Supplement edge case handling on violation.
-- **Project type tailoring first**: Must determine project scale before initialization, scoping according to the project type tailoring guide. Pause initialization on violation, supplement project type determination, then continue.
-- **Post-init checklist verification**: After step 6 (self-check), must verify all 6 checklist items pass before outputting the creation manifest. On violation: re-run the failed checklist item and fix before proceeding.
+- **Write is for new files only**: Prohibited from modifying existing business code, test files, or configuration files. Violation → revert the write operation immediately, confirm with `git diff` that no business code was touched, then continue with only new file creation.
+- **Distinguish project scale**: The initialization scope determined by the project type tailoring guide must not be exceeded. Violation → identify which files exceed the scope for the detected project type, delete them, and re-output the creation manifest with only scope-appropriate files.
+- **Provide specific guidance**: Every step must be actionable, not vague. Violation → identify the vague step, rewrite it with concrete commands or file paths, then proceed.
+- **Handle edge cases**: Must handle various edge cases and provide best practices. Violation → check `references/common-edge-cases.md`, identify which edge case applies, and add handling to the current step before continuing.
+- **Project type tailoring first**: Must determine project scale before initialization, scoping according to the project type tailoring guide. Violation → pause initialization immediately, run `ls -d */` to classify the project type, record the classification, then resume with the correct scope.
+- **Post-init checklist verification**: After step 6 (self-check), must verify all 6 checklist items pass before outputting the creation manifest. Violation → re-run each failed checklist item, fix the issue, re-verify all 6 pass, then output the manifest.
 
 ### Output Specification
 
 - **Format**: Markdown files
 - **Content**: CLAUDE.md (routing table + hard constraints + workflow tips); docs/ skeleton files (minimum content + "last updated" dates)
-- **Modification manifest**: List all created/modified files
+- **Modification manifest**: List all created/modified files with brief descriptions:
+  ```
+  ## Creation Manifest
+  - `CLAUDE.md` — Project map (routing table + hard constraints + workflow tips)
+  - `docs/ARCHITECTURE.md` — Architecture skeleton (domain decomposition + dependency direction)
+  - `docs/QUALITY_SCORE.md` — Quality score tracking (empty skeleton)
+  - `docs/design-docs/index.md` — Design decision index
+  - `docs/exec-plans/active/` — Active execution plans directory
+  - `docs/exec-plans/completed/` — Completed execution plans directory
+  - `.gitignore` — Updated with <tech stack> rules
+  ```
+- **Self-check results**: Output pass/fail for each of the 6 checklist items
+- **Project type classification**: State the detected project type and the initialization scope applied
 
 ---
-Last updated: 2026-07-07 (Change: Agent Prompt — post-init checklist Constraint + Execution Flow Step 6 enhanced)
+Last updated: 2026-09-24 (Change: Edge Cases 3→5 — added stale-partial-harness repair and wrong-shape delegation; addresses round-33 LOW #9)

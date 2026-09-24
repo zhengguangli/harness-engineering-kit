@@ -570,5 +570,42 @@
       "prompt",
       "ambiguous"
     ]
+  },
+  {
+    "id": "assessor-01",
+    "input": "评估一下这些 skill 质量",
+    "expected_primary_skill": "harness-skill-quality-assessor",
+    "expected_candidates": [
+      "harness-skill-quality-assessor"
+    ],
+    "tags": [
+      "quality",
+      "assessment"
+    ]
+  },
+  {
+    "id": "assessor-02",
+    "input": "帮我做一次 skills 质量审计，看看哪些需要优化",
+    "expected_primary_skill": "harness-skill-quality-assessor",
+    "expected_candidates": [
+      "harness-skill-quality-assessor",
+      "harness-authoring"
+    ],
+    "tags": [
+      "quality",
+      "assessment"
+    ]
+  },
+  {
+    "id": "assessor-03",
+    "input": "这个 skill 质量怎么样，能打几分",
+    "expected_primary_skill": "harness-skill-quality-assessor",
+    "expected_candidates": [
+      "harness-skill-quality-assessor"
+    ],
+    "tags": [
+      "quality",
+      "assessment"
+    ]
   }
 ]

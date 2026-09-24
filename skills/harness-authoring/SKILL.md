@@ -8,6 +8,7 @@ when_to_use: |
 context: fork
 agent: skill-scaffolder
 compatibility: claude-code
+depends_on: []
 allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *)
 metadata:
   category: meta
@@ -44,6 +45,17 @@ metadata:
 | Parallelism | Not parallelizable (there's only one current context) | Can run multiple instances in parallel |
 
 **Rule of thumb**: If the main conversation needs to "remember" something to continue reasoning, use a skill; if something can be "delegated out and wait for results", use a subagent. The two often appear paired (a skill defines the methodology, an agent with the same name handles execution) — this is not duplication, it is division of labor.
+
+**Quick Decision Table**:
+
+| Signal | → Skill | → Subagent |
+|--------|---------|-----------|
+| Main conversation references it across turns | ✅ | |
+| Only needs final result, not process | | ✅ |
+| Has its own methodology/workflow to document | ✅ | |
+| Can run independently in isolation | | ✅ |
+| Needs to inject knowledge into current context | ✅ | |
+| Produces a deliverable (file, report, code) | | ✅ |
 
 ### 2. Context Budget Discipline for SKILL.md
 
@@ -119,15 +131,6 @@ When the body approaches 500 lines, split content into `references/` sub-files, 
 - **Avoid capability overlap**: Check existing capabilities before adding new ones; merge or define boundaries if overlap exists.
 - **Canonical version**: `## Agent 提示词` is the single entry point for modifications.
 - **Agent prompt and skill body are co-located**: Maintaining both in a single `SKILL.md` avoids the drift problem of separate agent prompt files — edit once, synchronize automatically.
-
-## Related Templates
-
-- `references/scaffold-templates.md`: Scaffolding templates for new skills and agents
-- `references/skill-design-patterns.md`: Skill design patterns reference
-- `references/subagent-design-patterns.md`: Subagent design patterns reference
-- `references/context-budget-management-guide.md`: Context budget management guidelines
-- `references/common-edge-cases.md`: General edge case handling guide
-
 ## Edge Case Handling
 
 > For general edge cases, see `references/common-edge-cases.md`. The following list only covers edge cases specific to this skill.
@@ -157,6 +160,16 @@ When the body approaches 500 lines, split content into `references/` sub-files, 
 **Scenario**: A subagent initially configured as read-only later needs write capability for a new task
 **Action**: Explicitly update `allowed-tools` in the frontmatter — do not write silent exceptions in the agent prompt body, as this creates a gap between declared permissions and actual behavior
 
+### Skill vs. Subagent Boundary Dispute
+
+**Scenario**: Two team members disagree on whether a capability should be a skill or subagent
+**Action**: Apply the "context continuity" test: does the main conversation need to retain this knowledge across multiple turns? If yes → skill. Does it only need the final result? If yes → subagent. When still ambiguous, default to skill (lower context cost to change later).
+
+### New Skill Collides with Existing Agent Prompt
+
+**Scenario**: A new skill's Agent Prompt section has overlapping responsibilities with an existing skill's agent
+**Action**: Define explicit boundaries in both skills' "Related Skills" sections — specify what each handles and what it delegates. If overlap is >50%, merge into one skill with the stronger methodology.
+
 ## Common Pitfalls
 
 - **Skill and Subagent confusion**: Making a task that could be completed independently into a Skill, consuming the main context; or making knowledge that needs continuous reference into a Subagent, causing context discontinuity.
@@ -172,6 +185,23 @@ When the body approaches 500 lines, split content into `references/` sub-files, 
 - When checking overlap, besides file name scanning, use grep to search for verb phrases in the `description` field, flagging synonym combinations as potential overlaps.
 - When splitting a bloated skill, move complete sections (not partial paragraphs) to `references/` — each reference file should cover a unified topic, making it easy for the agent to load what it needs on demand without reading adjacent irrelevant content.
 
+## Related Skills
+- routes-to  **harness-orchestration**: Receives orchestration decisions as trigger signals for when to create a new skill
+- output     **harness-skill-quality-assessor**: After authoring a new skill, hand off to the assessor to score it
+- see-also   **harness-commit-gate**: New skills must pass the commit gate before merge
+
+- output     **all other skills**: This skill's output (new skill templates and specifications) is passed downstream as scaffolding
+
+## Related Templates
+
+- `references/scaffold-templates.md`: Scaffolding templates for new skills and agents
+- `references/skill-design-patterns.md`: Skill design patterns reference
+- `references/subagent-design-patterns.md`: Subagent design patterns reference
+- `references/context-budget-management-guide.md`: Context budget management guidelines
+- `references/common-edge-cases.md`: General edge case handling guide
+
+---
+Last updated: 2026-09-23 (Change: removed a verbatim-duplicated '## Related Templates' block; normalised a legacy 'Downstream' label in Related Skills)
 ## Agent 提示词
 
 ## Skill Scaffolder
@@ -224,19 +254,3 @@ You are the "Skill Scaffolder", responsible for generating complete file skeleto
 - **Self-check results**: Body line count, description content, agent prompt pairing status.
 - **Overlap check results**: If overlap is found, output merge/boundary suggestions.
 
-## Related Skills
-
-- Upstream **harness-orchestration**: Receives output (orchestration decisions) as trigger signals for when to create a new skill
-- Downstream **all other skills**: This skill's output (new skill templates and specifications) is passed downstream as scaffolding
-- `harness-skill-quality-assessor`: After authoring a new skill, assess its quality
-
-## Related Templates
-
-- `references/scaffold-templates.md`: Scaffolding templates for new skills and agents
-- `references/skill-design-patterns.md`: Skill design patterns reference
-- `references/subagent-design-patterns.md`: Subagent design patterns reference
-- `references/context-budget-management-guide.md`: Context budget management guidelines
-- `references/common-edge-cases.md`: General edge case handling guide
-
----
-Last updated: 2026-07-07 (Change: Agent Prompt — Agent Prompt First design principle + scaffolding step)

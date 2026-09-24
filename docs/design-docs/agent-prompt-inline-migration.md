@@ -1,7 +1,7 @@
 # Agent 提示词内联迁移模式
 
 - 创建日期: 2026-07-02
-- 关联 exec-plan: `docs/exec-plans/completed/consolidate-agents-into-skills.md`（该文件已归档）
+- 关联 exec-plan: 无。迁移本身已由本文件完整记录；曾计划的 `consolidate-agents-into-skills.md` 从未提交到 `docs/exec-plans/`，因此不再引用一个不存在的路径
 
 ## 背景
 
@@ -94,4 +94,4 @@ compatibility: claude-code
 - `CLAUDE.md`：硬约束描述
 
 ---
-最后更新: 2026-07-02
+最后更新: 2026-09-24（变更：移除指向从未提交的 exec-plan 的悬空引用）

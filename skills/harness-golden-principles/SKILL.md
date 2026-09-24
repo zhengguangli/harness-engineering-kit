@@ -8,6 +8,8 @@ when_to_use: |
 context: fork
 agent: entropy-collector
 compatibility: claude-code
+depends_on:
+  - harness-project-intake
 allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *)
 metadata:
   category: quality
@@ -83,6 +85,9 @@ Don't confuse them: taste preferences should not be CI hard blocks (they slow th
 **Example 3**: Quarterly audit reveals a rule about import ordering has triggered zero times for three consecutive cycles
 **Resolution**: Retire the rule and update documentation. Prettier now handles import ordering -- the golden principle is redundant.
 
+**Example 4**: AI-generated code consistently uses `any` type for API responses
+**Resolution**: Establish a golden principle "API responses must be parsed into strong types" → write a lint rule `@typescript-eslint/no-explicit-any` scoped to `api/` directory → add to AI code generation prompt as a negative example → scan weekly until violation count reaches zero
+
 ## Key Points
 - Distinguishing from `architecture-boundaries` is critical — don't make taste preferences into merge blockers.
 - Fix PRs should be as small as possible, reviewable within one minute.
@@ -108,6 +113,14 @@ Don't confuse them: taste preferences should not be CI hard blocks (they slow th
 **Scenario**: The codebase has thousands of existing violations against a newly established golden principle
 **Handling**: Do not attempt to fix everything at once. Use incremental adoption: scope each sweep to one module, one file type, or one pattern type. Record the full inventory in `tech-debt-tracker.md` and process it in prioritized batches.
 
+### New Principle Conflicts with Existing Lint Rule
+**Scenario**: A newly proposed golden principle contradicts an existing lint rule (e.g., the lint allows `any` but the new principle requires strong types)
+**Handling**: Resolve the conflict before activating the principle: (1) if the lint rule is outdated, update the lint config first; (2) if both are valid for different contexts, scope the golden principle to the specific context where it applies; (3) if the conflict is irreconcilable, the lint rule takes precedence (CI hard blocks > periodic scans). Document the resolution in the principle's rationale.
+
+### Principle Triggers Only in AI-Generated Code
+**Scenario**: A golden principle triggers frequently in AI-generated code but rarely in human-written code
+**Handling**: This is expected — AI code tends to follow training data patterns rather than project conventions. Keep the principle active, but consider adding it to the AI code generation prompt (if the project uses one) to prevent violations at generation time rather than catching them in sweeps.
+
 ## Common Pitfalls
 - **Inventing principles out of thin air**: Not starting from real signals, rules detached from reality → every principle must be backed by specific review feedback, bug reports, or refactoring requirements.
 - **Making taste preferences into CI hard blocks**: Slows throughput without increasing safety margin → taste preferences are only periodic scans, not merge blockers.
@@ -124,10 +137,10 @@ Don't confuse them: taste preferences should not be CI hard blocks (they slow th
 - For each new golden principle, link it to a specific code location (file:line) of the review comment or bug report that inspired it, so future readers understand the real-world context without rediscovering it.
 
 ## Related Skills
+- input      **harness-project-intake**: Receives output (project code pattern analysis) as input for distilling golden principles
+- see-also   **harness-architecture-boundaries**: Architecture boundary context helps distinguish invariants from style preferences; both are Layer 2 and run in parallel
+- see-also   **harness-commit-gate**: Golden principle rulesets may inform commit message conventions — advisory, not an input contract
 
-- Upstream **harness-project-intake**: Receives output (project code pattern analysis) as input for distilling golden principles
-- Upstream **harness-architecture-boundaries**: Receives output (architecture boundary context) as a basis for distinguishing invariants from style preferences
-- Downstream **harness-commit-gate**: This skill's output (golden principle ruleset) is passed downstream for quality gate checks
 
 ## Related Templates
 
@@ -191,4 +204,4 @@ Scan the codebase on a fixed rhythm, comparing against encoded golden principles
 - **Output path**: `docs/quality-reports/golden-principles-scan.md` (overwrite in place; history is in git).
 
 ---
-Last updated: 2026-07-07 (Change: Agent Prompt — cross-file scan enhancement + Cross-file comparison Constraint)
+Last updated: 2026-07-10 (Change: Edge Cases 3→5 scenarios + Example 4 added for AI-generated code governance)

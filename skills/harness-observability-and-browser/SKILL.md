@@ -8,6 +8,8 @@ when_to_use: |
 context: fork
 agent: qa-verifier
 compatibility: claude-code
+depends_on:
+  - harness-exec-plans
 allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *) Bash(npx *)
 metadata:
   category: verification
@@ -69,8 +71,11 @@ Playwright and Puppeteer are two mainstream browser automation tools. In this sk
 5. **Capability gaps**: If the project lacks necessary observability capabilities, record the gap itself as a to-be-fixed "environment deficiency."
 
 ## Hard Constraints
-- **Conclusions without supporting evidence must not be attached to a PR**: Violations will be rejected by verification-loop, requiring supplemental verification evidence before resubmission.
-- **Browser screenshots must include a timestamp and URL**: Screenshots lacking metadata are considered invalid evidence and will be rejected by verification-loop.
+1. **Conclusions without supporting evidence must not be attached to a PR**: Violations will be rejected by verification-loop, requiring supplemental verification evidence before resubmission.
+2. **Browser screenshots must include a timestamp and URL**: Screenshots lacking metadata are considered invalid evidence and will be rejected by verification-loop.
+3. **Acceptance criteria must be machine-checkable**: Subjective criteria (e.g., "looks good", "feels fast") are not allowed. Violation → reject the criteria and require rewrite with measurable conditions (e.g., "P99 < 800ms", "screenshot matches design within 5% pixel diff").
+4. **Observability verification must use structured logs**: Free-text logs are not queryable or aggregatable. Violation → report the gap and recommend converting to structured JSON logs before verification can proceed.
+5. **Verification type must be correctly distinguished**: UI verification, performance verification, and reliability verification must not be conflated. Violation → reclassify the verification type and re-run with the correct method.
 
 ## Examples
 
@@ -79,6 +84,12 @@ Playwright and Puppeteer are two mainstream browser automation tools. In this sk
 
 **Example 2**: User says "P99 延迟是否达标"
 **Handling**: Observability verification → Query metrics → Compare against thresholds → Output yes/no + evidence
+
+**Example 3**: User says "修复了 checkout 流程，帮我验证一下"
+**Handling**: Chained verification → Observability first (check API response times and error rates for /checkout endpoints) → Browser second (drive the full checkout user journey, capture before/after screenshots) → Attach both evidence sets in the PR description
+
+**Example 4**: User says "移动端首页加载太慢了"
+**Handling**: Browser verification with mobile emulation → Throttle to 3G → Capture waterfall + screenshot → Identify render-blocking resources → Report findings with network timeline evidence
 
 ## Key Points
 - Do not draw conclusions without supporting evidence — either add validation methods, or explicitly state "cannot be verified in the current environment."
@@ -108,6 +119,14 @@ Playwright and Puppeteer are two mainstream browser automation tools. In this sk
 **Scenario**: Need to verify mobile page rendering and interaction
 **Handling**: Use Playwright's mobile emulation or real device testing (e.g., BrowserStack, Sauce Labs)
 
+### Browser Tool Version Mismatch
+**Scenario**: The installed browser/driver version does not match the version the automation library expects, so every navigation fails with a protocol error
+**Handling**: Report the exact mismatch (library version vs. browser version) as the finding — do not attempt to verify UI behaviour until it is resolved. Recommend pinning both versions in the project's dev dependencies so CI and local runs agree.
+
+### Multi-Tab / Multi-Window Verification
+**Scenario**: The flow under test spans several tabs (e.g., OAuth popup, payment redirect, "open in new tab" links)
+**Handling**: Enumerate the expected tab sequence up front, drive each tab explicitly, and record which tab each screenshot came from. A screenshot with no tab context is not valid evidence — re-run with explicit tab labelling rather than attaching an ambiguous capture.
+
 ## Common Pitfalls
 - **Reading code to guess runtime behavior**: Just because code has a try-catch doesn't mean the exception is actually being caught — check the logs.
 - **Free-text logs**: Not queryable, not aggregatable — must use structured logs.
@@ -124,13 +143,20 @@ Playwright and Puppeteer are two mainstream browser automation tools. In this sk
 - When embedding screenshots in PR descriptions, use `<details><summary>Before / After</summary>![screenshot]</details>` to collapse them and avoid overly long PR bodies.
 
 ## Related Skills
+- input      **harness-exec-plans**: Execution plan acceptance criteria may require observability/browser verification evidence
+- routes-to  **harness-verification-loop**: Acts as a feedback sensor invoked by the verification loop; not an independent workflow node
+- see-also   **harness-golden-principles**: Observability patterns (structured logs, metric naming) can be encoded as golden principles for consistent instrumentation
+- output     **harness-commit-gate**: Verification result evidence is passed downstream as the basis for quality gate pass
 
-- Upstream **harness-verification-loop**: Receives outputs (verification cycle trigger signals) as the trigger for runtime verification
-- Downstream **harness-commit-gate**: This skill's outputs (verification result evidence) are passed downstream as the basis for quality gate pass
 
 ## Related Templates
 
 - `references/browser-verification-cycle.md`: Complete browser-driven verification cycle flow
+- `references/browser-automation-guide.md`: Playwright/Puppeteer configuration and usage guide
+- `references/verification-checklist-template.md`: Verification checklist template
+- `references/verification-standards-design-guide.md`: Verification standards design guide
+- `references/capability-gap-report-template.md`: Capability gap report template
+- `references/observability-tools-guide.md`: Observability tools configuration guide
 - `references/common-edge-cases.md`: General edge case handling guide
 
 ## Agent 提示词
@@ -187,4 +213,4 @@ Produces verification evidence based on real runtime signals (browser rendering,
 - Output primarily in conversation — if archiving is needed, attach screenshots and query results in the PR description or exec-plan acceptance records, not as standalone files.
 
 ---
-Last updated: 2026-07-06 (Change: Agent Prompt enhanced — Skip Conditions 3→6, Core Capabilities 4→6, Execution Flow pre-check added, Acceptance Criteria examples expanded)
+Last updated: 2026-09-24 (Change: Edge Cases 3→5 — added browser tool version mismatch and multi-tab/multi-window verification; addresses round-33 LOW #8)

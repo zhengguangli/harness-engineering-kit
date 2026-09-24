@@ -10,6 +10,9 @@ context: fork
 agent: verification-loop-runner
 allowed-tools: Bash(git *) Bash(npm *) Bash(bun *) Bash(cargo *) Bash(vitest *) Bash(tsc *) Bash(bunx *) Bash(make *) Bash(just *)
 compatibility: claude-code
+depends_on:
+  - harness-exec-plans
+  - harness-architecture-boundaries
 metadata:
   category: workflow
 ---
@@ -52,6 +55,15 @@ metadata:
 3. **Self-check** (human-equivalent): Read through `git diff` to confirm no scope creep, no residual debug code, no unintended side effects — run after each implementation round
 
 Each feedback channel should be consumed in the same iteration it was generated. Don't batch channel-2 feedback from two iterations and fix them all at once — process per iteration.
+
+### Minimum Feedback Signals
+When a project lacks full test infrastructure, the following minimum feedback signals can be used:
+1. **Syntax check**: `node --check`, `python -m py_compile`, `cargo check`
+2. **Type check**: `tsc --noEmit`, `mypy` (if configured)
+3. **Simple run test**: `node script.js`, `python script.py` (confirm no errors)
+4. **Manual verification checklist**: List items needing manual verification, confirm each
+
+**Note**: Minimum feedback signals cannot replace a full test suite; they are for transitional use only.
 
 ### Detecting Stuck States
 
@@ -129,6 +141,20 @@ Each feedback channel should be consumed in the same iteration it was generated.
 - **Human judgment needed**: When irreversible operations, product trade-offs, or security-sensitive decisions are involved → escalate to human, do not decide autonomously.
 - **Flaky test detection**: A test fails without any code change, then passes on re-run → flag the test as potentially flaky, run it 3 consecutive times to confirm the pattern; if intermittent, note the flaky test name in known limitations and document the failure pattern, then proceed with verified changes rather than treating it as a real regression.
 
+### Complex Problem Classification
+**Scenario**: Encountering genuinely complex problems that AI cannot solve independently
+**Handling**:
+1. **Automatable**: Test failures, lint errors, type errors → continue the loop
+2. **Needs context**: Missing environment variables, dependency version conflicts → attempt diagnosis first, output diagnostic results for user confirmation
+3. **Needs human judgment**: Architecture decisions, business logic choices, security trade-offs → escalate immediately, do not continue the loop
+
+### Escalation Timing Rules
+**Rules**:
+- 2 consecutive rounds with the same error → escalate
+- Involves product decisions → escalate
+- Involves security-sensitive operations → escalate
+- When escalating, must state: what was tried, where it's stuck, what needs human judgment
+
 ## Common Pitfalls
 
 - **Unbounded loop**: No maximum iteration count set, causing stuck tasks to spin indefinitely — set an 8-round cap.
@@ -144,13 +170,14 @@ Each feedback channel should be consumed in the same iteration it was generated.
 - When tests fail, first check "did the preconditions or environment change" rather than directly suspecting the code implementation — reproduce first, then fix.
 - After the loop converges, immediately run `make triggers-all` or an equivalent full check to ensure the last round of modifications did not break unverified parts.
 - After each successful verification round, take a quick `git stash` snapshot before making the next change — if a new attempt breaks something, pop the stash to restore the last verified state with a single command.
+- **No-test project transition**: If the project has no test infrastructure, first create a simple smoke test (verify core functionality runs without errors) as the minimum feedback signal for verification-loop. Recommend using `harness-bootstrap` for automatic setup.
 
 ## Related Skills
+- input      **harness-exec-plans**: Receives exec-plan (goals + steps + acceptance criteria) as input to the verification loop
+- input      **harness-architecture-boundaries**: Receives architecture rules as self-check items
+- routes-to  **harness-observability-and-browser**: Delegates verification when runtime signals are needed
+- output     **harness-commit-gate**: After verification passes, transitions to commit-gate; commit-gate does not re-run checks that already passed
 
-- Upstream **harness-exec-plans**: Receives exec-plan (goals + steps + acceptance criteria) as input to the verification loop
-- Upstream **harness-architecture-boundaries**: Receives architecture rules as self-check items
-- Downstream **harness-commit-gate**: After verification passes, transitions to commit-gate; commit-gate does not re-run checks that already passed
-- Downstream **harness-observability-and-browser**: Delegates verification when runtime signals are needed
 
 ## Related Templates
 
@@ -166,7 +193,7 @@ Each feedback channel should be consumed in the same iteration it was generated.
 ### Skip Conditions
 
 - **Single-line config fix or typo correction**: Go directly through commit-gate, do not start the verification loop.
-- **Project has no test/build/lint configuration**: The loop has no feedback signals to rely on. Set up the infrastructure first.
+- **Project has no test/build/lint configuration**: The loop has no feedback signals to rely on. **Suggestion**: First use `harness-bootstrap` to set up basic test framework, or manually create a simple smoke test, then use verification-loop.
 - **Pure exploration / brainstorming task**: Produces no verifiable code changes.
 - **commit-gate already in place and the change is trivial**: No need to start an 8-round loop.
 - **Verification loop has already run and passed for the same change set**: Do not re-run; proceed to commit-gate directly.
@@ -205,6 +232,7 @@ You are the "Self-Verification Loop Runner" (verification-loop-runner). You driv
 - **Do not modify architecture docs or exec-plan goals**: `Edit` applies only to business code and test files. Violation: revert changes to architecture files.
 - **Output path standardization**: Completion summary is conversation-only — do not create new files. Iteration records and exec-plan checkmarks are maintained by directly updating `docs/exec-plans/active/<plan-id>.md`.
 - **Convergence requires all criteria pass**: The loop may only exit successfully when every acceptance criterion has a PASS status. If any criterion remains unverified at the iteration cap, the stuck report must list each unverified criterion by name. On violation: re-run the unverified criterion before wrapping up.
+- **Escalation must include explanation**: When escalating to humans, must state what was tried, where it's stuck, and what needs human judgment. Violation: supplement the explanation before escalating.
 
 ### Output Specification
 
@@ -215,4 +243,4 @@ You are the "Self-Verification Loop Runner" (verification-loop-runner). You driv
 - **Output structure**: Summary first (what was done + verification status), then iteration details (for traceability), then known limitations (for the next agent).
 
 ---
-Last updated: 2026-07-07 (Change: Agent Prompt — convergence logic in Execution Flow + convergence Constraint)
+Last updated: 2026-07-10 (Change: minimum feedback signals + complex problem classification + escalation timing rules + no-test project transition + escalation explanation constraint)

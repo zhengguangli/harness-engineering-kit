@@ -14,6 +14,7 @@ python3 scripts/run-all.py --run-type check         # 仅 frontmatter 校验
 python3 scripts/run-all.py --run-type regression    # 仅关键词回归测试
 python3 scripts/run-all.py --run-type regression --json  # 回归 JSON 报告
 python3 scripts/run-all.py --run-type prompt        # 仅 agent prompt 检查
+python3 scripts/run-all.py --run-type deps          # 仅依赖方向/循环依赖校验
 python3 scripts/run-all.py --sync                   # 验证 + 同步到 ~/.agents/skills/ (并维护软链接)
 ```
 
@@ -33,7 +34,7 @@ python3 scripts/run-all.py --sync                   # 验证 + 同步到 ~/.agen
 | 已知但暂不处理的技术债 | `docs/exec-plans/tech-debt-tracker.md` |
 | 产品功能规格 | `docs/product-specs/index.md` |
 | 各 skill 质量评分与趋势追踪 | `docs/QUALITY_SCORE.md` |
-| 黄金原则扫描报告 | `docs/quality-reports/golden-principles-scan.md` |
+| 架构级变更记录（契约/CI/方法论变更） | `CHANGELOG.md` |
 | Skills 质量评估报告 | `docs/quality-reports/skills-quality-assessment.md` |
 | 质量报告详情 | `docs/quality-reports/` |
 | 13 个 skill 的方法论正文 + agent 提示词 + 模板 | `skills/` |
@@ -43,7 +44,8 @@ python3 scripts/run-all.py --sync                   # 验证 + 同步到 ~/.agen
 
 - 每个 `SKILL.md` 的 frontmatter 必须包含 `description`（>= 20 字符）、`when_to_use`、`compatibility` 字段，不含已废弃的 `version` 字段。
 - 每个 skill 的 agent 提示词维护在 `SKILL.md` 的 `## Agent 提示词` section，不再使用独立的 `agents/<name>.md` 文件。
-- Skills 之间不允许循环依赖；依赖方向见 `docs/ARCHITECTURE.md`。
+- 每个 `SKILL.md` 的 frontmatter 必须声明 `depends_on`（无依赖写 `depends_on: []`），只表达真实数据依赖；路由/参见/模板出处指针放 `## Related Skills`，用 `input`/`output`/`routes-to`/`see-also` 四标签标注。
+- Skills 之间不允许循环依赖，依赖只能向下流动（Layer N → Layer ≤ N）；由 `scripts/validate_skill_dependencies.py` 机械强制。
 - `compatibility` 和 `metadata`（含 `category`）为 harness 自定义 frontmatter 扩展字段，非 Claude Code 标准字段。Claude Code 会静默忽略未识别的字段。
 
 ## Architecture
@@ -60,7 +62,7 @@ python3 scripts/run-all.py --sync                   # 验证 + 同步到 ~/.agen
 
 ## Quality gates
 
-提交前必须运行全量验证脚本（`python3 scripts/run-all.py`）。当前全 13 个 skill 质量评分 9.48（A 级，第二十五次评估）。详细维度评分见 `docs/QUALITY_SCORE.md`。
+提交前必须运行全量验证脚本（`python3 scripts/run-all.py`，五阶段：frontmatter / 触发回归 / Agent Prompt / 依赖校验 / 单元测试）。最后一次主观加权评分为第 33 次（2026-07-10，平均 9.46，5 A+ / 8 A）；第 34 次（2026-09-23）为机械检查点审计，13/13 全绿。详见 `docs/QUALITY_SCORE.md`。
 
 ## Skill 文件结构
 
@@ -70,13 +72,21 @@ skills/<name>/
 └── references/         # 模板文件、边界情况指南
 ```
 
-**frontmatter 字段说明**：`description`（做什么 + 什么时候用）、`when_to_use`（触发场景）、`context`（执行模式，如 `fork`）、`allowed-tools`（工具白名单）。各字段仅 Claude Code 读取。
+**frontmatter 字段说明**：`description`（做什么 + 什么时候用）、`when_to_use`（触发场景）、`context`（执行模式，如 `fork`）、`allowed-tools`（工具白名单）、`depends_on`（真实数据依赖，harness 自定义字段，仅本仓库校验脚本读取）。Claude Code 会静默忽略 `depends_on`。
 
 ## Testing
 
-测试文件在 `tests/triggers/cases.json`（48 个触发回归用例）。关键词映射在 `scripts/run_trigger_regression.py` 的 `SKILL_KW` 字典。新增 skill 时必须同时更新关键词映射和测试用例。
+测试分两处：
+- `tests/triggers/cases.json`（触发回归用例，数量由 `run-all.py` 动态读出，当前 51）。关键词映射在 `scripts/run_trigger_regression.py` 的 `SKILL_KW` 字典。新增 skill 时必须同时更新关键词映射和测试用例。
+- `tests/dependencies/test_dependency_validation.py`（依赖校验，标准库 unittest）。新增 skill 时必须同时在 `scripts/validate_skill_dependencies.py` 的 `LAYERS`/`META_LAYER` 登记层级，否则该用例会失败。
+- `tests/scripts/test_validation_scripts.py`（校验脚本自身的行为，含关键词重复检测、每个 skill 至少一条回归用例等不变量）。
+
+两者都由 `run-all.py` 第五阶段自动执行，CI 继承——**测试失败即阻断合并**。
 
 ## Development Workflow
+
+**架构级变更必须同步更新 `CHANGELOG.md`**（新增/变更契约或不变式、CI 行为变更、验证方法论变更、核心依赖变更）。
+逐 commit 的流水账不进 CHANGELOG，看 `git log`。格式遵循 `AGENTS.md` §6：Context & Trade-offs / Impact Radius。
 
 修改 skill 后按此顺序操作：
 
@@ -91,4 +101,4 @@ skills/<name>/
 
 ---
 
-最后更新: 2026-07-06（CLAUDE.md 已合并至此文件，不再单独维护）
+最后更新: 2026-09-24（变更：移除导航表中指向不存在文件的 `golden-principles-scan.md` 行——该路径是 golden-principles 在**目标项目**中的输出位置，不是本仓库的文件，放进导航表是错的）

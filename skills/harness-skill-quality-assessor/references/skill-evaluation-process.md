@@ -1,6 +1,6 @@
 # Skills Quality Assessment Process Detailed Description
 
-Update time: 2026-07-02
+Update time: 2026-07-10
 Updated by: claude-code
 
 ## Evaluation Process Overview
@@ -596,4 +596,4 @@ jobs:
 ```
 
 ---
-Last updated: 2026-07-02
+Last updated: 2026-07-10

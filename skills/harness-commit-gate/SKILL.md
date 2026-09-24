@@ -10,6 +10,10 @@ context: fork
 allowed-tools: Bash(git *) Bash(npm *) Bash(bun *) Bash(cargo *) Bash(vitest *) Bash(tsc *) Bash(bunx *) Bash(make *) Bash(just *)
 agent: commit-gate-runner
 compatibility: claude-code
+depends_on:
+  - harness-verification-loop
+  - harness-observability-and-browser
+  - harness-exec-plans
 metadata:
   category: workflow
 ---
@@ -104,9 +108,9 @@ For detailed execution steps, see `## Agent 提示词 → 执行流程`. Below i
 
 ## Hard Constraints
 
-- **Test failure must block the commit**: When any test, build, or type check fails, the commit flow must immediately abort and must not proceed. Commits violating this constraint will be rejected until all checks pass.
-- **Commit message length limit**: The commit message must be ≤ 72 characters. Messages exceeding this limit will be rejected and a compliant version must be regenerated.
-- **allowed-tools coverage integrity**: The allowed-tools field must include all commands mentioned in the methodology (git, npm/bun/cargo, etc.). Missing tool declarations will prevent the corresponding commands from executing, blocking the quality gate flow.
+1. **Test failure must block the commit**: When any test, build, or type check fails, the commit flow must immediately abort and must not proceed. Commits violating this constraint will be rejected until all checks pass.
+2. **Commit message length limit**: The commit message must be ≤ 72 characters. Messages exceeding this limit will be rejected and a compliant version must be regenerated.
+3. **allowed-tools coverage integrity**: The allowed-tools field must include all commands mentioned in the methodology (git, npm/bun/cargo, etc.). Violation → the command is refused by the platform and the gate silently skips that check; before running the gate, diff the methodology's command list against allowed-tools and add every missing entry.
 
 ## Examples
 
@@ -121,6 +125,9 @@ For detailed execution steps, see `## Agent 提示词 → 执行流程`. Below i
 
 **Example 4**: User says "提交代码" (commit only, no push mentioned)
 **Flow**: Same as Example 1, but step 8 evaluates the original request — no push keyword found → local commit only, no `git push` executed.
+
+**Example 5**: User says "改完了，帮我提交" — tests were never run in this session
+**Flow**: This is the boundary case with `harness-verification-loop`. commit-gate does **not** enter an iterate-until-green loop; it runs the gate once, sees the tests have not passed, and stops with a blocked result pointing at verification-loop. Verification-loop owns "keep iterating until tests/lint/build converge"; commit-gate owns "given a diff that already converges, review it, format the message, and commit." If the user's intent is genuinely "make this work, then commit", hand off to verification-loop first and re-enter commit-gate only after it reports convergence.
 
 ## Key Points
 
@@ -176,15 +183,24 @@ For detailed execution steps, see `## Agent 提示词 → 执行流程`. Below i
 - When committing AI-assisted or paired work, append a `Co-Authored-By: Name <email>` trailer below the message body to credit all contributors.
 
 ## Related Skills
+- input      **harness-verification-loop**: After verification-loop completes checks, hand off to commit-gate; commit-gate does not re-run already-passed checks
+- input      **harness-observability-and-browser**: Verified changes proceed to commit
+- input      **harness-exec-plans**: After the execution plan completes, proceed through verification-loop to commit
+- see-also   **harness-golden-principles**: Golden principle rules may inform commit message conventions — advisory only
 
-- `harness-verification-loop`: Upstream. After verification-loop completes checks, hand off to commit-gate; commit-gate does not re-run already-passed checks.
-- `harness-observability-and-browser`: Upstream. Verified changes proceed to commit.
-- `harness-exec-plans`: Upstream. After the execution plan completes, proceed through verification-loop to commit.
-- `harness-golden-principles`: Golden principle rules may inform commit message conventions
 
+## Related Templates
+
+- `references/commit-message-guide.md`: Commit Message Format Guide
+- `references/ci-integration-guide.md`: CI Integration Guide (GitHub Actions / GitLab CI Configuration)
+- `references/diff-review-checklist.md`: Standardized git diff review checklist (sensitive info, debug code, scope creep)
+- `references/common-edge-cases.md`: Common edge cases in commit-gate processing; referenced from Edge Case Handling
+
+---
+Last updated: 2026-09-24 (Change: added Example 5 drawing the commit-gate vs verification-loop responsibility boundary; round-33 LOW #5)
 ## Agent 提示词
 
-## Commit Gate Runner
+## commit-gate-runner (Commit Gate Runner)
 
 ### Skip Conditions
 
@@ -243,11 +259,3 @@ You are the "Commit Quality Gate Runner". Your role is to execute a lightweight,
 - **Success confirmation**: When all checks pass, output a brief success confirmation before proceeding to commit.
 - **Report location**: Only output in conversation, not persisted to file — unlike verification-loop, commit-gate is disposable per run. On violation: retract file writes and output in conversation only.
 
-## Related Templates
-
-- `references/commit-message-guide.md`: Commit Message Format Guide
-- `references/ci-integration-guide.md`: CI Integration Guide (GitHub Actions / GitLab CI Configuration)
-- `references/diff-review-checklist.md`: Standardized git diff review checklist (sensitive info, debug code, scope creep)
-
----
-Last updated: 2026-07-07 (Change: Agent Prompt — push decision Capability + Execution Flow step 8 enhanced + Constraint added + Example 4)
