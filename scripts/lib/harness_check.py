@@ -1,17 +1,27 @@
 """
-Shared utility library for harness script checking.
+Shared checker library for skill-level automated checks.
 
-Provides:
-- Path constants (ROOT_DIR, SKILLS_DIR)
-- SkillChecker class: pass/fail/warn counters with JSON output
-- run_shared_checks(): replicating scripts/skill_automated_check.py behavior
-- Frontmatter parsing and section lookup helpers
+This module is the single implementation behind every
+`skills/*/references/automated_check_script.py`. Before it existed, all 13
+scripts carried their own ~110-line copy of the boilerplate below; the copies
+had already drifted (several counted Hard Constraints with a bullet-only regex
+that broke once the sections were normalised to numbered lists).
+
+Each skill's script now imports this module and contributes only its own
+checks. Behaviour is identical to the old inline copies.
+
+Usage from a skill script:
+
+    import os, sys
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../../scripts"))
+    from lib.harness_check import (read_file, has_text, SkillChecker,
+                                   run_shared_checks, check_reference_files,
+                                   print_extra_summary)
 """
 
 import json
 import os
 import re
-import sys
 
 # --- Path constants ---
 
@@ -19,110 +29,47 @@ ROOT_DIR = os.path.normpath(os.path.join(os.path.dirname(__file__), "../.."))
 SKILLS_DIR = os.path.join(ROOT_DIR, "skills")
 
 
-def resolve_skill_path(skill_name):
-    """Return the path to a skill directory given its name."""
-    return os.path.join(SKILLS_DIR, skill_name)
-
-
-def read_skill_md(skill_name):
-    """Return the full path to a skill's SKILL.md."""
-    return os.path.join(SKILLS_DIR, skill_name, "SKILL.md")
-
+# --- File helpers (signatures match the former inline copies) ---
 
 def read_file(path):
-    """Read a file and return its lines. Returns empty list on error."""
+    """Read a file and return its full text. Returns '' on error."""
     try:
         with open(path, "r", encoding="utf-8") as f:
-            return f.read().splitlines()
+            return f.read()
+    except (OSError, UnicodeDecodeError):
+        return ""
+
+
+def read_lines(path):
+    """Read a file as a list of lines. Returns [] on error."""
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return f.readlines()
     except (OSError, UnicodeDecodeError):
         return []
 
 
-def read_frontmatter(file_path):
-    """
-    Parse the YAML frontmatter (--- ... ---) of a SKILL.md.
-    Returns a dict with key-value pairs (no nested YAML parsing).
-    Returns {} if no frontmatter found.
-    """
-    lines = read_file(file_path)
-    if not lines or lines[0].strip() != "---":
-        return {}
-    result = {}
-    for line in lines[1:]:
-        if line.strip() == "---":
-            break
-        m = re.match(r"^(\w[\w-]*?)\s*:\s*(.*)", line)
-        if m:
-            result[m.group(1)] = m.group(2).strip()
-    return result
+def has_text(text, pattern, flags=0):
+    """True if `text` (a string, not a path) matches `pattern`."""
+    return bool(re.search(pattern, text, flags))
 
 
-def has_section(file_path, section_name):
-    """Check if the file has a ##-level section matching section_name."""
-    for line in read_file(file_path):
-        m = re.match(r"^##\s+(.+)$", line)
-        if m and section_name in m.group(1):
-            return True
-    return False
-
-
-def has_text(file_path, pattern):
-    """Check if the file contains text matching the regex pattern."""
-    for line in read_file(file_path):
-        if re.search(pattern, line, re.IGNORECASE):
-            return True
-    return False
-
-
-def count_text(file_path, pattern):
-    """Count lines matching a regex pattern (case-insensitive)."""
-    count = 0
-    for line in read_file(file_path):
-        if re.search(pattern, line, re.IGNORECASE):
-            count += 1
-    return count
-
-
-def skill_dirs():
-    """Yield (skill_name, skill_dir_path) for all harness-* skills."""
-    if not os.path.isdir(SKILLS_DIR):
-        return
-    for entry in sorted(os.listdir(SKILLS_DIR)):
-        d = os.path.join(SKILLS_DIR, entry)
-        if os.path.isdir(d) and entry.startswith("harness-"):
-            yield entry, d
-
-
-def skill_md_files():
-    """Yield (skill_name, skill_md_path) for all skills with SKILL.md."""
-    for name, _ in skill_dirs():
-        md = os.path.join(SKILLS_DIR, name, "SKILL.md")
-        if os.path.isfile(md):
-            yield name, md
-
-
-# --- SkillChecker class ---
+# --- SkillChecker ---
 
 class SkillChecker:
-    """
-    Check counter with pass/fail/warn tracking and JSON output.
-    Mirrors the check_pass/check_fail/check_warn pattern from the bash scripts.
-    """
+    """Pass/fail/warn counter with JSON output."""
 
     def __init__(self, skill_name=""):
         self.skill_name = skill_name
-        self.total = 0
-        self.passed = 0
-        self.failed = 0
-        self.warning_count = 0
-        self.issues = []      # {"check", "severity", "detail"}
-        self.warnings = []    # {"check", "detail"}
-        self.passed_items = []  # {"check": name}
+        self.total = self.passed = self.failed = self.warning_count = 0
+        self.issues = []      # [{"check", "severity", "detail"}]
+        self.warnings = []    # [{"check", "detail"}]
+        self.passed_items = []
 
     def check_pass(self, check_name=""):
         self.total += 1
         self.passed += 1
-        self.passed_items.append({"check": check_name})
+        self.passed_items.append(check_name)
 
     def check_fail(self, check_name, severity="HIGH", detail=""):
         self.total += 1
@@ -136,13 +83,10 @@ class SkillChecker:
 
     @property
     def score(self):
-        """Calculate 0-10 score from pass/total ratio."""
-        if self.total == 0:
-            return 0.0
-        return round(self.passed * 10 / self.total, 2)
+        return round(self.passed * 10 / self.total, 2) if self.total else 0.0
 
-    def to_dict(self):
-        return {
+    def print_json(self):
+        d = {
             "skill_name": self.skill_name,
             "auto_check_score": self.score,
             "stats": {
@@ -153,62 +97,61 @@ class SkillChecker:
             },
             "issues": self.issues,
             "warnings": self.warnings,
-            "passes": self.passed_items,
         }
+        print(json.dumps(d, ensure_ascii=False, indent=2))
 
-    def to_json(self):
-        return json.dumps(self.to_dict(), ensure_ascii=False, indent=2)
-
-    def print_json(self):
-        print(self.to_json())
+    def exit_code(self):
+        """Non-zero when any check failed, so CI can actually gate on it."""
+        return 1 if self.failed else 0
 
 
-# --- Shared checks (replicating scripts/skill_automated_check.py) ---
+# --- Shared checks (identical for every skill) ---
 
 def run_shared_checks(skills_dir, skill_name):
-    """
-    Perform the shared checks that scripts/skill_automated_check.py does.
-    Returns a SkillChecker instance with all shared checks recorded.
-    """
+    """Run the checks common to all skills. Returns a SkillChecker."""
     checker = SkillChecker(skill_name)
     file_path = os.path.join(skills_dir, skill_name, "SKILL.md")
 
-    # Check file exists
     if not os.path.isfile(file_path):
         checker.check_fail("file-exists", "CRITICAL", f"SKILL.md not found for {skill_name}")
         return checker
     checker.check_pass("file-exists")
 
-    fm = read_frontmatter(file_path)
+    content = read_file(file_path)
+    fm = {}
+    lines = read_lines(file_path)
+    if lines and lines[0].strip() == "---":
+        for line in lines[1:]:
+            s = line.strip()
+            if s == "---":
+                break
+            m = re.match(r"^(\w[\w-]*?)\s*:\s*(.*)", s)
+            if m:
+                fm[m.group(1)] = m.group(2).strip()
 
-    # Check frontmatter fields
     for field in ("name", "description", "when_to_use", "compatibility"):
         if field in fm:
             checker.check_pass(f"fm-{field}")
         else:
             checker.check_fail(f"fm-{field}", "HIGH", f"Missing {field}")
 
-    # Check key sections
     for section in ("Core Principles", "When to Use", "Methodology", "Key Points"):
-        if has_section(file_path, section):
+        if has_text(content, rf"^##\s+{re.escape(section)}", re.MULTILINE):
             checker.check_pass(f"section-{section}")
         else:
             checker.check_warn(f"section-{section}", f"Missing {section}")
 
-    # Check Agent prompt section
-    if has_text(file_path, r"^##\s+Agent\s+(Prompt|提示词)"):
+    if has_text(content, r"^##\s+Agent\s+(Prompt|提示词)", re.MULTILINE):
         checker.check_pass("agent-prompt")
     else:
         checker.check_warn("agent-prompt", "Missing Agent 提示词 section")
 
-    # Check Last updated
-    if has_text(file_path, r"Last [Uu]pdated"):
+    if has_text(content, r"Last [Uu]pdated"):
         checker.check_pass("last-updated")
     else:
         checker.check_warn("last-updated", "Missing last updated date")
 
-    # Check Edge Cases
-    if has_text(file_path, r"Edge Case"):
+    if has_text(content, r"Edge Case", re.IGNORECASE):
         checker.check_pass("edge-cases")
     else:
         checker.check_warn("edge-cases", "No edge cases section")
@@ -216,10 +159,10 @@ def run_shared_checks(skills_dir, skill_name):
     return checker
 
 
-# --- Reference check helpers ---
+# --- Reference-file helpers ---
 
 def check_reference_files(checker, skill_dir, ref_files):
-    """Check existence of reference files. Returns number passed."""
+    """Check that each listed reference file exists. Returns (passed, total)."""
     passed_extra = 0
     total_extra = 0
     for ref in ref_files:
@@ -234,16 +177,40 @@ def check_reference_files(checker, skill_dir, ref_files):
 
 
 def print_extra_summary(checker, passed_extra, total_extra):
-    """Print extra checks summary line (matching old script format)."""
     print("---")
     print(f"Extra checks: {passed_extra}/{total_extra} passed")
 
 
-if __name__ == "__main__":
-    # Quick self-test
-    print("SkillChecker library loaded OK")
-    print(f"ROOT_DIR = {ROOT_DIR}")
-    c = SkillChecker("test")
-    c.check_pass("test-pass")
-    c.check_warn("test-warn", "just a test")
-    print(c.to_json())
+# --- Counting helpers used by skill-specific checks ---
+
+def count_hard_constraints(content):
+    """Count Hard Constraints entries.
+
+    Accepts both the numbered form ('1. **Rule**: ...') and the legacy bullet
+    form ('- **Rule**: ...'). Several skills' checks used a bullet-only regex
+    and silently reported 0 after the sections were normalised to numbered
+    lists.
+    """
+    m = re.search(r"^##\s+Hard Constraints\s*$(.*?)(?=^##\s|\Z)",
+                  content, re.MULTILINE | re.DOTALL)
+    if not m:
+        return 0
+    return len(re.findall(r"^\s*(?:\d+\.|-)\s+\*\*", m.group(1), re.MULTILINE))
+
+
+def count_agent_constraints(content):
+    """Count entries in the '### Constraints' sub-section of the agent prompt.
+
+    The agent block is '## Agent 提示词' followed by a '## <agent-name> (<Role>)'
+    heading at the SAME level, so the block cannot be bounded by '## ' alone.
+    Locate the agent prompt, then find '### Constraints' after it.
+    """
+    m = re.search(r"^##\s+Agent\s+(?:Prompt|提示词)\s*$", content, re.MULTILINE)
+    if not m:
+        return 0
+    tail = content[m.end():]
+    c = re.search(r"^###\s+Constraints\s*$(.*?)(?=^###\s|^##\s|\Z)",
+                  tail, re.MULTILINE | re.DOTALL)
+    if not c:
+        return 0
+    return len(re.findall(r"^\s*(?:\d+\.|-)\s+\*\*", c.group(1), re.MULTILINE))

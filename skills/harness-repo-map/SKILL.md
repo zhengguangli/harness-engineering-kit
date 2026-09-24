@@ -148,6 +148,19 @@ Failures are written as agent-friendly repair instructions so whoever finds them
 - Run `find docs -name '*.md' -exec grep -l '\\](' {} \\;` once after fixing broken links to confirm no residual broken links remain.
 - Use git history as an implicit freshness signal: a document unchanged for 60+ days while surrounding code has evolved is likely stale, regardless of its "last validated" date.
 
+## Cross-Skill Handoff Points
+
+| Direction | Skill | Deliverable | Handoff mechanism | When to skip |
+|---|---|---|---|---|
+| input | `harness-bootstrap` | Initialized CLAUDE.md + docs/ skeleton | Skeleton files are passed straight to `doc-gardener` for validation | A docs/ structure already exists — skip bootstrap and go directly to a doc-gardener audit |
+| input | `harness-project-intake` | Structured project card (tech stack, architecture, entry points) | Card fields drive doc-gardener's ARCHITECTURE.md coverage check | The project has already been analysed — reuse the existing card |
+| output | `harness-architecture-boundaries` | `docs/ARCHITECTURE.md` domain boundaries and layering rules | Generated during initialisation; `boundary-auditor` later reads it to validate layers | Small project with no layering |
+| output | `harness-golden-principles` | `docs/QUALITY_SCORE.md` quality matrix | Generated during initialisation; the golden-principles scanner reads it to score drift | No quality rules defined yet |
+| routes-to | `harness-bootstrap` | Missing docs/ skeleton | When CLAUDE.md exists but docs/ does not, hand the skeleton creation back to bootstrap | docs/ already exists |
+| routes-to | `harness-prompt-optimizer` | CLAUDE.md content needing prompt tuning | When the issue is prompt quality rather than structure | The issue is structure or staleness, not wording |
+
+**Error handling**: If an upstream deliverable is missing, do not fabricate it — report the gap and hand back to the owning skill. If a downstream consumer reports the docs are unusable, re-run the four inline checks (broken links, freshness, coverage, structure) before rewriting anything.
+
 ## Edge Case Handling
 
 > For general edge cases (cross-platform sync, etc.), see `references/common-edge-cases.md`. Below are edge cases specific to this skill only.
