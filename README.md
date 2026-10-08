@@ -15,7 +15,7 @@ The two papers are highly complementary — OpenAI provides concrete experience 
 
 ```
 harness-engineering-kit/
-├── .gitignore                           # 忽略 docs/generated/、CLAUDE.md、CLAUDE.md（均由 agent 按项目生成）
+├── .gitignore                           # 忽略 docs/generated/、tests/triggers/report.json 及编辑器/OS/构建产物
 └── skills/                              # 13 个 skill（方法论 + agent 提示词 + 模板）
     ├── harness-architecture-boundaries/ # Layered architecture and dependency direction with mechanical enforcement
     ├── harness-authoring/               # Meta-skill: how to author new skills for this harness system
@@ -209,10 +209,10 @@ python3 scripts/run-all.py --run-type check
 - 每个 skill 必须有 `compatibility` 字段
 - 不应包含 `version` 字段或 `## 触发信号` 正文章节
 
-> 当前为 warn-only 本地门禁，不阻断开发；后续可按需要升级为 CI gate。
+> 该校验是**硬门禁**：字段缺失时 `validate_skill_triggers.py` 以 exit 1 结束，`scripts/run-all.py` 第一阶段即失败并阻断 CI（2026-10-08 修正了此前“warn-only 不阻断”的过时描述，并将输出标签由误导性的 `[WARN]` 改为 `[FAIL]`）。
 ### 本地全量检查（推荐）
 
-四阶段依次执行：frontmatter 校验 → 触发词回归 → Agent Prompt 存在性 → 依赖方向校验。
+六个阶段依次执行：frontmatter 校验 → 触发词回归 → Agent Prompt 存在性 → 依赖方向校验 → 单元测试 → 输出规格与任务覆盖审计。
 
 ```bash
 python3 scripts/run-all.py
@@ -364,4 +364,8 @@ python3 tests/dependencies/test_dependency_validation.py  # 18 个回归用例
 | harness-orchestration | "我该用哪些 skill"、"怎么组合这些 skill" |
 | harness-authoring | "怎么写一个好的 SKILL.md"、"给 harness 添新能力" |
 
-完整 30 个回归用例见 `tests/triggers/cases.json`。
+完整 51 个回归用例见 `tests/triggers/cases.json`。
+
+---
+
+最后更新: 2026-10-08（变更：回归用例数 30→51、验证流水线四阶段→六阶段、.gitignore 描述与实际对齐、frontmatter 门禁由“warn-only”修正为硬门禁描述）

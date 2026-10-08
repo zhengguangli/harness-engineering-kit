@@ -20,6 +20,12 @@ SKILL_DIR = os.path.normpath(os.path.join(SCRIPT_DIR, ".."))
 ROOT_DIR = os.path.normpath(os.path.join(SCRIPT_DIR, "../../.."))
 SKILLS_DIR = os.environ.get("SKILLS_DIR", os.path.join(ROOT_DIR, "skills"))
 
+# Freshness policy for SKILL.md "Last updated" stamps: pass below the warn
+# band, warn inside it, fail past the hard threshold. The warn band exists so
+# the required genuine re-review is surfaced before it becomes a failure.
+FRESH_WARN_DAYS = 76
+FRESH_MAX_DAYS = 90
+
 
 def extract_depends_on(content):
     """Return the raw text of the frontmatter depends_on block, or ''."""
@@ -390,8 +396,16 @@ def check_last_updated_freshness(c, file_path):
             last_date = datetime.strptime(last_date_str, "%Y-%m-%d").replace(tzinfo=timezone.utc)
             now = datetime.now(timezone.utc)
             diff_days = (now - last_date).days
-            if diff_days <= 90:
+            if diff_days <= FRESH_WARN_DAYS:
                 c.check_pass("content-freshness")
+            elif diff_days <= FRESH_MAX_DAYS:
+                # Early warning band: the stamp is still valid but the genuine
+                # re-review it certifies is due soon. Surfacing it here (warn,
+                # CI-visible) beats discovering it as a FAIL on day 91.
+                c.check_warn("content-freshness-due",
+                             f"Last updated {diff_days} days ago; re-review due in "
+                             f"{FRESH_MAX_DAYS - diff_days} day(s) "
+                             f"(threshold {FRESH_MAX_DAYS})")
             else:
                 c.check_fail("content-freshness", "LOW",
                              f"Last updated {diff_days} days ago, exceeds 90-day threshold")
@@ -517,7 +531,14 @@ def check_skill_refs(c, file_path, skill_name=""):
 
 
 def check_agent_prompt_redundancy(c, file_path):
-    """Detect Agent Prompt subsections that duplicate main body content."""
+    """Detect Agent Prompt subsections that VERBATIM-duplicate main body content.
+
+    Co-existence of e.g. '## Hard Constraints' and '### Constraints' is the
+    canonical design, not a defect: the agent prompt must stay self-contained
+    because it runs in an isolated context (see
+    docs/design-docs/agent-prompt-inline-migration.md). Only substantive lines
+    shared verbatim between the two are real duplication worth flagging.
+    """
     contents = read_file(file_path)
     agent_start = re.search(r"^##\s+(?:Agent Prompt|Agent 提示词)", contents, re.MULTILINE)
     if not agent_start:
@@ -532,11 +553,24 @@ def check_agent_prompt_redundancy(c, file_path):
         "Output Specification": r"^##\s+Methodology",
     }
     for sub, pattern in REDUNDANCY_MAP.items():
-        if not re.search(rf"^\s*###\s+{re.escape(sub)}", agent_section, re.MULTILINE):
+        m = re.search(rf"^###\s+{re.escape(sub)}\s*$(.*?)(?=^###\s|^##\s|\Z)",
+                      agent_section, re.MULTILINE | re.DOTALL)
+        if not m:
             continue
-        if re.search(pattern, main_body, re.MULTILINE):
+        b = re.search(rf"{pattern}\s*$(.*?)(?=^##\s|\Z)", main_body,
+                      re.MULTILINE | re.DOTALL)
+        if not b:
+            continue
+        sub_lines = {ln.strip() for ln in m.group(1).splitlines()
+                     if len(ln.strip()) >= 20}
+        body_lines = {ln.strip() for ln in b.group(1).splitlines()
+                      if len(ln.strip()) >= 20}
+        shared = sub_lines & body_lines
+        if shared:
             c.check_warn("agent-prompt-redundancy",
-                         f"Agent Prompt '{sub}' duplicates main body content")
+                         f"Agent Prompt '{sub}' shares {len(shared)} verbatim "
+                         f"line(s) with the main body: "
+                         f"{sorted(shared)[0][:60]!r}")
 
 
 # --- Main assessment ---

@@ -15,9 +15,9 @@
 
 | 领域 | frontmatter 合规 | 触发回归 | 关键词一致性 | 文档新鲜度 | 最近评估日期 |
 |---|---|---|---|---|---|
-| skills (13个) | 13/13 (100%) ✅ | 51/51 (100%) ✅ | 13/13 (100%) ✅ | ✅ 当日更新 | 2026-09-24 (三十四次) |
-| scripts | — | — | — | ✅ 当日更新 | 2026-09-24 (新增依赖校验脚本) |
-| tests | — | — | — | ✅ 当日更新 | 2026-09-24 (新增 18 个依赖校验用例) |
+| skills (13个) | 13/13 (100%) ✅ | 51/51 (100%) ✅ | 13/13 (100%) ✅ | ✅ 2026-09-24 | 2026-09-24 (三十四次) |
+| scripts | — | — | — | ✅ 2026-09-24 | 2026-09-24 (新增依赖校验脚本) |
+| tests | — | — | — | ✅ 2026-09-24 | 2026-09-24 (新增 18 个依赖校验用例) |
 
 ## 趋势备注
 
@@ -88,7 +88,7 @@
 2026-07-10 (三十三次): 第三十三次批量评估。平均分 **9.46** (A 级，-0.03)，**5 A+ / 8 A**。评分精度微调——部分维度"上限宽松分"回调至更严格标准，核心内容无退化。13个 skill 全部有未提交变更（slug frontmatter 清理 + 内容增强 + 自动化检查脚本修复）。关键事件：(1) observability Hard Constraints 2→5（+3条新约束），评分从 9.43 升至 9.46 (+0.03)，但未突破 A+ 门槛；(2) 3 个自动化检查脚本修复缩进 bug（architecture-boundaries/exec-plans/orchestration）；(3) verification-loop 新增 Minimum Feedback Signals + Complex Problem Classification + Escalation Timing Rules；(4) authoring 新增 Quick Decision Table；(5) bootstrap Related Skills 3→6；(6) orchestration 新增 Routing Quality Validation 4项检查。等级分布从 6A+/7A 变为 5A+/8A（commit-gate 晋升 A+，project-intake 降至 A）。最高分 skill-quality-assessor (9.50)，最低分 project-intake (9.42)。1 个 MEDIUM 问题（exec-plans 缺少显式 Cross-Skill Handoff section）。第二十一次达成"零未解决 CRITICAL/HIGH 问题"状态。详见 `docs/quality-reports/skills-quality-assessment.md`。
 
 ---
-最后更新: 2026-07-10（第 33 次）
+最后更新: 2026-10-08（变更：刷新页脚新鲜度戳——正文实际已更新至第 34 次审计（2026-09-24），但页脚停留在 2026-07-10；三处“✅ 当日更新”改为实际日期 2026-09-24，避免过期后变成失真陈述）
 
 ## 维护周期（自 2026-07-03 起生效）
 
@@ -137,3 +137,5 @@
 新增机械强制：`depends_on` frontmatter 契约 + `scripts/validate_skill_dependencies.py`（环检测/向下流动/Meta 隔离/引用有效性/跨 skill 路径存在性），TD-001 关闭。
 
 **关于 A+ 数量的说明**：第 33 次记录为 5 A+ / 8 A。本轮不做主观重评，因此不更新该计数——它仍是第 33 次评估的结果，不是本轮的。若需要新的 A+ 判定，需由 harness-skill-quality-assessor 按 rubric 人工执行。
+
+> **2026-10-08 勘误**（仅注解，不改写上方历史记录）：(1) 上方各轮备注中的 `make triggers-all` 是当时的命令名，本仓库没有 Makefile，2026-09-24 起统一为 `python3 scripts/run-all.py`；(2) 第十一次备注所述 `scripts/skill_automated_check.py` 共享脚本经 CHANGELOG 核实**从未存在**，现行共享实现是 `scripts/lib/harness_check.py`；(3) 各轮“48/48 全绿”为当时用例数，现行门禁集为 51 例。

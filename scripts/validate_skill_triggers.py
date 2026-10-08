@@ -117,7 +117,7 @@ for skill_md_path in sorted(glob_skills_files()):
 
     if missing:
         fail = 1
-        print(f"[WARN] {skill_name}: {' '.join(missing)}")
+        print(f"[FAIL] {skill_name}: {' '.join(missing)}")
     else:
         print(f"[OK] {skill_name}")
 
@@ -139,7 +139,7 @@ for skill_md_path in sorted(glob_skills_files()):
         cross_ref_total += 1
         ref_dir = os.path.join(SKILLS_DIR, r)
         if not os.path.isdir(ref_dir):
-            print(f"[WARN] {skill_name} references non-existent skill: {r}")
+            print(f"[FAIL] {skill_name} references non-existent skill: {r}")
             cross_ref_fail = 1
 
 if cross_ref_fail:

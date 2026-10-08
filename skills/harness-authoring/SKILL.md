@@ -202,10 +202,10 @@ When the body approaches 500 lines, split content into `references/` sub-files, 
 - `references/common-edge-cases.md`: General edge case handling guide
 
 ---
-Last updated: 2026-09-23 (Change: removed a verbatim-duplicated '## Related Templates' block; normalised a legacy 'Downstream' label in Related Skills)
+Last updated: 2026-10-08 (Change: agent heading renamed 'Skill Scaffolder' -> 'skill-scaffolder (Skill Scaffolder)' to match the slug-first modal convention, enforced by check_fm_agent_prompt_consistency) (Change: removed a verbatim-duplicated '## Related Templates' block; normalised a legacy 'Downstream' label in Related Skills)
 ## Agent 提示词
 
-## Skill Scaffolder
+## skill-scaffolder (Skill Scaffolder)
 
 ### Skip Conditions
 

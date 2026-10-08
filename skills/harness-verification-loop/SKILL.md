@@ -168,7 +168,7 @@ When a project lacks full test infrastructure, the following minimum feedback si
 - At the start of the loop, run `git stash list` once to ensure a clean working directory, preventing untracked changes from interfering with repeated iterations.
 - Before each iteration, use `git diff --stat` to quickly confirm substantive change; if none, trigger stuck diagnosis.
 - When tests fail, first check "did the preconditions or environment change" rather than directly suspecting the code implementation — reproduce first, then fix.
-- After the loop converges, immediately run `make triggers-all` or an equivalent full check to ensure the last round of modifications did not break unverified parts.
+- After the loop converges, immediately run `python3 scripts/run-all.py` or an equivalent full check to ensure the last round of modifications did not break unverified parts.
 - After each successful verification round, take a quick `git stash` snapshot before making the next change — if a new attempt breaks something, pop the stash to restore the last verified state with a single command.
 - **No-test project transition**: If the project has no test infrastructure, first create a simple smoke test (verify core functionality runs without errors) as the minimum feedback signal for verification-loop. Recommend using `harness-bootstrap` for automatic setup.
 
@@ -188,7 +188,7 @@ When a project lacks full test infrastructure, the following minimum feedback si
 
 ## Agent 提示词
 
-## Self-Verification Loop Runner (verification-loop-runner)
+## verification-loop-runner (Self-Verification Loop Runner)
 
 ### Skip Conditions
 
@@ -243,4 +243,4 @@ You are the "Self-Verification Loop Runner" (verification-loop-runner). You driv
 - **Output structure**: Summary first (what was done + verification status), then iteration details (for traceability), then known limitations (for the next agent).
 
 ---
-Last updated: 2026-07-10 (Change: minimum feedback signals + complex problem classification + escalation timing rules + no-test project transition + escalation explanation constraint)
+Last updated: 2026-10-08 (Change: minimum feedback signals + complex problem classification + escalation timing rules + no-test project transition + escalation explanation constraint + replaced dead `make triggers-all` with `python3 scripts/run-all.py` + agent heading renamed to slug-first 'verification-loop-runner (Self-Verification Loop Runner)')

@@ -1,5 +1,7 @@
 # Standardize SKILL.md Frontmatter Fields
 
+> **2026-10-08 勘误**：本文中的 `make triggers-all` 为历史命令名，本仓库没有 Makefile；现行等效命令为 `python3 scripts/run-all.py`。文中“48 trigger regression tests”为当时用例数，现行门禁集为 51 例。
+
 - Status: completed
 - Created: 2026-07-06
 - Last updated: 2026-09-23（复核：内容未变更，仅刷新新鲜度戳）

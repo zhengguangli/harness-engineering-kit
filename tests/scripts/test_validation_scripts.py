@@ -142,24 +142,78 @@ class ValidateSkillTriggersTests(unittest.TestCase):
                     "## Core Principles\n\n- a\n\n## Methodology\n\n- b\n")
         out = self._run()
         self.assertIn("[OK] harness-alpha", out)
-        self.assertNotIn("[WARN]", out)
+        self.assertNotIn("[FAIL]", out)
 
-    def test_missing_required_field_warns(self):
+    def test_missing_required_field_fails(self):
         write_skill(self.skills, "harness-alpha", "## Core Principles\n\n- a\n",
                     frontmatter="---\nname: harness-alpha\ndescription: too short\n---\n")
-        self.assertIn("missing_field:when_to_use", self._run())
+        out = self._run()
+        self.assertIn("missing_field:when_to_use", out)
+        self.assertIn("[FAIL]", out)
 
-    def test_short_description_warns(self):
+    def test_short_description_fails(self):
         write_skill(self.skills, "harness-alpha", "## Core Principles\n\n- a\n",
                     frontmatter="---\nname: harness-alpha\ndescription: short\n"
                                 "when_to_use: fixture\ncompatibility: claude-code\n---\n")
-        self.assertIn("description_too_short", self._run())
+        out = self._run()
+        self.assertIn("description_too_short", out)
+        self.assertIn("[FAIL]", out)
 
-    def test_dangling_cross_reference_warns(self):
+    def test_dangling_cross_reference_fails(self):
         write_skill(self.skills, "harness-alpha",
                     "## Core Principles\n\n- a\n\n## Related Skills\n\n"
                     "- see-also **harness-does-not-exist**: broken pointer\n")
-        self.assertIn("references non-existent skill", self._run())
+        out = self._run()
+        self.assertIn("references non-existent skill", out)
+        self.assertIn("[FAIL]", out)
+
+
+class SkillAutomatedCheckScriptTests(unittest.TestCase):
+    """Guards for skills/*/references/automated_check_script.py.
+
+    These scripts import the shared lib/harness_check.py from the kit repo's
+    scripts/ directory, which only resolves inside the repo layout. A
+    standalone-deployed skill copy must degrade gracefully (exit 0, [SKIP]),
+    while a genuinely broken library inside the repo must fail loudly so CI
+    never reports a false green.
+    """
+
+    SKILL = "harness-commit-gate"
+
+    def _script(self, root=REAL_SKILLS):
+        return os.path.join(root, self.SKILL, "references",
+                            "automated_check_script.py")
+
+    def test_in_repo_layout_runs_real_checks(self):
+        r = subprocess.run([sys.executable, self._script()],
+                           capture_output=True, text=True, cwd=REPO_ROOT)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertNotIn("[SKIP]", r.stdout)
+
+    def test_standalone_deployment_skips_gracefully(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            dest = os.path.join(tmp, ".claude", "skills", self.SKILL)
+            shutil.copytree(os.path.join(REAL_SKILLS, self.SKILL), dest)
+            r = subprocess.run([sys.executable, self._script(
+                os.path.join(tmp, ".claude", "skills"))],
+                capture_output=True, text=True)
+            self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+            self.assertIn("[SKIP]", r.stdout)
+            self.assertNotIn("Traceback", r.stderr)
+
+    def test_broken_shared_lib_does_not_false_green(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            fake = os.path.join(tmp, "repo")
+            shutil.copytree(REPO_ROOT, fake,
+                            ignore=shutil.ignore_patterns(".git", "__pycache__", ".codegraph"))
+            with open(os.path.join(fake, "scripts", "lib", "harness_check.py"),
+                      "w", encoding="utf-8") as f:
+                f.write("raise RuntimeError('broken lib')\n")
+            r = subprocess.run([sys.executable, self._script(
+                os.path.join(fake, "skills"))],
+                capture_output=True, text=True)
+            self.assertNotEqual(r.returncode, 0,
+                                "a broken shared library must fail loudly, not skip")
 
 
 class ValidateAgentPromptSyncTests(unittest.TestCase):

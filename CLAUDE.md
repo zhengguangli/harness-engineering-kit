@@ -30,8 +30,9 @@ python3 scripts/run-all.py --sync                   # 验证 + 同步到 ~/.agen
 | Agent Prompt 内联迁移设计 | `docs/design-docs/agent-prompt-inline-migration.md` |
 | 设计决策详情 | `docs/design-docs/` |
 | 当前执行计划 | `docs/exec-plans/active/` |
+| 质量测量计划（13 项已完成 + 4 项待办 + 决策日志） | `docs/exec-plans/active/quality-measurement-program.md` |
 | Skill Quality Assessor 精炼计划 | `docs/exec-plans/completed/skill-quality-assessor-refinement.md` |
-| 已知但暂不处理的技术债 | `docs/exec-plans/tech-debt-tracker.md` |
+| 已知但暂不处理的技术债（TD-001~TD-010） | `docs/exec-plans/tech-debt-tracker.md` |
 | 产品功能规格 | `docs/product-specs/index.md` |
 | 各 skill 质量评分与趋势追踪 | `docs/QUALITY_SCORE.md` |
 | 架构级变更记录（契约/CI/方法论变更） | `CHANGELOG.md` |
@@ -57,12 +58,12 @@ python3 scripts/run-all.py --sync                   # 验证 + 同步到 ~/.agen
 所有 skill 均使用 `context: fork`，通过 subagent 独立执行。
 
 - **3 个 `disable-model-invocation: true`**：`harness-bootstrap`、`harness-commit-gate`、`harness-verification-loop` — 不能直接用 Skill tool 调用，必须通过 `Agent` tool 或 Workflow 使用。
-- **2 个 `allowed-tools` 受限**：`harness-commit-gate` 和 `harness-verification-loop` 分别将 Bash 限制为 `git`/`npm`/`bun`/`cargo`/`make`/`just` 子集。其余 skill 默认继承全部工具，不符合最小权限原则时应手动限制。
+- **13/13 个 skill 均显式声明 `allowed-tools`**（最小权限原则，2026-10-08 修正——此前此文称仅 2 个受限、其余继承全部工具，已过期）：`harness-commit-gate` 与 `harness-verification-loop` 为构建工具子集（`git`/`npm`/`bun`/`cargo`/`vitest`/`tsc`/`make`/`just` 等），其余为只读巡检子集（`git`/`grep`/`rg`/`find`/`ls`/`cat`/`head`/`wc` 等）。新增 skill 时必须显式声明，不得留空继承全部工具。
 - Agent 提示词 canonical 版本在 `SKILL.md` 的 `## Agent 提示词` section，不再使用独立的 `agents/<name>.md` 文件。
 
 ## Quality gates
 
-提交前必须运行全量验证脚本（`python3 scripts/run-all.py`，五阶段：frontmatter / 触发回归 / Agent Prompt / 依赖校验 / 单元测试）。最后一次主观加权评分为第 33 次（2026-07-10，平均 9.46，5 A+ / 8 A）；第 34 次（2026-09-23）为机械检查点审计，13/13 全绿。详见 `docs/QUALITY_SCORE.md`。
+提交前必须运行全量验证脚本（`python3 scripts/run-all.py`，六阶段：frontmatter / 触发回归 / Agent Prompt / 依赖校验 / 单元测试 / 输出规格与任务覆盖审计）。最后一次主观加权评分为第 33 次（2026-07-10，平均 9.46，5 A+ / 8 A）；第 34 次（2026-09-23）为机械检查点审计，13/13 全绿。详见 `docs/QUALITY_SCORE.md`。
 
 ## Skill 文件结构
 
@@ -108,4 +109,4 @@ skills/<name>/
 
 ---
 
-最后更新: 2026-09-24（变更：移除导航表中指向不存在文件的 `golden-principles-scan.md` 行——该路径是 golden-principles 在**目标项目**中的输出位置，不是本仓库的文件，放进导航表是错的）
+最后更新: 2026-10-08（变更：验证阶段数由五阶段修正为六阶段——补上 2026-09-24 新增的输出规格与任务覆盖审计阶段；allowed-tools 声明由“2 个受限”修正为 13/13 全覆盖）

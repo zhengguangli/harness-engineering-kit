@@ -204,4 +204,4 @@ Scan the codebase on a fixed rhythm, comparing against encoded golden principles
 - **Output path**: `docs/quality-reports/golden-principles-scan.md` (overwrite in place; history is in git).
 
 ---
-Last updated: 2026-07-10 (Change: Edge Cases 3→5 scenarios + Example 4 added for AI-generated code governance)
+Last updated: 2026-10-08 (Re-review: content verified against the current repo — frontmatter contract, canonical section order, Related Skills labels and reference files all consistent; no content change. Freshness stamp refreshed ahead of the 90-day threshold)
