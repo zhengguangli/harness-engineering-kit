@@ -3,9 +3,26 @@
 本文件只记录**架构级变更**：新的契约/不变量、CI 行为变更、验证方法论变更、
 核心依赖变更。逐 commit 的流水账看 `git log`。
 
-格式遵循 `AGENTS.md` §6：Context & Trade-offs / Impact Radius。
+格式遵循 `AGENTS.md` 的 Change Log 节：Context & Trade-offs / Impact Radius。
 
 ---
+
+## [2026-10-08] 入口文件整合：CLAUDE.md 合并至 AGENTS.md
+
+- **Context & Trade-offs**: `c45b933`（2026-09）曾以"清理非 Claude Code 文件"为由把 AGENTS.md 合并进
+  CLAUDE.md，其隐含前提是"本 kit 只服务 Claude Code"。该前提已不成立——维护者的实际工作流是
+  Codex（读 AGENTS.md），且 kit 自身的 core-beliefs #7 要求"跨平台兼容是设计约束"。AGENTS.md 是
+  跨工具的标准入口约定，故本次反向整合：删除 CLAUDE.md，其独有内容（导航表、frontmatter 硬约束、
+  Skill Invocation、测试细则、开发工作流）全部并入 AGENTS.md。代价：Claude Code 会话不再自动加载
+  入口地图（内容零丢失，需时直读 AGENTS.md）；收益：消除双入口重叠（`run-all.py` 命令曾在两文件
+  各存一份，是本会话修复的多起文档漂移的共同根因），CHANGELOG 对格式的引用同步改为不依赖章节号。
+  目标项目由 harness-bootstrap 生成 CLAUDE.md 的行为不变——那是 kit 的产物，不是 kit 的入口。
+- **Impact Radius**:
+  - `CLAUDE.md` — 删除（git rm）
+  - `AGENTS.md` — 吸收其全部独有内容，由 6 节扩为 8 节（新增 Documentation Map、Development Workflow）
+  - `CHANGELOG.md` — 格式引用由 "AGENTS.md §6" 改为 "AGENTS.md 的 Change Log 节"（解耦章节号）
+  - `docs/design-docs/core-beliefs.md` — 信念 6 补充入口区分；`docs/design-docs/index.md` — 校验日期刷新
+  - 无脚本/测试依赖 CLAUDE.md（已全量 grep 核实：tests/tasks/tasks.json 等处的 CLAUDE.md 均指目标项目产物）
 
 ## [2026-09-24] depends_on 契约与依赖机械强制
 
