@@ -2,11 +2,22 @@
 """Automated check script for harness-bootstrap"""
 import os, re, sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../../scripts"))
-from lib.harness_check import (read_file, read_lines, has_text, SkillChecker,
-                                run_shared_checks, check_reference_files,
-                                print_extra_summary, count_hard_constraints,
-                                count_agent_constraints)
+# Shared checker library lives in the kit repo's scripts/lib/. Resolve it via an
+# absolute path so the script works from any CWD, and degrade gracefully when the
+# skill has been deployed standalone (e.g. ~/.claude/skills/<name>/) where the
+# kit's scripts/ directory is not shipped -- there is nothing to check there.
+_SHARED_LIB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../../scripts")
+if os.path.isdir(_SHARED_LIB):
+    sys.path.insert(0, _SHARED_LIB)
+    from lib.harness_check import (read_file, read_lines, has_text, SkillChecker,
+                                    run_shared_checks, check_reference_files,
+                                    print_extra_summary, count_hard_constraints,
+                                    count_agent_constraints)
+else:
+    print("[SKIP] shared checker library not found at ../../../scripts -- this "
+          "script only runs inside the harness-engineering-kit repository "
+          "layout; a standalone-deployed skill copy has nothing to check.")
+    sys.exit(0)
 
 # Path resolution
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
