@@ -209,7 +209,7 @@ python3 scripts/run-all.py --run-type check
 - 每个 skill 必须有 `compatibility` 字段
 - 不应包含 `version` 字段或 `## 触发信号` 正文章节
 
-> 当前为 warn-only 本地门禁，不阻断开发；后续可按需要升级为 CI gate。
+> 该校验是**硬门禁**：字段缺失时 `validate_skill_triggers.py` 以 exit 1 结束，`scripts/run-all.py` 第一阶段即失败并阻断 CI（2026-10-08 修正了此前“warn-only 不阻断”的过时描述，并将输出标签由误导性的 `[WARN]` 改为 `[FAIL]`）。
 ### 本地全量检查（推荐）
 
 六个阶段依次执行：frontmatter 校验 → 触发词回归 → Agent Prompt 存在性 → 依赖方向校验 → 单元测试 → 输出规格与任务覆盖审计。
