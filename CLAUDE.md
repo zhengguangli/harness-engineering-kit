@@ -63,7 +63,7 @@ python3 scripts/run-all.py --sync                   # 验证 + 同步到 ~/.agen
 
 ## Quality gates
 
-提交前必须运行全量验证脚本（`python3 scripts/run-all.py`，五阶段：frontmatter / 触发回归 / Agent Prompt / 依赖校验 / 单元测试）。最后一次主观加权评分为第 33 次（2026-07-10，平均 9.46，5 A+ / 8 A）；第 34 次（2026-09-23）为机械检查点审计，13/13 全绿。详见 `docs/QUALITY_SCORE.md`。
+提交前必须运行全量验证脚本（`python3 scripts/run-all.py`，六阶段：frontmatter / 触发回归 / Agent Prompt / 依赖校验 / 单元测试 / 输出规格与任务覆盖审计）。最后一次主观加权评分为第 33 次（2026-07-10，平均 9.46，5 A+ / 8 A）；第 34 次（2026-09-23）为机械检查点审计，13/13 全绿。详见 `docs/QUALITY_SCORE.md`。
 
 ## Skill 文件结构
 
@@ -109,4 +109,4 @@ skills/<name>/
 
 ---
 
-最后更新: 2026-09-24（变更：移除导航表中指向不存在文件的 `golden-principles-scan.md` 行——该路径是 golden-principles 在**目标项目**中的输出位置，不是本仓库的文件，放进导航表是错的）
+最后更新: 2026-10-08（变更：验证阶段数由五阶段修正为六阶段——补上 2026-09-24 新增的输出规格与任务覆盖审计阶段）

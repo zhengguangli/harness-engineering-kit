@@ -15,7 +15,7 @@ The two papers are highly complementary — OpenAI provides concrete experience 
 
 ```
 harness-engineering-kit/
-├── .gitignore                           # 忽略 docs/generated/、CLAUDE.md、CLAUDE.md（均由 agent 按项目生成）
+├── .gitignore                           # 忽略 docs/generated/、tests/triggers/report.json 及编辑器/OS/构建产物
 └── skills/                              # 13 个 skill（方法论 + agent 提示词 + 模板）
     ├── harness-architecture-boundaries/ # Layered architecture and dependency direction with mechanical enforcement
     ├── harness-authoring/               # Meta-skill: how to author new skills for this harness system
@@ -212,7 +212,7 @@ python3 scripts/run-all.py --run-type check
 > 当前为 warn-only 本地门禁，不阻断开发；后续可按需要升级为 CI gate。
 ### 本地全量检查（推荐）
 
-四阶段依次执行：frontmatter 校验 → 触发词回归 → Agent Prompt 存在性 → 依赖方向校验。
+六个阶段依次执行：frontmatter 校验 → 触发词回归 → Agent Prompt 存在性 → 依赖方向校验 → 单元测试 → 输出规格与任务覆盖审计。
 
 ```bash
 python3 scripts/run-all.py
@@ -364,4 +364,4 @@ python3 tests/dependencies/test_dependency_validation.py  # 18 个回归用例
 | harness-orchestration | "我该用哪些 skill"、"怎么组合这些 skill" |
 | harness-authoring | "怎么写一个好的 SKILL.md"、"给 harness 添新能力" |
 
-完整 30 个回归用例见 `tests/triggers/cases.json`。
+完整 51 个回归用例见 `tests/triggers/cases.json`。
