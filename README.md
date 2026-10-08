@@ -365,3 +365,7 @@ python3 tests/dependencies/test_dependency_validation.py  # 18 个回归用例
 | harness-authoring | "怎么写一个好的 SKILL.md"、"给 harness 添新能力" |
 
 完整 51 个回归用例见 `tests/triggers/cases.json`。
+
+---
+
+最后更新: 2026-10-08（变更：回归用例数 30→51、验证流水线四阶段→六阶段、.gitignore 描述与实际对齐、frontmatter 门禁由“warn-only”修正为硬门禁描述）

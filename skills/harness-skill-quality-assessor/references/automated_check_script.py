@@ -20,6 +20,12 @@ SKILL_DIR = os.path.normpath(os.path.join(SCRIPT_DIR, ".."))
 ROOT_DIR = os.path.normpath(os.path.join(SCRIPT_DIR, "../../.."))
 SKILLS_DIR = os.environ.get("SKILLS_DIR", os.path.join(ROOT_DIR, "skills"))
 
+# Freshness policy for SKILL.md "Last updated" stamps: pass below the warn
+# band, warn inside it, fail past the hard threshold. The warn band exists so
+# the required genuine re-review is surfaced before it becomes a failure.
+FRESH_WARN_DAYS = 76
+FRESH_MAX_DAYS = 90
+
 
 def extract_depends_on(content):
     """Return the raw text of the frontmatter depends_on block, or ''."""
@@ -390,8 +396,16 @@ def check_last_updated_freshness(c, file_path):
             last_date = datetime.strptime(last_date_str, "%Y-%m-%d").replace(tzinfo=timezone.utc)
             now = datetime.now(timezone.utc)
             diff_days = (now - last_date).days
-            if diff_days <= 90:
+            if diff_days <= FRESH_WARN_DAYS:
                 c.check_pass("content-freshness")
+            elif diff_days <= FRESH_MAX_DAYS:
+                # Early warning band: the stamp is still valid but the genuine
+                # re-review it certifies is due soon. Surfacing it here (warn,
+                # CI-visible) beats discovering it as a FAIL on day 91.
+                c.check_warn("content-freshness-due",
+                             f"Last updated {diff_days} days ago; re-review due in "
+                             f"{FRESH_MAX_DAYS - diff_days} day(s) "
+                             f"(threshold {FRESH_MAX_DAYS})")
             else:
                 c.check_fail("content-freshness", "LOW",
                              f"Last updated {diff_days} days ago, exceeds 90-day threshold")
