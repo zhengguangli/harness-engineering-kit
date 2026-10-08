@@ -188,7 +188,7 @@ When a project lacks full test infrastructure, the following minimum feedback si
 
 ## Agent 提示词
 
-## Self-Verification Loop Runner (verification-loop-runner)
+## verification-loop-runner (Self-Verification Loop Runner)
 
 ### Skip Conditions
 
@@ -243,4 +243,4 @@ You are the "Self-Verification Loop Runner" (verification-loop-runner). You driv
 - **Output structure**: Summary first (what was done + verification status), then iteration details (for traceability), then known limitations (for the next agent).
 
 ---
-Last updated: 2026-10-08 (Change: minimum feedback signals + complex problem classification + escalation timing rules + no-test project transition + escalation explanation constraint + replaced dead `make triggers-all` with `python3 scripts/run-all.py`)
+Last updated: 2026-10-08 (Change: minimum feedback signals + complex problem classification + escalation timing rules + no-test project transition + escalation explanation constraint + replaced dead `make triggers-all` with `python3 scripts/run-all.py` + agent heading renamed to slug-first 'verification-loop-runner (Self-Verification Loop Runner)')

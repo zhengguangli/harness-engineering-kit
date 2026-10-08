@@ -531,7 +531,14 @@ def check_skill_refs(c, file_path, skill_name=""):
 
 
 def check_agent_prompt_redundancy(c, file_path):
-    """Detect Agent Prompt subsections that duplicate main body content."""
+    """Detect Agent Prompt subsections that VERBATIM-duplicate main body content.
+
+    Co-existence of e.g. '## Hard Constraints' and '### Constraints' is the
+    canonical design, not a defect: the agent prompt must stay self-contained
+    because it runs in an isolated context (see
+    docs/design-docs/agent-prompt-inline-migration.md). Only substantive lines
+    shared verbatim between the two are real duplication worth flagging.
+    """
     contents = read_file(file_path)
     agent_start = re.search(r"^##\s+(?:Agent Prompt|Agent 提示词)", contents, re.MULTILINE)
     if not agent_start:
@@ -546,11 +553,24 @@ def check_agent_prompt_redundancy(c, file_path):
         "Output Specification": r"^##\s+Methodology",
     }
     for sub, pattern in REDUNDANCY_MAP.items():
-        if not re.search(rf"^\s*###\s+{re.escape(sub)}", agent_section, re.MULTILINE):
+        m = re.search(rf"^###\s+{re.escape(sub)}\s*$(.*?)(?=^###\s|^##\s|\Z)",
+                      agent_section, re.MULTILINE | re.DOTALL)
+        if not m:
             continue
-        if re.search(pattern, main_body, re.MULTILINE):
+        b = re.search(rf"{pattern}\s*$(.*?)(?=^##\s|\Z)", main_body,
+                      re.MULTILINE | re.DOTALL)
+        if not b:
+            continue
+        sub_lines = {ln.strip() for ln in m.group(1).splitlines()
+                     if len(ln.strip()) >= 20}
+        body_lines = {ln.strip() for ln in b.group(1).splitlines()
+                      if len(ln.strip()) >= 20}
+        shared = sub_lines & body_lines
+        if shared:
             c.check_warn("agent-prompt-redundancy",
-                         f"Agent Prompt '{sub}' duplicates main body content")
+                         f"Agent Prompt '{sub}' shares {len(shared)} verbatim "
+                         f"line(s) with the main body: "
+                         f"{sorted(shared)[0][:60]!r}")
 
 
 # --- Main assessment ---

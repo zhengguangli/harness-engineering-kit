@@ -36,6 +36,7 @@ python3 scripts/run-all.py --sync                 # 验证通过后部署 skills
 - Python：仅标准库，snake_case 文件名与函数名，`python3` 直接运行，无第三方依赖。
 - Skill 目录：`harness-` 前缀 + kebab-case。frontmatter 必填 `description`（≥20 字符）、`when_to_use`、`compatibility`、`depends_on`（无依赖写 `[]`），禁止废弃的 `version` 字段。
 - `SKILL.md` 章节顺序固定（见 `docs/ARCHITECTURE.md` 的 Canonical section order），不可随意重排。
+- agent 提示词标题须以 `agent:` frontmatter 的 slug 开头（如 `## entropy-collector (Entropy Sweeper)`），由 assessor 检查脚本机械强制；agent 子节与主文档对应章节共存是规范设计（agent 提示词须自包含），只有逐行重复才算冗余。
 - 文档正文可中文；代码注释、提交信息必须英文。
 - 改动 `SKILL.md` 后必须同步刷新其 `Last updated` 日期戳：assessor 检查脚本对全部 13 个 skill 强制 90 天新鲜度阈值，过期即记 FAIL。
 

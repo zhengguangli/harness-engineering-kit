@@ -161,7 +161,7 @@ Playwright and Puppeteer are two mainstream browser automation tools. In this sk
 
 ## Agent 提示词
 
-## QA Verifier
+## qa-verifier (QA Verifier)
 
 ### Skip Conditions
 
@@ -213,4 +213,4 @@ Produces verification evidence based on real runtime signals (browser rendering,
 - Output primarily in conversation — if archiving is needed, attach screenshots and query results in the PR description or exec-plan acceptance records, not as standalone files.
 
 ---
-Last updated: 2026-09-24 (Change: Edge Cases 3→5 — added browser tool version mismatch and multi-tab/multi-window verification; addresses round-33 LOW #8)
+Last updated: 2026-10-08 (Change: agent heading renamed 'QA Verifier' -> 'qa-verifier (QA Verifier)' to match the slug-first modal convention, enforced by check_fm_agent_prompt_consistency) (Change: Edge Cases 3→5 — added browser tool version mismatch and multi-tab/multi-window verification; addresses round-33 LOW #8)
