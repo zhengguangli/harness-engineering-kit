@@ -28,7 +28,7 @@ Defines the agent-first operating principles of the harness-engineering-kit. The
 
 - 复杂、可能跨多次会话的任务，先用 `harness-exec-plans` 技能落一份 exec-plan，不要直接动手。
 - 改动完成后，跑自验证循环（`harness-verification-loop`）而不是一次性提交了事。
-- 提交前跑 `make triggers-all` 确保 frontmatter 校验、关键词一致性、回归测试全部通过。
+- 提交前跑 `python3 scripts/run-all.py` 确保 frontmatter 校验、关键词一致性、回归测试全部通过。
 - 不确定某条规则是否仍然有效？去对应的 docs 文件查"最后校验日期"，过期的规则应该被标记而不是被信任。
 - 要给这套体系添加新能力，参考 `harness-authoring` skill。
 - **推送代码后**，主动询问用户是否同步技能包到 `~/.claude/skills`，获得允许后执行：
@@ -38,4 +38,4 @@ Defines the agent-first operating principles of the harness-engineering-kit. The
   ```
 
 ---
-最后更新: 2026-09-23（复核：内容未变更，仅刷新新鲜度戳）
+最后更新: 2026-10-08（变更：将死命令 `make triggers-all` 替换为 `python3 scripts/run-all.py`——本仓库没有 Makefile）

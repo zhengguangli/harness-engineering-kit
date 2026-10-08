@@ -113,7 +113,7 @@ tests/   → skills/    (Regression test cases verify skill trigger logic)
 
 - scripts/ only reads from skills/, never modifies it.
 - Regression test cases in tests/ depend on keyword mappings defined in scripts/.
-- .github/workflows/ invokes `make triggers-all` to trigger the full validation chain.
+- .github/workflows/ invokes `python3 scripts/run-all.py` to trigger the full validation chain.
 
 ## Data Boundary Rules
 
@@ -156,4 +156,4 @@ Key lessons from the full A+-grade optimization:
 See `docs/QUALITY_SCORE.md` for detailed lessons.
 
 ---
-Last updated: 2026-09-24 (Change: added the canonical SKILL.md section order, derived from the modal position across all 13 skills)
+Last updated: 2026-10-08 (Change: replaced the dead `make triggers-all` reference with `python3 scripts/run-all.py` — no Makefile exists in this repo)
