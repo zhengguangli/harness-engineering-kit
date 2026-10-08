@@ -58,7 +58,7 @@ python3 scripts/run-all.py --sync                   # 验证 + 同步到 ~/.agen
 所有 skill 均使用 `context: fork`，通过 subagent 独立执行。
 
 - **3 个 `disable-model-invocation: true`**：`harness-bootstrap`、`harness-commit-gate`、`harness-verification-loop` — 不能直接用 Skill tool 调用，必须通过 `Agent` tool 或 Workflow 使用。
-- **2 个 `allowed-tools` 受限**：`harness-commit-gate` 和 `harness-verification-loop` 分别将 Bash 限制为 `git`/`npm`/`bun`/`cargo`/`make`/`just` 子集。其余 skill 默认继承全部工具，不符合最小权限原则时应手动限制。
+- **13/13 个 skill 均显式声明 `allowed-tools`**（最小权限原则，2026-10-08 修正——此前此文称仅 2 个受限、其余继承全部工具，已过期）：`harness-commit-gate` 与 `harness-verification-loop` 为构建工具子集（`git`/`npm`/`bun`/`cargo`/`vitest`/`tsc`/`make`/`just` 等），其余为只读巡检子集（`git`/`grep`/`rg`/`find`/`ls`/`cat`/`head`/`wc` 等）。新增 skill 时必须显式声明，不得留空继承全部工具。
 - Agent 提示词 canonical 版本在 `SKILL.md` 的 `## Agent 提示词` section，不再使用独立的 `agents/<name>.md` 文件。
 
 ## Quality gates
@@ -109,4 +109,4 @@ skills/<name>/
 
 ---
 
-最后更新: 2026-10-08（变更：验证阶段数由五阶段修正为六阶段——补上 2026-09-24 新增的输出规格与任务覆盖审计阶段）
+最后更新: 2026-10-08（变更：验证阶段数由五阶段修正为六阶段——补上 2026-09-24 新增的输出规格与任务覆盖审计阶段；allowed-tools 声明由“2 个受限”修正为 13/13 全覆盖）
