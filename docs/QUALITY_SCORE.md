@@ -137,3 +137,5 @@
 新增机械强制：`depends_on` frontmatter 契约 + `scripts/validate_skill_dependencies.py`（环检测/向下流动/Meta 隔离/引用有效性/跨 skill 路径存在性），TD-001 关闭。
 
 **关于 A+ 数量的说明**：第 33 次记录为 5 A+ / 8 A。本轮不做主观重评，因此不更新该计数——它仍是第 33 次评估的结果，不是本轮的。若需要新的 A+ 判定，需由 harness-skill-quality-assessor 按 rubric 人工执行。
+
+> **2026-10-08 勘误**（仅注解，不改写上方历史记录）：(1) 上方各轮备注中的 `make triggers-all` 是当时的命令名，本仓库没有 Makefile，2026-09-24 起统一为 `python3 scripts/run-all.py`；(2) 第十一次备注所述 `scripts/skill_automated_check.py` 共享脚本经 CHANGELOG 核实**从未存在**，现行共享实现是 `scripts/lib/harness_check.py`；(3) 各轮“48/48 全绿”为当时用例数，现行门禁集为 51 例。

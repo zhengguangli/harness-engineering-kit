@@ -32,6 +32,8 @@
 | automated_check_script.py 存在且可执行 | 13/13 |
 | `python3 scripts/run-all.py` 四阶段全绿（frontmatter / regression 48 / agent prompt / deps） | 13/13 |
 
+> **2026-10-08 勘误**：上行为 2026-09-23 审计时点的快照。次日（2026-09-24）流水线新增第五阶段 `tests` 与审计阶段，现行流水线为六阶段、门禁回归集 51 例。本行按历史快照保留，未改写。
+
 ### 本轮修复的结构性缺陷
 
 全部由机械审计发现，非人工浏览：

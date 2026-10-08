@@ -1,5 +1,7 @@
 # Skill Quality Assessor 精细化提升计划
 
+> **2026-10-08 勘误**：本文中的 `make triggers-all` 为历史命令名，本仓库没有 Makefile；现行等效命令为 `python3 scripts/run-all.py`。
+
 - 状态: completed
 - 创建日期: 2026-07-03
 - 最近更新: 2026-07-06
