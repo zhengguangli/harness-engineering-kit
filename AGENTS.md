@@ -9,15 +9,18 @@
 harness-engineering-kit 是与具体项目无关的 skills + agents 套件（13 个 skill），无编译步骤，全部为纯文本 + Python 3 标准库脚本。
 
 ```
-skills/harness-*/    # 每个 skill：SKILL.md（方法论 + frontmatter + `## Agent 提示词`）+ references/ 模板
-scripts/             # Python 校验脚本（snake_case，仅标准库，只读 skills/ 不修改）
-tests/triggers/      # 触发词回归用例 cases.json（门禁）与 cases.diagnostic.json（测量集）
+skills/harness-*/    # 【产品区·对外契约】每个 skill：SKILL.md（方法论 + frontmatter + `## Agent 提示词`）+ references/ 模板；布局受部署链路约束，不可动
+scripts/             # 【工程区】Python 校验脚本（snake_case，仅标准库，只读 skills/ 不修改）
+scripts/diagnostics/ # 【工程区】测量/实验工具（compare_matchers*、evaluate_trigger_discrimination、cases.diagnostic.json），非门禁
+tests/triggers/      # 触发词回归用例 cases.json（门禁）与 report.json 产物
 tests/dependencies/  # 依赖校验回归（unittest）
 tests/scripts/       # 校验脚本自身行为回归
 tests/tasks/         # 13 个代表性任务 + 55 条机械可验证验收标准
 docs/                # 设计文档、执行计划、质量报告；docs/generated/ 自动生成，勿手改
 .github/             # CI workflow 与 PR 模板
 ```
+
+**分区边界**：产品区（`skills/`）是部署到 `~/.agents/skills/` 的对外契约，目录形态不可动；工程区（`scripts/ tests/ docs/ .github/`）是 kit 自身的质量基建。**门禁面** = `scripts/*.py`（顶层，含 `lib/`）+ `tests/**/test_*.py` + `tests/triggers/cases.json`；`scripts/diagnostics/` 不属于门禁（TD-006）。
 
 ## 2. Build, Test, and Development Commands
 
@@ -59,7 +62,7 @@ python3 scripts/run-all.py --sync                 # 全量验证 + 部署 skills
 
 - 框架：标准库 `unittest`（无 pytest）。
 - `tests/triggers/cases.json`（51 例）是回归门禁，必须全绿；新增 skill 必须同步更新 `scripts/run_trigger_regression.py` 的 `SKILL_KW` 关键词映射并新增 case（id 格式 `skill-topic-NN`）。
-- `cases.diagnostic.json`（87 例）是契约派生测量集，**不是门禁**，禁止为凑通过率调关键词。判别力测量用 `scripts/evaluate_trigger_discrimination.py`；匹配机制对比实验见 `scripts/compare_matchers*.py`（结论：TF-IDF 更优但无阈值能兼顾正负样本，故门禁保留子串匹配，见 TD-006）。
+- `scripts/diagnostics/cases.diagnostic.json`（87 例）是契约派生测量集，**不是门禁**，禁止为凑通过率调关键词。判别力测量用 `scripts/diagnostics/evaluate_trigger_discrimination.py`；匹配机制对比实验见 `scripts/diagnostics/compare_matchers*.py`（结论：TF-IDF 更优但无阈值能兼顾正负样本，故门禁保留子串匹配，见 TD-006）。
 - `tests/dependencies/test_dependency_validation.py`（18 例）：新增 skill 必须在 `scripts/validate_skill_dependencies.py` 的 `LAYERS` / `META_LAYER` 登记层级，否则 CI 失败（有意设计）。
 - `tests/scripts/test_validation_scripts.py`：校验脚本自身的行为回归（含关键词重复检测、每 skill 至少一条回归用例、共享库降级行为等不变量）。
 - `tests/tasks/tasks.json`：13 个代表性任务 + 55 条机械可验证验收标准；`scripts/audit_output_specs.py` 与 `scripts/audit_task_coverage.py` 审计其可执行性与覆盖。
@@ -83,7 +86,8 @@ python3 scripts/run-all.py --sync                 # 全量验证 + 部署 skills
 | 架构级变更记录（契约/CI/方法论变更） | `CHANGELOG.md` |
 | Skills 质量评估报告 | `docs/quality-reports/skills-quality-assessment.md` |
 | 13 个 skill 的方法论正文 + agent 提示词 + 模板 | `skills/` |
-| 详细的安装方式、触发速查表、回归用例维护规范 | `README.md` |
+| 安装方式、触发速查表、接入顺序 | `README.md` |
+| 校验工具用法、回归用例维护规范、CI 流水线说明 | `docs/references/` |
 
 ## 6. Development Workflow
 

@@ -10,6 +10,7 @@ This document defines the domain division and dependency direction rules for the
 |---|---|---|
 | skills | 13 skills (methodology + agent prompts + templates) | `skills/harness-*/` |
 | scripts | Validation scripts (frontmatter, keyword consistency, regression) | `scripts/` |
+| diagnostics | Trigger-matching measurement experiments (not gate; TD-006) | `scripts/diagnostics/` |
 | tests | Trigger regression test cases and reports | `tests/` |
 | ci | GitHub Actions workflows and PR templates | `.github/` |
 
@@ -114,6 +115,7 @@ tests/   → skills/    (Regression test cases verify skill trigger logic)
 - scripts/ only reads from skills/, never modifies it.
 - Regression test cases in tests/ depend on keyword mappings defined in scripts/.
 - .github/workflows/ invokes `python3 scripts/run-all.py` to trigger the full validation chain.
+- 门禁面（gate surface）= `scripts/*.py`（顶层，含 `lib/`）+ `tests/**/test_*.py` + `tests/triggers/cases.json`。`scripts/diagnostics/` 及其中的 `cases.diagnostic.json` 是测量/实验区，不属于门禁（TD-006）。
 
 ## Data Boundary Rules
 
@@ -156,4 +158,4 @@ Key lessons from the full A+-grade optimization:
 See `docs/QUALITY_SCORE.md` for detailed lessons.
 
 ---
-Last updated: 2026-10-08 (Change: replaced the dead `make triggers-all` reference with `python3 scripts/run-all.py` — no Makefile exists in this repo)
+Last updated: 2026-11-02 (Change: diagnostics domain split out of scripts/; gate surface defined; maintainer docs consolidated in docs/references/)
