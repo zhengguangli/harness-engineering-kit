@@ -144,6 +144,10 @@
   - `docs/exec-plans/active/quality-measurement-program.md` — 新增，记录 13 项已完成 + 4 项待办
   - `docs/exec-plans/tech-debt-tracker.md` — 新增 TD-006~TD-010
 
+> **2026-11-02 勘误**：本节中 `scripts/evaluate_trigger_discrimination.py`、
+> `scripts/compare_matchers*.py` 已于 2026-11-02 移至 `scripts/diagnostics/`，
+> `cases.diagnostic.json` 同批移至该目录；此处保留原文作为历史记录。
+
 ### 关键实测结果
 
 | 指标 | 值 |
