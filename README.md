@@ -192,96 +192,9 @@ nacos-cli skill-sync resolve <skill-name> --use-agent claude-code --non-interact
 > local 模式下 symlink 自动保持同步,大部分时候只需 `status` 看一眼。Nacos 模式下 daemon 会轮询远端变更。
 
 
-## Skill Frontmatter QA（frontmatter 质量校验）
+## 维护者参考
 
-每个 `SKILL.md` 的 frontmatter 应包含 `description`、`when_to_use`、`compatibility` 字段，不应包含已废弃的 `version` 字段或正文中的 `## 触发信号` 节。仓库提供轻量校验脚本，用于防止格式漂移。
-
-### 本地运行
-
-```bash
-python3 scripts/run-all.py --run-type check
-```
-
-### 校验规则
-
-- 每个 skill 必须有 `description` 字段（≥ 20 字符）
-- 每个 skill 必须有 `when_to_use` 字段
-- 每个 skill 必须有 `compatibility` 字段
-- 不应包含 `version` 字段或 `## 触发信号` 正文章节
-
-> 该校验是**硬门禁**：字段缺失时 `validate_skill_triggers.py` 以 exit 1 结束，`scripts/run-all.py` 第一阶段即失败并阻断 CI（2026-10-08 修正了此前“warn-only 不阻断”的过时描述，并将输出标签由误导性的 `[WARN]` 改为 `[FAIL]`）。
-### 本地全量检查（推荐）
-
-六个阶段依次执行：frontmatter 校验 → 触发词回归 → Agent Prompt 存在性 → 依赖方向校验 → 单元测试 → 输出规格与任务覆盖审计。
-
-```bash
-python3 scripts/run-all.py
-```
-
-### Agent Prompt 存在性校验
-
-`python3 scripts/run-all.py --run-type prompt` 验证每个 SKILL.md 是否包含 `## Agent 提示词` section。
-
-```bash
-python3 scripts/run-all.py --run-type prompt
-```
-
-### 依赖方向与循环依赖校验
-
-`python3 scripts/run-all.py --run-type deps` 机械强制 skill 间的依赖方向（原 TD-001，此前仅靠人工 review）。
-
-```bash
-python3 scripts/run-all.py --run-type deps                # 校验
-python3 scripts/validate_skill_dependencies.py --graph    # 打印依赖图
-python3 scripts/validate_skill_dependencies.py --paths    # 列出跨 skill 路径引用
-python3 tests/dependencies/test_dependency_validation.py  # 18 个回归用例
-```
-
-校验内容：
-
-| 规则 | 级别 |
-|---|---|
-| `depends_on` 图中不得有环 | FAIL |
-| Layer N 只能依赖 Layer ≤ N（向上引用即失败） | FAIL |
-| 非 Meta 层 skill 不得依赖 Meta 层 skill | FAIL |
-| `depends_on` 目标必须存在且已登记层级 | FAIL |
-| SKILL.md/references 中 `../harness-*/references/*` 路径必须存在 | FAIL |
-| 同层 skill 之间存在依赖 | WARN |
-| `## Related Skills` 引用其他 skill 但无 `input`/`output`/`routes-to`/`see-also` 标注 | WARN |
-
-新增 skill 时必须同步修改 `scripts/validate_skill_dependencies.py` 顶部的 `LAYERS` /
-`META_LAYER` 常量——它们与 `docs/ARCHITECTURE.md` 的层级定义是同一份事实的两处拷贝。
-
-### 回归用例维护规范（Case Guide）
-
-新增或修改回归用例时，请遵循：
-
-- 用例文件：`tests/triggers/cases.json`
-- 每条 case 至少包含：
-  - `id`：唯一 ID，建议格式 `skill-topic-NN`
-  - `input`：自然语言输入（尽量贴近用户原话）
-  - `expected_primary_skill`：首选命中 skill
-  - `expected_candidates`：可接受候选列表（用于歧义场景）
-  - `tags`：分类标签（如 `commit`、`plan`、`ambiguous`）
-
-#### 判定规则
-
-- `PASS`：主 skill 命中且为最强信号
-- `WARN`：主 skill 命中但不是最强信号（候选歧义仍存在）
-- `FAIL`：主 skill 未命中
-
-#### 关键词一致性要求
-
-回归脚本依赖静态关键词映射（`scripts/run_trigger_regression.py` 中的 `SKILL_KW`）。  
-当你新增 case 时，务必保证：
-
-1. 所有用于匹配的关键词在对应 `SKILL.md` 中真实存在
-2. 避免“只改用例、不改关键词”导致结果漂移
-
-#### 报告与产物
-
-- 回归报告：`tests/triggers/report.json`（`python3 scripts/run-all.py --run-type regression --json` 生成）
-- 推荐更新节奏：每次修改触发词/用例后都跑一次 `python3 scripts/run-all.py`
+校验工具用法、依赖校验说明与回归用例维护规范见 [`docs/references/`](docs/references/)（`validation-checks.md`、`regression-case-guide.md`、`ci-pipeline.md`）。
 
 
 ## 推荐的接入顺序
