@@ -32,14 +32,14 @@
 | 3 | 修复 CI 假绿（退出码） | `sys.exit(checker.exit_code())` | ✅ |
 | 4 | 补 3 个零覆盖校验脚本的测试 | `tests/scripts/`，23 用例 | ✅ |
 | 5 | 测试接入 CI 第五阶段 | `run-all.py --run-type tests` | ✅ |
-| 6 | 触发判别力测量工具 | `scripts/evaluate_trigger_discrimination.py` | ✅ |
-| 7 | 用例扩充 51→138 + 门控/测量分离 | `cases.json` + `cases.diagnostic.json` | ✅ |
+| 6 | 触发判别力测量工具 | `scripts/diagnostics/evaluate_trigger_discrimination.py` | ✅ |
+| 7 | 用例扩充 51→138 + 门控/测量分离 | `tests/triggers/cases.json` + `scripts/diagnostics/cases.diagnostic.json` | ✅ |
 | 8 | 契约去歧义（3 类问题分类处理） | arch/golden/repo-map 的 `when_to_use` | ✅ |
 | 9 | 契约漂移棘轮 | `TriggerContractConsistencyTests` | ✅ |
 | 10 | 任务集 + 55 条验收标准 | `tests/tasks/tasks.json` | ✅ |
 | 11 | 输出规格 + 任务覆盖审计 | `audit_output_specs.py` / `audit_task_coverage.py` | ✅ |
 | 12 | REQUIRES 漂移棘轮 | `TaskCoverageMappingTests` | ✅ |
-| 13 | 匹配机制对比（含留出集） | `compare_matchers.py` / `compare_matchers_holdout.py` | ✅ |
+| 13 | 匹配机制对比（含留出集） | `scripts/diagnostics/compare_matchers.py` / `scripts/diagnostics/compare_matchers_holdout.py` | ✅ |
 
 ### 待办
 
