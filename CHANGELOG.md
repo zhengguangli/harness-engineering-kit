@@ -22,7 +22,7 @@
   - `scripts/diagnostics/` — 新建：`compare_matchers*.py`、`evaluate_trigger_discrimination.py`、
     `cases.diagnostic.json`（自 `scripts/` 与 `tests/triggers/` 移入，git mv 保历史）
   - `docs/references/` — 新增 `validation-checks.md`、`regression-case-guide.md`
-    （README 维护者区块移入，README 19K→15.6K，原位留指路行）
+    （README 维护者区块移入，README 19223→15663 字节，原位留指路行）
   - `AGENTS.md` / `docs/ARCHITECTURE.md` — 建立「产品区 `skills/` vs 工程区」分区叙事；
     写明门禁面定义 = `scripts/*.py`（顶层，含 `lib/`）+ `tests/**/test_*.py` + `tests/triggers/cases.json`
   - 门禁行为零变化：`run-all.py`、CI workflow、`skills/` 全部未动；消费方命令
