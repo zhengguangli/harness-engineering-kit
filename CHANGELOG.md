@@ -7,6 +7,27 @@
 
 ---
 
+## [2026-11-02] 目录契约：诊断区建立与维护者文档归位
+
+- **Context & Trade-offs**: 「门控/测量分离」在 quality-measurement-program 中早已逻辑完成，
+  但物理布局未跟上：`scripts/` 顶层混放 6 个门禁脚本与 3 个测量实验脚本，`tests/triggers/`
+  混放门禁用例与测量集；README 混排产品文档与维护者文档。选择 R1 逻辑分区（物理小动）而非
+  R2 物理工程区（顶层 `eng/` 重组）——后者需改动仓库根定位硬编码（`harness_check.py`、
+  `run-all.py` 二级 dirname 上溯、tests 的 sys.path hack）、CI 命令与全部文档，收益仅是视觉分区。
+  `docs/QUALITY_SCORE.md` 保持原位：harness-repo-map 等 4 个 skill 将其作为消费者项目的
+  规定路径引用，移动会侵入对外契约区。`cases.diagnostic.json` 跟随唯一消费者移入
+  `scripts/diagnostics/`；3 个诊断脚本的仓库根定位从 `os.getcwd()` 改为 `__file__` 上溯，
+  可在任意 cwd 运行。
+- **Impact Radius**:
+  - `scripts/diagnostics/` — 新建：`compare_matchers*.py`、`evaluate_trigger_discrimination.py`、
+    `cases.diagnostic.json`（自 `scripts/` 与 `tests/triggers/` 移入，git mv 保历史）
+  - `docs/references/` — 新增 `validation-checks.md`、`regression-case-guide.md`
+    （README 维护者区块移入，README 19223→15663 字节，原位留指路行）
+  - `AGENTS.md` / `docs/ARCHITECTURE.md` — 建立「产品区 `skills/` vs 工程区」分区叙事；
+    写明门禁面定义 = `scripts/*.py`（顶层，含 `lib/`）+ `tests/**/test_*.py` + `tests/triggers/cases.json`
+  - 门禁行为零变化：`run-all.py`、CI workflow、`skills/` 全部未动；消费方命令
+    `python3 scripts/run-all.py` 不变；仅诊断脚本调用路径增加 `scripts/diagnostics/` 前缀
+
 ## [2026-10-08] 入口文件整合：CLAUDE.md 合并至 AGENTS.md
 
 - **Context & Trade-offs**: `c45b933`（2026-09）曾以"清理非 Claude Code 文件"为由把 AGENTS.md 合并进
@@ -122,6 +143,10 @@
   - `scripts/run-all.py` — 三阶段 → 七阶段
   - `docs/exec-plans/active/quality-measurement-program.md` — 新增，记录 13 项已完成 + 4 项待办
   - `docs/exec-plans/tech-debt-tracker.md` — 新增 TD-006~TD-010
+
+> **2026-11-02 勘误**：本节中 `scripts/evaluate_trigger_discrimination.py`、
+> `scripts/compare_matchers*.py` 已于 2026-11-02 移至 `scripts/diagnostics/`，
+> `cases.diagnostic.json` 同批移至该目录；此处保留原文作为历史记录。
 
 ### 关键实测结果
 

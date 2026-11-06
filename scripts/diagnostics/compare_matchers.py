@@ -24,12 +24,12 @@ neither mechanism is demonstrably better. The prerequisite is a larger labelled
 set (roughly 150 cases for a +/-5% interval), not a better matcher.
 
 Usage:
-    python3 scripts/compare_matchers.py
+    python3 scripts/diagnostics/compare_matchers.py
 """
 
 import json, math, re, sys, os, collections
 
-ROOT = os.getcwd()
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(ROOT, "scripts"))
 import run_trigger_regression as rtr
 
