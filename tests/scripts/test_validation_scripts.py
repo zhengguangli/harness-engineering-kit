@@ -386,5 +386,46 @@ class TaskCoverageMappingTests(unittest.TestCase):
                          f"fallback logic: {unmapped}")
 
 
+class SyncSafetyTests(unittest.TestCase):
+    """Ensure run-all.py --sync never wipes third-party skills."""
+
+    def test_sync_preserves_unrelated_skills_and_prunes_stale_harness(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "run_all", os.path.join(SCRIPTS_DIR, "run-all.py"))
+        run_all = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(run_all)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            src_skills = os.path.join(tmp, "repo_skills")
+            home_skills = os.path.join(tmp, "agents_skills")
+            claude_skills = os.path.join(tmp, "claude_skills")
+            os.makedirs(os.path.join(src_skills, "harness-bootstrap"))
+            with open(os.path.join(src_skills, "harness-bootstrap", "SKILL.md"),
+                      "w", encoding="utf-8") as f:
+                f.write("# bootstrap\n")
+
+            os.makedirs(os.path.join(home_skills, "context7-mcp"))
+            os.makedirs(os.path.join(home_skills, "harness-retired"))
+            os.makedirs(os.path.join(claude_skills, "use-railway"))
+            os.makedirs(os.path.join(claude_skills, "harness-retired"))
+
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                run_all.sync(skills_dir=src_skills, home_skills=home_skills,
+                             claude_skills=claude_skills)
+
+            self.assertTrue(os.path.isdir(os.path.join(home_skills, "context7-mcp")))
+            self.assertFalse(os.path.exists(os.path.join(home_skills, "harness-retired")))
+            self.assertTrue(os.path.isfile(
+                os.path.join(home_skills, "harness-bootstrap", "SKILL.md")))
+
+            self.assertTrue(os.path.isdir(os.path.join(claude_skills, "use-railway")))
+            self.assertFalse(os.path.exists(os.path.join(claude_skills, "harness-retired")))
+            self.assertTrue(os.path.islink(os.path.join(claude_skills, "harness-bootstrap")))
+            self.assertEqual(os.readlink(os.path.join(claude_skills, "harness-bootstrap")),
+                             os.path.join(home_skills, "harness-bootstrap"))
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

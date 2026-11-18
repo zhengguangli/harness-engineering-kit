@@ -14,15 +14,17 @@ Usage:
     python3 scripts/run-all.py --sync                         # 全量 + 同步到 ~/.agents/skills/ (并维护 ~/.claude/skills 软链接)
 """
 
+import argparse
+import json
+import os
+import shutil
 import subprocess
 import sys
-import os
-import json
-import argparse
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SKILLS_DIR = os.path.join(ROOT_DIR, "skills")
 HOME_SKILLS = os.path.expanduser("~/.agents/skills")
+CLAUDE_SKILLS = os.path.expanduser("~/.claude/skills")
 
 
 def run_script(name, args=None):
@@ -39,31 +41,64 @@ def run_script(name, args=None):
 _verbose = sys.stdout.isatty()
 
 
-CLAUDE_SKILLS = os.path.expanduser("~/.claude/skills")
+def _remove_entry(path):
+    """Remove a file, symlink, or directory cleanly."""
+    if os.path.islink(path) or os.path.isfile(path):
+        os.unlink(path)
+    elif os.path.isdir(path):
+        shutil.rmtree(path)
 
-def sync():
-    """Sync skills/ to ~/.agents/skills/ and maintain ~/.claude/skills symlink."""
-    print(">>> 部署 skills 到 ~/.agents/skills/")
-    subprocess.run(["rsync", "-av", "--delete", SKILLS_DIR + "/", HOME_SKILLS + "/"],
-                   cwd=ROOT_DIR, capture_output=not _verbose)
 
-    # Maintain ~/.claude/skills as a symlink to ~/.agents/skills
-    if os.path.islink(CLAUDE_SKILLS):
-        current = os.readlink(CLAUDE_SKILLS)
-        if current == HOME_SKILLS:
+def sync(skills_dir=SKILLS_DIR, home_skills=HOME_SKILLS, claude_skills=CLAUDE_SKILLS):
+    """Safely sync harness-* skills to ~/.agents/skills/ without deleting unrelated skills."""
+    print(f">>> 部署 harness-* skills 到 {home_skills}/")
+    os.makedirs(home_skills, exist_ok=True)
+
+    active = sorted(
+        name for name in os.listdir(skills_dir)
+        if name.startswith("harness-") and os.path.isdir(os.path.join(skills_dir, name))
+    )
+    active_set = set(active)
+
+    # Prune only stale harness-* entries; preserve third-party skills (e.g. context7-mcp)
+    for entry in sorted(os.listdir(home_skills)):
+        if entry.startswith("harness-") and entry not in active_set:
+            _remove_entry(os.path.join(home_skills, entry))
+            print(f"  [PRUNE] {os.path.join(home_skills, entry)}")
+
+    for name in active:
+        src = os.path.join(skills_dir, name)
+        dst = os.path.join(home_skills, name)
+        if os.path.lexists(dst):
+            _remove_entry(dst)
+        shutil.copytree(src, dst, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+        print(f"  [SYNC] {name}")
+
+    # Maintain ~/.claude/skills: directory-level symlink if empty/absent, else per-skill symlinks
+    if os.path.islink(claude_skills):
+        if os.readlink(claude_skills) == home_skills:
             print("  ~/.claude/skills -> ~/.agents/skills 软链接已存在，跳过")
         else:
-            os.unlink(CLAUDE_SKILLS)
-            os.symlink(HOME_SKILLS, CLAUDE_SKILLS)
+            os.unlink(claude_skills)
+            os.symlink(home_skills, claude_skills)
             print("  ~/.claude/skills 软链接已更新")
-    elif os.path.isdir(CLAUDE_SKILLS):
-        # Migrate existing directory to symlink
-        import shutil
-        shutil.rmtree(CLAUDE_SKILLS)
-        os.symlink(HOME_SKILLS, CLAUDE_SKILLS)
-        print("  ~/.claude/skills 目录已替换为软链接")
+    elif os.path.isdir(claude_skills):
+        # Preserve existing non-harness skills inside ~/.claude/skills/
+        for entry in sorted(os.listdir(claude_skills)):
+            if entry.startswith("harness-") and entry not in active_set:
+                _remove_entry(os.path.join(claude_skills, entry))
+        for name in active:
+            link_path = os.path.join(claude_skills, name)
+            target = os.path.join(home_skills, name)
+            if os.path.lexists(link_path):
+                if os.path.islink(link_path) and os.readlink(link_path) == target:
+                    continue
+                _remove_entry(link_path)
+            os.symlink(target, link_path)
+        print("  ~/.claude/skills 中 harness-* 软链接已更新（保留非 harness 技能）")
     else:
-        os.symlink(HOME_SKILLS, CLAUDE_SKILLS)
+        os.makedirs(os.path.dirname(claude_skills), exist_ok=True)
+        os.symlink(home_skills, claude_skills)
         print("  ~/.claude/skills 软链接已创建")
 
     print("✅ 同步完成")
