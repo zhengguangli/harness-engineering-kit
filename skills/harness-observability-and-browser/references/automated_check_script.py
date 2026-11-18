@@ -9,10 +9,9 @@ import os, re, sys
 _SHARED_LIB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../../scripts")
 if os.path.isdir(_SHARED_LIB):
     sys.path.insert(0, _SHARED_LIB)
-    from lib.harness_check import (read_file, read_lines, has_text, SkillChecker,
+    from lib.harness_check import (read_file, has_text,
                                     run_shared_checks, check_reference_files,
-                                    print_extra_summary, count_hard_constraints,
-                                    count_agent_constraints)
+                                    check_skill_patterns, print_extra_summary)
 else:
     print("[SKIP] shared checker library not found at ../../../scripts -- this "
           "script only runs inside the harness-engineering-kit repository "
@@ -35,15 +34,25 @@ passed_extra, total_extra = check_reference_files(checker, SKILL_DIR,
 
 # Skill-specific content checks
 content = read_file(os.path.join(SKILL_DIR, "SKILL.md"))
-for pattern, label in [
+p, t = check_skill_patterns(checker, content, [
     (r"runtime evidence|runtime signals", "Runtime signal principle"),
     (r"timestamp and URL", "Screenshot metadata rule"),
     (r"machine-checkable", "Machine-checkable criteria constraint"),
     (r"Playwright", "Playwright tool reference"),
     (r"yes/no \+ evidence", "Conclusion format"),
+])
+passed_extra += p
+total_extra += t
+
+# Template integrity checks
+gap_tpl = read_file(os.path.join(SKILL_DIR, "references", "capability-gap-report-template.md"))
+checklist_tpl = read_file(os.path.join(SKILL_DIR, "references", "verification-checklist-template.md"))
+for tpl_text, pattern, label in [
+    (gap_tpl, r"Capability Gap", "Capability gap template section"),
+    (checklist_tpl, r"## Conclusion", "Verification checklist conclusion section"),
 ]:
     total_extra += 1
-    if has_text(content, pattern, re.IGNORECASE | re.MULTILINE):
+    if has_text(tpl_text, pattern):
         passed_extra += 1; checker.check_pass(label)
     else:
         checker.check_fail(label, "MEDIUM", f"Missing {label}")

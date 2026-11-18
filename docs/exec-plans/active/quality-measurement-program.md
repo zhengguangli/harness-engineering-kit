@@ -36,7 +36,7 @@
 | 7 | 用例扩充 51→138 + 门控/测量分离 | `tests/triggers/cases.json` + `scripts/diagnostics/cases.diagnostic.json` | ✅ |
 | 8 | 契约去歧义（3 类问题分类处理） | arch/golden/repo-map 的 `when_to_use` | ✅ |
 | 9 | 契约漂移棘轮 | `TriggerContractConsistencyTests` | ✅ |
-| 10 | 任务集 + 43 条验收标准 | `tests/tasks/tasks.json` | ✅ |
+| 10 | 任务集 + 44 条验收标准 | `tests/tasks/tasks.json` | ✅ |
 | 11 | 输出规格 + 任务覆盖审计 | `audit_output_specs.py` / `audit_task_coverage.py` | ✅ |
 | 12 | REQUIRES 漂移棘轮 | `TaskCoverageMappingTests` | ✅ |
 | 13 | 匹配机制对比（含留出集） | `scripts/diagnostics/compare_matchers.py` / `scripts/diagnostics/compare_matchers_holdout.py` | ✅ |
@@ -48,7 +48,7 @@
 | # | 步骤 | 阻塞原因 | 处理条件 |
 |---|---|---|---|
 | A | 扩标注到 ~150 正样本 | 需人工判断"哪些 skill 不该被选中" | 有人能标注歧义用例的完整应选/不应选集合 |
-| B | 混合匹配器（语义排序 + 独立拒识信号） | 架构变更，非调参 | A 完成，或确认接受当前 diagnostic 正准确率（86.4%） |
+| B | 混合匹配器（语义排序 + 独立拒识信号） | 架构变更，非调参 | A 完成，或确认接受当前正样本准确率（85.7%） |
 
 > 注：原待办 `C`（其余任务 Tier-3 A/B 补测）已于 2026-11-18 完成；原待办 `D`（A+ 主观人工重评）随 `harness-skill-quality-assessor` 退役一并取消，不再保留主观总分体系。
 
@@ -93,9 +93,9 @@
 ## Acceptance Criteria
 
 - [x] `python3 scripts/run-all.py` 六阶段全绿
-- [x] 触发判别力有可复现数字 + 置信区间（当前 111 用例总体 `95/111 = 85.6%`，正样本 `76/88 = 86.4%`）
+- [x] 触发判别力有可复现数字 + 置信区间（当前 111 用例总体 `97/111 = 87.4%`，正样本 `78/91 = 85.7%`，门控集 `37/37 = 100.0%`，跨 skill 混淆对 = 0）
 - [x] 契约三份表示（`when_to_use`/`SKILL_KW`/`REQUIRES`）均有漂移棘轮
-- [x] 任务集 + 43 条验收标准存在且全部有 SKILL.md 依据
+- [x] 任务集 + 44 条验收标准存在且全部有 SKILL.md 依据
 - [x] 审计工具的敏感性经注入假数据验证（3/3 抓获）
 - [x] Tier-3 结果有效性有实测数字（2026-11-18 完成全套 10/10 任务、覆盖全部 9 个保留 skill 的 A/B 隔离实测）
 
@@ -105,7 +105,7 @@
 |---|---|
 | 标注循环性 | 测量集标签来自各 skill 自己的 `when_to_use`，所以衡量的是"词表与契约的一致性"，不是"边界划分是否正确" |
 | 样本量 | 现行有效集为 111 用例（gate 42 + diagnostic 69）；收敛到 ±5% 置信区间仍需 ~151 正样本（步骤 A） |
-| 边界歧义用例 | `diagnostic` 集正样本 78.4%、负样本 14/18 反映边界语义竞争（见 TD-006） |
+| 边界歧义用例 | 经收紧单 token 并修正误标否定用例后，跨 skill 混淆对已归零；`diagnostic` 集正样本 75.9%（41/54）、负样本 14/15 主要反映短语同义转述漏检（见 TD-006） |
 | 三份表示的维护成本 | 每加一层抽象就多一份需同步的表示；已有棘轮管住，但未消除成本 |
 
 ## Change History

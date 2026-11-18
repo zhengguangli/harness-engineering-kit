@@ -45,6 +45,7 @@ REQUIRES = {
     "diff is reviewed":        r"diff|review",
     "tests/build":             r"test|build|lint",
     "commit is blocked":       r"block|abort|reject|拒绝",
+    "nothing is staged":       r"nothing is staged",
     "template":                r"template|模板",
     "mechanically verifiable": r"mechanically verifiable|mechanically checkable|可机械|可自动",
     "one PR":                  r"one PR|单个 PR|single PR",
