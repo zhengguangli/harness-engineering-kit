@@ -139,3 +139,5 @@
 **关于 A+ 数量的说明**：第 33 次记录为 5 A+ / 8 A。本轮不做主观重评，因此不更新该计数——它仍是第 33 次评估的结果，不是本轮的。若需要新的 A+ 判定，需由 harness-skill-quality-assessor 按 rubric 人工执行。
 
 > **2026-10-08 勘误**（仅注解，不改写上方历史记录）：(1) 上方各轮备注中的 `make triggers-all` 是当时的命令名，本仓库没有 Makefile，2026-09-24 起统一为 `python3 scripts/run-all.py`；(2) 第十一次备注所述 `scripts/skill_automated_check.py` 共享脚本经 CHANGELOG 核实**从未存在**，现行共享实现是 `scripts/lib/harness_check.py`；(3) 各轮“48/48 全绿”为当时用例数，现行门禁集为 51 例。
+>
+> **2026-11-18 勘误**（仅注解，不改写上方历史记录）：上方“维护周期 / 质量阈值”与第 139 行“关于 A+ 数量的说明”均沿用自 13-skill 与主观加权评分时期（如“参考文件总数 低于 75”“51 例”“`harness-skill-quality-assessor`”）。2026-11-18 完成 13→9 减法重构、移除 9 个冗余 `common-edge-cases.md` 并完成全套 10 任务 Tier-3 A/B 实测后，现行门禁集为 **42 例**，质量门控以 `python3 scripts/run-all.py` 六阶段全绿、9 个 skill 级 `automated_check_script.py`、`TriggerContractConsistencyTests` 0 漂移以及 `eval` 实测为准（主观 9.xx 加权体系已正式退役）。

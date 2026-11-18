@@ -41,7 +41,7 @@ A skill's real data dependencies are declared in `SKILL.md` frontmatter:
 
 ```yaml
 depends_on:
-  - harness-project-intake
+  - harness-bootstrap
 ```
 
 `depends_on` means **"I consume this skill's output as input"** and nothing else. Routing
@@ -80,7 +80,7 @@ Every `SKILL.md` uses the lean contract format (target 80–120 lines, soft cap 
 
 ```
 skills/<name>/
-├── SKILL.md          # Methodology body + agent prompt (including frontmatter)
+├── SKILL.md          # Lean contract + inline agent prompt (including frontmatter)
 └── references/       # Template files
 ```
 

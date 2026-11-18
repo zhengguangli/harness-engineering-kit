@@ -3,7 +3,7 @@ name: harness-bootstrap
 description: Analyze a project into a 5-dimension Project Card and initialize its harness skeleton — AGENTS.md map, docs/ skeleton, and .gitignore rules. Used for project intake, harness initialization, setting up harness standards, and producing project overviews.
 when_to_use: |
   显式触发：用户说"init harness"、"Build a harness for this project"、"为这个项目初始化 harness"、"设计一套 harness 规范"、"生成 AGENTS.md 和 docs/ 骨架"、"分析当前项目"、"分析一下 README"、"项目概览"、"产出项目卡片"。
-  隐式触发：用户进入新项目希望用 harness 管理 agent 协作、项目还没有 AGENTS.md/docs/ 骨架与 CI 模板、用户问"这项目用什么技术栈"或"这个项目是做什么的"。
+  隐式触发：用户进入新项目希望用 harness 管理 agent 协作、项目还没有 AGENTS.md/docs/ 骨架与 CI 模板、要求读 README 并给摘要、用户问"这项目用什么技术栈"或"这个项目是做什么的"。
   不触发：项目已有完整 harness 结构且未要求重初始化、用户只要求读取单个文件原文、只需重构现有 AGENTS.md/docs（用 harness-repo-map）。
 disable-model-invocation: true
 context: fork

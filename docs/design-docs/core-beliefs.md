@@ -22,7 +22,7 @@ Defines the agent-first operating principles of the harness-engineering-kit. The
 
 9. **"已完成任务的详细清单应压缩为摘要"**: After an exec-plan is archived, the detailed step-by-step list (especially with line numbers) quickly goes stale as code changes. Retain a three-paragraph summary of "what was accomplished + key decisions + verification results" and delete the line-by-line details. The same applies to tech-debt-tracker — processed items should be compressed into a one-line completion record, not preserved as a 20-row stale table.
 
-10. **"Agent 提示词结构一致性需要机械强制"**: Across skills, agent prompts can suffer from structural issues such as heading-level drift (h2/h3/h4 mixed), missing output specifications, and duplicate prohibition rules. Define a standard six-section format (Role Definition / Core Capabilities / Execution Flow / Constraints / Output Specification / Skip Conditions), mechanically verified by doc-gardener's "pairing completeness" check.
+10. **"Agent 提示词结构一致性需要机械强制"**: Across skills, agent prompts can suffer from structural issues such as heading-level drift (h2/h3/h4 mixed), missing output specifications, and duplicate prohibition rules. Define a lean three-subsection contract format (Role & Execution Contract / Constraints / Output Specification), mechanically verified by `scripts/lib/harness_check.py`.
 
 ## 工作方式提示
 
@@ -30,7 +30,7 @@ Defines the agent-first operating principles of the harness-engineering-kit. The
 - 改动完成后，跑自验证循环（`harness-verification-loop`）而不是一次性提交了事。
 - 提交前跑 `python3 scripts/run-all.py` 确保 frontmatter 校验、关键词一致性、回归测试全部通过。
 - 不确定某条规则是否仍然有效？去对应的 docs 文件查"最后校验日期"，过期的规则应该被标记而不是被信任。
-- 要给这套体系添加新能力，参考 `harness-authoring` skill。
+- 要给这套体系添加或修改 skill，参考 [skill-authoring-guide.md](../references/skill-authoring-guide.md)。
 - **推送代码后**，主动询问用户是否同步技能包到 `~/.agents/skills/`（并维护 `~/.claude/skills` 软链接），获得允许后执行：
 
   ```bash
