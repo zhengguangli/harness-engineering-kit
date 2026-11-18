@@ -7,6 +7,22 @@
 
 ---
 
+## [2026-11-18] 套件减法（13→9）与 SKILL.md 精简契约化重构
+
+- **Context & Trade-offs**: 基于 5/13 代表性任务 Tier-3 A/B 隔离实测（`quality-measurement-program.md`），强模型对“10 章节 + 6 子节教程八股”边际收益低甚至产生负向干扰（`task-assessor-01` 对照组查出 7 处真实缺陷而挂载 skill 组只查出 4 处），真正拉开差距的是**硬约束、跳过边界、持久化外部状态、机械验收标准与运行时传感器**。因此执行减法与契约瘦身：剥离内部维护与非工程主线 skill，并将保留的 `SKILL.md` 从 205–349 行压缩至 80–120 行精简契约格式，消除主文档与 `## Agent 提示词` 间的双份重复。
+- **Impact Radius**:
+  - **Skill 减法（13→9）**：
+    - `harness-project-intake` 并入 `harness-bootstrap`（保留 `references/project-card-template.md` 与 `Not found` 防编造硬约束，删去冗余文档）
+    - `harness-authoring` 与 `harness-skill-quality-assessor` 退出对外 `skills/`，核心规范沉淀至 `docs/references/skill-authoring-guide.md` 与 `scripts/lib/harness_check.py`
+    - `harness-prompt-optimizer` 剥离出代码工程套件
+  - **精简契约标准与机械检查**：
+    - 全部 9 个 `SKILL.md` 重构为 6 节精简契约（`Scope & Skip Conditions` / `Hard Constraints` / `Related Skills` / `Related Templates` / `Agent 提示词` 3 子节），行数从 205–349 行压至 **67–75 行**（≤ 120 行目标）
+    - `scripts/lib/harness_check.py` 与 9 个 `automated_check_script.py` 切换至新契约并引入 150/180 行预算门禁
+    - 修复实测暴露的 `harness-commit-gate` 缺陷：`allowed-tools` 补全 `Read`/`Grep`/`Glob`/`ls`/`pytest`/`go` 等，修正 `diff-review-checklist.md` 中危险的 `git reset HEAD~` 为 `git reset HEAD`
+  - **依赖图、回归门禁与文档**：
+    - `scripts/validate_skill_dependencies.py`、`docs/ARCHITECTURE.md` 收敛为 5 层 DAG（L0 `bootstrap` → L4 `commit-gate` + Meta `orchestration`）
+    - `scripts/run_trigger_regression.py`、`tests/triggers/cases.json`（42 例）、`tests/tasks/tasks.json`（10 任务 / 43 验收标准）、`scripts/audit_output_specs.py`、`scripts/audit_task_coverage.py`、`README.md`、`AGENTS.md`、`docs/product-specs/index.md`、`docs/QUALITY_SCORE.md` 同步更新
+
 ## [2026-11-18] TD-007 落地、触发契约棘轮归零与 CI skill 级门禁阻断化
 
 - **Context & Trade-offs**:

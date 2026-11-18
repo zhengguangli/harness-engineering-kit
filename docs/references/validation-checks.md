@@ -59,3 +59,7 @@ python3 tests/dependencies/test_dependency_validation.py  # 18 个回归用例
 
 新增 skill 时必须同步修改 `scripts/validate_skill_dependencies.py` 顶部的 `LAYERS` /
 `META_LAYER` 常量——它们与 `docs/ARCHITECTURE.md` 的层级定义是同一份事实的两处拷贝。
+
+## Skill 级精简契约检查（`automated_check_script.py`）
+
+各 skill 下的 `references/automated_check_script.py` 共享 `scripts/lib/harness_check.py`，强制执行 80–120 行精简契约标准（软上限 150 行、硬上限 180 行、`Scope & Skip Conditions` / `Hard Constraints` / `Related Skills` / `Agent 提示词` 3 子节 / `Last updated`），详见 `docs/references/skill-authoring-guide.md`。

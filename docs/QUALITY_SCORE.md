@@ -15,9 +15,9 @@
 
 | 领域 | frontmatter 合规 | 触发回归 | 关键词一致性 | 文档新鲜度 | 最近评估日期 |
 |---|---|---|---|---|---|
-| skills (13个) | 13/13 (100%) ✅ | 51/51 (100%) ✅ | 13/13 (100%) ✅ | ✅ 2026-09-24 | 2026-09-24 (三十四次) |
-| scripts | — | — | — | ✅ 2026-09-24 | 2026-09-24 (新增依赖校验脚本) |
-| tests | — | — | — | ✅ 2026-09-24 | 2026-09-24 (新增 18 个依赖校验用例) |
+| skills (9个) | 9/9 (100%) ✅ | 42/42 (100%) ✅ | 9/9 (100%) ✅ | ✅ 2026-11-18 | 2026-11-18 (三十五次：13→9 减法与契约瘦身) |
+| scripts | — | — | — | ✅ 2026-11-18 | 2026-11-18 (契约检查更新至 80-120 行标准) |
+| tests | — | — | — | ✅ 2026-11-18 | 2026-11-18 (10 任务 / 43 验收标准 + 0 漂移棘轮) |
 
 ## 趋势备注
 
@@ -88,7 +88,7 @@
 2026-07-10 (三十三次): 第三十三次批量评估。平均分 **9.46** (A 级，-0.03)，**5 A+ / 8 A**。评分精度微调——部分维度"上限宽松分"回调至更严格标准，核心内容无退化。13个 skill 全部有未提交变更（slug frontmatter 清理 + 内容增强 + 自动化检查脚本修复）。关键事件：(1) observability Hard Constraints 2→5（+3条新约束），评分从 9.43 升至 9.46 (+0.03)，但未突破 A+ 门槛；(2) 3 个自动化检查脚本修复缩进 bug（architecture-boundaries/exec-plans/orchestration）；(3) verification-loop 新增 Minimum Feedback Signals + Complex Problem Classification + Escalation Timing Rules；(4) authoring 新增 Quick Decision Table；(5) bootstrap Related Skills 3→6；(6) orchestration 新增 Routing Quality Validation 4项检查。等级分布从 6A+/7A 变为 5A+/8A（commit-gate 晋升 A+，project-intake 降至 A）。最高分 skill-quality-assessor (9.50)，最低分 project-intake (9.42)。1 个 MEDIUM 问题（exec-plans 缺少显式 Cross-Skill Handoff section）。第二十一次达成"零未解决 CRITICAL/HIGH 问题"状态。详见 `docs/quality-reports/skills-quality-assessment.md`。
 
 ---
-最后更新: 2026-11-18（复核：第 34 次机械审计结论有效，`run-all.py` 六阶段及 13/13 skill 自动化检查脚本均保持全绿；下方“最近评估日期 2026-09-24”保留为实际审计日，不覆盖）
+最后更新: 2026-11-18（变更：第 35 次审计——完成 5/13 Tier-3 A/B 实测后执行 13→9 减法与契约瘦身，全部 9 个 SKILL.md 压缩至 67–75 行（≤120 行目标）并全绿通过 `run-all.py` 与 `automated_check_script.py`）
 
 ## 维护周期（自 2026-07-03 起生效）
 

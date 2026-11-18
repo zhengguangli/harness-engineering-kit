@@ -9,7 +9,7 @@ PR → main:        确保 source ∈ {develop, main, release/*} + python3 scrip
 详情见 `.github/workflows/skill-triggers.yml`。PR 必须从 `develop` / `main` / `release/*`
 发起，不可直接从特性分支向 `main` 提 PR。
 
-`run-all.py` 六阶段：frontmatter 校验 → 触发词回归（51 用例）→ Agent Prompt 存在性 →
+`run-all.py` 六阶段：frontmatter 校验 → 触发词回归（42 用例）→ Agent Prompt 存在性 →
 依赖方向校验（`validate_skill_dependencies.py`）→ 单元测试 → 输出规格与任务覆盖审计。新增 skill 时第四阶段会因未登记
 `LAYERS`/`META_LAYER` 而失败——这是有意的强制点。
 
@@ -17,4 +17,4 @@ skill 级自动化检查与 `run-all.py` 在 CI 中均作为硬门禁执行，�
 
 ---
 
-Last updated: 2026-11-18 (Change: upgraded skill-level automated_check_script.py checks in CI from warn-only to blocking)
+Last updated: 2026-11-18 (Change: updated regression case count 51→42 after 13→9 skill subtraction)

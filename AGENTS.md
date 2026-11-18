@@ -6,16 +6,16 @@
 
 ## 1. Project Structure & Module Organization
 
-harness-engineering-kit 是与具体项目无关的 skills + agents 套件（13 个 skill），无编译步骤，全部为纯文本 + Python 3 标准库脚本。
+harness-engineering-kit 是与具体项目无关的 skills + agents 套件（9 个精简契约 skill），无编译步骤，全部为纯文本 + Python 3 标准库脚本。
 
 ```
-skills/harness-*/    # 【产品区·对外契约】每个 skill：SKILL.md（方法论 + frontmatter + `## Agent 提示词`）+ references/ 模板；布局受部署链路约束，不可动
+skills/harness-*/    # 【产品区·对外契约】每个 skill：SKILL.md（精简契约 + frontmatter + `## Agent 提示词`）+ references/ 模板；布局受部署链路约束，不可动
 scripts/             # 【工程区】Python 校验脚本（snake_case，仅标准库，只读 skills/ 不修改）
 scripts/diagnostics/ # 【工程区】测量/实验工具（compare_matchers*、evaluate_trigger_discrimination、cases.diagnostic.json），非门禁
 tests/triggers/      # 触发词回归用例 cases.json（门禁）与 report.json 产物
 tests/dependencies/  # 依赖校验回归（unittest）
 tests/scripts/       # 校验脚本自身行为回归
-tests/tasks/         # 13 个代表性任务 + 55 条机械可验证验收标准
+tests/tasks/         # 10 个代表性任务 + 43 条机械可验证验收标准
 docs/                # 设计文档、执行计划、质量报告；docs/generated/ 自动生成，勿手改
 .github/             # CI workflow 与 PR 模板
 ```
@@ -42,9 +42,9 @@ python3 scripts/run-all.py --sync                 # 全量验证 + 部署 skills
 
 - Python：仅标准库，snake_case 文件名与函数名，`python3` 直接运行，无第三方依赖。
 - Skill 目录：`harness-` 前缀 + kebab-case。
-- `SKILL.md` 章节顺序固定（见 `docs/ARCHITECTURE.md` 的 Canonical section order），不可随意重排。
-- agent 提示词标题须以 `agent:` frontmatter 的 slug 开头（如 `## entropy-collector (Entropy Sweeper)`），由 assessor 检查脚本机械强制；agent 子节与主文档对应章节共存是规范设计（agent 提示词须自包含），只有逐行重复才算冗余。
-- 改动 `SKILL.md` 后必须同步刷新其 `Last updated` 日期戳：assessor 检查脚本对全部 13 个 skill 强制 90 天新鲜度阈值（76-90 天预警），过期即记 FAIL。
+- `SKILL.md` 采用精简契约格式（≤ 120 行，软上限 150 行，见 `docs/ARCHITECTURE.md` 与 `docs/references/skill-authoring-guide.md`），不可随意重排章节。
+- agent 提示词标题须以 `agent:` frontmatter 的 slug 开头（如 `## entropy-collector (Entropy Sweeper)`），且 `## Agent 提示词` 内含 `Role & Execution Contract` / `Constraints` / `Output Specification` 三个子节。
+- 改动 `SKILL.md` 后必须同步刷新其 `Last updated` 日期戳，并运行对应 `references/automated_check_script.py` 确保契约与行预算合规。
 - 文档正文可中文；代码注释、提交信息必须英文。
 
 ### Frontmatter 契约（违反即阻塞合并）
@@ -56,25 +56,25 @@ python3 scripts/run-all.py --sync                 # 全量验证 + 部署 skills
 
 ### Skill Invocation
 
-所有 skill 均使用 `context: fork`，通过 subagent 独立执行。3 个 `disable-model-invocation: true`（`harness-bootstrap`、`harness-commit-gate`、`harness-verification-loop`）不能直接用 Skill tool 调用，必须通过 `Agent` tool 或 Workflow 使用。13/13 个 skill 均显式声明 `allowed-tools`（最小权限）：commit-gate 与 verification-loop 为构建工具子集，其余为只读巡检子集。
+所有 skill 均使用 `context: fork`，通过 subagent 独立执行。3 个 `disable-model-invocation: true`（`harness-bootstrap`、`harness-commit-gate`、`harness-verification-loop`）不能直接用 Skill tool 调用，必须通过 `Agent` tool 或 Workflow 使用。9/9 个 skill 均显式声明 `allowed-tools`（最小权限）：`bootstrap` 为新建文件子集，`commit-gate` 与 `verification-loop` 为构建与审查工具子集，其余为只读巡检子集。
 
 ## 4. Testing Guidelines
 
 - 框架：标准库 `unittest`（无 pytest）。
-- `tests/triggers/cases.json`（51 例）是回归门禁，必须全绿；新增 skill 必须同步更新 `scripts/run_trigger_regression.py` 的 `SKILL_KW` 关键词映射并新增 case（id 格式 `skill-topic-NN`）。
-- `scripts/diagnostics/cases.diagnostic.json`（87 例）是契约派生测量集，**不是门禁**，禁止为凑通过率调关键词。判别力测量用 `scripts/diagnostics/evaluate_trigger_discrimination.py`；匹配机制对比实验见 `scripts/diagnostics/compare_matchers*.py`（结论：TF-IDF 更优但无阈值能兼顾正负样本，故门禁保留子串匹配，见 TD-006）。
+- `tests/triggers/cases.json`（42 例）是回归门禁，必须全绿；新增 skill 必须同步更新 `scripts/run_trigger_regression.py` 的 `SKILL_KW` 关键词映射并新增 case（id 格式 `skill-topic-NN`）。
+- `scripts/diagnostics/cases.diagnostic.json`（70 例）是契约派生测量集，**不是门禁**，禁止为凑通过率调关键词。判别力测量用 `scripts/diagnostics/evaluate_trigger_discrimination.py`；匹配机制对比实验见 `scripts/diagnostics/compare_matchers*.py`（结论：TF-IDF 更优但无阈值能兼顾正负样本，故门禁保留子串匹配，见 TD-006）。
 - `tests/dependencies/test_dependency_validation.py`（18 例）：新增 skill 必须在 `scripts/validate_skill_dependencies.py` 的 `LAYERS` / `META_LAYER` 登记层级，否则 CI 失败（有意设计）。
-- `tests/scripts/test_validation_scripts.py`：校验脚本自身的行为回归（含关键词重复检测、每 skill 至少一条回归用例、共享库降级行为等不变量）。
-- `tests/tasks/tasks.json`：13 个代表性任务 + 55 条机械可验证验收标准；`scripts/audit_output_specs.py` 与 `scripts/audit_task_coverage.py` 审计其可执行性与覆盖。
+- `tests/scripts/test_validation_scripts.py`：校验脚本自身的行为回归（含关键词重复检测、每 skill 至少一条回归用例、契约 0 漂移棘轮、共享库降级行为等不变量）。
+- `tests/tasks/tasks.json`：10 个代表性任务 + 43 条机械可验证验收标准；`scripts/audit_output_specs.py` 与 `scripts/audit_task_coverage.py` 审计其可执行性与覆盖。
 - 以上测试由 `run-all.py` 第五阶段自动执行，CI 继承——**测试失败即阻断合并**。
 
-**质量门现状**：最后一次主观加权评分为第 33 次（2026-07-10，平均 9.46，5 A+ / 8 A）；第 34 次（2026-09-23）起改为机械检查点审计，13/13 全绿。详见 `docs/QUALITY_SCORE.md`。
+**质量门现状**：2026-11-18 完成 Tier-3 5/13 代表性任务 A/B 实测后，套件从 13 精简为 9 个工程核心 skill，全部 `SKILL.md` 压缩为 ≤ 120 行精简契约格式（当前 67–75 行），CI 对 skill 级 `automated_check_script.py` 升级为阻断门禁。详见 `docs/QUALITY_SCORE.md` 与 `docs/exec-plans/active/quality-measurement-program.md`。
 
 ## 5. Documentation Map
 
 | 我想知道… | 去看这里 |
 |---|---|
-| 13 个 skill 的分层架构与依赖方向 | `docs/ARCHITECTURE.md` |
+| 9 个 skill 的分层架构与依赖方向 | `docs/ARCHITECTURE.md` |
 | agent-first 的核心运作信念 | `docs/design-docs/core-beliefs.md` |
 | 设计决策索引 | `docs/design-docs/index.md` |
 | Agent Prompt 内联迁移设计 | `docs/design-docs/agent-prompt-inline-migration.md` |
@@ -85,19 +85,18 @@ python3 scripts/run-all.py --sync                 # 全量验证 + 部署 skills
 | 各 skill 质量评分与趋势追踪 | `docs/QUALITY_SCORE.md` |
 | 架构级变更记录（契约/CI/方法论变更） | `CHANGELOG.md` |
 | Skills 质量评估报告 | `docs/quality-reports/skills-quality-assessment.md` |
-| 13 个 skill 的方法论正文 + agent 提示词 + 模板 | `skills/` |
+| 9 个 skill 的精简契约 + agent 提示词 + 模板 | `skills/` |
 | 安装方式、触发速查表、接入顺序 | `README.md` |
-| 校验工具用法、回归用例维护规范、CI 流水线说明 | `docs/references/` |
+| 校验工具用法、Skill 编写规范、回归用例维护、CI 流水线 | `docs/references/` |
 
 ## 6. Development Workflow
 
 修改 skill 后按此顺序操作：
 
-1. 修改 `skills/<name>/SKILL.md`
-2. 运行全量验证脚本（`python3 scripts/run-all.py`）确保无断裂
-3. 用 `harness-skill-quality-assessor` 评估修改质量
-4. 提交前再跑一次全量验证——**这是硬约束，提交前必须通过**
-5. 推送到 `develop` 分支（本仓库 PR 合并到 `main`）
+1. 修改 `skills/<name>/SKILL.md`（遵循 `docs/references/skill-authoring-guide.md`）
+2. 运行全量验证脚本（`python3 scripts/run-all.py`）与 `python3 skills/<name>/references/automated_check_script.py` 确保无断裂
+3. 提交前再跑一次全量验证——**这是硬约束，提交前必须通过**
+4. 推送到 `develop` 分支（本仓库 PR 合并到 `main`）
 
 **架构级变更必须同步更新 `CHANGELOG.md`**（新增/变更契约或不变式、CI 行为变更、验证方法论变更、核心依赖变更）；逐 commit 的流水账不进 CHANGELOG，看 `git log`。
 
