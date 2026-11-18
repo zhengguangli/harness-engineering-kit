@@ -22,7 +22,7 @@ REPORT_FILE = os.path.join(ROOT_DIR, "tests/triggers/report.json")
 # Keyword mappings (replicating SKILL_KW associative array from bash)
 SKILL_KW = {
     "harness-architecture-boundaries": "分层架构 循环依赖 层间越界 lint+规则 依赖方向 架构腐化",
-    "harness-bootstrap": "init harness 为这个项目初始化 AGENTS.md docs/ 骨架 CI 模板 分析当前项目 项目概览 README 这个项目是做什么的 项目卡片 技术栈",
+    "harness-bootstrap": "init harness 为这个项目初始化 生成+AGENTS.md docs/ 骨架 CI 模板 分析当前项目 项目概览 README+摘要 分析+README 这个项目是做什么的 项目卡片 技术栈",
     "harness-commit-gate": "提交代码 commit git+commit 修复后提交代码 代码提交",
     "harness-exec-plans": "先做个计划 改动比较大 落盘 跨多个会话 跨多窗口 接力 上一轮试过什么",
     "harness-golden-principles": "周期性+扫描 模式漂移 黄金原则 品味编码 重复模式 AI+重复 代码异味 代码风格+不统一 lint+品味",

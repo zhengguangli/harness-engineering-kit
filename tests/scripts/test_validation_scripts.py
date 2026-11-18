@@ -266,6 +266,17 @@ class RealRepoGuards(unittest.TestCase):
             code = vdd.validate(REAL_SKILLS, REPO_ROOT, strict=True, out=buf)
         self.assertEqual(code, 0, buf.getvalue())
 
+    def test_all_skill_automated_check_scripts_pass(self):
+        import glob
+        scripts = sorted(glob.glob(os.path.join(
+            REAL_SKILLS, "harness-*", "references", "automated_check_script.py")))
+        self.assertGreater(len(scripts), 0)
+        for script in scripts:
+            r = subprocess.run([sys.executable, script],
+                               capture_output=True, text=True, cwd=REPO_ROOT)
+            self.assertEqual(r.returncode, 0,
+                             f"{os.path.relpath(script, REPO_ROOT)} failed:\n{r.stdout}\n{r.stderr}")
+
 
 class TriggerContractConsistencyTests(unittest.TestCase):
     """SKILL_KW and when_to_use are two representations of the same intent.

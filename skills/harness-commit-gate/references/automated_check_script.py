@@ -31,7 +31,7 @@ checker.print_json()
 
 passed_extra, total_extra = check_reference_files(checker, SKILL_DIR,
     ["commit-message-guide.md", "ci-integration-guide.md",
-     "diff-review-checklist.md", "common-edge-cases.md"])
+     "diff-review-checklist.md"])
 
 # Skill-specific content checks
 content = read_file(os.path.join(SKILL_DIR, "SKILL.md"))

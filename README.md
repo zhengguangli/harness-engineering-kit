@@ -92,29 +92,33 @@ Skill 不直接"调用" Agent。主对话根据 Skill 的指导决定何时 spaw
 | harness-observability-and-browser | 需要 UI 或性能验证 | qa-verifier |
 | harness-golden-principles | 周期性代码质量清扫 | entropy-collector |
 | harness-commit-gate | 提交代码前质量门检查 | commit-gate-runner |
-| harness-orchestration | 多 skill 组合路由决策（只读路由顾问） | （纯知识型，主对话直接执行，无需 spawn 独立 agent） |
+| harness-orchestration | 多 skill 组合路由决策（只读路由顾问） | orchestrator |
 
 ### Agent 提示词结构
 
-每个 agent 的系统提示词遵循统一的五区块结构：
+每个 agent 提示词内联在对应 `SKILL.md` 的 `## Agent 提示词` 章节中，遵循统一的精简三子节契约：
 
 ```
-角色定义 → 核心能力 → 执行流程 → 约束 → 输出规范
+Role & Execution Contract → Constraints → Output Specification
 ```
 
-- **约束**区块包含每条规则 + 违反时的行为，确保 agent 在边界内运行
+- **Constraints** 区块包含每条规则 + 违规时的回退/修复动作，确保 agent 在边界内运行
 
 ## 安装方式
 
-Skills 和 agents 都是按位置发现的纯文本文件,直接复制即可。
+**用户级一键同步（推荐，自动校验后部署至 `~/.agents/skills/` 并维护 `~/.claude/skills/` 软链，不删改非 harness 技能）**
 
-**项目级(推荐,纳入版本控制,团队共享)**
+```bash
+python3 scripts/run-all.py --sync
+```
+
+**项目级（纳入版本控制，团队共享）**
 
 ```bash
 cp -r skills/*  <你的项目>/.claude/skills/
 ```
 
-**用户级(跨项目个人习惯)**
+**手动用户级拷贝**
 
 ```bash
 cp -r skills/*  ~/.claude/skills/
@@ -262,4 +266,4 @@ nacos-cli skill-sync resolve <skill-name> --use-agent claude-code --non-interact
 
 ---
 
-最后更新: 2026-11-18（变更：13→9 套件减法——`project-intake` 并入 `bootstrap`，剥离 `authoring`/`skill-quality-assessor`/`prompt-optimizer`，接入顺序与速查表同步精简为 9 个工程核心 skill）
+最后更新: 2026-11-18（变更：更新精简三子节 Agent 提示词结构说明、orchestrator 映射与推荐 `--sync` 安装方式）
