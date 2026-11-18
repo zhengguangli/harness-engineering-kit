@@ -13,8 +13,8 @@ PR → main:        确保 source ∈ {develop, main, release/*} + python3 scrip
 依赖方向校验（`validate_skill_dependencies.py`）→ 单元测试 → 输出规格与任务覆盖审计。新增 skill 时第四阶段会因未登记
 `LAYERS`/`META_LAYER` 而失败——这是有意的强制点。
 
-skill 级自动化检查在 CI 中为 warn-only（不阻断）；只有 `run-all.py` 失败才阻断。
+skill 级自动化检查与 `run-all.py` 在 CI 中均作为硬门禁执行，任一失败即阻断 PR/合并。
 
 ---
 
-Last updated: 2026-10-08 (Change: corrected the pipeline description to six stages and 51 regression cases — the tests and audit stages added on 2026-09-24 were missing)
+Last updated: 2026-11-18 (Change: upgraded skill-level automated_check_script.py checks in CI from warn-only to blocking)
