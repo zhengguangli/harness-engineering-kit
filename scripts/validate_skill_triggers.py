@@ -109,11 +109,9 @@ for skill_md_path in sorted(glob_skills_files()):
             missing.append("legacy_section:## 触发信号 still present")
             break
 
-    # Check no legacy version field (the old "version: x.x.x" is deprecated)
-    # Note: the new slug spec uses version: 1.0.0, so we only warn if it's a
-    # non-standard value, not if it's exactly "1.0.0"
-    # Actually, since we're migrating to slug spec, we allow version now.
-    # Just skip this check entirely for now.
+    # Reject deprecated legacy version field (all slug frontmatter blocks were removed)
+    if "version" in fm:
+        missing.append("deprecated_field:version")
 
     if missing:
         fail = 1

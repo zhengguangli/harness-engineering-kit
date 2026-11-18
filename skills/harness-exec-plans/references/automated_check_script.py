@@ -35,14 +35,12 @@ passed_extra, total_extra = check_reference_files(checker, SKILL_DIR,
 # Skill-specific content checks
 content = read_file(os.path.join(SKILL_DIR, "SKILL.md"))
 for pattern, label in [
-    (r"exec-plan.*(?:File Structure|Template)", "exec-plan file structure/template section"),
-    (r"Lightweight Plan", "Lightweight Plan concept"),
-    (r"Parallel Collaboration", "Parallel Collaboration concept"),
-    (r"Plan Quality Checklist", "Plan Quality Checklist section"),
+    (r"Plan only, no.*code", "Plan only, no code constraint"),
+    (r"mechanically verifiable", "Mechanically verifiable criteria"),
+    (r"one PR|single PR", "One-PR step granularity"),
     (r"Decision log", "Decision log concept"),
-    (r"plan overrun|Plan overrun|scope re-assessment", "Plan overrun recovery mechanism"),
-    (r"Directory.*Lifecycle|Directory & Lifecycle", "Directory lifecycle management"),
-    (r"Cross-skill handoff|cross.*skill.*handoff", "Cross-skill handoff documentation"),
+    (r"Non-goals", "Non-goals requirement"),
+    (r"overrun|50%|blocked", "Overrun / blocked protocol"),
 ]:
     total_extra += 1
     if has_text(content, pattern, re.IGNORECASE):
@@ -50,29 +48,12 @@ for pattern, label in [
     else:
         print(f"  [FAIL] Missing {label}")
 
-# Hard Constraints completeness: must have at least 3
 constraint_count = count_hard_constraints(content)
 total_extra += 1
-if constraint_count >= 3:
+if constraint_count >= 4:
     passed_extra += 1; checker.check_pass("hard-constraints-count")
 else:
-    print(f"  [FAIL] Hard Constraints count: {constraint_count} (expected ≥3)")
-
-# Examples count: must have at least 4
-example_count = len(re.findall(r"\*\*Example\s+\d+\*\*", content))
-total_extra += 1
-if example_count >= 4:
-    passed_extra += 1; checker.check_pass("examples-count")
-else:
-    print(f"  [FAIL] Examples count: {example_count} (expected ≥4)")
-
-# Agent Prompt constraints: must have at least 6
-agent_constraint_count = count_agent_constraints(content)
-total_extra += 1
-if agent_constraint_count >= 6:
-    passed_extra += 1; checker.check_pass("agent-constraints-count")
-else:
-    print(f"  [FAIL] Agent Prompt constraints: {agent_constraint_count} (expected ≥6)")
+    checker.check_fail("hard-constraints-count", "MEDIUM", f"Hard Constraints count: {constraint_count} (expected ≥4)")
 
 print_extra_summary(checker, passed_extra, total_extra)
 

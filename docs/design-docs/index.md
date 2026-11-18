@@ -4,9 +4,9 @@
 
 | 文档 | 主题 | 校验状态 | 最近校验日期 |
 |---|---|---|---|
-| `core-beliefs.md` | agent-first 的核心运作信念 | ✅ 已校验 | 2026-10-08 |
-| `agent-prompt-inline-migration.md` | Agent 提示词内联迁移模式 | ✅ 已校验 | 2026-09-24 |
-| `bash-to-python-migration.md` | Bash 到 Python 3 跨平台迁移设计 | ✅ 已校验 | 2026-09-24 |
+| `core-beliefs.md` | agent-first 的核心运作信念 | ✅ 已校验 | 2026-11-18 |
+| `agent-prompt-inline-migration.md` | Agent 提示词内联迁移模式 | ✅ 已校验 | 2026-11-18 |
+| `bash-to-python-migration.md` | Bash 到 Python 3 跨平台迁移设计 | ✅ 已校验 | 2026-11-18 |
 
 校验状态说明:
 - ✅ 已校验: 最近确认过和代码现状一致
@@ -14,4 +14,4 @@
 - ❌ 已知过期: 确认和代码现状不一致，等待修复
 
 ---
-最后更新: 2026-10-08（变更：core-beliefs.md 因入口文件整合再次复核——10 条信念仍成立，信念 6 补充 AGENTS.md/CLAUDE.md 的入口区分；另两篇无变更，校验日期顺延）
+最后更新: 2026-11-18（变更：完成三篇设计文档的例行复核并刷新校验日期；同步 `core-beliefs.md` 同步命令与 `agent-prompt-inline-migration.md` 的 `AGENTS.md` 入口引用）

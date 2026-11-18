@@ -33,7 +33,7 @@ Check each added/modified line for:
 Review the diff as a whole:
 
 - **One concern per commit**: Does the diff touch unrelated areas? (e.g., a bugfix commit also refactoring unrelated code)
-  - **Action**: Split into multiple commits; commit-gate aborts and suggests `git reset HEAD~` for re-splitting.
+  - **Action**: Split into multiple commits; commit-gate aborts and suggests `git reset HEAD` (or `git restore --staged <files>`) for re-splitting.
 - **File count**: >10 files changed for a single commit on a small change
   - **Action**: Request clarification — is this really one change set?
 - **Configuration drift**: Changes to `ci/*.yml`, `Dockerfile`, or deployment configs in a feature commit
@@ -68,10 +68,6 @@ For each changed file (especially new ones):
 
 ## Usage
 
-Run as part of commit-gate's diff review step:
+Run git diff and secret/debug grep checks above during `commit-gate`'s diff review step.
 
-```bash
-# Full checklist (automated checks run first, then manual review items flagged)
-python3 skills/harness-commit-gate/references/automated_check_script.py
-# If warnings detected, prompt the user before proceeding
-```
+> Note: `references/automated_check_script.py` validates `SKILL.md` inside the `harness-engineering-kit` repo itself — it is not a target-project diff scanner.

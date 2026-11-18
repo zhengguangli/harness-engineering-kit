@@ -59,7 +59,7 @@ This document consolidates common edge cases encountered during Commit Gate proc
 **Handling Principle**:
 - Skip code quality checks (lint, type check, tests)
 - Trigger documentation/configuration consistency checks (if any)
-- If CLAUDE.md is changed, trigger repo-map related checks
+- If AGENTS.md is changed, trigger repo-map related checks
 
 **Criteria**:
 - All changed files are in non-source extensions such as `docs/`, `*.md`, `*.json`, `*.yaml`, `*.png`, etc.

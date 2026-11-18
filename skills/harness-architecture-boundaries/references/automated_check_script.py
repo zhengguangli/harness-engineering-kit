@@ -35,14 +35,12 @@ passed_extra, total_extra = check_reference_files(checker, SKILL_DIR,
 # Skill-specific content checks
 content = read_file(os.path.join(SKILL_DIR, "SKILL.md"))
 for pattern, label in [
-    (r"Severity Classification Reference", "Severity Classification Reference section"),
-    (r"CRITICAL|HIGH|MEDIUM|LOW", "severity level references"),
-    (r"^##\s+Best Practices", "Best Practices section"),
-    (r"Finding organization specification", "Finding Organization Specification section"),
-    (r"Reference Layering Model", "Reference Layering Model section"),
-    (r"Parse.*Don.*Validate|Parse, Don't Validate", "Parse Don't Validate pattern"),
-    (r"cross-cutting.*chokepoint|single chokepoint|unified Providers", "Cross-cutting chokepoint pattern"),
-    (r"Implementation variations", "Implementation variations across projects"),
+    (r"CRITICAL.*HIGH.*MEDIUM.*LOW", "Severity level contract"),
+    (r"Types\s*→\s*Config\s*→\s*Repo\s*→\s*Service", "Layering model diagram"),
+    (r"Parse.*Don.*Validate|parsed, not passed", "Parse Don't Validate pattern"),
+    (r"Providers|chokepoint", "Cross-cutting chokepoint pattern"),
+    (r"Architecture Boundary Audit Report", "Exact report title"),
+    (r"I have fixed this", "Prohibit false fix claims"),
 ]:
     total_extra += 1
     if has_text(content, pattern, re.IGNORECASE | re.MULTILINE):
@@ -50,29 +48,12 @@ for pattern, label in [
     else:
         print(f"  [FAIL] Missing {label}")
 
-# Hard Constraints completeness: must have at least 5
-constraint_section = content[content.find("## Hard Constraints"):content.find("## Key Points")] if "## Hard Constraints" in content else ""
-constraint_count = len(re.findall(r"^\d+\.\s+\*\*", constraint_section, re.MULTILINE))
+constraint_count = count_hard_constraints(content)
 total_extra += 1
 if constraint_count >= 5:
     passed_extra += 1; checker.check_pass("hard-constraints-count")
 else:
-    print(f"  [FAIL] Hard Constraints count: {constraint_count} (expected ≥5)")
-
-# Layering model diagram: must contain the arrow chain
-total_extra += 1
-if has_text(content, r"Types\s*→\s*Config\s*→\s*Repo\s*→\s*Service"):
-    passed_extra += 1; checker.check_pass("layering-model-diagram")
-else:
-    print(f"  [FAIL] Missing layering model arrow chain (Types → Config → Repo → Service)")
-
-# Agent Prompt constraints count: must have at least 5
-agent_constraint_count = count_agent_constraints(content)
-total_extra += 1
-if agent_constraint_count >= 5:
-    passed_extra += 1; checker.check_pass("agent-constraints-count")
-else:
-    print(f"  [FAIL] Agent Prompt constraints: {agent_constraint_count} (expected ≥5)")
+    checker.check_fail("hard-constraints-count", "MEDIUM", f"Hard Constraints count: {constraint_count} (expected ≥5)")
 
 print_extra_summary(checker, passed_extra, total_extra)
 

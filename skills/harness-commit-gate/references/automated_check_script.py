@@ -30,22 +30,23 @@ checker = run_shared_checks(SKILLS_DIR, SKILL_NAME)
 checker.print_json()
 
 passed_extra, total_extra = check_reference_files(checker, SKILL_DIR,
-    ["commit-message-guide.md", "ci-integration-guide.md"])
+    ["commit-message-guide.md", "ci-integration-guide.md",
+     "diff-review-checklist.md", "common-edge-cases.md"])
 
 # Skill-specific content checks
 content = read_file(os.path.join(SKILL_DIR, "SKILL.md"))
 for pattern, label in [
-    (r"Three Checks of the Quality Gate", "Three Checks of the Quality Gate"),
-    (r"Toolchain Detection Flow|Check Strategy.*Based on Project Configuration", "Toolchain Detection Flow / Check Strategy"),
-    (r"Diff.*[Rr]eview", "Diff Review section"),
-    (r"When to Skip|Skip Automated", "When to Skip section"),
-    (r"[Ss]ensitive [Ii]nformation|API.*key|leak", "Sensitive information handling"),
+    (r"git diff --staged", "Staged diff review check"),
+    (r"subject line\s*≤\s*72", "Subject line ≤ 72 chars constraint"),
+    (r"allowed-tools.*Grep.*Bash\(ls \*", "allowed-tools includes Grep and ls"),
+    (r"force-with-lease", "Prohibit force-push on push mistake"),
+    (r"API_KEY|TOKEN|SECRET|secret", "Sensitive information handling"),
 ]:
     total_extra += 1
     if has_text(content, pattern, re.IGNORECASE | re.MULTILINE):
         passed_extra += 1; checker.check_pass(label)
     else:
-        print(f"  [FAIL] Missing {label}")
+        checker.check_fail(label, "MEDIUM", f"Missing {label}")
 
 print_extra_summary(checker, passed_extra, total_extra)
 

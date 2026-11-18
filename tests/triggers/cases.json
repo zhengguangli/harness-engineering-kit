@@ -124,7 +124,7 @@
   },
   {
     "id": "bootstrap-02",
-    "input": "生成 CLAUDE.md 和 docs/ 骨架",
+    "input": "生成 AGENTS.md 和 docs/ 骨架",
     "expected_primary_skill": "harness-bootstrap",
     "expected_candidates": [
       "harness-bootstrap",
@@ -137,7 +137,7 @@
   },
   {
     "id": "repo-map-01",
-    "input": "CLAUDE.md 太大了，需要瘦身",
+    "input": "AGENTS.md 太大了，需要瘦身",
     "expected_primary_skill": "harness-repo-map",
     "expected_candidates": [
       "harness-repo-map"
@@ -197,37 +197,13 @@
   {
     "id": "intake-01",
     "input": "分析当前项目并产出项目卡片",
-    "expected_primary_skill": "harness-project-intake",
+    "expected_primary_skill": "harness-bootstrap",
     "expected_candidates": [
-      "harness-project-intake",
+      "harness-bootstrap",
       "harness-repo-map"
     ],
     "tags": [
       "intake",
-      "ambiguous"
-    ]
-  },
-  {
-    "id": "prompt-01",
-    "input": "帮我优化这个 system prompt",
-    "expected_primary_skill": "harness-prompt-optimizer",
-    "expected_candidates": [
-      "harness-prompt-optimizer"
-    ],
-    "tags": [
-      "prompt"
-    ]
-  },
-  {
-    "id": "authoring-01",
-    "input": "怎么写一个好的 SKILL.md",
-    "expected_primary_skill": "harness-authoring",
-    "expected_candidates": [
-      "harness-authoring",
-      "harness-orchestration"
-    ],
-    "tags": [
-      "authoring",
       "ambiguous"
     ]
   },
@@ -247,25 +223,14 @@
   {
     "id": "intake-02",
     "input": "读取 README 并给摘要",
-    "expected_primary_skill": "harness-project-intake",
+    "expected_primary_skill": "harness-bootstrap",
     "expected_candidates": [
-      "harness-project-intake",
+      "harness-bootstrap",
       "harness-repo-map"
     ],
     "tags": [
       "intake",
       "ambiguous"
-    ]
-  },
-  {
-    "id": "prompt-02",
-    "input": "这个 prompt 效果不好，帮我改进结构和约束",
-    "expected_primary_skill": "harness-prompt-optimizer",
-    "expected_candidates": [
-      "harness-prompt-optimizer"
-    ],
-    "tags": [
-      "prompt"
     ]
   },
   {
@@ -280,21 +245,8 @@
     ]
   },
   {
-    "id": "authoring-02",
-    "input": "给这套 harness 工具集本身添加新能力",
-    "expected_primary_skill": "harness-authoring",
-    "expected_candidates": [
-      "harness-authoring",
-      "harness-orchestration"
-    ],
-    "tags": [
-      "authoring",
-      "ambiguous"
-    ]
-  },
-  {
     "id": "repo-map-04",
-    "input": "CLAUDE.md 指针断了，需要校验",
+    "input": "AGENTS.md 指针断了，需要校验",
     "expected_primary_skill": "harness-repo-map",
     "expected_candidates": [
       "harness-repo-map"
@@ -308,8 +260,7 @@
     "input": "新项目接入 harness，先给骨架",
     "expected_primary_skill": "harness-bootstrap",
     "expected_candidates": [
-      "harness-bootstrap",
-      "harness-project-intake"
+      "harness-bootstrap"
     ],
     "tags": [
       "bootstrap",
@@ -322,7 +273,7 @@
     "expected_primary_skill": "harness-orchestration",
     "expected_candidates": [
       "harness-orchestration",
-      "harness-project-intake"
+      "harness-bootstrap"
     ],
     "tags": [
       "orchestration",
@@ -439,38 +390,14 @@
   {
     "id": "intake-03",
     "input": "这个项目是做什么的，项目概览一下",
-    "expected_primary_skill": "harness-project-intake",
+    "expected_primary_skill": "harness-bootstrap",
     "expected_candidates": [
-      "harness-project-intake",
+      "harness-bootstrap",
       "harness-orchestration"
     ],
     "tags": [
       "intake",
       "implicit"
-    ]
-  },
-  {
-    "id": "prompt-03",
-    "input": "这个 agent 行为不对，帮我优化 system prompt",
-    "expected_primary_skill": "harness-prompt-optimizer",
-    "expected_candidates": [
-      "harness-prompt-optimizer"
-    ],
-    "tags": [
-      "prompt"
-    ]
-  },
-  {
-    "id": "authoring-03",
-    "input": "怎么给 harness 工具集瘦身和拆分 references",
-    "expected_primary_skill": "harness-authoring",
-    "expected_candidates": [
-      "harness-authoring",
-      "harness-repo-map"
-    ],
-    "tags": [
-      "authoring",
-      "ambiguous"
     ]
   },
   {
@@ -559,53 +486,16 @@
   },
   {
     "id": "ambiguous-03",
-    "input": "为这个项目初始化 harness 生成 CLAUDE.md 并优化 system prompt",
+    "input": "为这个项目初始化 harness 并生成 AGENTS.md",
     "expected_primary_skill": "harness-bootstrap",
     "expected_candidates": [
       "harness-bootstrap",
-      "harness-prompt-optimizer"
+      "harness-repo-map"
     ],
     "tags": [
       "bootstrap",
-      "prompt",
+      "repo-map",
       "ambiguous"
-    ]
-  },
-  {
-    "id": "assessor-01",
-    "input": "评估一下这些 skill 质量",
-    "expected_primary_skill": "harness-skill-quality-assessor",
-    "expected_candidates": [
-      "harness-skill-quality-assessor"
-    ],
-    "tags": [
-      "quality",
-      "assessment"
-    ]
-  },
-  {
-    "id": "assessor-02",
-    "input": "帮我做一次 skills 质量审计，看看哪些需要优化",
-    "expected_primary_skill": "harness-skill-quality-assessor",
-    "expected_candidates": [
-      "harness-skill-quality-assessor",
-      "harness-authoring"
-    ],
-    "tags": [
-      "quality",
-      "assessment"
-    ]
-  },
-  {
-    "id": "assessor-03",
-    "input": "这个 skill 质量怎么样，能打几分",
-    "expected_primary_skill": "harness-skill-quality-assessor",
-    "expected_candidates": [
-      "harness-skill-quality-assessor"
-    ],
-    "tags": [
-      "quality",
-      "assessment"
     ]
   }
 ]

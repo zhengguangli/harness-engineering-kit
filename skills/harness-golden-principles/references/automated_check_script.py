@@ -36,11 +36,11 @@ passed_extra, total_extra = check_reference_files(checker, SKILL_DIR,
 # Skill-specific content checks
 content = read_file(os.path.join(SKILL_DIR, "SKILL.md"))
 for pattern, label in [
-    (r"^##\s+Core Principles", "Core Principles section"),
-    (r"Sweep Rhythm", "Sweep Rhythm concept"),
-    (r"Golden Principles vs Architecture Boundaries", "Golden Principles vs Architecture Boundaries comparison"),
-    (r"Distilling Golden Principles", "Distilling Golden Principles section"),
-    (r"[Ss]ignal [Aa]nnotation|frequently triggered principle", "Signal annotation mention"),
+    (r"NOT CI hard blocks|not.*merge block", "Taste vs CI hard block boundary"),
+    (r"1 min|small PR|One deviation type", "Small PR scope limitation"),
+    (r"tech-debt-tracker\.md", "Tech debt persistence contract"),
+    (r"golden-principles-scan\.md", "Scan report path"),
+    (r"signal annotation|frequently triggered", "Signal annotation mention"),
 ]:
     total_extra += 1
     if has_text(content, pattern, re.IGNORECASE | re.MULTILINE):

@@ -2,7 +2,7 @@
 """
 TF-IDF threshold experiment with proper train/holdout separation.
 
-The earlier comparison (scripts/compare_matchers.py) evaluated TF-IDF on the
+The earlier comparison (scripts/diagnostics/compare_matchers.py) evaluated TF-IDF on the
 same cases used to look at it, and TF-IDF scored 95.7% on positives but 0/5 on
 negatives because cosine similarity has no natural zero.
 
@@ -36,11 +36,12 @@ matcher) for ranking, plus a separate signal for "none of these apply".
 Recorded here so the experiment is not re-derived.
 
 Usage:
-    python3 scripts/compare_matchers_holdout.py
+    python3 scripts/diagnostics/compare_matchers_holdout.py
 """
 
 import json, math, re, sys, os, collections
-ROOT=os.getcwd(); sys.path.insert(0,os.path.join(ROOT,"scripts"))
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.join(ROOT, "scripts"))
 import run_trigger_regression as rtr
 SKILLS=sorted(rtr.SKILL_KW)
 
@@ -49,7 +50,7 @@ def ngrams(t,n=(2,3)):
     for k in n: o+=[t[i:i+k] for i in range(len(t)-k+1)]
     return o
 def build():
-    docs={s:ngrams(open(f"skills/{s}/SKILL.md",encoding="utf-8").read()) for s in SKILLS}
+    docs={s:ngrams(open(os.path.join(ROOT,"skills",s,"SKILL.md"),encoding="utf-8").read()) for s in SKILLS}
     df=collections.Counter()
     for s,ts in docs.items():
         for t in set(ts): df[t]+=1
@@ -76,8 +77,8 @@ def sub_top(t):
     b=max(sc.items(),key=lambda kv:(kv[1],[-ord(c) for c in kv[0]]))
     return b[0] if b[1]>0 else None
 
-gate=json.load(open("tests/triggers/cases.json",encoding="utf-8"))
-diag=json.load(open("tests/triggers/cases.diagnostic.json",encoding="utf-8"))
+gate=json.load(open(os.path.join(ROOT,"tests","triggers","cases.json"),encoding="utf-8"))
+diag=json.load(open(os.path.join(ROOT,"scripts","diagnostics","cases.diagnostic.json"),encoding="utf-8"))
 
 # --- 在 gate 上选阈值：要求 gate 的负样本全部拒识，且正样本 accuracy 最大 ---
 print("=== 在 GATE 集 (51) 上选阈值 ===")

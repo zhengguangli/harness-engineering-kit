@@ -36,16 +36,17 @@ passed_extra, total_extra = check_reference_files(checker, SKILL_DIR,
 # Skill-specific content checks
 content = read_file(os.path.join(SKILL_DIR, "SKILL.md"))
 for pattern, label in [
-    (r"Browser Automation Configuration Reference", "Browser Automation Configuration Reference"),
-    (r"Two Types of Feedback Sensors", "Two Types of Feedback Sensors"),
-    (r"Playwright|Puppeteer", "Playwright/Puppeteer mentions"),
-    (r"Acceptance Criteria Examples", "Acceptance Criteria Examples"),
+    (r"runtime evidence|runtime signals", "Runtime signal principle"),
+    (r"timestamp and URL", "Screenshot metadata rule"),
+    (r"machine-checkable", "Machine-checkable criteria constraint"),
+    (r"Playwright", "Playwright tool reference"),
+    (r"yes/no \+ evidence", "Conclusion format"),
 ]:
     total_extra += 1
     if has_text(content, pattern, re.IGNORECASE | re.MULTILINE):
         passed_extra += 1; checker.check_pass(label)
     else:
-        print(f"  [FAIL] Missing {label}")
+        checker.check_fail(label, "MEDIUM", f"Missing {label}")
 
 print_extra_summary(checker, passed_extra, total_extra)
 

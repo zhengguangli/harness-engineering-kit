@@ -135,26 +135,35 @@ def run_shared_checks(skills_dir, skill_name):
         else:
             checker.check_fail(f"fm-{field}", "HIGH", f"Missing {field}")
 
-    for section in ("Core Principles", "When to Use", "Methodology", "Key Points"):
+    for section in ("Scope & Skip Conditions", "Hard Constraints", "Related Skills"):
         if has_text(content, rf"^##\s+{re.escape(section)}", re.MULTILINE):
             checker.check_pass(f"section-{section}")
         else:
-            checker.check_warn(f"section-{section}", f"Missing {section}")
+            checker.check_fail(f"section-{section}", "HIGH", f"Missing ## {section}")
 
     if has_text(content, r"^##\s+Agent\s+(Prompt|提示词)", re.MULTILINE):
         checker.check_pass("agent-prompt")
     else:
-        checker.check_warn("agent-prompt", "Missing Agent 提示词 section")
+        checker.check_fail("agent-prompt", "HIGH", "Missing ## Agent 提示词 section")
+
+    for sub in ("Role & Execution Contract", "Constraints", "Output Specification"):
+        if has_text(content, rf"^###\s+{re.escape(sub)}", re.MULTILINE):
+            checker.check_pass(f"agent-sub-{sub}")
+        else:
+            checker.check_fail(f"agent-sub-{sub}", "HIGH", f"Missing ### {sub}")
 
     if has_text(content, r"Last [Uu]pdated"):
         checker.check_pass("last-updated")
     else:
         checker.check_warn("last-updated", "Missing last updated date")
 
-    if has_text(content, r"Edge Case", re.IGNORECASE):
-        checker.check_pass("edge-cases")
+    line_count = len(lines)
+    if line_count <= 150:
+        checker.check_pass("line-budget")
+    elif line_count <= 180:
+        checker.check_warn("line-budget", f"SKILL.md is {line_count} lines (target 80-120, soft cap 150)")
     else:
-        checker.check_warn("edge-cases", "No edge cases section")
+        checker.check_fail("line-budget", "MEDIUM", f"SKILL.md is {line_count} lines (exceeds 180-line contract cap)")
 
     return checker
 

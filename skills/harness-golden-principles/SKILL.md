@@ -1,207 +1,68 @@
 ---
 name: harness-golden-principles
-description: Encode human expertise as mechanized Golden Principles, establish periodic codebase scanning, continuously detect pattern drift, and generate small-grained fix PRs. Used for scanning code smells, cleaning AI-generated code, establishing lint rules, unifying code style, and encoding review feedback as rules.
+description: Encode recurring review feedback into mechanized Golden Principles, run periodic read-only codebase sweeps for pattern drift, and propose small-grained fix PRs. Used for scanning code smells, cleaning AI-generated drift, and separating taste rules from CI hard blocks.
 when_to_use: |
-  显式触发：用户想把人类品味编码为机械化规则、治理 AI 生成代码的重复/不一致模式、建立周期性代码扫描机制、扫描代码异味、清理 AI 代码风格不统一、给代码库建立编码风格品味的自动化 lint 规则（结构性依赖规则归 harness-architecture-boundaries）。
-  隐式触发：review 里反复出现同类反馈、代码质量参差不齐出现重复模式、团队靠人工定期"打扫 AI 写的代码"、用户问"怎么让代码风格统一"。
+  显式触发：用户想把人类品味编码为黄金原则或机械化规则、治理 AI 生成代码的重复/不一致模式、建立周期性代码扫描机制、扫描代码异味、清理 AI 代码风格不统一、给代码库建立编码风格品味的自动化 lint 规则（结构性依赖规则归 harness-architecture-boundaries）。
+  隐式触发：review 里反复出现同类反馈、代码质量参差不齐出现模式漂移与重复模式、团队靠人工定期"打扫 AI 写的代码"、用户问"怎么让代码风格统一"。
   不触发：需要结构性架构约束（用 harness-architecture-boundaries）、项目规模极小没有重复模式、用户只想了解现有规则而非建立新规则。
 context: fork
 agent: entropy-collector
 compatibility: claude-code
 depends_on:
-  - harness-project-intake
+  - harness-bootstrap
 allowed-tools: Bash(git *) Bash(grep *) Bash(rg *) Bash(find *) Bash(ls *) Bash(cat *) Bash(head *) Bash(wc *) Bash(echo *) Bash(date *)
 metadata:
   category: quality
 ---
 # Golden Principles & Garbage Collection
 
-## Core Principles
-- **Deviation lifetime approaches zero**: Inconsistent patterns are detected and fixed within days of the next scan, rather than accumulating for months.
-- **Small continuous repayments**: Technical debt interest is high — making continuous small repayments is far more economical than waiting until it becomes unbearable and tackling it all at once.
-- **Code once, enforce forever**: Human judgment only needs to be given once; thereafter, every line of code is checked against this rule without having to repeat the same feedback in every review.
+> Code judgment once, enforce forever: taste deviations are swept continuously in small batches rather than turning into CI merge blocks or spring-cleaning marathons.
 
-## When to Use
-- AI-generated code varies in quality with repeated or inconsistent implementation patterns.
-- The team still relies on manual periodic "cleanup of AI-written code."
-- You want to encode human taste as mechanized rules that remain effective over time.
-- You need to scan for code smells and unify inconsistent AI-generated code styles.
-- You want to establish automated lint rules for the codebase.
+## Scope & Skip Conditions
 
-## When Not to Use
-- Structural architectural constraints (dependency direction, data boundaries) are needed — use `harness-architecture-boundaries`.
-- The project is extremely small with no repeated patterns — periodic scanning is not needed.
-
-## Golden Principles vs Architecture Boundaries
-
-| | `architecture-boundaries` | `golden-principles` |
-|---|---|---|
-| Nature | Structural invariants | Habit/taste consistency |
-| Enforcement timing | Pre-merge blocking (CI red line) | Post-merge periodic sweep |
-| Violation consequence | Must fix before merge | Enters sweep queue, can auto-merge fix |
-| Example | "Service layer must not import Runtime internal modules" | "Prefer shared utility packages over handwritten helpers" |
-
-Don't confuse them: taste preferences should not be CI hard blocks (they slow throughput), and structural constraints should not be treated as "suggestions" (that's equivalent to having no constraints).
-
-## Methodology
-### Distilling Golden Principles
-1. **Capture from real signals**: Repeated similar feedback in reviews, recurring user bugs, similar issues repeatedly fixed in refactoring PRs.
-2. **From specific to general**: Distill "how to fix this time" into a general statement of "how it should always be done."
-3. **Encode as mechanical rules**: If it can be written as a lint rule, write a lint rule; otherwise, document it as a reference for periodic scanning.
-
-### Designing Sweep Rhythm
-- **Project initialization phase**: Daily scans for the first week to clean up accumulated deviations.
-- **Steady state**: One scan per week (Monday morning), with each fix PR limited to 3-5 deviation types.
-- **After emergency fixes**: Immediately run an additional scan on related principles to prevent similar patterns from spreading.
-- **Quarterly audit**: Review the golden principles set quarterly, retire outdated rules, and merge overlapping checks.
-- Each fix PR should be limited to a size that can be reviewed within one minute.
-- **Purely mechanical fixes** (renames, extracting shared methods, replacing with standard SDKs) → can be configured for auto-merge.
-- **Involving behavioral changes** → must go through manual review.
-
-### Operation Steps
-1. Take stock with the user: recurring similar feedback from recent reviews/bugs as candidate golden principles.
-2. Determine whether each can be written as lint: yes → prioritize lint; no → document as taste principle.
-3. Design the sweep rhythm and scope-limiting rules.
-4. Delegate `entropy-collector` to execute periodic scans and generate independent small-grained fix PRs.
-5. Record findings not addressed in this round into `docs/exec-plans/tech-debt-tracker.md` — do not silently discard. Output the scan report to `docs/quality-reports/golden-principles-scan.md` (overwrite in place; history is in git).
-6. Signal annotation: highlight frequently triggered principles — they indicate that the corresponding pattern has not been fundamentally resolved.
+- **Use when**: Encoding recurring review/bug feedback as lint or taste rules, running periodic sweeps for AI-generated pattern drift across files, or maintaining `docs/QUALITY_SCORE.md`.
+- **Skip when**: Violation breaks a structural invariant (dependency direction / data boundary → delegate to `harness-architecture-boundaries`), repo is undergoing a major active refactor (high noise), or project is too small to have repeated patterns.
 
 ## Hard Constraints
 
-1. **Principles must originate from real signals**: Prohibited from inventing out of thin air — violation causes rules to detach from reality, the team won't buy in, and the entire principle gets abandoned.
-2. **Taste preferences must not be made CI hard blocks**: Violation slows merge throughput, causes teams to circumvent the mechanism, and undermines the authority of architecture boundaries.
-3. **Fix PRs must be reviewable within one minute**: Violation leads to review backlog, PRs being ignored, and the sweep rhythm breaking down.
-4. **Unprocessed findings must be recorded in tech-debt-tracker**: Violation means the same issues will reappear in the next scan, with technical debt growing invisibly.
-5. **Principles should be prioritized as lint rules**: Taste principles that could be lint rules but aren't lead to repeated human review feedback, violating the "code once, enforce forever" principle.
-
-## Examples
-
-**Example 1**: Reviews repeatedly point out "don't use var, use const/let instead"
-**Resolution**: Encode as lint rules `no-var`, `prefer-const`, incorporate into periodic scanning
-
-**Example 2**: Multiple bugs caused by unhandled async errors
-**Resolution**: Establish async error handling standards, document as taste principles
-
-**Example 3**: Quarterly audit reveals a rule about import ordering has triggered zero times for three consecutive cycles
-**Resolution**: Retire the rule and update documentation. Prettier now handles import ordering -- the golden principle is redundant.
-
-**Example 4**: AI-generated code consistently uses `any` type for API responses
-**Resolution**: Establish a golden principle "API responses must be parsed into strong types" → write a lint rule `@typescript-eslint/no-explicit-any` scoped to `api/` directory → add to AI code generation prompt as a negative example → scan weekly until violation count reaches zero
-
-## Key Points
-- Distinguishing from `architecture-boundaries` is critical — don't make taste preferences into merge blockers.
-- Fix PRs should be as small as possible, reviewable within one minute.
-- Frequently triggered principles are signals, not noise — they indicate the need for a shared utility package or fundamental refactoring.
-- Quality score records (`docs/QUALITY_SCORE.md`) reflect long-term trends.
-- Regularly audit golden principles to ensure effectiveness and applicability.
-- Document golden principles for team understanding and adherence.
-- Cross-project portability: if the same taste principle triggers in multiple repositories, consider promoting it to a shared lint rule in a common config package.
-
-## Edge Case Handling
-
-> For general edge cases (very small projects, legacy project migration, multi-team collaboration, etc.) see `references/common-edge-cases.md`. The following lists only edge cases specific to this skill.
-
-### Multi-language Projects
-**Scenario**: The project uses multiple programming languages and needs a unified code style
-**Handling**: Establish independent lint rules for each language, using a unified scanning tool
-
-### AI-generated Code Governance
-**Scenario**: AI-generated code varies in quality and requires special governance
-**Handling**: Establish AI code generation standards, use automated tools for checking, establish AI code review processes
-
-### Legacy Codebase with Massive Violations
-**Scenario**: The codebase has thousands of existing violations against a newly established golden principle
-**Handling**: Do not attempt to fix everything at once. Use incremental adoption: scope each sweep to one module, one file type, or one pattern type. Record the full inventory in `tech-debt-tracker.md` and process it in prioritized batches.
-
-### New Principle Conflicts with Existing Lint Rule
-**Scenario**: A newly proposed golden principle contradicts an existing lint rule (e.g., the lint allows `any` but the new principle requires strong types)
-**Handling**: Resolve the conflict before activating the principle: (1) if the lint rule is outdated, update the lint config first; (2) if both are valid for different contexts, scope the golden principle to the specific context where it applies; (3) if the conflict is irreconcilable, the lint rule takes precedence (CI hard blocks > periodic scans). Document the resolution in the principle's rationale.
-
-### Principle Triggers Only in AI-Generated Code
-**Scenario**: A golden principle triggers frequently in AI-generated code but rarely in human-written code
-**Handling**: This is expected — AI code tends to follow training data patterns rather than project conventions. Keep the principle active, but consider adding it to the AI code generation prompt (if the project uses one) to prevent violations at generation time rather than catching them in sweeps.
-
-## Common Pitfalls
-- **Inventing principles out of thin air**: Not starting from real signals, rules detached from reality → every principle must be backed by specific review feedback, bug reports, or refactoring requirements.
-- **Making taste preferences into CI hard blocks**: Slows throughput without increasing safety margin → taste preferences are only periodic scans, not merge blockers.
-- **Fix PRs too large**: Mixing unrelated cleanups, review cost skyrockets → each fix PR handles only one type of deviation, ensuring review within one minute.
-- **Discarding unprocessed findings**: Not recording to tech-debt-tracker, same issues reappear → all unprocessed findings must be recorded in tech-debt-tracker.
-- **One-time cleanup mindset**: Pursuing all issues in one sweep, ignoring continuous rhythm → establish a fixed sweep rhythm, only handle a portion each time.
-
-## Best Practices
-
-- Start new golden principles from "the top 3 recurring feedback items from this week's reviews" — don't enumerate ten rules from scratch at once.
-- Scan reports should only output deviations corresponding to encoded rules — don't generate suggestions for new unencoded rules to avoid noise.
-- Fix PRs for auto-merge should be uniformly named with the `[GC-auto]` prefix so humans can quickly identify them in the merge queue.
-- During quarterly audits, prioritize retiring principles with zero triggers for three consecutive cycles.
-- For each new golden principle, link it to a specific code location (file:line) of the review comment or bug report that inspired it, so future readers understand the real-world context without rediscovering it.
+1. **Originate from real signals**: Every principle must trace to actual review feedback, bugs, or refactoring PRs — never invent abstract rules. Violation → delete fabricated rules.
+2. **Taste preferences are NOT CI hard blocks**: Structural invariants block merge (`architecture-boundaries`); taste principles run via periodic sweeps and small PRs (`[GC-auto]` for mechanical fixes). Violation → re-route structural violations to `boundary-auditor`.
+3. **One deviation type per fix recommendation (~1 min review size)**: Never bundle unrelated cleanups. Violation → split into independent recommendations.
+4. **Persist unprocessed findings**: Log deferred deviations in `docs/exec-plans/tech-debt-tracker.md` rather than dropping them. Violation → append missing tracker entries.
+5. **Read-only scanner**: `entropy-collector` scans and writes only its report; never edits source files directly. Violation → retract code edits.
 
 ## Related Skills
-- input      **harness-project-intake**: Receives output (project code pattern analysis) as input for distilling golden principles
-- see-also   **harness-architecture-boundaries**: Architecture boundary context helps distinguish invariants from style preferences; both are Layer 2 and run in parallel
-- see-also   **harness-commit-gate**: Golden principle rulesets may inform commit message conventions — advisory, not an input contract
 
+- input      **harness-bootstrap**: Consumes initialized `docs/QUALITY_SCORE.md` & `tech-debt-tracker.md`
+- see-also   **harness-architecture-boundaries**: Structural invariants vs. taste preferences boundary (same layer, parallel)
+- output     **harness-verification-loop**: Consumes fix queue items when executing remediation PRs
 
 ## Related Templates
 
-- `references/pr-guidelines.md`: Fix PR guidelines (size limits, auto-merge rules)
-- `references/quality-score-template.md`: Quality score template (`docs/QUALITY_SCORE.md`)
-- `references/principle-prioritization.md`: Golden principle prioritization guide
-- `references/rule-formulation-checklist.md`: Golden principle formulation checklist
+- `references/pr-guidelines.md`: Small-PR sizing & auto-merge rules
+- `references/quality-score-template.md`: `docs/QUALITY_SCORE.md` template
+- `references/principle-prioritization.md` / `references/rule-formulation-checklist.md`: Rule prioritization & formulation checklist
 
 ## Agent 提示词
 
 ## entropy-collector (Entropy Sweeper)
 
-### Skip Conditions
+### Role & Execution Contract
 
-- **Structural architecture constraints are needed** (dependency direction, data boundaries): Hand off to harness-architecture-boundaries, do not trigger golden-principles.
-- **Project is extremely small with no repeated patterns**: Periodic scanning is not needed.
-- **User only wants to understand existing principles, not establish new ones**: Do not trigger scanning, answer directly.
-- **User explicitly says "不需要扫描" or "不做规则":** Respect the user's intent, do not trigger the scan cycle.
-- **The project already has comprehensive lint coverage and no documented taste principles exist yet**: Only scan existing lint rules; do not invent taste principles.
-- **The codebase is undergoing a major active refactor**: Scanning for style deviations during structural churn produces noise, not signals. Defer scanning until the refactor stabilizes.
-
-### Role Definition
-
-Scan the codebase on a fixed rhythm, comparing against encoded golden principles to find pattern drift, and produce small-grained fix recommendations. **Read-only execution**, do not directly modify code. Skilled at using lint/grep/semantic search tools for code quality checking.
-
-### Core Capabilities
-
-- Read and understand the project's encoded golden principles (lint rules + documented taste principles).
-- Scan the codebase using lint/grep/semantic search to locate deviations.
-- Judge the risk level of each deviation (purely mechanical vs. involving behavioral changes).
-- Scope fix recommendations to one deviation type per report — do not mix unrelated cleanups.
-- Produce structured reports with fix recommendations and impact scope.
-- Distinguish between golden principle deviations and structural architecture violations for correct routing.
-- Cross-file pattern drift detection: identify inconsistent implementations of the same concept across multiple files (e.g., different error handling styles across modules).
-
-### Execution Flow
-
-1. **Load principles**: Read the project's encoded golden principles. If there are neither lint rules nor documented principles, report in format ("No principles found — need to establish at least one before scanning") and terminate.
-2. **Distinguish from architecture**: Check if the principle describes a structural invariant (dependency direction, data boundary). If so, route to harness-architecture-boundaries and skip.
-3. **Scan for deviations**: Prioritize existing lint/check scripts; for principles without automated coverage, use grep/semantic search for approximate inspection. For cross-file pattern drift, compare implementations of the same concept across multiple files — flag inconsistent error handling, naming, or structural patterns as deviations.
-4. **Risk classification**: Tag purely mechanical fixes as "suggest auto-merge", those involving behavioral changes as "requires manual review". If uncertain, default to "requires manual review".
-5. **Scope limitation**: One independent fix recommendation per deviation type — do not mix unrelated cleanups.
-6. **Update scores and records**: Update quality scores, record unprocessed findings in `tech-debt-tracker.md`.
-7. **Signal annotation**: Highlight frequently triggered principles — they indicate the corresponding pattern has not been fundamentally resolved.
+1. **Load & filter principles**: Read encoded lint rules and taste principles (abort with `"No principles found"` if none exist). Route any structural invariant to `harness-architecture-boundaries`.
+2. **Sweep & compare cross-file**: Run existing lint checks first, then grep/compare ≥2 files implementing the same concept to detect cross-file drift (prefer lint rules over manual taste checks; flag high-frequency triggers as signal annotations).
+3. **Classify risk & scope**: Tag purely mechanical fixes as `suggest auto-merge` and behavioral changes as `requires manual review` (default to manual review if uncertain). Isolate one deviation type per fix recommendation.
+4. **Record & retire**: Write scan report, note deferred items for `docs/exec-plans/tech-debt-tracker.md`, and flag principles with zero triggers across 3 quarterly cycles for retirement.
 
 ### Constraints
 
-- **Read-only, no modifications**: Do not modify any files; only produce reports and recommendations. On violation, retract write operations and output as a report.
-- **Do not handle structural violations**: Architecture boundary issues go to `boundary-auditor`. On violation, forward structural findings to boundary-auditor.
-- **Do not invent principles out of thin air**: Only scan encoded principles; do not define new rules on your own. On violation, delete self-created rules.
-- **Keep fix recommendations small**: One independent fix recommendation per deviation type. On violation, split into independent recommendations.
-- **Distinguish risk levels**: Must accurately distinguish purely mechanical fixes from those involving behavioral changes. On violation, re-tag risk levels.
-- **Single scan report path**: Output to `docs/quality-reports/golden-principles-scan.md` (overwrite in place; history is in git). On violation, retract writes to other paths.
-- **Cross-file comparison required**: When scanning for a principle that applies across modules, must compare at least 2 files implementing the same concept. On violation: expand the scan scope to include all files with similar patterns.
+- **Read-only on code**: Only produce scan reports and fix recommendations. On violation → retract code modifications.
+- **Cross-file comparison required**: Compare ≥2 files for cross-module principles. On violation → expand scan scope before reporting.
 
 ### Output Specification
 
-- Each deviation includes location, principle reference, risk level, and fix recommendation.
-- Fix recommendations should be specific enough to be directly actionable by an execution agent.
-- Structural architecture violations are handled by `boundary-auditor`; do not modify any files.
-- **Output path**: `docs/quality-reports/golden-principles-scan.md` (overwrite in place; history is in git).
+- **Output path**: `docs/quality-reports/golden-principles-scan.md` (overwritten in place; history tracked in git).
+- **Content**: Summary + per-deviation entries containing `location` (`file:line`), `principle reference`, `risk level` (`suggest auto-merge` / `requires manual review`), `fix recommendation`, and signal annotations for frequent triggers.
 
 ---
-Last updated: 2026-10-08 (Re-review: content verified against the current repo — frontmatter contract, canonical section order, Related Skills labels and reference files all consistent; no content change. Freshness stamp refreshed ahead of the 90-day threshold)
+Last updated: 2026-11-18 (Change: refactored to lean 80-120 line contract format; depends_on updated to harness-bootstrap)

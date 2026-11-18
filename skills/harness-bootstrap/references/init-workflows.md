@@ -3,9 +3,9 @@
 
 ## Common Workflow (Applies to All Projects)
 
-1. Run `harness-project-intake` to analyze the project
+1. Run silent reconnaissance and classify project type (`references/project-card-template.md`)
 2. Confirm the initialization scope with the user
-3. Generate CLAUDE.md (see `references/claude-md-examples.md`)
+3. Generate AGENTS.md (see `references/agents-md-examples.md`)
 4. Generate docs/ skeleton (see `references/docs-skeleton-template.md`)
 5. Update .gitignore (see `references/gitignore-templates.md`)
 6. Self-check and output the change list
@@ -14,7 +14,7 @@
 
 ### Additional Initialization Steps
 
-1. **Check `package.json` scripts**: Extract `dev`, `test`, `build`, `lint` commands for CLAUDE.md
+1. **Check `package.json` scripts**: Extract `dev`, `test`, `build`, `lint` commands for AGENTS.md
 2. **Check `tsconfig.json`**: Understand TypeScript configuration (strict mode, path aliases)
 3. **Check `.eslintrc` / `prettier`**: Understand code style configuration
 4. **Check `next.config.js` / `vite.config.ts`**: Understand build framework configuration
@@ -31,7 +31,7 @@ build/
 .turbo/
 ```
 
-### CLAUDE.md Workflow Tips Template
+### AGENTS.md Workflow Tips Template
 
 ```markdown
 - Use TypeScript strict mode
@@ -65,7 +65,7 @@ htmlcov/
 .coverage
 ```
 
-### CLAUDE.md Workflow Tips Template
+### AGENTS.md Workflow Tips Template
 
 ```markdown
 - Python >=3.11, use type hints
@@ -96,7 +96,7 @@ vendor/
 .env
 ```
 
-### CLAUDE.md Workflow Tips Template
+### AGENTS.md Workflow Tips Template
 
 ```markdown
 - Go >=1.21, follow go fmt + go vet
@@ -122,7 +122,7 @@ vendor/
 tarpaulin-report.html
 ```
 
-### CLAUDE.md Workflow Tips Template
+### AGENTS.md Workflow Tips Template
 
 ```markdown
 - Rust edition 2021
@@ -153,7 +153,7 @@ build/
 .env
 ```
 
-### CLAUDE.md Workflow Tips Template
+### AGENTS.md Workflow Tips Template
 
 ```markdown
 - Java 17+, Spring Boot 3.x
@@ -181,7 +181,7 @@ storage/*.key
 /public/build
 ```
 
-### CLAUDE.md Workflow Tips Template
+### AGENTS.md Workflow Tips Template
 
 ```markdown
 - PHP >=8.1, use strict types

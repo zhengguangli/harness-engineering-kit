@@ -8,33 +8,32 @@ This document defines the domain division and dependency direction rules for the
 
 | Domain | Description | Path |
 |---|---|---|
-| skills | 13 skills (methodology + agent prompts + templates) | `skills/harness-*/` |
+| skills | 9 skills (lean contracts + agent prompts + templates) | `skills/harness-*/` |
 | scripts | Validation scripts (frontmatter, keyword consistency, regression) | `scripts/` |
+| diagnostics | Trigger-matching measurement experiments (not gate; TD-006) | `scripts/diagnostics/` |
 | tests | Trigger regression test cases and reports | `tests/` |
 | ci | GitHub Actions workflows and PR templates | `.github/` |
 
 ## Skill Layering & Dependency Direction
 
 ```
-Layer 0 Information Collection    harness-project-intake
+Layer 0 Intake & Bootstrap       harness-bootstrap
        ↓
-Layer 1 Scaffolding Setup        harness-bootstrap
+Layer 1 Knowledge & Constraints  harness-repo-map, harness-architecture-boundaries,
+                                 harness-golden-principles
        ↓
-Layer 2 Knowledge & Constraints  harness-repo-map, harness-architecture-boundaries,
-                                 harness-golden-principles, harness-prompt-optimizer
+Layer 2 Plan-Driven              harness-exec-plans
        ↓
-Layer 3 Plan-Driven              harness-exec-plans
+Layer 3 Execution & Verification harness-verification-loop, harness-observability-and-browser
        ↓
-Layer 4 Execution & Verification harness-verification-loop, harness-observability-and-browser
-       ↓
-Layer 5 Commit Gate              harness-commit-gate
+Layer 4 Commit Gate              harness-commit-gate
 
-Meta-layer                       harness-orchestration, harness-authoring
+Meta-layer                       harness-orchestration
 ```
 
 - Dependencies flow downward only: Layer N skills may reference outputs from Layer < N, but not the reverse.
 - Skills within the same layer can run in parallel and do not depend on each other.
-- Meta-layer skills can be called from any layer (orchestration handles routing, authoring extends the system itself).
+- Meta-layer skills can be called from any layer (`harness-orchestration` handles routing).
 
 ### Declaring a dependency
 
@@ -64,34 +63,18 @@ resolve. Related Skills entries lacking any of the four labels raise a WARN.
 
 ### Canonical section order
 
-Every `SKILL.md` uses this top-level order. Sections 4-10 may be omitted by a skill that
-genuinely has nothing to say, but must never be reordered:
+Every `SKILL.md` uses the lean contract format (target 80–120 lines, soft cap 150 lines) in this fixed order:
 
 ```
-1.  Core Principles
-2.  When to Use
-3.  When Not to Use
-4.  Methodology                (+ optional skill-specific subsections)
-5.  Hard Constraints
-6.  Examples
-7.  Key Points
-8.  Edge Case Handling
-9.  Common Pitfalls
-10. Best Practices
-11. Related Skills
-12. Related Templates
-13. Agent 提示词               (+ agent name heading + its 6 sub-sections)
+1. Scope & Skip Conditions
+2. Standard Workflows           (optional, orchestration only)
+3. Hard Constraints
+4. Related Skills
+5. Related Templates
+6. Agent 提示词                 (+ agent heading + Role & Execution Contract / Constraints / Output Specification)
 ```
 
-Skill-specific sections that do not fit the list above (`Workflow`, `Project Card`,
-`Five Standard Workflows`, `Cross-Skill Handoff Points`, `FAQ / Troubleshooting`,
-`Routing Recommendation`, `Golden Principles vs Architecture Boundaries`) go immediately
-after the section they elaborate — typically after `Methodology`.
-
-The order is the modal position across the 13 skills, not an arbitrary preference. Two
-rules make it enforceable: `Hard Constraints` always precedes `Examples`, and
-`Related Skills` / `Related Templates` always sit between `Best Practices` and
-`Agent 提示词`.
+`scripts/lib/harness_check.py` enforces this contract, line budget (`<= 150` pass, `151-180` warn, `> 180` fail), and `Last updated` presence across all 9 skills.
 
 ## Internal Structure of Each Skill
 
@@ -114,6 +97,7 @@ tests/   → skills/    (Regression test cases verify skill trigger logic)
 - scripts/ only reads from skills/, never modifies it.
 - Regression test cases in tests/ depend on keyword mappings defined in scripts/.
 - .github/workflows/ invokes `python3 scripts/run-all.py` to trigger the full validation chain.
+- 门禁面（gate surface）= `scripts/*.py`（顶层，含 `lib/`）+ `tests/**/test_*.py` + `tests/triggers/cases.json`。`scripts/diagnostics/` 及其中的 `cases.diagnostic.json` 是测量/实验区，不属于门禁（TD-006）。
 
 ## Data Boundary Rules
 
@@ -156,4 +140,4 @@ Key lessons from the full A+-grade optimization:
 See `docs/QUALITY_SCORE.md` for detailed lessons.
 
 ---
-Last updated: 2026-10-08 (Change: replaced the dead `make triggers-all` reference with `python3 scripts/run-all.py` — no Makefile exists in this repo)
+Last updated: 2026-11-18 (Change: 13→9 subtraction and 5-layer lean contract standard recorded after Tier-3 A/B evaluation)

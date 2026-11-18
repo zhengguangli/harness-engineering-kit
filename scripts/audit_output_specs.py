@@ -117,7 +117,8 @@ def main():
     print("== output specification executability audit ==")
     print()
     total = 0
-    for d in sorted(glob.glob(os.path.join(SKILLS_DIR, "harness-*"))):
+    dirs = sorted(glob.glob(os.path.join(SKILLS_DIR, "harness-*")))
+    for d in dirs:
         skill = os.path.basename(d)
         issues = audit(skill)
         if not issues:
@@ -128,7 +129,7 @@ def main():
         for sev, msg in issues:
             print(f"    [{sev}] {msg}")
     print()
-    print(f"summary: {total} issue(s) across 13 skills")
+    print(f"summary: {total} issue(s) across {len(dirs)} skills")
     return 1 if total else 0
 
 

@@ -21,16 +21,16 @@ Widening the labelled set (positive AND negative labels per case) is the
 prerequisite for a precision figure.
 
 Usage:
-    python3 scripts/evaluate_trigger_discrimination.py
+    python3 scripts/diagnostics/evaluate_trigger_discrimination.py
 """
 
 import json, sys, collections, os
-ROOT = os.getcwd()
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(ROOT, "scripts"))
 import run_trigger_regression as rtr
 
 CASES_FILE = os.path.join(ROOT, "tests", "triggers", "cases.json")
-DIAG_FILE = os.path.join(ROOT, "tests", "triggers", "cases.diagnostic.json")
+DIAG_FILE = os.path.join(ROOT, "scripts", "diagnostics", "cases.diagnostic.json")
 SKILLS = sorted(rtr.SKILL_KW)
 
 

@@ -14,7 +14,7 @@ Defines the agent-first operating principles of the harness-engineering-kit. The
 
 5. **"熵增需要持续清扫，不要攒成大扫除"**: Technical debt is a high-interest loan; small, continuous repayments are more economical than batch cleanups. The periodic scanning of golden-principles exists precisely for this purpose.
 
-6. **"渐进式披露，不要一次性灌入"**: An agent's context budget is a scarce resource. The entry file is the map — it holds only pointers; `docs/` holds the details. (This repo's entry is `AGENTS.md`; `CLAUDE.md` remains the entry convention for **target projects** scaffolded by `harness-bootstrap`.) Skills use `when_to_use` to control loading timing.
+6. **"渐进式披露，不要一次性灌入"**: An agent's context budget is a scarce resource. The entry file (`AGENTS.md`, for both this repo and target projects scaffolded by `harness-bootstrap`) is the map — it holds only pointers; `docs/` holds the details. Skills use `when_to_use` to control loading timing.
 
 7. **"跨平台兼容是设计约束，不是事后补丁"**: SKILL.md frontmatter is designed so that each platform reads only the fields it recognizes and ignores unknown fields. When adding a new field, the behavioral differences across three platforms must be considered.
 
@@ -31,11 +31,11 @@ Defines the agent-first operating principles of the harness-engineering-kit. The
 - 提交前跑 `python3 scripts/run-all.py` 确保 frontmatter 校验、关键词一致性、回归测试全部通过。
 - 不确定某条规则是否仍然有效？去对应的 docs 文件查"最后校验日期"，过期的规则应该被标记而不是被信任。
 - 要给这套体系添加新能力，参考 `harness-authoring` skill。
-- **推送代码后**，主动询问用户是否同步技能包到 `~/.claude/skills`，获得允许后执行：
+- **推送代码后**，主动询问用户是否同步技能包到 `~/.agents/skills/`（并维护 `~/.claude/skills` 软链接），获得允许后执行：
 
   ```bash
-  rsync -av skills/ ~/.claude/skills/
+  python3 scripts/run-all.py --sync
   ```
 
 ---
-最后更新: 2026-10-08（变更：将死命令 `make triggers-all` 替换为 `python3 scripts/run-all.py`——本仓库没有 Makefile；信念 6 补充本仓库入口为 AGENTS.md、CLAUDE.md 为目标项目入口的区分）
+最后更新: 2026-11-18（变更：将同步命令统一为 `python3 scripts/run-all.py --sync` 以匹配 `AGENTS.md`，并完成 30 天例行复核）

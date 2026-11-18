@@ -2,9 +2,9 @@
 
 ## Scenario background
 
-A React + TypeScript project with CLAUDE.md bloated to 350 lines, containing architecture descriptions, API docs, deployment workflows, troubleshooting, and everything else. The agent frequently can't find information or reads stale content.
+A React + TypeScript project with AGENTS.md bloated to 350 lines, containing architecture descriptions, API docs, deployment workflows, troubleshooting, and everything else. The agent frequently can't find information or reads stale content.
 
-Goal: Refactor the encyclopedia-style CLAUDE.md into a "map + structured docs/" progressive disclosure model.
+Goal: Refactor the encyclopedia-style AGENTS.md into a "map + structured docs/" progressive disclosure model.
 
 ---
 
@@ -15,8 +15,8 @@ Goal: Refactor the encyclopedia-style CLAUDE.md into a "map + structured docs/" 
 **Operations**:
 
 ```bash
-# Check CLAUDE.md line count
-wc -l CLAUDE.md
+# Check AGENTS.md line count
+wc -l AGENTS.md
 
 # Check docs/ directory
 ls -la docs/ 2>/dev/null || echo "docs/ does not exist"
@@ -27,15 +27,15 @@ find . -name "*.md" -not -path "./node_modules/*" | head -20
 
 **Output**:
 ```
-350 CLAUDE.md
+350 AGENTS.md
 docs/ does not exist
 ./README.md
-./CLAUDE.md
+./AGENTS.md
 ./CHANGELOG.md
 ```
 
 **Current state analysis**:
-- CLAUDE.md: 350 lines (severely over limit; should be <= 100 lines)
+- AGENTS.md: 350 lines (severely over limit; should be <= 100 lines)
 - docs/: does not exist
 - Content mixed: architecture, API, deployment, troubleshooting all in one file
 
@@ -48,7 +48,7 @@ docs/ does not exist
 **Operations**: Trim the target skeleton as needed
 
 ```
-CLAUDE.md                  # Slimmed down to ~80 line map
+AGENTS.md                  # Slimmed down to ~80 line map
 docs/
 ├── ARCHITECTURE.md        # Architecture description
 ├── QUALITY_SCORE.md       # Quality score
@@ -69,13 +69,13 @@ docs/
 
 ## Step 3: Split and relocate
 
-**Input**: Existing CLAUDE.md (350 lines)
+**Input**: Existing AGENTS.md (350 lines)
 
 **Operations**: Split by topic into docs/
 
 ### 3.1 Create ARCHITECTURE.md
 
-Extract architecture-related content from CLAUDE.md:
+Extract architecture-related content from AGENTS.md:
 
 ```markdown
 ---
@@ -194,9 +194,9 @@ last_verified: 2026-07-02
 
 ---
 
-## Step 4: Rewrite CLAUDE.md as a map
+## Step 4: Rewrite AGENTS.md as a map
 
-**Input**: Original CLAUDE.md (350 lines) + docs/ from step 3
+**Input**: Original AGENTS.md (350 lines) + docs/ from step 3
 
 **Operations**: Condense into an ~80-line navigation map
 
@@ -299,8 +299,8 @@ done
 
 ### Detailed Findings
 
-### [HIGH] CLAUDE.md navigation table broken link
-- File: `CLAUDE.md`, Line: L15
+### [HIGH] AGENTS.md navigation table broken link
+- File: `AGENTS.md`, Line: L15
 - Issue: Navigation table points to `docs/QUALITY_SCORE.md`, but the file does not exist
 - Impact: Agent cannot find quality score information
 - Fix: Create `docs/QUALITY_SCORE.md` or update the navigation table
@@ -326,7 +326,7 @@ done
 **Handling**: Check filesystem permissions, confirm parent directory exists, and re-create.
 
 ### Scenario 2: Information lost during content splitting
-**Handling**: Compare the original CLAUDE.md against the new docs/ to ensure all critical information was migrated.
+**Handling**: Compare the original AGENTS.md against the new docs/ to ensure all critical information was migrated.
 
 ### Scenario 3: Document and code are inconsistent
 **Handling**: doc-gardener marks as HIGH priority, proactively fix misleading content.
@@ -335,7 +335,7 @@ done
 
 ## Acceptance criteria
 
-- [ ] CLAUDE.md <= 100 lines
+- [ ] AGENTS.md <= 100 lines
 - [ ] docs/ broken link rate = 0
 - [ ] Every docs/ file has metadata headers (title, last_verified)
 - [ ] ARCHITECTURE.md covers all top-level directories

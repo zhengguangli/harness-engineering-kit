@@ -16,25 +16,20 @@ The two papers are highly complementary — OpenAI provides concrete experience 
 ```
 harness-engineering-kit/
 ├── .gitignore                           # 忽略 docs/generated/、tests/triggers/report.json 及编辑器/OS/构建产物
-└── skills/                              # 13 个 skill（方法论 + agent 提示词 + 模板）
+└── skills/                              # 9 个精简契约 skill（硬约束 + agent 提示词 + 模板）
     ├── harness-architecture-boundaries/ # Layered architecture and dependency direction with mechanical enforcement
-    ├── harness-authoring/               # Meta-skill: how to author new skills for this harness system
-    ├── harness-bootstrap/               # One-click harness initialization
+    ├── harness-bootstrap/               # Project intake card + one-click harness initialization
     ├── harness-commit-gate/             # Commit quality gate
     ├── harness-exec-plans/              # Execution plans as first-class artifacts for complex tasks
     ├── harness-golden-principles/       # Golden principles and continuous entropy cleanup
     ├── harness-observability-and-browser/ # Browser automation + observability feedback sensors
     ├── harness-orchestration/           # Skill orchestration and workflow routing
-    ├── harness-project-intake/          # Project intake analysis and structured project cards
-    ├── harness-prompt-optimizer/        # Prompt optimization and structured prompt engineering
     ├── harness-repo-map/                # Entry file map + docs/ system records
-    ├── harness-skill-quality-assessor/  # Skills quality assessment with improvement recommendations
     └── harness-verification-loop/       # Ralph Wiggum self-verification loop
 ```
 
 安装后由 agent 按项目生成的文件(不在仓库中):
-- `CLAUDE.md` — 入口地图
-- `CLAUDE.md` — Claude Code 入口地图
+- `AGENTS.md` — 跨平台入口地图
 - `docs/` — 架构文档、执行计划、质量评分等
 
 每个 skill 内部结构:
@@ -85,23 +80,19 @@ Skill 不直接"调用" Agent。主对话根据 Skill 的指导决定何时 spaw
 ④ 验收通过 → 完成
 ```
 
-### 13 个 Skill 的触发场景
+### 9 个 Skill 的触发场景
 
 | Skill | 触发时 | spawn 的 Agent |
 |---|---|---|
+| harness-bootstrap | 分析项目卡片 / 首次初始化 harness 结构 | harness-bootstrap |
 | harness-repo-map | 搭建/重构入口文件和 docs/ | doc-gardener |
 | harness-architecture-boundaries | 建立或检查架构边界规则 | boundary-auditor |
 | harness-exec-plans | 复杂任务需要落盘计划 | plan-architect |
 | harness-verification-loop | 把改动推进到"可合并"状态 | verification-loop-runner |
 | harness-observability-and-browser | 需要 UI 或性能验证 | qa-verifier |
 | harness-golden-principles | 周期性代码质量清扫 | entropy-collector |
-| harness-authoring | 创建新的 skill 或 agent | skill-scaffolder |
-| harness-skill-quality-assessor | 评估 skill 质量、审计 skills 规范 | skill-quality-assessor |
-| harness-bootstrap | 新项目首次初始化 harness 结构 | harness-bootstrap |
 | harness-commit-gate | 提交代码前质量门检查 | commit-gate-runner |
 | harness-orchestration | 多 skill 组合路由决策（只读路由顾问） | （纯知识型，主对话直接执行，无需 spawn 独立 agent） |
-| harness-project-intake | 分析项目产出结构化卡片 | project-analyzer |
-| harness-prompt-optimizer | 优化/创建结构化 Prompt | （纯知识型，主对话直接执行） |
 
 ### Agent 提示词结构
 
@@ -192,136 +183,43 @@ nacos-cli skill-sync resolve <skill-name> --use-agent claude-code --non-interact
 > local 模式下 symlink 自动保持同步,大部分时候只需 `status` 看一眼。Nacos 模式下 daemon 会轮询远端变更。
 
 
-## Skill Frontmatter QA（frontmatter 质量校验）
+## 维护者参考
 
-每个 `SKILL.md` 的 frontmatter 应包含 `description`、`when_to_use`、`compatibility` 字段，不应包含已废弃的 `version` 字段或正文中的 `## 触发信号` 节。仓库提供轻量校验脚本，用于防止格式漂移。
-
-### 本地运行
-
-```bash
-python3 scripts/run-all.py --run-type check
-```
-
-### 校验规则
-
-- 每个 skill 必须有 `description` 字段（≥ 20 字符）
-- 每个 skill 必须有 `when_to_use` 字段
-- 每个 skill 必须有 `compatibility` 字段
-- 不应包含 `version` 字段或 `## 触发信号` 正文章节
-
-> 该校验是**硬门禁**：字段缺失时 `validate_skill_triggers.py` 以 exit 1 结束，`scripts/run-all.py` 第一阶段即失败并阻断 CI（2026-10-08 修正了此前“warn-only 不阻断”的过时描述，并将输出标签由误导性的 `[WARN]` 改为 `[FAIL]`）。
-### 本地全量检查（推荐）
-
-六个阶段依次执行：frontmatter 校验 → 触发词回归 → Agent Prompt 存在性 → 依赖方向校验 → 单元测试 → 输出规格与任务覆盖审计。
-
-```bash
-python3 scripts/run-all.py
-```
-
-### Agent Prompt 存在性校验
-
-`python3 scripts/run-all.py --run-type prompt` 验证每个 SKILL.md 是否包含 `## Agent 提示词` section。
-
-```bash
-python3 scripts/run-all.py --run-type prompt
-```
-
-### 依赖方向与循环依赖校验
-
-`python3 scripts/run-all.py --run-type deps` 机械强制 skill 间的依赖方向（原 TD-001，此前仅靠人工 review）。
-
-```bash
-python3 scripts/run-all.py --run-type deps                # 校验
-python3 scripts/validate_skill_dependencies.py --graph    # 打印依赖图
-python3 scripts/validate_skill_dependencies.py --paths    # 列出跨 skill 路径引用
-python3 tests/dependencies/test_dependency_validation.py  # 18 个回归用例
-```
-
-校验内容：
-
-| 规则 | 级别 |
-|---|---|
-| `depends_on` 图中不得有环 | FAIL |
-| Layer N 只能依赖 Layer ≤ N（向上引用即失败） | FAIL |
-| 非 Meta 层 skill 不得依赖 Meta 层 skill | FAIL |
-| `depends_on` 目标必须存在且已登记层级 | FAIL |
-| SKILL.md/references 中 `../harness-*/references/*` 路径必须存在 | FAIL |
-| 同层 skill 之间存在依赖 | WARN |
-| `## Related Skills` 引用其他 skill 但无 `input`/`output`/`routes-to`/`see-also` 标注 | WARN |
-
-新增 skill 时必须同步修改 `scripts/validate_skill_dependencies.py` 顶部的 `LAYERS` /
-`META_LAYER` 常量——它们与 `docs/ARCHITECTURE.md` 的层级定义是同一份事实的两处拷贝。
-
-### 回归用例维护规范（Case Guide）
-
-新增或修改回归用例时，请遵循：
-
-- 用例文件：`tests/triggers/cases.json`
-- 每条 case 至少包含：
-  - `id`：唯一 ID，建议格式 `skill-topic-NN`
-  - `input`：自然语言输入（尽量贴近用户原话）
-  - `expected_primary_skill`：首选命中 skill
-  - `expected_candidates`：可接受候选列表（用于歧义场景）
-  - `tags`：分类标签（如 `commit`、`plan`、`ambiguous`）
-
-#### 判定规则
-
-- `PASS`：主 skill 命中且为最强信号
-- `WARN`：主 skill 命中但不是最强信号（候选歧义仍存在）
-- `FAIL`：主 skill 未命中
-
-#### 关键词一致性要求
-
-回归脚本依赖静态关键词映射（`scripts/run_trigger_regression.py` 中的 `SKILL_KW`）。  
-当你新增 case 时，务必保证：
-
-1. 所有用于匹配的关键词在对应 `SKILL.md` 中真实存在
-2. 避免“只改用例、不改关键词”导致结果漂移
-
-#### 报告与产物
-
-- 回归报告：`tests/triggers/report.json`（`python3 scripts/run-all.py --run-type regression --json` 生成）
-- 推荐更新节奏：每次修改触发词/用例后都跑一次 `python3 scripts/run-all.py`
+校验工具用法、依赖校验说明与回归用例维护规范见 [`docs/references/`](docs/references/)（`validation-checks.md`、`regression-case-guide.md`、`ci-pipeline.md`）。
 
 
 ## 推荐的接入顺序
 
 以下是基于各 skill 之间**实际依赖关系**推导出的分层接入顺序。每一层依赖上一层的产出,不可跳步。
 
-### Layer 0 · 信息采集
+### Layer 0 · 信息采集与骨架搭建
 
-1. **`harness-project-intake`** + `project-intake-runner`:分析目标项目,产出结构化项目卡片(技术栈、架构骨架、关键模块、配置要点)。这是后续一切步骤的信息源——没有项目卡片,`bootstrap` 不知道该生成什么样的骨架。
+1. **`harness-bootstrap`**:先做成本递进式项目侦察（可单步产出 5 维度项目卡片），再生成 `AGENTS.md` 地图、`docs/` 目录骨架、.gitignore 规则和 CI 模板。这是整个 harness 的物理地基。
 
-### Layer 1 · 骨架搭建
+### Layer 1 · 知识体系与约束规则
 
-2. **`harness-bootstrap`**:根据项目卡片生成 CLAUDE.md 地图、`docs/` 目录骨架、.gitignore 规则和 CI 模板。这是整个 harness 的物理地基。
+以下三项依赖 Layer 0 的产出(`docs/` 结构已存在),彼此之间可以并行推进:
 
-### Layer 2 · 知识体系与约束规则
+2. **`harness-repo-map`** + `doc-gardener`:校验 `AGENTS.md` 是否只是"地图"而非"百科全书",确保 `docs/` 里的指针准确、无断链。这是知识的可发现性保障。
+3. **`harness-architecture-boundaries`** + `boundary-auditor`:在 `docs/ARCHITECTURE.md` 里写入分层模型与依赖方向规则,建立结构性红线。哪怕一开始只能靠文档约束,也先确立规则再逐步补上 lint。
+4. **`harness-golden-principles`** + `entropy-collector`:把人类品味编码为可机械检查的规则,建立周期性清扫节奏(可与上一步并行)。
 
-以下四项依赖 Layer 1 的产出(`docs/` 结构已存在),但彼此之间可以并行推进:
+### Layer 2 · 计划驱动
 
-3. **`harness-repo-map`** + `doc-gardener`:校验 CLAUDE.md 是否只是"地图"而非"百科全书",确保 `docs/` 里的指针准确、无断链。这是知识的可发现性保障。
-4. **`harness-architecture-boundaries`** + `boundary-auditor`:在 `docs/ARCHITECTURE.md` 里写入分层模型与依赖方向规则,建立结构性红线。哪怕一开始只能靠文档约束,也先确立规则再逐步补上 lint。
-5. **`harness-golden-principles`** + `entropy-collector`:把人类品味编码为可机械检查的规则,建立周期性清扫节奏(可与上一步并行)。
-6. **`harness-prompt-optimizer`**:优化和创建结构化 Prompt,提升 agent 与 LLM 交互的确定性和输出质量。可与上述三项并行推进。
+5. **`harness-exec-plans`** + `plan-architect`:复杂任务开始用落盘计划驱动。依赖 `docs/exec-plans/` 目录结构已存在(Layer 0 产出)。
 
-### Layer 3 · 计划驱动
+### Layer 3 · 执行与验证
 
-7. **`harness-exec-plans`** + `plan-architect`:复杂任务开始用落盘计划驱动。依赖 `docs/exec-plans/` 目录结构已存在(Layer 1 产出)。
+6. **`harness-verification-loop`** + `verification-loop-runner`:让改动的"完成"有可机械检查的定义。循环内会调用 `boundary-auditor`(Layer 1)做架构评审,并把状态写回 exec-plan(Layer 2)实现跨窗口接力。
+7. **`harness-observability-and-browser`** + `qa-verifier`:作为 verification-loop 的反馈传感器——需要 UI 验证或性能确认时产出真实证据,不是独立的工作流节点。
 
-### Layer 4 · 执行与验证
+### Layer 4 · 提交门
 
-8. **`harness-verification-loop`** + `verification-loop-runner`:让改动的"完成"有可机械检查的定义。循环内会调用 `boundary-auditor`(Layer 2)做架构评审,并把状态写回 exec-plan(Layer 3)实现跨窗口接力。
-9. **`harness-observability-and-browser`** + `qa-verifier`:作为 verification-loop 的反馈传感器——需要 UI 验证或性能确认时产出真实证据,不是独立的工作流节点。
+8. **`harness-commit-gate`**:最终质量关卡——diff 审查、自动化验证、commit message 格式化。在自验证循环收敛后执行。
 
-### Layer 5 · 提交门
+### 元层 · 编排路由
 
-10. **`harness-commit-gate`**:最终质量关卡——diff 审查、自动化验证、commit message 格式化。在自验证循环收敛后执行。
-
-### 元层 · 编排与扩展
-
-11. **`harness-orchestration`**:路由知识，帮助 agent 在上述各层之间选择正确的 skill 组合和执行顺序。配对 `orchestrator` agent 为只读路由顾问；由于编排是"主对话需要持续记住才能推理"的路由知识，主对话也可以直接根据 `SKILL.md` 中的工作流和决策树执行，不一定需要 spawn 独立 agent。
-12. **`harness-authoring`** + `skill-scaffolder`:任何时候要给这套体系本身添加新能力,参考此技能。
+9. **`harness-orchestration`**:路由知识，帮助 agent 在上述各层之间选择正确的 skill 组合和执行顺序。配对 `orchestrator` agent 为只读路由顾问；主对话也可以直接根据 `SKILL.md` 中的工作流执行，不一定需要 spawn 独立 agent。
 
 ## 概念到组件的映射
 
@@ -333,7 +231,6 @@ python3 tests/dependencies/test_dependency_validation.py  # 18 个回归用例
 | Ralph Wiggum Loop、"失败时问缺了什么能力" | `harness-verification-loop` skill + `verification-loop-runner` agent |
 | Chrome DevTools 驱动验证、可观测性栈(日志/指标/追踪) | `harness-observability-and-browser` skill + `qa-verifier` agent |
 | 黄金原则、熵增与垃圾回收、避免"AI 屎山大扫除日" | `harness-golden-principles` skill + `entropy-collector` agent |
-| 渐进式披露、上下文预算、skill/agent 撰写规范 | `harness-authoring` skill + `skill-scaffolder` agent |
 
 ## 关于 model / tools 字段的选择
 
@@ -347,25 +244,22 @@ python3 tests/dependencies/test_dependency_validation.py  # 18 个回归用例
 
 ## 自然语言触发速查表
 
-13 个 skill 的典型触发场景（每个 skill 1-2 个最常见说法）：
+9 个 skill 的典型触发场景（每个 skill 1-2 个最常见说法）：
 
 | Skill | 典型触发 |
 |---|---|
-| harness-project-intake | "分析当前项目"、"这个项目是做什么的" |
-| harness-bootstrap | "为这个项目初始化 harness"、"init harness" |
-| harness-repo-map | "CLAUDE.md 太大需要瘦身"、"审计文档断链" |
+| harness-bootstrap | "为这个项目初始化 harness"、"init harness"、"分析当前项目" |
+| harness-repo-map | "AGENTS.md 太大需要瘦身"、"审计文档断链" |
 | harness-architecture-boundaries | "建立分层架构"、"出现了循环依赖" |
 | harness-golden-principles | "治理 AI 生成代码的重复模式"、"建立周期性代码扫描机制" |
-| harness-prompt-optimizer | "优化这个 prompt"、"帮我写一个 system prompt" |
 | harness-exec-plans | "先做个计划"、"任务比较大需要落盘" |
 | harness-verification-loop | "把改动推进到可合并状态"、"自动修复测试失败" |
 | harness-observability-and-browser | "复现 UI bug"、"确认 P99 延迟达标" |
 | harness-commit-gate | "提交代码"、"git commit" |
 | harness-orchestration | "我该用哪些 skill"、"怎么组合这些 skill" |
-| harness-authoring | "怎么写一个好的 SKILL.md"、"给 harness 添新能力" |
 
-完整 51 个回归用例见 `tests/triggers/cases.json`。
+完整 42 个回归用例见 `tests/triggers/cases.json`。
 
 ---
 
-最后更新: 2026-10-08（变更：回归用例数 30→51、验证流水线四阶段→六阶段、.gitignore 描述与实际对齐、frontmatter 门禁由“warn-only”修正为硬门禁描述）
+最后更新: 2026-11-18（变更：13→9 套件减法——`project-intake` 并入 `bootstrap`，剥离 `authoring`/`skill-quality-assessor`/`prompt-optimizer`，接入顺序与速查表同步精简为 9 个工程核心 skill）

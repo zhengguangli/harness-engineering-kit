@@ -159,6 +159,16 @@ class ValidateSkillTriggersTests(unittest.TestCase):
         self.assertIn("description_too_short", out)
         self.assertIn("[FAIL]", out)
 
+    def test_deprecated_version_field_fails(self):
+        write_skill(self.skills, "harness-alpha", "## Core Principles\n\n- a\n",
+                    frontmatter="---\nname: harness-alpha\n"
+                                "description: Synthetic fixture skill used only by validation tests.\n"
+                                "when_to_use: fixture\ncompatibility: claude-code\n"
+                                "version: 1.0.0\n---\n")
+        out = self._run()
+        self.assertIn("deprecated_field:version", out)
+        self.assertIn("[FAIL]", out)
+
     def test_dangling_cross_reference_fails(self):
         write_skill(self.skills, "harness-alpha",
                     "## Core Principles\n\n- a\n\n## Related Skills\n\n"
@@ -268,13 +278,14 @@ class TriggerContractConsistencyTests(unittest.TestCase):
     These tests act as a ratchet: they record the current drift as a baseline
     and fail if it gets worse. Tightening the baseline is a deliberate act.
     """
-    BASELINE_ORPHAN_KEYWORDS = 19   # keywords with no basis in when_to_use
-    BASELINE_UNCOVERED_PHRASES = 13  # explicit trigger phrases with no keyword
+    BASELINE_ORPHAN_KEYWORDS = 0   # keywords with no basis in when_to_use
+    BASELINE_UNCOVERED_PHRASES = 0  # explicit trigger phrases with no keyword
 
     @staticmethod
     def _when_to_use(skill):
         import re
-        txt = open(os.path.join(REAL_SKILLS, skill, "SKILL.md"), encoding="utf-8").read()
+        with open(os.path.join(REAL_SKILLS, skill, "SKILL.md"), encoding="utf-8") as f:
+            txt = f.read()
         m = re.search(r"^when_to_use:\s*\|\s*$(.*?)^(?:\w[\w-]*:|---)",
                       txt, re.M | re.S)
         return m.group(1) if m else ""
@@ -296,7 +307,7 @@ class TriggerContractConsistencyTests(unittest.TestCase):
             m = re.search(r"显式触发：([^\n]*)", wt)
             if not m:
                 continue
-            phrases = [p.strip().strip("\"'") for p in re.split(r"[、，,]", m.group(1))
+            phrases = [p.strip().strip("。\"'") for p in re.split(r"[、，,]", m.group(1))
                        if p.strip()]
             for p in phrases:
                 if not any(all(x in p for x in w.split("+"))
@@ -347,8 +358,9 @@ class TaskCoverageMappingTests(unittest.TestCase):
         sys.path.insert(0, SCRIPTS_DIR)
         import audit_task_coverage as atc
         import json
-        tasks = json.load(open(os.path.join(REPO_ROOT, "tests", "tasks", "tasks.json"),
-                               encoding="utf-8"))
+        with open(os.path.join(REPO_ROOT, "tests", "tasks", "tasks.json"),
+                  encoding="utf-8") as f:
+            tasks = json.load(f)
         crits = [c for t in tasks for c in t["acceptance_criteria"]]
         return atc, crits
 
@@ -372,6 +384,47 @@ class TaskCoverageMappingTests(unittest.TestCase):
         self.assertEqual(unmapped, [],
                          f"{len(unmapped)} criteria match no REQUIRES key and rely on "
                          f"fallback logic: {unmapped}")
+
+
+class SyncSafetyTests(unittest.TestCase):
+    """Ensure run-all.py --sync never wipes third-party skills."""
+
+    def test_sync_preserves_unrelated_skills_and_prunes_stale_harness(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "run_all", os.path.join(SCRIPTS_DIR, "run-all.py"))
+        run_all = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(run_all)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            src_skills = os.path.join(tmp, "repo_skills")
+            home_skills = os.path.join(tmp, "agents_skills")
+            claude_skills = os.path.join(tmp, "claude_skills")
+            os.makedirs(os.path.join(src_skills, "harness-bootstrap"))
+            with open(os.path.join(src_skills, "harness-bootstrap", "SKILL.md"),
+                      "w", encoding="utf-8") as f:
+                f.write("# bootstrap\n")
+
+            os.makedirs(os.path.join(home_skills, "context7-mcp"))
+            os.makedirs(os.path.join(home_skills, "harness-retired"))
+            os.makedirs(os.path.join(claude_skills, "use-railway"))
+            os.makedirs(os.path.join(claude_skills, "harness-retired"))
+
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                run_all.sync(skills_dir=src_skills, home_skills=home_skills,
+                             claude_skills=claude_skills)
+
+            self.assertTrue(os.path.isdir(os.path.join(home_skills, "context7-mcp")))
+            self.assertFalse(os.path.exists(os.path.join(home_skills, "harness-retired")))
+            self.assertTrue(os.path.isfile(
+                os.path.join(home_skills, "harness-bootstrap", "SKILL.md")))
+
+            self.assertTrue(os.path.isdir(os.path.join(claude_skills, "use-railway")))
+            self.assertFalse(os.path.exists(os.path.join(claude_skills, "harness-retired")))
+            self.assertTrue(os.path.islink(os.path.join(claude_skills, "harness-bootstrap")))
+            self.assertEqual(os.readlink(os.path.join(claude_skills, "harness-bootstrap")),
+                             os.path.join(home_skills, "harness-bootstrap"))
 
 
 if __name__ == "__main__":
