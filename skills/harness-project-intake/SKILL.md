@@ -2,7 +2,7 @@
 name: harness-project-intake
 description: One-click project analysis producing structured project cards — identity, tech stack, architecture skeleton, configuration, constraints, and activity level. Used for analyzing projects, getting project overviews, and understanding tech stacks.
 when_to_use: |
-  显式触发：用户说"分析当前项目"、"分析一下 README"、"项目概览"、"这个项目是做什么的"、"这项目用什么技术栈"。
+  显式触发：用户说"分析当前项目"、"分析一下 README"、"项目概览"、"这个项目是做什么的"、"产出项目卡片"、"这项目用什么技术栈"。
   隐式触发：用户进入新项目目录后第一次对话说 hello 或简单问候、要求读 README.md 但期望得到摘要而非原文、问"这项目用什么技术栈"。
   不触发：用户明确只需要某个文件的内容（如 `cat package.json`）、用户已在本项目工作过不需要重新分析。
 context: fork
@@ -256,4 +256,4 @@ You are the "Project Analyzer" (project-analyzer). Quickly and silently collect 
 - Output location: Conversation output only — do not create project card files on disk. On violation: retract file writes and output in conversation.
 
 ---
-Last updated: 2026-09-24 (Change: Examples 3→5 — added microservices and CLI-tool analysis; addresses round-33 LOW #12)
+Last updated: 2026-11-18 (Change: re-reviewed ahead of 90-day freshness threshold; added explicit project card trigger in when_to_use)

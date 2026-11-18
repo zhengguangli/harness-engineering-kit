@@ -92,7 +92,7 @@ When the body approaches 500 lines, split content into `references/` sub-files, 
 3. Write the body, control the budget; anticipate bloat and plan `references/` in advance.
 4. For subagents, list tools following minimal tool authorization, and explain the model selection rationale.
 5. Check for overlap with existing capabilities — merge or define boundaries if overlap is found.
-6. Register new pointers in CLAUDE.md/README.
+6. Register new pointers in AGENTS.md/README.
 7. Self-check: Body ≤ 500 lines? Tools with least privilege? description complete?
 
 ### 7. Agent Prompt Canonical Version Convention
@@ -117,7 +117,7 @@ When the body approaches 500 lines, split content into `references/` sub-files, 
 **Action**: Merge or clearly define boundaries, don't create choice paralysis between two similar options
 
 **Example 3**: User says "这个 skill 超过 500 行了，帮我瘦身"
-**Action**: Check current line count, identify content that can be extracted as complete topic blocks into `references/` sub-files, update `SKILL.md` body with loading instructions, and update navigation pointers in CLAUDE.md
+**Action**: Check current line count, identify content that can be extracted as complete topic blocks into `references/` sub-files, update `SKILL.md` body with loading instructions, and update navigation pointers in AGENTS.md
 
 **Example 4**: User says "我要加一个新 subagent 专门跑自动化测试"
 **Action**: Determine it's a subagent (can execute independently), configure `allowed-tools` with test runner tools only (no `Write`/`Edit`), choose a lightweight model for test execution, and skip creating a full skill
@@ -202,7 +202,7 @@ When the body approaches 500 lines, split content into `references/` sub-files, 
 - `references/common-edge-cases.md`: General edge case handling guide
 
 ---
-Last updated: 2026-10-08 (Change: agent heading renamed 'Skill Scaffolder' -> 'skill-scaffolder (Skill Scaffolder)' to match the slug-first modal convention, enforced by check_fm_agent_prompt_consistency) (Change: removed a verbatim-duplicated '## Related Templates' block; normalised a legacy 'Downstream' label in Related Skills)
+Last updated: 2026-11-18 (Change: TD-007 — updated target index pointer references from CLAUDE.md to AGENTS.md)
 ## Agent 提示词
 
 ## skill-scaffolder (Skill Scaffolder)
@@ -225,7 +225,7 @@ You are the "Skill Scaffolder", responsible for generating complete file skeleto
 - Generate SKILL.md and references/ directory structure from templates following context budget discipline
 - Check if new capabilities overlap with existing ones using Grep/Glob scanning (files + description verb phrases)
 - Configure agent tools following the principle of least privilege (read-only agents → no Edit/Write)
-- Update CLAUDE.md pointers and navigation table
+- Update AGENTS.md pointers and navigation table
 - Judge skill vs. subagent based on context impact and execution isolation needs
 - Self-check output against quality criteria: body ≤ 500 lines, description complete, agent prompt paired
 - Slim existing bloated skills by identifying extractable content and moving complete sections into references/ sub-files while maintaining coherent section flow in the body
@@ -238,7 +238,7 @@ You are the "Skill Scaffolder", responsible for generating complete file skeleto
 2. **Check overlap**: Scan existing skills/agents with Grep/Glob. If overlap is found, report it and suggest merging or defining boundaries.
 3. **Existence check**: If `skills/<name>/` already exists, ask the user whether to overwrite — do not silently overwrite.
 4. **Generate from template**: Use `references/scaffold-templates.md` to generate SKILL.md and references/.
-5. **Update index**: Add pointers in CLAUDE.md.
+5. **Update index**: Add pointers in AGENTS.md.
 6. **Self-check**: Body ≤ 500 lines, description complete, Agent prompt matches the frontmatter agent field, includes the standard six-section sub-headings.
 
 ### Constraints

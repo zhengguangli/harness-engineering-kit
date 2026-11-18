@@ -33,7 +33,7 @@ harness-engineering-kit/
 ```
 
 安装后由 agent 按项目生成的文件(不在仓库中):
-- `CLAUDE.md` — 入口地图
+- `AGENTS.md` — 跨平台入口地图
 - `docs/` — 架构文档、执行计划、质量评分等
 
 每个 skill 内部结构:
@@ -206,13 +206,13 @@ nacos-cli skill-sync resolve <skill-name> --use-agent claude-code --non-interact
 
 ### Layer 1 · 骨架搭建
 
-2. **`harness-bootstrap`**:根据项目卡片生成 CLAUDE.md 地图、`docs/` 目录骨架、.gitignore 规则和 CI 模板。这是整个 harness 的物理地基。
+2. **`harness-bootstrap`**:根据项目卡片生成 `AGENTS.md` 地图、`docs/` 目录骨架、.gitignore 规则和 CI 模板。这是整个 harness 的物理地基。
 
 ### Layer 2 · 知识体系与约束规则
 
 以下四项依赖 Layer 1 的产出(`docs/` 结构已存在),但彼此之间可以并行推进:
 
-3. **`harness-repo-map`** + `doc-gardener`:校验 CLAUDE.md 是否只是"地图"而非"百科全书",确保 `docs/` 里的指针准确、无断链。这是知识的可发现性保障。
+3. **`harness-repo-map`** + `doc-gardener`:校验 `AGENTS.md` 是否只是"地图"而非"百科全书",确保 `docs/` 里的指针准确、无断链。这是知识的可发现性保障。
 4. **`harness-architecture-boundaries`** + `boundary-auditor`:在 `docs/ARCHITECTURE.md` 里写入分层模型与依赖方向规则,建立结构性红线。哪怕一开始只能靠文档约束,也先确立规则再逐步补上 lint。
 5. **`harness-golden-principles`** + `entropy-collector`:把人类品味编码为可机械检查的规则,建立周期性清扫节奏(可与上一步并行)。
 6. **`harness-prompt-optimizer`**:优化和创建结构化 Prompt,提升 agent 与 LLM 交互的确定性和输出质量。可与上述三项并行推进。
@@ -266,7 +266,7 @@ nacos-cli skill-sync resolve <skill-name> --use-agent claude-code --non-interact
 |---|---|
 | harness-project-intake | "分析当前项目"、"这个项目是做什么的" |
 | harness-bootstrap | "为这个项目初始化 harness"、"init harness" |
-| harness-repo-map | "CLAUDE.md 太大需要瘦身"、"审计文档断链" |
+| harness-repo-map | "AGENTS.md 太大需要瘦身"、"审计文档断链" |
 | harness-architecture-boundaries | "建立分层架构"、"出现了循环依赖" |
 | harness-golden-principles | "治理 AI 生成代码的重复模式"、"建立周期性代码扫描机制" |
 | harness-prompt-optimizer | "优化这个 prompt"、"帮我写一个 system prompt" |

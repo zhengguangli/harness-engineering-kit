@@ -7,6 +7,20 @@
 
 ---
 
+## [2026-11-18] TD-007 落地、触发契约棘轮归零与 CI skill 级门禁阻断化
+
+- **Context & Trade-offs**:
+  1. **目标项目入口统一为 `AGENTS.md`（TD-007）**：本仓库入口已于 2026-10-08 整合为 `AGENTS.md`，但产品产出仍停留在 `CLAUDE.md`。为保持跨平台一致，将 `harness-bootstrap` 与 `harness-repo-map` 的目标项目入口统一改为 `AGENTS.md`（重命名 3 个模板为 `agents-md-*.md`），并同步相关 skill 说明、产品规格与验收/回归用例；`README.md` 摘要 OpenAI 原文结论处保留原文语境，产品行为描述切换为 `AGENTS.md`。
+  2. **触发契约漂移棘轮归零**：`TriggerContractConsistencyTests` 原基线容忍 19 个孤儿关键词与 13 条未覆盖显式触发短语（包括 `harness-repo-map` 中与 `不触发` 冲突的 `从零搭建`）。在不针对 `cases.diagnostic.json` 调参（遵守 TD-006）的前提下，对齐各 `SKILL.md` 的 `when_to_use` 与 `SKILL_KW` 并清零基线（0 / 0）。
+  3. **CI 行为变更**：`.github/workflows/skill-triggers.yml` 中 13 个 `automated_check_script.py` 此前仅打 `::warning::` 而不失败。现改为任一失败即 `exit 1` 阻断 CI，与 `run-all.py` 一同构成硬门禁。
+- **Impact Radius**:
+  - `skills/harness-bootstrap/`、`skills/harness-repo-map/` 及其他引用目标入口的 `SKILL.md` / `references/` — 目标入口切换为 `AGENTS.md`；模板重命名为 `agents-md-template.md`、`agents-md-examples.md`、`agents-md-map-template.md`
+  - `scripts/run_trigger_regression.py`、`tests/triggers/cases.json`、`tests/tasks/tasks.json` — `CLAUDE.md` 用例迁移至 `AGENTS.md`，`SKILL_KW` 与 `when_to_use` 双向对齐
+  - `tests/scripts/test_validation_scripts.py` — `BASELINE_ORPHAN_KEYWORDS`（19→0）与 `BASELINE_UNCOVERED_PHRASES`（13→0）归零，`_uncovered_phrases` 过滤句末中文句号
+  - `.github/workflows/skill-triggers.yml`、`docs/references/ci-pipeline.md` — skill 级 `automated_check_script.py` 升级为阻断门禁
+  - `scripts/validate_skill_triggers.py` — 恢复对废弃 `version` frontmatter 字段的拒绝校验
+  - `docs/exec-plans/tech-debt-tracker.md`、`docs/product-specs/index.md`、`docs/design-docs/core-beliefs.md`、`AGENTS.md`、`README.md` — 同步 TD-007 关闭状态与入口约定
+
 ## [2026-11-02] 目录契约：诊断区建立与维护者文档归位
 
 - **Context & Trade-offs**: 「门控/测量分离」在 quality-measurement-program 中早已逻辑完成，

@@ -2,7 +2,7 @@
 name: harness-commit-gate
 description: Run a set of quality gate checks before committing code (lint/build/test/sensitive info leaks), applying CI-level rules while ensuring not all code needs the full suite. Used for committing code, preparing to push, checking code quality, and pre-commit verification.
 when_to_use: |
-  显式触发：用户说"提交代码"、"commit"、"git commit"、"代码提交"、"修复，提交代码"。
+  显式触发：用户说"提交代码"、"commit"、"git commit"、"代码提交"、"修复后提交代码"。
   隐式触发：用户完成了代码修改并准备提交、verification-loop 已完成并需要提交、用户询问如何提交代码。
   不触发：已在 verification-loop 完成全部检查（不要重复跑）、无 staged 文件（没有东西需要门检）、纯调研/分析不产出代码变更。
 disable-model-invocation: true
@@ -197,7 +197,7 @@ For detailed execution steps, see `## Agent 提示词 → 执行流程`. Below i
 - `references/common-edge-cases.md`: Common edge cases in commit-gate processing; referenced from Edge Case Handling
 
 ---
-Last updated: 2026-09-24 (Change: added Example 5 drawing the commit-gate vs verification-loop responsibility boundary; round-33 LOW #5)
+Last updated: 2026-11-18 (Change: re-reviewed ahead of 90-day freshness threshold; clarified '修复后提交代码' explicit trigger phrase)
 ## Agent 提示词
 
 ## commit-gate-runner (Commit Gate Runner)

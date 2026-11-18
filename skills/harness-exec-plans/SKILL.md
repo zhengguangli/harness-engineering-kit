@@ -218,7 +218,7 @@ You are the plan-architect. Convert a high-level goal into an execution plan art
 
 ### Execution Flow
 
-1. **Read context**: Review CLAUDE.md and `docs/` directory to understand architecture constraints; read existing plans in `docs/exec-plans/active/` and tech debt inventory to avoid conflicts.
+1. **Read context**: Review AGENTS.md and `docs/` directory to understand architecture constraints; read existing plans in `docs/exec-plans/active/` and tech debt inventory to avoid conflicts.
 2. **Assess necessity**: 
    a. Can the goal be done in one session without multi-step handoffs? → Inform user "no persisted plan needed" and provide temporary steps, then return.
    b. Does the task span multiple sessions or involve multiple agents? → Must create an exec-plan.
@@ -254,4 +254,4 @@ You are the plan-architect. Convert a high-level goal into an execution plan art
 - **Delivery advice**: After the plan file is created, output suggestions for which agent should execute next and which steps need human confirmation.
 
 ---
-Last updated: 2026-09-23 (Change: Hard Constraints normalised to numbered list (format consistency)) (Change: Example 5 added for mid-execution failure recovery + overrun detection criteria)
+Last updated: 2026-11-18 (Change: TD-007 — updated context entry reference from CLAUDE.md to AGENTS.md)

@@ -278,8 +278,8 @@ class TriggerContractConsistencyTests(unittest.TestCase):
     These tests act as a ratchet: they record the current drift as a baseline
     and fail if it gets worse. Tightening the baseline is a deliberate act.
     """
-    BASELINE_ORPHAN_KEYWORDS = 19   # keywords with no basis in when_to_use
-    BASELINE_UNCOVERED_PHRASES = 13  # explicit trigger phrases with no keyword
+    BASELINE_ORPHAN_KEYWORDS = 0   # keywords with no basis in when_to_use
+    BASELINE_UNCOVERED_PHRASES = 0  # explicit trigger phrases with no keyword
 
     @staticmethod
     def _when_to_use(skill):
@@ -306,7 +306,7 @@ class TriggerContractConsistencyTests(unittest.TestCase):
             m = re.search(r"显式触发：([^\n]*)", wt)
             if not m:
                 continue
-            phrases = [p.strip().strip("\"'") for p in re.split(r"[、，,]", m.group(1))
+            phrases = [p.strip().strip("。\"'") for p in re.split(r"[、，,]", m.group(1))
                        if p.strip()]
             for p in phrases:
                 if not any(all(x in p for x in w.split("+"))

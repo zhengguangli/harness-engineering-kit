@@ -30,7 +30,7 @@ checker = run_shared_checks(SKILLS_DIR, SKILL_NAME)
 checker.print_json()
 
 passed_extra, total_extra = check_reference_files(checker, SKILL_DIR,
-    ["claude-md-template.md", "claude-md-examples.md", "docs-skeleton-template.md",
+    ["agents-md-template.md", "agents-md-examples.md", "docs-skeleton-template.md",
      "docs-skeleton-by-stack.md", "gitignore-templates.md", "init-workflows.md"])
 
 # Skill-specific content checks

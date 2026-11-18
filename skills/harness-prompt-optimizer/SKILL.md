@@ -2,7 +2,7 @@
 name: harness-prompt-optimizer
 description: Transform natural language requirements or rough prompts into structured, high-quality LLM prompts — including role definitions, variable dictionaries, execution chains, constraints, output schemas, and few-shot examples. Used for optimizing prompts, improving descriptions, writing new prompts, and fixing poorly performing prompts.
 when_to_use: |
-  显式触发：用户说"优化/优化一下/改进"、"帮我优化/改改我的描述/提示词/prompt"、"帮我写个/给我一个 prompt"、"这个 prompt 效果不好"、"我需要一个 system prompt"、"怎么让 AI 做好 XXX"，后面跟着一段需要优化的内容。
+  显式触发：用户说"优化这个 prompt"、"优化/优化一下/改进"、"帮我优化/改改我的描述/提示词/prompt"、"帮我写个/给我一个 prompt"、"这个 prompt 效果不好"、"我需要一个 system prompt"、"怎么让 AI 做好 XXX"（后附需要优化的内容）。
   隐式触发：用户贴了一段 prompt 但没说意图、描述了需要 AI 反复执行的复杂任务（但没有结构化）、在构建 agent/自动化流程需要 system prompt、用户的 prompt 存在明显问题（缺角色定义、无输出格式、无约束）。
   不触发：用户要代码实现、单次工具调用、闲聊头脑风暴、一句话能说清的简单任务。
 context: fork
@@ -178,7 +178,7 @@ Generate a complete, ready-to-use prompt. Do not wrap in markdown code blocks (u
 
 ## Related Skills
 - input      **harness-project-intake**: Receives output (project context information) as input for prompt optimization
-- see-also   **harness-repo-map**: Knowledge base information is contextual reference; also the right skill when the issue is CLAUDE.md bloat rather than prompt quality
+- see-also   **harness-repo-map**: Knowledge base information is contextual reference; also the right skill when the issue is AGENTS.md bloat rather than prompt quality
 
 - Downstream **All skills needing structured prompts**: Output from this skill (optimized prompt text) is passed downstream for execution
 
@@ -241,4 +241,4 @@ You are the "Prompt Engineer" (prompt-optimizer). Transform the user's rough des
 - If the user requests a comparison, include a before/after diff explanation.
 
 ---
-Last updated: 2026-09-23 (Change: Edge Case Handling moved before Common Pitfalls to match canonical section order; step-count constraint given an explicit violation consequence)
+Last updated: 2026-11-18 (Change: TD-007 — updated target entry reference from CLAUDE.md to AGENTS.md; aligned when_to_use explicit triggers)

@@ -2,8 +2,8 @@
 name: harness-golden-principles
 description: Encode human expertise as mechanized Golden Principles, establish periodic codebase scanning, continuously detect pattern drift, and generate small-grained fix PRs. Used for scanning code smells, cleaning AI-generated code, establishing lint rules, unifying code style, and encoding review feedback as rules.
 when_to_use: |
-  显式触发：用户想把人类品味编码为机械化规则、治理 AI 生成代码的重复/不一致模式、建立周期性代码扫描机制、扫描代码异味、清理 AI 代码风格不统一、给代码库建立编码风格品味的自动化 lint 规则（结构性依赖规则归 harness-architecture-boundaries）。
-  隐式触发：review 里反复出现同类反馈、代码质量参差不齐出现重复模式、团队靠人工定期"打扫 AI 写的代码"、用户问"怎么让代码风格统一"。
+  显式触发：用户想把人类品味编码为黄金原则或机械化规则、治理 AI 生成代码的重复/不一致模式、建立周期性代码扫描机制、扫描代码异味、清理 AI 代码风格不统一、给代码库建立编码风格品味的自动化 lint 规则（结构性依赖规则归 harness-architecture-boundaries）。
+  隐式触发：review 里反复出现同类反馈、代码质量参差不齐出现模式漂移与重复模式、团队靠人工定期"打扫 AI 写的代码"、用户问"怎么让代码风格统一"。
   不触发：需要结构性架构约束（用 harness-architecture-boundaries）、项目规模极小没有重复模式、用户只想了解现有规则而非建立新规则。
 context: fork
 agent: entropy-collector
@@ -204,4 +204,4 @@ Scan the codebase on a fixed rhythm, comparing against encoded golden principles
 - **Output path**: `docs/quality-reports/golden-principles-scan.md` (overwrite in place; history is in git).
 
 ---
-Last updated: 2026-10-08 (Re-review: content verified against the current repo — frontmatter contract, canonical section order, Related Skills labels and reference files all consistent; no content change. Freshness stamp refreshed ahead of the 90-day threshold)
+Last updated: 2026-11-18 (Change: aligned explicit/implicit trigger wording with SKILL_KW contract)

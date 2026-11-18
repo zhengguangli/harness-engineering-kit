@@ -8,8 +8,8 @@
 User says: "Help me initialize the harness for this project"
 
 1. project-intake → analyze package.json → identify React+TypeScript+Vite
-2. bootstrap → generate CLAUDE.md (routing table) + docs/ (ARCHITECTURE.md, QUALITY_SCORE.md)
-3. repo-map → verify: CLAUDE.md ≤ 100 lines? Links valid?
+2. bootstrap → generate AGENTS.md (routing table) + docs/ (ARCHITECTURE.md, QUALITY_SCORE.md)
+3. repo-map → verify: AGENTS.md ≤ 100 lines? Links valid?
 4. architecture-boundaries → define 3-layer model: Types → Components → Pages
    golden-principles → register ESLint rules and code style standards
 ```
@@ -62,7 +62,7 @@ User says: "I want to add a database migration management skill"
    - description: clearly state "when to use" + "what it does"
    - Template: generate per scaffold-templates.md
 2. bootstrap (optional) → if new docs/ structure is involved
-3. repo-map → add routing entry in CLAUDE.md
+3. repo-map → add routing entry in AGENTS.md
 ```
 
 ---

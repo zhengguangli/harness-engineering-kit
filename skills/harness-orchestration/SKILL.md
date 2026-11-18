@@ -2,7 +2,7 @@
 name: harness-orchestration
 description: Orchestrate skill combinations and workflow routing in the current project — selecting the right skill mix and execution order based on user goals. Used for deciding which skills to use, planning multi-skill collaboration, and navigating workflow order in new projects.
 when_to_use: |
-  显式触发：用户问"我该用哪些 skill"、"怎么组合这些 skill"、"工作流怎么走"、"进入新项目不确定先后顺序"。
+  显式触发：用户问"我该用哪些 skill"、"怎么组合这些 skill"、"工作流怎么走"、"进入新项目不确定先做什么后做什么"或"不确定先后顺序"。
   隐式触发：用户面对多个 skill 不知如何组合、复杂任务需要规划多 skill 协作流程、用户进入新项目后第一次对话。
   不触发：用户明确知道要用哪个 skill（直接使用，不需要路由）、任务简单只涉及单个 skill、用户在问具体 skill 的用法而非组合。
 context: fork
@@ -38,7 +38,7 @@ metadata:
 
 ### Workflow 1: Greenfield Initialization
 1. Execute `project-intake` to produce a structured project card
-2. Execute `bootstrap` to generate CLAUDE.md + docs/ skeleton
+2. Execute `bootstrap` to generate AGENTS.md + docs/ skeleton
 3. Execute `repo-map` to verify document structural integrity
 4. Execute `architecture-boundaries` + `golden-principles` (small projects may skip `architecture-boundaries`)
 
@@ -272,7 +272,7 @@ When combining across workflows, use the table above to confirm upstream deliver
 ## Related Skills
 - routes-to  **harness-project-intake**: Route here when the goal is understanding an unfamiliar project
 - routes-to  **harness-bootstrap**: Route here when the goal is initializing a harness structure
-- routes-to  **harness-repo-map**: Route here when the goal is validating or restructuring CLAUDE.md/docs
+- routes-to  **harness-repo-map**: Route here when the goal is validating or restructuring AGENTS.md/docs
 - routes-to  **harness-golden-principles**: Route here when the goal is encoding team taste into mechanical rules
 - routes-to  **harness-prompt-optimizer**: Route here when the goal is improving prompt quality
 - routes-to  **harness-exec-plans**: Route here when a large task needs a persisted execution plan
@@ -290,7 +290,7 @@ When combining across workflows, use the table above to confirm upstream deliver
 - `references/workflow-summary-cheatsheet.md`: Five workflows quick reference table with omission guidance
 
 ---
-Last updated: 2026-09-24 (Change: added a Best Practice covering the four places that must be updated when a new skill is added; round-33 LOW #7)
+Last updated: 2026-11-18 (Change: TD-007 — updated target entry references from CLAUDE.md to AGENTS.md; aligned when_to_use explicit triggers)
 ## Agent 提示词
 
 ## orchestrator (Skill Orchestration Advisor)

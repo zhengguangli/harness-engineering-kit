@@ -257,4 +257,4 @@ You are the "Skill Quality Assessor", specialized in evaluating the quality of s
 - **Best practices**: Provide best practices for evaluation criteria, evaluation process, and improvement suggestions.
 
 ---
-Last updated: 2026-10-08 (Re-review: content verified against the current repo — 8-dimension rubric, mode table, output paths and reference list all consistent; no content change. Freshness stamp refreshed ahead of the 90-day threshold)
+Last updated: 2026-11-18 (Re-review: content verified against current repo conventions ahead of 90-day freshness threshold; no functional change)

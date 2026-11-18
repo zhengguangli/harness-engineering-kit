@@ -1,10 +1,10 @@
-<!-- CLAUDE.md examples by tech stack — used by harness-bootstrapper agent -->
+<!-- AGENTS.md examples by tech stack — used by harness-bootstrapper agent -->
 <!-- Pick the closest example based on the actual project as a starting point -->
 
 ## Example 1: Node.js Full-Stack Project
 
 ```markdown
-# CLAUDE.md
+# AGENTS.md
 
 > This file is a map, not an encyclopedia. If you don't find the answer here, look for it in the corresponding `docs/` files below.
 
@@ -42,7 +42,7 @@ Last updated: <YYYY-MM-DD>
 ## Example 2: Python FastAPI Project
 
 ```markdown
-# CLAUDE.md
+# AGENTS.md
 
 > This file is a map, not an encyclopedia. If you don't find the answer here, look for it in the corresponding `docs/` files below.
 
@@ -80,7 +80,7 @@ Last updated: <YYYY-MM-DD>
 ## Example 3: Go Microservice
 
 ```markdown
-# CLAUDE.md
+# AGENTS.md
 
 > This file is a map, not an encyclopedia. If you don't find the answer here, look for it in the corresponding `docs/` files below.
 
@@ -117,7 +117,7 @@ Last updated: <YYYY-MM-DD>
 ## Example 4: Rust CLI Tool
 
 ```markdown
-# CLAUDE.md
+# AGENTS.md
 
 > This file is a map, not an encyclopedia. If you don't find the answer here, look for it in the corresponding `docs/` files below.
 
@@ -154,7 +154,7 @@ Last updated: <YYYY-MM-DD>
 ## Example 5: Java Spring Boot Project
 
 ```markdown
-# CLAUDE.md
+# AGENTS.md
 
 > This file is a map, not an encyclopedia. If you don't find the answer here, look for it in the corresponding `docs/` files below.
 
@@ -193,4 +193,4 @@ Last updated: <YYYY-MM-DD>
 1. **Find the closest example**: Choose the example that best matches your project's tech stack
 2. **Adjust based on actual situation**: Modify the one-sentence description, hard constraints, and routing table
 3. **Don't copy verbatim**: Examples are a starting point, not the final answer
-4. **Keep it concise**: CLAUDE.md should only contain the routing table and hard constraints, don't let it bloat
+4. **Keep it concise**: AGENTS.md should only contain the routing table and hard constraints, don't let it bloat

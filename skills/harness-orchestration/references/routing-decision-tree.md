@@ -33,11 +33,11 @@ The following artifacts have clear "upstream output to downstream consumer" rela
 | `architecture-boundaries` | lint rules / structured tests | `verification-loop` (as self-check items), `commit-gate` (as gate check) |
 | `observability-and-browser` | Screenshots/screen recordings/metric query results | `verification-loop` (as fix evidence), `commit-gate` (as completion proof) |
 | `golden-principles` | Fix queue (list of deviation patterns) | `verification-loop` (fix one by one) |
-| `repo-map` | CLAUDE.md + documentation validation report | `bootstrap` (verify skeleton completeness), `authoring` (confirm new skill has been registered) |
+| `repo-map` | AGENTS.md + documentation validation report | `bootstrap` (verify skeleton completeness), `authoring` (confirm new skill has been registered) |
 
 ## Common Omissions
 
-These 12 skills are used on demand — you do not need to go through all of them every time:
+These 13 skills are used on demand — you do not need to go through all of them every time:
 
 - Small projects do not need `architecture-boundaries` (no multi-layer architecture to guard).
 - Pure documentation changes do not need `verification-loop` and `observability-and-browser`.

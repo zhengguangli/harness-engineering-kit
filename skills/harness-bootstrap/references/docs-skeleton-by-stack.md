@@ -266,5 +266,5 @@ docs/
 
 1. **Start with the common skeleton**: All projects must include ARCHITECTURE.md and QUALITY_SCORE.md
 2. **Append by tech stack**: Add corresponding files based on the project's actual tech stack
-3. **Skip if unsure**: If unsure whether a file is needed, don't create it yet, leave a placeholder entry in the CLAUDE.md routing table
+3. **Skip if unsure**: If unsure whether a file is needed, don't create it yet, leave a placeholder entry in the AGENTS.md routing table
 4. **Keep skeletons lean**: Write only the skeleton and "Last updated" date per file, don't fill in large amounts of empty content

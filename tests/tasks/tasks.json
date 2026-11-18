@@ -34,13 +34,13 @@
     "skill": "harness-bootstrap",
     "request": "这是个全新的 Node.js 项目，帮我初始化 harness",
     "expected_artifacts": [
-      {"kind": "file", "path": "CLAUDE.md", "required": true},
+      {"kind": "file", "path": "AGENTS.md", "required": true},
       {"kind": "file", "path": "docs/ARCHITECTURE.md", "required": true},
       {"kind": "file", "path": "docs/QUALITY_SCORE.md", "required": true},
       {"kind": "file", "path": ".gitignore", "required": false}
     ],
     "acceptance_criteria": [
-      "CLAUDE.md is <= 100 lines",
+      "AGENTS.md is <= 100 lines",
       "every docs/ file has a 'last updated' date at the bottom",
       "a Creation Manifest listing all created/modified files is output",
       "project type is classified before scope is chosen",
@@ -149,7 +149,7 @@
   {
     "id": "task-repomap-01",
     "skill": "harness-repo-map",
-    "request": "CLAUDE.md 已经 300 行了，帮我瘦身成地图",
+    "request": "AGENTS.md 已经 300 行了，帮我瘦身成地图",
     "expected_artifacts": [
       {"kind": "conversation", "required": true}
     ],
@@ -157,7 +157,7 @@
       "findings include location, severity and a specific repair suggestion",
       "findings ordered HIGH -> MEDIUM -> LOW",
       "unrelated changes are not mixed into one suggestion",
-      "target CLAUDE.md is <= 100 lines after restructuring"
+      "target AGENTS.md is <= 100 lines after restructuring"
     ]
   },
   {

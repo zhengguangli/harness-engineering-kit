@@ -1,4 +1,4 @@
-# CLAUDE.md
+# AGENTS.md
 
 > This file is a map, not an encyclopedia. If you can't find the answer here, look for it in the corresponding `docs/` files below — don't assume information outside this file doesn't exist; it's just stored elsewhere.
 
@@ -52,15 +52,15 @@ Last updated: <YYYY-MM-DD>
 
 ---
 
-## Appendix B: Rules for writing CLAUDE.md
+## Appendix B: Rules for writing AGENTS.md
 
 (Map) rules
 
-1. **Target length ~100 lines**. If you reach 200 lines and aren't wrapping up, you're writing an encyclopedia not a map — sink content down to the corresponding `docs/` files and leave only a one-line pointer in CLAUDE.md.
+1. **Target length ~100 lines**. If you reach 200 lines and aren't wrapping up, you're writing an encyclopedia not a map — sink content down to the corresponding `docs/` files and leave only a one-line pointer in AGENTS.md.
 2. **Only three types of content**: (a) Repository structure overview and "start here" pointers, (b) A very small number of global hard constraints (e.g. "no hand-written code", "all data boundaries must parse, not validate"), (c) A navigation table pointing to each `docs/` subdirectory.
 3. **Don't write details that change frequently** (specific API signatures, current progress, status of a particular bug) — put these in `docs/generated/`, `exec-plans/`, kept fresh by tools or agent tasks.
 4. **Every rule must be actionable or verifiable**. If a rule can't be mechanically checked by lint/tests, either make it checkable or acknowledge it's just advice not a constraint — don't mix them up.
 
 ---
 ---
-Last updated: <YYYY-MM-DD> · If you modify the structure of this file, remember to update the skeleton described in the `harness-repo-map` skill (if there's any deviation). Template file name: `claude-md-map-template.md`.
+Last updated: <YYYY-MM-DD> · If you modify the structure of this file, remember to update the skeleton described in the `harness-repo-map` skill (if there's any deviation). Template file name: `agents-md-map-template.md`.

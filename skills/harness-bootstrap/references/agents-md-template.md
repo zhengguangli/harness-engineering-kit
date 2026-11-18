@@ -1,7 +1,7 @@
-<!-- CLAUDE.md generation template — used by harness-bootstrapper agent -->
+<!-- AGENTS.md generation template — used by harness-bootstrapper agent -->
 <!-- Fill in based on the actual project situation, do not keep placeholders -->
 
-# CLAUDE.md
+# AGENTS.md
 
 > This file is a map, not an encyclopedia. If you don't find the answer here, look for it in the corresponding `docs/` files below — don't assume information outside this file doesn't exist, it's just stored elsewhere.
 

@@ -2,7 +2,7 @@
 
 > 本文件是 harness-engineering-kit 的**唯一入口**（2026-10-08 由 `CLAUDE.md` 合并而来，沿革见 `CHANGELOG.md`）。它是地图，不是百科全书：这里没答案时去下文对应的 `docs/` 文件找，不要假设这个文件之外的信息不存在。
 >
-> 本仓库是 Harness Engineering Kit **自身**，不是被初始化的目标项目。目标项目在执行 `harness-bootstrap` 后各自生成自己的 `CLAUDE.md`——kit 给消费者的产物与 kit 自身入口是两回事，互不影响。
+> 本仓库是 Harness Engineering Kit **自身**，不是被初始化的目标项目。目标项目在执行 `harness-bootstrap` 后各自生成自己的 `AGENTS.md`（2026-11-18 完成 TD-007 多平台入口统一）——kit 给消费者的产物与 kit 自身入口同用跨平台 `AGENTS.md` 约定，但各自独立维护。
 
 ## 1. Project Structure & Module Organization
 

@@ -2,7 +2,7 @@
 name: harness-verification-loop
 description: Enable agents to autonomously advance code changes to a mergable state — using a self-verification loop (modify → verify → fix → re-verify) to reduce manual review burden, producing auditable records of what was tested, when, and by whom. Used for advancing changes to mergable state, confirming changes work before committing, and running smoke tests.
 when_to_use: |
-  显式触发：用户要求把代码改动推进到"可合并"状态、可验证的代码任务反复失败需要循环迭代、需要建立提交前自检流程。
+  显式触发：用户要求把代码改动推进到"可合并"状态、可验证的代码任务反复失败需要循环迭代、建立自验证循环（实现→自检→测试→评审→修复）或提交前自检流程。
   隐式触发：用户说"把代码改好"、"修复测试失败"、"确保代码能合并"、改动需要多轮测试和修复才能达标。
   不触发：改动是单行配置修复或 typo 修正（直接走 commit-gate）、项目没有任何测试/构建/lint 配置（循环没有反馈信号可依赖）、任务是纯探索/头脑风暴、已经有 commit-gate 且改动极小。
 disable-model-invocation: true
@@ -243,4 +243,4 @@ You are the "Self-Verification Loop Runner" (verification-loop-runner). You driv
 - **Output structure**: Summary first (what was done + verification status), then iteration details (for traceability), then known limitations (for the next agent).
 
 ---
-Last updated: 2026-10-08 (Change: minimum feedback signals + complex problem classification + escalation timing rules + no-test project transition + escalation explanation constraint + replaced dead `make triggers-all` with `python3 scripts/run-all.py` + agent heading renamed to slug-first 'verification-loop-runner (Self-Verification Loop Runner)')
+Last updated: 2026-11-18 (Change: aligned when_to_use explicit triggers with SKILL_KW contract)

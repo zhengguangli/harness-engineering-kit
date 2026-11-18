@@ -1,9 +1,9 @@
 ---
 name: harness-repo-map
-description: Restructure repo knowledge management from a bloated CLAUDE.md into a progressive disclosure model of map + structured docs/ — avoiding context bloat and document rot. Used for sliming oversized CLAUDE.md, building docs structure from scratch, auditing broken links, and fixing outdated docs.
+description: Restructure repo knowledge management from a bloated AGENTS.md into a progressive disclosure model of map + structured docs/ — avoiding context bloat and document rot. Used for sliming oversized AGENTS.md, building docs structure from scratch, auditing broken links, and fixing outdated docs.
 when_to_use: |
-  显式触发：现有 CLAUDE.md 膨胀需要瘦身、需要审计文档是否过期、需要为渐进式披露设计目录层级、CLAUDE.md/docs 已存在但结构混乱需重构。
-  隐式触发：用户抱怨 agent 缺乏项目背景、CLAUDE.md 超过 100 行、docs/ 目录结构混乱或缺失、文档与代码行为脱节。
+  显式触发：现有 AGENTS.md 膨胀需要瘦身、需要审计文档断链或是否过期、需要为渐进式披露设计目录层级、AGENTS.md/docs 已存在但结构混乱需重构。
+  隐式触发：用户抱怨 agent 缺乏项目背景、AGENTS.md 超过 100 行、docs/ 目录结构混乱或缺失、文档与代码行为脱节。
   不触发：项目很小（单文件脚本）不需要结构化文档、用户只需要更新某个具体文档而非重构整个知识体系、项目需要从零全面初始化 harness 结构（用 harness-bootstrap）。
 context: fork
 agent: doc-gardener
@@ -20,14 +20,14 @@ metadata:
 
 ## Core Principles
 
-- **CLAUDE.md is a map, not an encyclopedia**: A bloated CLAUDE.md is an anti-pattern — it consumes context quota, can't be mechanically validated, and rots instantly. The right approach is to treat CLAUDE.md as a table of contents pointing to the sources of truth in `docs/`.
+- **AGENTS.md is a map, not an encyclopedia**: A bloated AGENTS.md is an anti-pattern — it consumes context quota, can't be mechanically validated, and rots instantly. The right approach is to treat AGENTS.md as a table of contents pointing to the sources of truth in `docs/`.
 - **Knowledge must be mechanically discoverable and verifiable**: Google Docs, Slack discussions, and "team consensus" stored only in people's brains — if they aren't written into the repository, they might as well never have happened. Documentation must exist in a way that agents can mechanically discover and validate.
 - **Progressive disclosure**: The agent starts from a small entry point and is taught where to find more. Don't cram all information into a single file.
 
 ## When to Use
 
-- The project has no CLAUDE.md / docs structure yet and needs to be built from scratch.
-- An existing CLAUDE.md has ballooned to hundreds of lines and needs to be "slimmed into a map" with content moved down to `docs/`.
+- The project has no AGENTS.md / docs structure yet and needs to be built from scratch.
+- An existing AGENTS.md has ballooned to hundreds of lines and needs to be "slimmed into a map" with content moved down to `docs/`.
 - Documentation needs auditing for staleness, broken links, or divergence from actual code behavior.
 - Directory hierarchy needs to be designed for progressive disclosure.
 - Users report that the agent lacks project context.
@@ -36,13 +36,13 @@ metadata:
 
 - The project is small (single-file script) and doesn't need structured documentation.
 - The user only needs to update a specific document rather than restructure the entire knowledge system.
-- The project needs a full from-scratch harness initialization (CLAUDE.md + docs/ + .gitignore + CI) — use `harness-bootstrap` instead. This skill focuses on knowledge governance and progressive disclosure, and does not include .gitignore/CI initialization.
+- The project needs a full from-scratch harness initialization (AGENTS.md + docs/ + .gitignore + CI) — use `harness-bootstrap` instead. This skill focuses on knowledge governance and progressive disclosure, and does not include .gitignore/CI initialization.
 
 ## Methodology
 
 **Entry decision**: This skill has two entry paths depending on current state:
-- **No CLAUDE.md or docs/ yet** → Follow the *Unified Procedure* below, branch A, to create the docs/ skeleton from scratch.
-- **Existing CLAUDE.md > 100 lines or docs/ chaotic** → Follow the *Unified Procedure* below, branch B, to restructure and slim down.
+- **No AGENTS.md or docs/ yet** → Follow the *Unified Procedure* below, branch A, to create the docs/ skeleton from scratch.
+- **Existing AGENTS.md > 100 lines or docs/ chaotic** → Follow the *Unified Procedure* below, branch B, to restructure and slim down.
 
 If neither condition applies (small project, just need a quick document update), skip this skill entirely.
 
@@ -50,16 +50,16 @@ If neither condition applies (small project, just need a quick document update),
 
 | Symptom | Likely diagnosis | Action |
 |---|---|---|
-| Agent doesn't know where to find project rules | Bloated CLAUDE.md | Follow Procedure to slim CLAUDE.md into a map |
+| Agent doesn't know where to find project rules | Bloated AGENTS.md | Follow Procedure to slim AGENTS.md into a map |
 | docs/ has files but no index | Missing navigation structure | Create index files from templates |
 | ARCHITECTURE.md references deleted modules | Stale architecture docs | Update ARCHITECTURE.md, re-validate references |
 | Broken links found in docs | Link rot | Fix each link, run `find docs -name '*.md' -exec grep -l '\\](' {} \\;` to confirm |
-| No CLAUDE.md at all | Greenfield project | Follow the Unified Procedure, branch A |
+| No AGENTS.md at all | Greenfield project | Follow the Unified Procedure, branch A |
 
 ### Target Directory Skeleton
 
 ```
-CLAUDE.md                  # ~100 line map: "where to look now"
+AGENTS.md                  # ~100 line map: "where to look now"
 docs/
 ├── ARCHITECTURE.md        # Top-level architecture map: domain boundaries, layering rules
 ├── QUALITY_SCORE.md       # Quality scores by domain/layer
@@ -76,9 +76,9 @@ docs/
 └── references/            # Condensed reference for third-party libraries/tools
 ```
 
-Not every project needs all subdirectories — trim as needed. But the directory structure itself must be recorded in CLAUDE.md so that an agent entering the repository for the first time knows "what categories of files the information is distributed across."
+Not every project needs all subdirectories — trim as needed. But the directory structure itself must be recorded in AGENTS.md so that an agent entering the repository for the first time knows "what categories of files the information is distributed across."
 
-The 4 core rules for writing CLAUDE.md (length, scope, change frequency, verifiability) are detailed in Appendix B of `references/claude-md-map-template.md`.
+The 4 core rules for writing AGENTS.md (length, scope, change frequency, verifiability) are detailed in Appendix B of `references/agents-md-map-template.md`.
 
 ### Unified Procedure
 
@@ -86,17 +86,17 @@ The two former entry paths (*Initialization Steps* and *Procedure*) shared three
 steps and differed only in how the skeleton gets populated. They are now one flow with a
 single branch point.
 
-1. **Assess the current state** (both branches): How long is the existing CLAUDE.md/README? Is it a map or an encyclopedia? Does `docs/` exist? Does it have structure? The answer selects branch A or B in step 3.
-2. **Design the directory skeleton** (both branches): Refer to the template above — only create subdirectories the project actually needs. Record the structure in CLAUDE.md so a first-time agent knows what categories of files the information is distributed across.
+1. **Assess the current state** (both branches): How long is the existing AGENTS.md/README? Is it a map or an encyclopedia? Does `docs/` exist? Does it have structure? The answer selects branch A or B in step 3.
+2. **Design the directory skeleton** (both branches): Refer to the template above — only create subdirectories the project actually needs. Record the structure in AGENTS.md so a first-time agent knows what categories of files the information is distributed across.
 3. **Populate the skeleton** — branch on the assessment from step 1:
-   - **Branch A (greenfield — no CLAUDE.md or docs/ yet)**:
-     1. Create the entry file (refer to `references/claude-md-map-template.md`) — only create the one for your own platform.
+   - **Branch A (greenfield — no AGENTS.md or docs/ yet)**:
+     1. Create the entry file (refer to `references/agents-md-map-template.md`) — only create the one for your own platform.
      2. Create `docs/ARCHITECTURE.md` (refer to `../harness-architecture-boundaries/references/architecture-template.md`) and `docs/QUALITY_SCORE.md` (refer to `../harness-golden-principles/references/quality-score-template.md`). These two files belong under `docs/`, not the root directory.
      3. Create empty directories as needed: `docs/design-docs/`, `docs/exec-plans/active/`, `docs/exec-plans/completed/`, `docs/generated/`, `docs/product-specs/`, `docs/references/`.
      4. Create corresponding index files from the templates in the `references/` subdirectory: `docs/design-docs/index.md`, `docs/design-docs/core-beliefs.md`, `docs/product-specs/index.md`, `docs/exec-plans/tech-debt-tracker.md`.
      5. Fill in template placeholders (domain names, code paths, dates, etc.) according to the project's actual situation.
-   - **Branch B (restructure — CLAUDE.md > 100 lines or docs/ chaotic)**:
-     1. Split encyclopedia-style CLAUDE.md content into `docs/*.md` files by topic, then rewrite CLAUDE.md as a pointer table.
+   - **Branch B (restructure — AGENTS.md > 100 lines or docs/ chaotic)**:
+     1. Split encyclopedia-style AGENTS.md content into `docs/*.md` files by topic, then rewrite AGENTS.md as a pointer table.
      2. For each migrated document, add "what this is about and when to read it" metadata.
 4. **Validate inline** (both branches): The `doc-gardener` agent performs document validation inline within its workflow (broken-link detection, freshness checks, coverage checks, structure checks) — no need to generate a separate standalone script.
 5. **Write the map disclaimer** (both branches): At the top of the entry file, write "This file is a map, not an encyclopedia; for in-depth information, see docs/."
@@ -114,14 +114,14 @@ Failures are written as agent-friendly repair instructions so whoever finds them
 
 ## Hard Constraints
 
-1. **CLAUDE.md ≤ 100 lines**: Violation → must be slimmed before merging.
+1. **AGENTS.md ≤ 100 lines**: Violation → must be slimmed before merging.
 2. **docs/ broken-link rate = 0**: Violation → blocks merge.
 3. **Every docs/ file must have a metadata header**: Violation → doc-gardener marks as UNKNOWN.
 
 ## Examples
 
-**Example 1**: CLAUDE.md exceeds 300 lines
-**Handling**: Move content down to docs/, rewrite CLAUDE.md as a pointer table, ensure ≤ 100 lines
+**Example 1**: AGENTS.md exceeds 300 lines
+**Handling**: Move content down to docs/, rewrite AGENTS.md as a pointer table, ensure ≤ 100 lines
 
 **Example 2**: Broken links exist in docs/
 **Handling**: doc-gardener scans and finds broken links → generates fix suggestions → re-validate after repair
@@ -133,18 +133,18 @@ Failures are written as agent-friendly repair instructions so whoever finds them
 **Handling**: HIGH severity — misleading content. Update the architecture map to reflect the current module structure, re-validate all cross-references
 
 **Example 5**: A new developer reports the docs/ structure is confusing to navigate
-**Handling**: doc-gardener scans for orphaned files, checks navigation table coverage, and suggests a reorganized directory skeleton with a clearer hierarchy documented in CLAUDE.md
+**Handling**: doc-gardener scans for orphaned files, checks navigation table coverage, and suggests a reorganized directory skeleton with a clearer hierarchy documented in AGENTS.md
 
 ## Key Points
 
-- When CLAUDE.md exceeds 100 lines, slim it down by moving content to `docs/` — it's a map, not an encyclopedia.
-- Trim the directory skeleton as needed, but record it in CLAUDE.md so the agent knows how information is organized.
+- When AGENTS.md exceeds 100 lines, slim it down by moving content to `docs/` — it's a map, not an encyclopedia.
+- Trim the directory skeleton as needed, but record it in AGENTS.md so the agent knows how information is organized.
 - Misleading content is more dangerous than missing content — prioritize fixing it.
 - Outdated execution records have historical value — don't delete them. Clean up content that is "still marked active but inaccurate."
 - For each document, add "what this is about" and "when to read it."
 - Document validation is performed inline by doc-gardener; failure information is written as directly actionable repair instructions.
 - Each directory has a clear responsibility and naming convention; avoid excessive nesting.
-- After document restructuring, keep old CLAUDE.md entries for one collaboration cycle with soft-link comments, then remove them completely.
+- After document restructuring, keep old AGENTS.md entries for one collaboration cycle with soft-link comments, then remove them completely.
 - Run `find docs -name '*.md' -exec grep -l '\\](' {} \\;` once after fixing broken links to confirm no residual broken links remain.
 - Use git history as an implicit freshness signal: a document unchanged for 60+ days while surrounding code has evolved is likely stale, regardless of its "last validated" date.
 
@@ -152,12 +152,12 @@ Failures are written as agent-friendly repair instructions so whoever finds them
 
 | Direction | Skill | Deliverable | Handoff mechanism | When to skip |
 |---|---|---|---|---|
-| input | `harness-bootstrap` | Initialized CLAUDE.md + docs/ skeleton | Skeleton files are passed straight to `doc-gardener` for validation | A docs/ structure already exists — skip bootstrap and go directly to a doc-gardener audit |
+| input | `harness-bootstrap` | Initialized AGENTS.md + docs/ skeleton | Skeleton files are passed straight to `doc-gardener` for validation | A docs/ structure already exists — skip bootstrap and go directly to a doc-gardener audit |
 | input | `harness-project-intake` | Structured project card (tech stack, architecture, entry points) | Card fields drive doc-gardener's ARCHITECTURE.md coverage check | The project has already been analysed — reuse the existing card |
 | output | `harness-architecture-boundaries` | `docs/ARCHITECTURE.md` domain boundaries and layering rules | Generated during initialisation; `boundary-auditor` later reads it to validate layers | Small project with no layering |
 | output | `harness-golden-principles` | `docs/QUALITY_SCORE.md` quality matrix | Generated during initialisation; the golden-principles scanner reads it to score drift | No quality rules defined yet |
-| routes-to | `harness-bootstrap` | Missing docs/ skeleton | When CLAUDE.md exists but docs/ does not, hand the skeleton creation back to bootstrap | docs/ already exists |
-| routes-to | `harness-prompt-optimizer` | CLAUDE.md content needing prompt tuning | When the issue is prompt quality rather than structure | The issue is structure or staleness, not wording |
+| routes-to | `harness-bootstrap` | Missing docs/ skeleton | When AGENTS.md exists but docs/ does not, hand the skeleton creation back to bootstrap | docs/ already exists |
+| routes-to | `harness-prompt-optimizer` | AGENTS.md content needing prompt tuning | When the issue is prompt quality rather than structure | The issue is structure or staleness, not wording |
 
 **Error handling**: If an upstream deliverable is missing, do not fabricate it — report the gap and hand back to the owning skill. If a downstream consumer reports the docs are unusable, re-run the four inline checks (broken links, freshness, coverage, structure) before rewriting anything.
 
@@ -165,15 +165,15 @@ Failures are written as agent-friendly repair instructions so whoever finds them
 
 > For general edge cases (cross-platform sync, etc.), see `references/common-edge-cases.md`. Below are edge cases specific to this skill only.
 
-### CLAUDE.md exceeds 100 lines
+### AGENTS.md exceeds 100 lines
 
-**Scenario**: CLAUDE.md exceeds 100 lines and needs trimming.
-**Handling**: Move content down to docs/, rewrite CLAUDE.md as a pointer table, ensure CLAUDE.md ≤ 100 lines.
+**Scenario**: AGENTS.md exceeds 100 lines and needs trimming.
+**Handling**: Move content down to docs/, rewrite AGENTS.md as a pointer table, ensure AGENTS.md ≤ 100 lines.
 
 ### docs/ directory missing or disorganized
 
 **Scenario**: The docs/ directory is missing or structurally chaotic.
-**Handling**: Refer to the target directory skeleton, create or reorganize the docs/ directory, record the directory structure in CLAUDE.md.
+**Handling**: Refer to the target directory skeleton, create or reorganize the docs/ directory, record the directory structure in AGENTS.md.
 
 ### Document broken links
 
@@ -192,30 +192,30 @@ Failures are written as agent-friendly repair instructions so whoever finds them
 
 ## Common Pitfalls
 
-- **Encyclopedia-style CLAUDE.md**: Stuffing all rules into one file — the agent can't navigate effectively and context is consumed.
+- **Encyclopedia-style AGENTS.md**: Stuffing all rules into one file — the agent can't navigate effectively and context is consumed.
 - **Build-but-don't-maintain**: Created a docs/ structure but with no validation mechanism — documentation rots quickly.
 - **Deleting historical records**: Removing outdated exec-plan decision records — outdated execution records still have historical value.
 - **Redundant entry files**: Creating duplicate entry files for multiple platforms simultaneously — only create the one for your own platform.
 
 ## Best Practices
 
-- When splitting CLAUDE.md, group by "which content will be read by the same type of agent" — don't mechanically follow the original file's section order.
+- When splitting AGENTS.md, group by "which content will be read by the same type of agent" — don't mechanically follow the original file's section order.
 - Each doc type in docs/ (design docs, specs, references) should use an independent preface template to help agents quickly determine whether to read deeper.
-- After migration, keep old CLAUDE.md entries for one collaboration cycle with soft-link comments (`# Originally in CLAUDE.md, moved to docs/xxx.md`), then remove them completely.
+- After migration, keep old AGENTS.md entries for one collaboration cycle with soft-link comments (`# Originally in AGENTS.md, moved to docs/xxx.md`), then remove them completely.
 - After fixing broken links, run `find docs -name '*.md' -exec grep -l '\\](' {} \\;` once to confirm no residual broken links remain.
-- When migrating from an external wiki or docs platform (Confluence, Notion, GitBook), batch-convert related pages into one docs/ subdirectory to preserve the original information hierarchy, then link from the CLAUDE.md navigation table.
+- When migrating from an external wiki or docs platform (Confluence, Notion, GitBook), batch-convert related pages into one docs/ subdirectory to preserve the original information hierarchy, then link from the AGENTS.md navigation table.
 
 ## Related Skills
-- input      **harness-bootstrap**: Consumes the initialized CLAUDE.md + docs/ skeleton for validation
+- input      **harness-bootstrap**: Consumes the initialized AGENTS.md + docs/ skeleton for validation
 - input      **harness-project-intake**: Consumes the structured project card (tech stack, architecture, entry points)
 - see-also   **harness-architecture-boundaries**: ARCHITECTURE.md domain boundaries are written by boundary-auditor; repo-map only checks the file exists and is reachable
 - see-also   **harness-golden-principles**: QUALITY_SCORE.md is generated during initialization and read by the golden-principles scanner
-- see-also   **harness-prompt-optimizer**: When CLAUDE.md content needs prompt optimization rather than restructuring
+- see-also   **harness-prompt-optimizer**: When AGENTS.md content needs prompt optimization rather than restructuring
 
 
 ## Related Templates
 
-- `references/claude-md-map-template.md`: CLAUDE.md map template (includes core beliefs and writing rules appendix)
+- `references/agents-md-map-template.md`: AGENTS.md map template (includes core beliefs and writing rules appendix)
 - `references/docs-index-templates.md`: Design document index + product spec index templates
 - `../harness-architecture-boundaries/references/architecture-template.md`: ARCHITECTURE.md architecture document template (canonical version)
 - `../harness-golden-principles/references/quality-score-template.md`: QUALITY_SCORE.md quality score template (canonical version)
@@ -232,7 +232,7 @@ Failures are written as agent-friendly repair instructions so whoever finds them
 - **User only needs to update a specific document**: Do not trigger a full scan — directly suggest how to update.
 - **Project needs full from-scratch harness initialization**: Hand off to harness-bootstrap, do not trigger doc-gardener.
 - **User explicitly says "文档不需要审计" or "不用检查"**: Respect the user's intent, do not trigger.
-- **The project has no CLAUDE.md or docs/ yet**: Inform the user that the knowledge base structure doesn't exist -- recommend harness-bootstrap first.
+- **The project has no AGENTS.md or docs/ yet**: Inform the user that the knowledge base structure doesn't exist -- recommend harness-bootstrap first.
 - **The project's docs/ structure was validated and passed all checks in the last scan**: No actionable findings, skip re-audit unless explicitly requested.
 
 ### Role Definition
@@ -241,19 +241,19 @@ You are the "document gardener" (doc-gardener). Your mission is to keep the repo
 
 ### Core Capabilities
 
-- CLAUDE.md health check: line count check (≤ 100 lines), navigation table integrity validation, map disclaimer presence
+- AGENTS.md health check: line count check (≤ 100 lines), navigation table integrity validation, map disclaimer presence
 - docs/ structure scan: file enumeration via `find docs -type f`, broken-link detection via extracting markdown links and verifying target existence, orphan document identification
 - Code consistency validation: component existence (ARCHITECTURE.md path references), pairing completeness (frontmatter agent field vs. Agent Prompt section match), reference integrity (navigation table paths), freshness check (last updated within 30 days)
 - Execution plan audit: active plan existence in `docs/exec-plans/active/`, tech-debt-tracker maintenance status
 - Severity rating per finding: independently classify each finding as HIGH (misleading content / broken links) / MEDIUM (missing but not functionally impacting) / LOW (suggested improvement) — severity drives repair priority
 - Read-only operations: only use `Bash` (grep/cat/find), `Glob`, `Grep`, `Read`; **forbidden** from writing/deleting/modifying files
-- Content migration planning: assess CLAUDE.md bloat, design target docs/ structure, generate a per-section split plan mapping CLAUDE.md paragraphs to docs/*.md destinations
+- Content migration planning: assess AGENTS.md bloat, design target docs/ structure, generate a per-section split plan mapping AGENTS.md paragraphs to docs/*.md destinations
 
 ### Execution Flow
 
 Execute the following steps strictly in order, using the minimum number of tool calls for each step.
 
-**Step 1: CLAUDE.md Location Check** — `wc -l CLAUDE.md` to check line count and navigation table integrity. Report missing if not present; flag as needing trimming if over 100 lines.
+**Step 1: AGENTS.md Location Check** — `wc -l AGENTS.md` to check line count and navigation table integrity. Report missing if not present; flag as needing trimming if over 100 lines.
 
 **Step 2: docs/ Structure and Broken-Link Detection** — `find docs -type f` to enumerate files, extract markdown links and verify target existence. Don't enforce structural consistency — only report broken links and orphaned documents.
 
@@ -279,4 +279,4 @@ Execute the following steps strictly in order, using the minimum number of tool 
 - **Best practices**: Provide best practices for knowledge base management, document maintenance, and directory structure.
 
 ---
-Last updated: 2026-09-24 (Change: merged 'Initialization Steps' and 'Procedure' into a single Unified Procedure with one branch point — they shared 3 of their steps; also fixed a truncated row in the quick-reference table; round-33 LOW #3)
+Last updated: 2026-11-18 (Change: TD-007 — switched target project entry file from CLAUDE.md to cross-platform AGENTS.md; added explicit broken-link audit trigger in when_to_use)

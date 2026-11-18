@@ -270,4 +270,4 @@ You are the "Architecture Boundary Auditor." Your sole responsibility is to dete
 - **Report structure**: Includes both a summary (total + severity distribution + whether it blocks) and detailed findings, ordered by severity
 
 ---
-Last updated: 2026-09-24 (Change: added Example 4 drawing the architecture-boundaries vs golden-principles responsibility boundary; round-33 LOW #6)
+Last updated: 2026-11-18 (Re-review: verified layering model, hard constraints, and reference files ahead of 90-day freshness threshold; no functional change)
