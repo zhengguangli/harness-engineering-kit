@@ -3,7 +3,7 @@
 全量验证流水线：frontmatter 校验 → 关键词回归测试 → agent prompt 存在性检查 → 依赖方向校验 → 单元测试 → 输出规格与任务集覆盖审计。
 
 Usage:
-    python3 scripts/run-all.py                                # 全量（四阶段依次执行）
+    python3 scripts/run-all.py                                # 全量（六阶段依次执行）
     python3 scripts/run-all.py --run-type check               # 仅 frontmatter 校验
     python3 scripts/run-all.py --run-type regression          # 仅关键词回归
     python3 scripts/run-all.py --run-type regression --json   # 回归 JSON 报告
@@ -72,7 +72,7 @@ def sync():
 def main():
     parser = argparse.ArgumentParser(description="Harness 全量验证流水线")
     parser.add_argument("--run-type", choices=["check", "regression", "prompt", "deps", "tests", "audit"],
-                        help="指定运行阶段: check/regression/prompt/deps")
+                        help="指定运行阶段: check/regression/prompt/deps/tests/audit")
     parser.add_argument("--json", action="store_true",
                         help="回归测试输出 JSON 报告")
     parser.add_argument("--sync", action="store_true",

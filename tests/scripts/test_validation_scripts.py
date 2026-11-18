@@ -159,6 +159,16 @@ class ValidateSkillTriggersTests(unittest.TestCase):
         self.assertIn("description_too_short", out)
         self.assertIn("[FAIL]", out)
 
+    def test_deprecated_version_field_fails(self):
+        write_skill(self.skills, "harness-alpha", "## Core Principles\n\n- a\n",
+                    frontmatter="---\nname: harness-alpha\n"
+                                "description: Synthetic fixture skill used only by validation tests.\n"
+                                "when_to_use: fixture\ncompatibility: claude-code\n"
+                                "version: 1.0.0\n---\n")
+        out = self._run()
+        self.assertIn("deprecated_field:version", out)
+        self.assertIn("[FAIL]", out)
+
     def test_dangling_cross_reference_fails(self):
         write_skill(self.skills, "harness-alpha",
                     "## Core Principles\n\n- a\n\n## Related Skills\n\n"
