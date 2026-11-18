@@ -30,7 +30,8 @@ Layer 4 Execution & Verification harness-verification-loop, harness-observabilit
        ↓
 Layer 5 Commit Gate              harness-commit-gate
 
-Meta-layer                       harness-orchestration, harness-authoring
+Meta-layer                       harness-orchestration, harness-authoring,
+                                 harness-skill-quality-assessor
 ```
 
 - Dependencies flow downward only: Layer N skills may reference outputs from Layer < N, but not the reverse.
@@ -158,4 +159,4 @@ Key lessons from the full A+-grade optimization:
 See `docs/QUALITY_SCORE.md` for detailed lessons.
 
 ---
-Last updated: 2026-11-02 (Change: diagnostics domain split out of scripts/; gate surface defined; maintainer docs consolidated in docs/references/)
+Last updated: 2026-11-18 (Change: added harness-skill-quality-assessor to the Meta-layer diagram to match validate_skill_dependencies.py)

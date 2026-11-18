@@ -22,4 +22,4 @@
 > 详细的 skill 触发场景和使用流程见 README.md 的"13 个 Skill 的触发场景"和"单次任务的使用流程"章节。
 
 ---
-最后更新: 2026-09-24（变更：补录 harness-skill-quality-assessor 规格行；修正指向 README 的过时章节计数）
+最后更新: 2026-11-18（复核：全部 14 项规格与 `README.md`、`skills/` 现状一致）

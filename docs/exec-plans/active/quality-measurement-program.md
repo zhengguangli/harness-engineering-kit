@@ -63,7 +63,7 @@
 
 ## Acceptance Criteria
 
-- [x] `python3 scripts/run-all.py` 七阶段全绿
+- [x] `python3 scripts/run-all.py` 六阶段全绿
 - [x] 触发判别力有可复现数字 + 置信区间（当前 76.8%，CI [70.1%, 85.2%]）
 - [x] 契约三份表示（`when_to_use`/`SKILL_KW`/`REQUIRES`）均有漂移棘轮
 - [x] 任务集 + 55 条验收标准存在且全部有 SKILL.md 依据

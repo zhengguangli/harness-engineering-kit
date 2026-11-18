@@ -34,7 +34,6 @@ harness-engineering-kit/
 
 安装后由 agent 按项目生成的文件(不在仓库中):
 - `CLAUDE.md` — 入口地图
-- `CLAUDE.md` — Claude Code 入口地图
 - `docs/` — 架构文档、执行计划、质量评分等
 
 每个 skill 内部结构:
@@ -235,6 +234,7 @@ nacos-cli skill-sync resolve <skill-name> --use-agent claude-code --non-interact
 
 11. **`harness-orchestration`**:路由知识，帮助 agent 在上述各层之间选择正确的 skill 组合和执行顺序。配对 `orchestrator` agent 为只读路由顾问；由于编排是"主对话需要持续记住才能推理"的路由知识，主对话也可以直接根据 `SKILL.md` 中的工作流和决策树执行，不一定需要 spawn 独立 agent。
 12. **`harness-authoring`** + `skill-scaffolder`:任何时候要给这套体系本身添加新能力,参考此技能。
+13. **`harness-skill-quality-assessor`** + `skill-quality-assessor`:评估 skill 质量、执行机械检查点审计并输出改进建议。
 
 ## 概念到组件的映射
 
@@ -276,9 +276,10 @@ nacos-cli skill-sync resolve <skill-name> --use-agent claude-code --non-interact
 | harness-commit-gate | "提交代码"、"git commit" |
 | harness-orchestration | "我该用哪些 skill"、"怎么组合这些 skill" |
 | harness-authoring | "怎么写一个好的 SKILL.md"、"给 harness 添新能力" |
+| harness-skill-quality-assessor | "评估一下这些 skill 质量"、"做一次 skills 质量审计" |
 
 完整 51 个回归用例见 `tests/triggers/cases.json`。
 
 ---
 
-最后更新: 2026-10-08（变更：回归用例数 30→51、验证流水线四阶段→六阶段、.gitignore 描述与实际对齐、frontmatter 门禁由“warn-only”修正为硬门禁描述）
+最后更新: 2026-11-18（变更：移除重复的 `CLAUDE.md` 入口列表行，在接入顺序与触发速查表中补齐第 13 个 skill `harness-skill-quality-assessor`）

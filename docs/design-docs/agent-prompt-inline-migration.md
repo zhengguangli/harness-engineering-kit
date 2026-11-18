@@ -91,7 +91,7 @@ compatibility: claude-code
 
 - `docs/design-docs/agent-prompt-inline-migration.md`：本文的决策记录
 - `docs/ARCHITECTURE.md`：目录结构说明
-- `CLAUDE.md`：硬约束描述
+- `AGENTS.md`：硬约束描述
 
 ---
-最后更新: 2026-09-24（变更：移除指向从未提交的 exec-plan 的悬空引用）
+最后更新: 2026-11-18（变更：将相关文件处的过时入口 `CLAUDE.md` 更新为 `AGENTS.md`，并完成 30 天例行复核）

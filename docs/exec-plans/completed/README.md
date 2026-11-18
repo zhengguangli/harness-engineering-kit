@@ -29,6 +29,7 @@ Dates indicate when the plan was finalized or moved to completed status.
 | `skills-optimization-2026-07-02-round2.md` | 2026-07-02 | Done — 17 LOW items applied |
 | `standardize-skill-frontmatter-fields.md` | 2026-07-06 | Done — frontmatter fields standardised |
 | `skills-a-plus-push.md` | 2026-09-23 | Partially done — Phase 1/2 achieved; Phase 3/4 abandoned because the bottleneck assumption was disproven |
+| `refactor-layout-2026-11-02.md` | 2026-11-02 | Done — R1 layout refactor (`scripts/diagnostics/`, `docs/references/`, gate-surface narrative) |
 
 ## Related Docs
 
@@ -36,4 +37,4 @@ Dates indicate when the plan was finalized or moved to completed status.
 - Tech debt tracker: `docs/exec-plans/tech-debt-tracker.md`
 
 ---
-最后更新: 2026-09-23（复核：内容未变更，仅补齐缺失的 last updated 日期戳）
+最后更新: 2026-11-18（变更：归档 `refactor-layout-2026-11-02.md`）

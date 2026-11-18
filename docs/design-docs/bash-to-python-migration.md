@@ -54,4 +54,4 @@
 
 ---
 
-最后更新: 2026-10-08（变更：修正 §2/§3/§5 与 2026-09-24 去重重构的矛盾——references 脚本现已共享 `lib/harness_check.py`；§3 补充 2026-10-08 的 `[SKIP]` 优雅降级路径及其防 false-green 设计；删除文件清单中两个从未存在的脚本名）
+最后更新: 2026-11-18（复核：与 `scripts/`、`scripts/lib/harness_check.py` 及 `tests/scripts/test_validation_scripts.py` 现状一致，内容无变更）
