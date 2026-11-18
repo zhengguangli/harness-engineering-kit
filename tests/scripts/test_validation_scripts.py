@@ -277,6 +277,17 @@ class RealRepoGuards(unittest.TestCase):
             self.assertEqual(r.returncode, 0,
                              f"{os.path.relpath(script, REPO_ROOT)} failed:\n{r.stdout}\n{r.stderr}")
 
+    def test_skill_scripts_do_not_print_silent_fail(self):
+        """Every skill check failure must go through SkillChecker (never print-only)."""
+        import glob
+        scripts = sorted(glob.glob(os.path.join(
+            REAL_SKILLS, "harness-*", "references", "automated_check_script.py")))
+        for script in scripts:
+            with open(script, encoding="utf-8") as f:
+                body = f.read()
+            self.assertNotIn("[FAIL]", body,
+                             f"{os.path.relpath(script, REPO_ROOT)} prints [FAIL] instead of calling checker.check_fail()")
+
 
 class TriggerContractConsistencyTests(unittest.TestCase):
     """SKILL_KW and when_to_use are two representations of the same intent.

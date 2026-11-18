@@ -9,10 +9,9 @@ import os, re, sys
 _SHARED_LIB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../../scripts")
 if os.path.isdir(_SHARED_LIB):
     sys.path.insert(0, _SHARED_LIB)
-    from lib.harness_check import (read_file, read_lines, has_text, SkillChecker,
+    from lib.harness_check import (read_file, has_text,
                                     run_shared_checks, check_reference_files,
-                                    print_extra_summary, count_hard_constraints,
-                                    count_agent_constraints)
+                                    check_skill_patterns, print_extra_summary)
 else:
     print("[SKIP] shared checker library not found at ../../../scripts -- this "
           "script only runs inside the harness-engineering-kit repository "
@@ -36,18 +35,24 @@ passed_extra, total_extra = check_reference_files(checker, SKILL_DIR,
 
 # Skill-specific content checks
 content = read_file(os.path.join(SKILL_DIR, "SKILL.md"))
-for pattern, label in [
+p, t = check_skill_patterns(checker, content, [
     (r"5-dimension|Project Card", "5-dimension Project Card contract"),
     (r"Not found", "No-fabrication 'Not found' rule"),
     (r"AGENTS\.md.*100|≤\s*100 lines", "AGENTS.md ≤ 100 lines constraint"),
     (r"\.gitignore", ".gitignore rules mention"),
     (r"Write is for new files only", "Hard constraint: Write for new files only"),
-]:
-    total_extra += 1
-    if has_text(content, pattern, re.IGNORECASE | re.MULTILINE):
-        passed_extra += 1; checker.check_pass(label)
-    else:
-        print(f"  [FAIL] Missing {label}")
+])
+passed_extra += p
+total_extra += t
+
+# TD-007 anti-regression: scaffolded AGENTS template must not regress to CLAUDE.md
+total_extra += 1
+agents_tpl = read_file(os.path.join(SKILL_DIR, "references", "agents-md-template.md"))
+if has_text(agents_tpl, r"CLAUDE\.md"):
+    checker.check_fail("agents-template-no-claude-md", "MEDIUM", "agents-md-template.md still mentions CLAUDE.md")
+else:
+    passed_extra += 1
+    checker.check_pass("agents-template-no-claude-md")
 
 print_extra_summary(checker, passed_extra, total_extra)
 

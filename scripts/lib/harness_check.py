@@ -190,6 +190,20 @@ def print_extra_summary(checker, passed_extra, total_extra):
     print(f"Extra checks: {passed_extra}/{total_extra} passed")
 
 
+def check_skill_patterns(checker, content, rules, flags=re.IGNORECASE | re.MULTILINE):
+    """Run (regex, label) checks via SkillChecker so failures always affect exit code."""
+    passed_extra = 0
+    total_extra = 0
+    for pattern, label in rules:
+        total_extra += 1
+        if has_text(content, pattern, flags):
+            passed_extra += 1
+            checker.check_pass(label)
+        else:
+            checker.check_fail(label, "MEDIUM", f"Missing {label}")
+    return passed_extra, total_extra
+
+
 # --- Counting helpers used by skill-specific checks ---
 
 def count_hard_constraints(content):

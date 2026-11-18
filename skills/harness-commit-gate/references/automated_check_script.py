@@ -9,10 +9,9 @@ import os, re, sys
 _SHARED_LIB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../../scripts")
 if os.path.isdir(_SHARED_LIB):
     sys.path.insert(0, _SHARED_LIB)
-    from lib.harness_check import (read_file, read_lines, has_text, SkillChecker,
+    from lib.harness_check import (read_file, has_text,
                                     run_shared_checks, check_reference_files,
-                                    print_extra_summary, count_hard_constraints,
-                                    count_agent_constraints)
+                                    check_skill_patterns, print_extra_summary)
 else:
     print("[SKIP] shared checker library not found at ../../../scripts -- this "
           "script only runs inside the harness-engineering-kit repository "
@@ -35,18 +34,24 @@ passed_extra, total_extra = check_reference_files(checker, SKILL_DIR,
 
 # Skill-specific content checks
 content = read_file(os.path.join(SKILL_DIR, "SKILL.md"))
-for pattern, label in [
+p, t = check_skill_patterns(checker, content, [
     (r"git diff --staged", "Staged diff review check"),
     (r"subject line\s*≤\s*72", "Subject line ≤ 72 chars constraint"),
     (r"allowed-tools.*Grep.*Bash\(ls \*", "allowed-tools includes Grep and ls"),
     (r"force-with-lease", "Prohibit force-push on push mistake"),
     (r"API_KEY|TOKEN|SECRET|secret", "Sensitive information handling"),
-]:
-    total_extra += 1
-    if has_text(content, pattern, re.IGNORECASE | re.MULTILINE):
-        passed_extra += 1; checker.check_pass(label)
-    else:
-        checker.check_fail(label, "MEDIUM", f"Missing {label}")
+])
+passed_extra += p
+total_extra += t
+
+# Safety regression guard: checklist must not revert to destructive git reset HEAD~
+total_extra += 1
+checklist = read_file(os.path.join(SKILL_DIR, "references", "diff-review-checklist.md"))
+if has_text(checklist, r"git reset HEAD~"):
+    checker.check_fail("no-destructive-git-reset", "HIGH", "diff-review-checklist.md contains destructive 'git reset HEAD~'")
+else:
+    passed_extra += 1
+    checker.check_pass("no-destructive-git-reset")
 
 print_extra_summary(checker, passed_extra, total_extra)
 

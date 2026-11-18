@@ -139,12 +139,13 @@
   },
   {
     "input": "项目已经有完整的 harness 结构，我只想重构 AGENTS.md",
-    "expected_primary_skill": "none",
-    "expected_candidates": [],
+    "expected_primary_skill": "harness-repo-map",
+    "expected_candidates": [
+      "harness-repo-map"
+    ],
     "tags": [
-      "negative",
-      "bootstrap",
       "repo-map",
+      "bootstrap",
       "verbatim"
     ],
     "forbidden_skills": [
@@ -499,12 +500,13 @@
   },
   {
     "input": "我知道要用 commit-gate，直接帮我提交",
-    "expected_primary_skill": "none",
-    "expected_candidates": [],
+    "expected_primary_skill": "harness-commit-gate",
+    "expected_candidates": [
+      "harness-commit-gate"
+    ],
     "tags": [
-      "negative",
-      "orchestration",
       "commit",
+      "orchestration",
       "verbatim"
     ],
     "forbidden_skills": [
@@ -648,12 +650,13 @@
   },
   {
     "input": "项目需要从零全面初始化 harness 结构，帮我搭起来",
-    "expected_primary_skill": "none",
-    "expected_candidates": [],
+    "expected_primary_skill": "harness-bootstrap",
+    "expected_candidates": [
+      "harness-bootstrap"
+    ],
     "tags": [
-      "negative",
-      "repo-map",
       "bootstrap",
+      "repo-map",
       "verbatim"
     ],
     "forbidden_skills": [

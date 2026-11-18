@@ -55,7 +55,7 @@
   {
     "id": "task-commit-01",
     "skill": "harness-commit-gate",
-    "request": "我改完了，帮我提交",
+    "request": "我改完了，已暂存（git add），帮我提交",
     "expected_artifacts": [
       {
         "kind": "conversation",
@@ -67,7 +67,8 @@
       "diff is reviewed before commit",
       "relevant tests/build run and their pass/fail is reported",
       "no report file is persisted to disk",
-      "commit is blocked and reported if any check fails"
+      "commit is blocked and reported if any check fails",
+      "prompts git add and stops if nothing is staged"
     ]
   },
   {

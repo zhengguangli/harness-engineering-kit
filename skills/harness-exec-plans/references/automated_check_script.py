@@ -9,10 +9,9 @@ import os, re, sys
 _SHARED_LIB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../../scripts")
 if os.path.isdir(_SHARED_LIB):
     sys.path.insert(0, _SHARED_LIB)
-    from lib.harness_check import (read_file, read_lines, has_text, SkillChecker,
-                                    run_shared_checks, check_reference_files,
-                                    print_extra_summary, count_hard_constraints,
-                                    count_agent_constraints)
+    from lib.harness_check import (read_file, run_shared_checks,
+                                    check_reference_files, check_skill_patterns,
+                                    print_extra_summary, count_hard_constraints)
 else:
     print("[SKIP] shared checker library not found at ../../../scripts -- this "
           "script only runs inside the harness-engineering-kit repository "
@@ -34,19 +33,16 @@ passed_extra, total_extra = check_reference_files(checker, SKILL_DIR,
 
 # Skill-specific content checks
 content = read_file(os.path.join(SKILL_DIR, "SKILL.md"))
-for pattern, label in [
+p, t = check_skill_patterns(checker, content, [
     (r"Plan only, no.*code", "Plan only, no code constraint"),
     (r"mechanically verifiable", "Mechanically verifiable criteria"),
     (r"one PR|single PR", "One-PR step granularity"),
     (r"Decision log", "Decision log concept"),
     (r"Non-goals", "Non-goals requirement"),
     (r"overrun|50%|blocked", "Overrun / blocked protocol"),
-]:
-    total_extra += 1
-    if has_text(content, pattern, re.IGNORECASE):
-        passed_extra += 1; checker.check_pass(label)
-    else:
-        print(f"  [FAIL] Missing {label}")
+], flags=re.IGNORECASE)
+passed_extra += p
+total_extra += t
 
 constraint_count = count_hard_constraints(content)
 total_extra += 1
