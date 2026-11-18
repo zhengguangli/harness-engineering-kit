@@ -3,7 +3,7 @@
 
 ## Common Workflow (Applies to All Projects)
 
-1. Run `harness-project-intake` to analyze the project
+1. Run silent reconnaissance and classify project type (`references/project-card-template.md`)
 2. Confirm the initialization scope with the user
 3. Generate AGENTS.md (see `references/agents-md-examples.md`)
 4. Generate docs/ skeleton (see `references/docs-skeleton-template.md`)

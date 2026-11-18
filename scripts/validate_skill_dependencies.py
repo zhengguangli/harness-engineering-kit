@@ -38,21 +38,19 @@ SKILLS_DIR = os.path.join(ROOT_DIR, "skills")
 # 修改 ARCHITECTURE.md 的层级时必须同步此处
 # ---------------------------------------------------------------------------
 LAYERS = {
-    0: ["harness-project-intake"],
-    1: ["harness-bootstrap"],
-    2: [
+    0: ["harness-bootstrap"],
+    1: [
         "harness-repo-map",
         "harness-architecture-boundaries",
         "harness-golden-principles",
-        "harness-prompt-optimizer",
     ],
-    3: ["harness-exec-plans"],
-    4: ["harness-verification-loop", "harness-observability-and-browser"],
-    5: ["harness-commit-gate"],
+    2: ["harness-exec-plans"],
+    3: ["harness-verification-loop", "harness-observability-and-browser"],
+    4: ["harness-commit-gate"],
 }
 
 # Meta 层：可被任意层调用；其自身依赖也豁免层级方向校验
-META_LAYER = ["harness-orchestration", "harness-authoring", "harness-skill-quality-assessor"]
+META_LAYER = ["harness-orchestration"]
 
 # 人读说明章节（不参与依赖图，仅做标注完整性 WARN 检查）
 DESCRIPTION_SECTIONS = [

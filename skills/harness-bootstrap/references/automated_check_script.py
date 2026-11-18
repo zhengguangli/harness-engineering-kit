@@ -30,17 +30,17 @@ checker = run_shared_checks(SKILLS_DIR, SKILL_NAME)
 checker.print_json()
 
 passed_extra, total_extra = check_reference_files(checker, SKILL_DIR,
-    ["agents-md-template.md", "agents-md-examples.md", "docs-skeleton-template.md",
-     "docs-skeleton-by-stack.md", "gitignore-templates.md", "init-workflows.md"])
+    ["project-card-template.md", "agents-md-template.md", "agents-md-examples.md",
+     "docs-skeleton-template.md", "docs-skeleton-by-stack.md",
+     "gitignore-templates.md", "init-workflows.md"])
 
 # Skill-specific content checks
 content = read_file(os.path.join(SKILL_DIR, "SKILL.md"))
 for pattern, label in [
-    (r"^##\s+Core Principles", "Core Principles section"),
-    (r"Project Type Tailoring Guide", "Project Type Tailoring Guide"),
-    (r"Three-Layer Structure", "Three-Layer Structure"),
-    (r"Post-Initialization Checklist", "Post-Initialization Checklist"),
-    (r"\.gitignore", ".gitignore rules section"),
+    (r"5-dimension|Project Card", "5-dimension Project Card contract"),
+    (r"Not found", "No-fabrication 'Not found' rule"),
+    (r"AGENTS\.md.*100|≤\s*100 lines", "AGENTS.md ≤ 100 lines constraint"),
+    (r"\.gitignore", ".gitignore rules mention"),
     (r"Write is for new files only", "Hard constraint: Write for new files only"),
 ]:
     total_extra += 1

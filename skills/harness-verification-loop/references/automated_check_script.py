@@ -30,19 +30,21 @@ checker = run_shared_checks(SKILLS_DIR, SKILL_NAME)
 checker.print_json()
 
 passed_extra, total_extra = check_reference_files(checker, SKILL_DIR,
-    ["stuck-loop-diagnostics.md", "completion-summary-template.md"])
+    ["stuck-loop-diagnostics.md", "loop-troubleshooting-guide.md", "completion-summary-template.md"])
 
 # Skill-specific content checks
 content = read_file(os.path.join(SKILL_DIR, "SKILL.md"))
 for pattern, label in [
-    (r"Maximum [Ii]terations?", "Maximum iterations concept"),
-    (r"Definition of done", "Definition of done concept"),
+    (r"Maximum iterations = 8", "Maximum iterations = 8 constraint"),
+    (r"Definition of Done", "Definition of Done concept"),
+    (r"2 consecutive.*identical|stuck detection", "2-round stuck detection"),
+    (r"Escalate", "Human escalation boundary"),
 ]:
     total_extra += 1
     if has_text(content, pattern, re.IGNORECASE):
         passed_extra += 1; checker.check_pass(label)
     else:
-        print(f"  [FAIL] Missing {label}")
+        checker.check_fail(label, "MEDIUM", f"Missing {label}")
 
 print_extra_summary(checker, passed_extra, total_extra)
 

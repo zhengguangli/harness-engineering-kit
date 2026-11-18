@@ -30,52 +30,29 @@ checker = run_shared_checks(SKILLS_DIR, SKILL_NAME)
 checker.print_json()
 
 passed_extra, total_extra = check_reference_files(checker, SKILL_DIR,
-    ["routing-decision-tree.md", "workflow-execution-examples.md"])
+    ["routing-decision-tree.md", "workflow-execution-examples.md", "workflow-summary-cheatsheet.md"])
 
 # Skill-specific content checks
 content = read_file(os.path.join(SKILL_DIR, "SKILL.md"))
 for pattern, label in [
-    (r"Five Standard Workflows", "Five Standard Workflows section"),
-    (r"^##\s+Cross-Skill Handoff Points|^##\s+Related Skills", "Cross-Skill Handoff or Related Skills section"),
-    (r"Omission Decision Guide", "Omission Decision Guide section"),
-    (r"FAQ / Troubleshooting", "FAQ / Troubleshooting section"),
-    (r"Intent Matching Table|User Intent Matching|Intent Matching", "Intent Matching Table section"),
-    (r"^###\s+\d+\.\s+Three-Layer Routing", "Three-Layer Routing Framework section"),
-    (r"Cross-workflow combination", "Cross-workflow combination handling"),
-    (r"Read-only.*routing|read-only.*orchestrat", "Read-only routing advisor constraint"),
-    (r"Routing Quality Validation", "Routing Quality Validation subsection"),
-    (r"^##\s+Hard Constraints", "Hard Constraints section"),
+    (r"Workflow 1.*Workflow 2.*Workflow 3", "3 Standard Workflows defined"),
+    (r"Read-only routing advisor", "Read-only routing advisor constraint"),
+    (r"Never override explicit user skill choice", "Respect explicit user skill choice"),
+    (r"≤\s*5\s*skills", "Single-goal sequence <= 5 skills cap"),
+    (r"No duplicate re-routing", "Session de-duplication constraint"),
 ]:
     total_extra += 1
-    if has_text(content, pattern, re.IGNORECASE | re.MULTILINE):
+    if has_text(content, pattern, re.IGNORECASE | re.MULTILINE | re.DOTALL):
         passed_extra += 1; checker.check_pass(label)
     else:
-        print(f"  [FAIL] Missing {label}")
+        checker.check_fail(label, "MEDIUM", f"Missing {label}")
 
-# Workflow completeness: all 5 workflows must be present
-workflow_count = len(re.findall(r"###\s+Workflow\s+\d+", content))
-total_extra += 1
-if workflow_count >= 5:
-    passed_extra += 1; checker.check_pass("workflow-completeness")
-else:
-    print(f"  [FAIL] Only {workflow_count}/5 workflows defined (expected ≥5)")
-
-# Hard Constraints count: must have at least 4
 constraint_count = count_hard_constraints(content)
 total_extra += 1
 if constraint_count >= 4:
     passed_extra += 1; checker.check_pass("hard-constraints-count")
 else:
-    print(f"  [FAIL] Hard Constraints count: {constraint_count} (expected ≥4)")
-
-# Handoff table completeness: must have at least 4 rows
-handoff_section = content[content.find("## Cross-Skill Handoff Points"):content.find("## Edge Case")] if "## Cross-Skill Handoff Points" in content else ""
-handoff_rows = len(re.findall(r"^\|.*\|.*\|.*\|", handoff_section, re.MULTILINE))
-total_extra += 1
-if handoff_rows >= 4:
-    passed_extra += 1; checker.check_pass("handoff-table-completeness")
-else:
-    print(f"  [FAIL] Handoff table rows: {handoff_rows} (expected ≥4)")
+    checker.check_fail("hard-constraints-count", "MEDIUM", f"Hard Constraints count: {constraint_count} (expected ≥4)")
 
 print_extra_summary(checker, passed_extra, total_extra)
 

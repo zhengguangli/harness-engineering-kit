@@ -78,80 +78,6 @@
     "id": "negative-g01"
   },
   {
-    "input": "怎么写一个好的 SKILL.md",
-    "expected_primary_skill": "harness-authoring",
-    "expected_candidates": [
-      "harness-authoring"
-    ],
-    "tags": [
-      "authoring",
-      "verbatim"
-    ],
-    "id": "authoring-g01"
-  },
-  {
-    "input": "这应该做成 skill 还是 subagent",
-    "expected_primary_skill": "harness-authoring",
-    "expected_candidates": [
-      "harness-authoring"
-    ],
-    "tags": [
-      "authoring",
-      "verbatim"
-    ],
-    "id": "authoring-g02"
-  },
-  {
-    "input": "我想给 harness 工具集添加一个新能力",
-    "expected_primary_skill": "harness-authoring",
-    "expected_candidates": [
-      "harness-authoring"
-    ],
-    "tags": [
-      "authoring",
-      "paraphrase"
-    ],
-    "id": "authoring-g03"
-  },
-  {
-    "input": "这个 skill 越写越臃肿了，需要拆 references",
-    "expected_primary_skill": "harness-authoring",
-    "expected_candidates": [
-      "harness-authoring"
-    ],
-    "tags": [
-      "authoring",
-      "paraphrase"
-    ],
-    "id": "authoring-g04"
-  },
-  {
-    "input": "新建能力之前怎么检查跟已有能力有没有重叠",
-    "expected_primary_skill": "harness-authoring",
-    "expected_candidates": [
-      "harness-authoring"
-    ],
-    "tags": [
-      "authoring",
-      "paraphrase"
-    ],
-    "id": "authoring-g05"
-  },
-  {
-    "input": "帮我写一个独立的 CLI 小工具，跟 harness 没关系",
-    "expected_primary_skill": "none",
-    "expected_candidates": [],
-    "tags": [
-      "negative",
-      "authoring",
-      "verbatim"
-    ],
-    "forbidden_skills": [
-      "harness-authoring"
-    ],
-    "id": "negative-g02"
-  },
-  {
     "input": "init harness",
     "expected_primary_skill": "harness-bootstrap",
     "expected_candidates": [
@@ -188,7 +114,7 @@
     "id": "bootstrap-g03"
   },
   {
-    "input": "这项目还没有 CLAUDE.md 和 docs 结构，先搭个骨架",
+    "input": "这项目还没有 AGENTS.md 和 docs 结构，先搭个骨架",
     "expected_primary_skill": "harness-bootstrap",
     "expected_candidates": [
       "harness-bootstrap"
@@ -212,7 +138,7 @@
     "id": "bootstrap-g05"
   },
   {
-    "input": "项目已经有完整的 harness 结构，我只想重构 CLAUDE.md",
+    "input": "项目已经有完整的 harness 结构，我只想重构 AGENTS.md",
     "expected_primary_skill": "none",
     "expected_candidates": [],
     "tags": [
@@ -588,9 +514,9 @@
   },
   {
     "input": "分析当前项目",
-    "expected_primary_skill": "harness-project-intake",
+    "expected_primary_skill": "harness-bootstrap",
     "expected_candidates": [
-      "harness-project-intake"
+      "harness-bootstrap"
     ],
     "tags": [
       "intake",
@@ -600,9 +526,9 @@
   },
   {
     "input": "这个项目是做什么的",
-    "expected_primary_skill": "harness-project-intake",
+    "expected_primary_skill": "harness-bootstrap",
     "expected_candidates": [
-      "harness-project-intake"
+      "harness-bootstrap"
     ],
     "tags": [
       "intake",
@@ -612,9 +538,9 @@
   },
   {
     "input": "刚进入一个新项目目录，帮我看看用的什么技术栈",
-    "expected_primary_skill": "harness-project-intake",
+    "expected_primary_skill": "harness-bootstrap",
     "expected_candidates": [
-      "harness-project-intake"
+      "harness-bootstrap"
     ],
     "tags": [
       "intake",
@@ -624,9 +550,9 @@
   },
   {
     "input": "读一下 README 给我个摘要，不用贴原文",
-    "expected_primary_skill": "harness-project-intake",
+    "expected_primary_skill": "harness-bootstrap",
     "expected_candidates": [
-      "harness-project-intake"
+      "harness-bootstrap"
     ],
     "tags": [
       "intake",
@@ -636,9 +562,9 @@
   },
   {
     "input": "项目概览说一下，包括关键模块和入口",
-    "expected_primary_skill": "harness-project-intake",
+    "expected_primary_skill": "harness-bootstrap",
     "expected_candidates": [
-      "harness-project-intake"
+      "harness-bootstrap"
     ],
     "tags": [
       "intake",
@@ -656,86 +582,12 @@
       "verbatim"
     ],
     "forbidden_skills": [
-      "harness-project-intake"
+      "harness-bootstrap"
     ],
     "id": "negative-g09"
   },
   {
-    "input": "帮我优化一下这个 prompt",
-    "expected_primary_skill": "harness-prompt-optimizer",
-    "expected_candidates": [
-      "harness-prompt-optimizer"
-    ],
-    "tags": [
-      "prompt",
-      "verbatim"
-    ],
-    "id": "prompt-g01"
-  },
-  {
-    "input": "这个 prompt 效果不好",
-    "expected_primary_skill": "harness-prompt-optimizer",
-    "expected_candidates": [
-      "harness-prompt-optimizer"
-    ],
-    "tags": [
-      "prompt",
-      "verbatim"
-    ],
-    "id": "prompt-g02"
-  },
-  {
-    "input": "我需要一个 system prompt，让 AI 稳定地做代码审查",
-    "expected_primary_skill": "harness-prompt-optimizer",
-    "expected_candidates": [
-      "harness-prompt-optimizer"
-    ],
-    "tags": [
-      "prompt",
-      "paraphrase"
-    ],
-    "id": "prompt-g03"
-  },
-  {
-    "input": "怎么让 AI 做好 XXX，帮我写个提示词",
-    "expected_primary_skill": "harness-prompt-optimizer",
-    "expected_candidates": [
-      "harness-prompt-optimizer"
-    ],
-    "tags": [
-      "prompt",
-      "paraphrase"
-    ],
-    "id": "prompt-g04"
-  },
-  {
-    "input": "我贴段 prompt 你看看有什么问题",
-    "expected_primary_skill": "harness-prompt-optimizer",
-    "expected_candidates": [
-      "harness-prompt-optimizer"
-    ],
-    "tags": [
-      "prompt",
-      "paraphrase"
-    ],
-    "id": "prompt-g05"
-  },
-  {
-    "input": "帮我实现一个用户登录功能，要代码",
-    "expected_primary_skill": "none",
-    "expected_candidates": [],
-    "tags": [
-      "negative",
-      "prompt",
-      "verbatim"
-    ],
-    "forbidden_skills": [
-      "harness-prompt-optimizer"
-    ],
-    "id": "negative-g10"
-  },
-  {
-    "input": "CLAUDE.md 需要瘦身",
+    "input": "AGENTS.md 需要瘦身",
     "expected_primary_skill": "harness-repo-map",
     "expected_candidates": [
       "harness-repo-map"
@@ -808,80 +660,6 @@
       "harness-repo-map"
     ],
     "id": "negative-g11"
-  },
-  {
-    "input": "评估 skill 质量",
-    "expected_primary_skill": "harness-skill-quality-assessor",
-    "expected_candidates": [
-      "harness-skill-quality-assessor"
-    ],
-    "tags": [
-      "assessor",
-      "verbatim"
-    ],
-    "id": "assessor-g01"
-  },
-  {
-    "input": "检查 skills 是否符合规范",
-    "expected_primary_skill": "harness-skill-quality-assessor",
-    "expected_candidates": [
-      "harness-skill-quality-assessor"
-    ],
-    "tags": [
-      "assessor",
-      "verbatim"
-    ],
-    "id": "assessor-g02"
-  },
-  {
-    "input": "刚创建了一个新 skill，想验证一下质量",
-    "expected_primary_skill": "harness-skill-quality-assessor",
-    "expected_candidates": [
-      "harness-skill-quality-assessor"
-    ],
-    "tags": [
-      "assessor",
-      "paraphrase"
-    ],
-    "id": "assessor-g03"
-  },
-  {
-    "input": "skills 质量参差不齐，需要统一标准审计一遍",
-    "expected_primary_skill": "harness-skill-quality-assessor",
-    "expected_candidates": [
-      "harness-skill-quality-assessor"
-    ],
-    "tags": [
-      "assessor",
-      "paraphrase"
-    ],
-    "id": "assessor-g04"
-  },
-  {
-    "input": "准备发布前做一次质量检查",
-    "expected_primary_skill": "harness-skill-quality-assessor",
-    "expected_candidates": [
-      "harness-skill-quality-assessor"
-    ],
-    "tags": [
-      "assessor",
-      "paraphrase"
-    ],
-    "id": "assessor-g05"
-  },
-  {
-    "input": "我就想了解某个 skill 怎么用，不用评估质量",
-    "expected_primary_skill": "none",
-    "expected_candidates": [],
-    "tags": [
-      "negative",
-      "assessor",
-      "verbatim"
-    ],
-    "forbidden_skills": [
-      "harness-skill-quality-assessor"
-    ],
-    "id": "negative-g12"
   },
   {
     "input": "把这个改动推进到可合并状态",

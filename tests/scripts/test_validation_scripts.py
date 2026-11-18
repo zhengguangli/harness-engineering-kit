@@ -284,7 +284,8 @@ class TriggerContractConsistencyTests(unittest.TestCase):
     @staticmethod
     def _when_to_use(skill):
         import re
-        txt = open(os.path.join(REAL_SKILLS, skill, "SKILL.md"), encoding="utf-8").read()
+        with open(os.path.join(REAL_SKILLS, skill, "SKILL.md"), encoding="utf-8") as f:
+            txt = f.read()
         m = re.search(r"^when_to_use:\s*\|\s*$(.*?)^(?:\w[\w-]*:|---)",
                       txt, re.M | re.S)
         return m.group(1) if m else ""
@@ -357,8 +358,9 @@ class TaskCoverageMappingTests(unittest.TestCase):
         sys.path.insert(0, SCRIPTS_DIR)
         import audit_task_coverage as atc
         import json
-        tasks = json.load(open(os.path.join(REPO_ROOT, "tests", "tasks", "tasks.json"),
-                               encoding="utf-8"))
+        with open(os.path.join(REPO_ROOT, "tests", "tasks", "tasks.json"),
+                  encoding="utf-8") as f:
+            tasks = json.load(f)
         crits = [c for t in tasks for c in t["acceptance_criteria"]]
         return atc, crits
 

@@ -22,18 +22,14 @@ REPORT_FILE = os.path.join(ROOT_DIR, "tests/triggers/report.json")
 # Keyword mappings (replicating SKILL_KW associative array from bash)
 SKILL_KW = {
     "harness-architecture-boundaries": "分层架构 循环依赖 层间越界 lint+规则 依赖方向 架构腐化",
-    "harness-authoring": "怎么写一个好的 SKILL.md harness 添加新能力 skill 还是 subagent 瘦身",
-    "harness-bootstrap": "init harness 为这个项目初始化 AGENTS.md docs/ 骨架 CI 模板",
-    "harness-commit-gate": "提交代码 commit git 修复后提交代码 代码提交",
+    "harness-bootstrap": "init harness 为这个项目初始化 AGENTS.md docs/ 骨架 CI 模板 分析当前项目 项目概览 README 这个项目是做什么的 项目卡片 技术栈",
+    "harness-commit-gate": "提交代码 commit git+commit 修复后提交代码 代码提交",
     "harness-exec-plans": "先做个计划 改动比较大 落盘 跨多个会话 跨多窗口 接力 上一轮试过什么",
     "harness-golden-principles": "周期性+扫描 模式漂移 黄金原则 品味编码 重复模式 AI+重复 代码异味 代码风格+不统一 lint+品味",
     "harness-observability-and-browser": "复现 UI bug P99 截图 浏览器 验证",
     "harness-orchestration": "我该用哪些 skill 协作 不确定先后顺序 不确定先做什么后做什么 工作流怎么走 路由",
-    "harness-project-intake": "分析当前项目 项目概览 README 这个项目是做什么的 项目卡片 技术栈",
-    "harness-prompt-optimizer": "优化这个 优化一下 prompt 效果不好 system 让+AI",
     "harness-repo-map": "AGENTS.md 瘦身 断链 过期 docs 渐进式披露",
     "harness-verification-loop": "可合并 自验证循环 测试失败 循环迭代 实现→自检→测试→评审→修复 自检流程 迭代",
-    "harness-skill-quality-assessor": "评估skill质量 skills质量审计 优化skills skill质量怎么样 检查skills是否符合规范 skill+质量 skills+质量评估 skills+审计",
 }
 
 
